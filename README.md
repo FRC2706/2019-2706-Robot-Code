@@ -11,23 +11,23 @@ Thanks, and enjoy!
 
 ## Run Code
 ### From IntelliJ
-Import the project as a Gradle Project.
-Click the dropdown to the left of the run button in the top right corner.
-Click edit configurations.
-Click the plus button in the top left of the new window, and select gradle project.
-Name the configuration, select this project for Gradle Project and set the task to "deploy"
-If the code should be offline, add "--offline" to arguments
-If the code should run in debug mode, add "-PdebugMode" to arguments
-Click OK
-Select the configuration from the dropdown menu
-To run regular mode, click the green triangle
-To run debug mode, click the bug to the right of the green triangle
+1. Import the project as a Gradle Project.
+2. Click the dropdown to the left of the run button in the top right corner.
+3. Click edit configurations.
+4. Click the plus button in the top left of the new window, and select gradle project.
+5. Name the configuration, select this project for Gradle Project and set the task to "deploy"
+6. If the code should be offline, add "--offline" to arguments
+7. If the code should run in debug mode, add "-PdebugMode" to arguments
+8. Click OK
+9. Select the configuration from the dropdown menu
+10. To run regular mode, click the green triangle
+11. To run debug mode, click the bug to the right of the green triangle
 ## From Terminal
-Open a terminal in the root of this project
-Type the appropriate command to run the gradlew file (e.g. "./gradlew") and then add "deploy"
-If the code should be offline, add "--offline"
-If the code should run in debug mode, add "-PdebugMode"
-Hit enter
+1. Open a terminal in the root of this project
+2. Type the appropriate command to run the gradlew file (e.g. "./gradlew") and then add "deploy"
+3. If the code should be offline, add "--offline"
+4. If the code should run in debug mode, add "-PdebugMode"
+5. Hit enter
 
 ## Want to help write robot code?
 

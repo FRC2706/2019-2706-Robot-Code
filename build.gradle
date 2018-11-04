@@ -4,6 +4,9 @@ plugins {
 	id "idea"
 }
 
+ext.PhoenixVersion = "5.8.1"
+ext.AHRSVersion = "3.0.348"
+
 def ROBOT_CLASS = "ca.tean2706.robot.Robot"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
@@ -28,11 +31,18 @@ deploy {
 
 repositories {
 	mavenCentral()
+    maven {url "http://first.wpi.edu/FRC/roborio/maven/development"}
+    maven {url "http://devsite.ctr-electronics.com/maven/release"}
+    maven {url "http://www.kauailabs.com/maven2"}
 }
 
 // Defining my dependencies. In this case, WPILib (+ friends)
 dependencies {
     compile wpilib()
+    compile "com.kauailabs.navx.frc:navx_frc:${AHRSVersion}"
+    compile "com.ctre.phoenix:api-java:${PhoenixVersion}"
+    compile "com.ctre.phoenix:wpiapi-java:${PhoenixVersion}"
+    nativeZip "com.ctre.phoenix:cci:${PhoenixVersion}:linuxathena@zip"
 	compile 'com.google.code.gson:gson:2.8.5'
 }
 

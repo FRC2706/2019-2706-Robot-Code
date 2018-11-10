@@ -2,12 +2,13 @@ plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2019.1.1-beta-1"
 	id "idea"
+	id "eclipse"
 }
 
-ext.PhoenixVersion = "5.8.1"
-ext.AHRSVersion = "3.0.348"
+ext.PhoenixVersion = "5.9.2"
+ext.AHRSVersion = "3.1.336"
 
-def ROBOT_CLASS = "ca.tean2706.robot.Robot"
+def ROBOT_MAIN_CLASS = "ca.team2706.robot.Robot"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project EmbeddedTools.
@@ -39,7 +40,7 @@ repositories {
 // Defining my dependencies. In this case, WPILib (+ friends)
 dependencies {
     compile wpilib()
-    compile "com.kauailabs.navx.frc:navx_frc:${AHRSVersion}"
+    compile "com.kauailabs.navx.frc:navx-java:${AHRSVersion}"
     compile "com.ctre.phoenix:api-java:${PhoenixVersion}"
     compile "com.ctre.phoenix:wpiapi-java:${PhoenixVersion}"
     nativeZip "com.ctre.phoenix:cci:${PhoenixVersion}:linuxathena@zip"
@@ -47,8 +48,8 @@ dependencies {
 }
 
 compileJava {
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+    sourceCompatibility = 11
+    targetCompatibility = 11
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
@@ -56,7 +57,7 @@ compileJava {
 // knows where to look for our Robot Class.
 jar {
     from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_CLASS)
+    manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
 }
 
 task wrapper(type: Wrapper) {

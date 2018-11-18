@@ -1,0 +1,17 @@
+{
+    "local": {
+        "practice_bot": {
+            "camera_ip": "",
+            "selector_id": 0
+        },
+        "competition_bot": {
+            "camera_ip": "",
+            "selector_id": 0
+        }
+    },
+    "global": {
+        "control_mappings": {
+            "drive_forward": 0
+        }
+    }
+}

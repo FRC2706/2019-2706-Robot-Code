@@ -18,7 +18,7 @@ public class FluidConstant<A> {
     /**
      * The NetworkTables entry for this fluid constant.
      */
-    NetworkTableEntry ntEntry;
+    final NetworkTableEntry ntEntry;
 
     /**
      * Creates a new FluidConstant class.
@@ -45,15 +45,15 @@ public class FluidConstant<A> {
 
     /**
      * Gets the current value of this constant.
-     * @return
+     * @return The current value of this constant.
      */
     public A value() {
         return value;
     }
 
     /**
-     * Sets the value of this constant to a new value.
-     * @param value
+     * Sets the value of this constant to a new value. Will only set constants if {@link #canSet()} returns true.
+     * @param value The value to which the constant should be set.
      */
     public void setValue(A value) {
         // Only allow the changing of the fluid constant while disabled.
@@ -96,7 +96,7 @@ public class FluidConstant<A> {
 
     /**
      * Gets the name of this constant.
-     * @return
+     * @return The name of this constant, as a string.
      */
     public String getName() {
         return name;

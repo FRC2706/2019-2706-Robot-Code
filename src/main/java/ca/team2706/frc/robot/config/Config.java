@@ -9,6 +9,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Config manager for the robot.
@@ -45,7 +46,7 @@ public class Config {
      */
     private static <A> FluidConstant<A> constant(final String name, final A initialValue) {
         FluidConstant<A> constant = new FluidConstant<>(name, initialValue);
-        CONSTANTS.add(constant);
+        Objects.requireNonNull(CONSTANTS).add(constant);
         return constant;
     }
 
@@ -65,7 +66,7 @@ public class Config {
     }
 
     /**
-     * Writes the given string to a file on the roborio.
+     * Writes the given string to a file on the Roborio.
      * @param writable The string to be written to file.
      */
     private static void writeFile(String writable) {

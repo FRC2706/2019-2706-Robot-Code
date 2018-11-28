@@ -24,11 +24,7 @@ public class Config {
 
     static {
         // Save the current constants when the robot disables.
-        Robot.setOnDisabled(isDisabled -> {
-            if (isDisabled) {
-                saveConstants();
-            }
-        });
+        Robot.setOnDisabled(Config::saveConstants);
     }
 
     /* Control bindings */

@@ -23,6 +23,7 @@ public class Robot extends TimedRobot {
     /**
      * Called when the robot enters the disabled state.
      */
+    @Override
     public void disabledInit() {
         // Iterate through each of the disabled listeners and call them.
         STATE_LISTENERS.forEach(action -> action.accept(RobotState.DISABLED));

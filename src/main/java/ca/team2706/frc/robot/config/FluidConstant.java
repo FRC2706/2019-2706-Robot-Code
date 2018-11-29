@@ -1,5 +1,7 @@
 package ca.team2706.frc.robot.config;
 
+import ca.team2706.frc.robot.Robot;
+import ca.team2706.frc.robot.RobotState;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableValue;
@@ -18,7 +20,7 @@ public class FluidConstant<A> {
     /**
      * The NetworkTables entry for this fluid constant.
      */
-    final NetworkTableEntry ntEntry;
+    NetworkTableEntry ntEntry;
 
     /**
      * Creates a new FluidConstant class.
@@ -30,16 +32,25 @@ public class FluidConstant<A> {
         this.value = initialValue;
         this.deployedValue = initialValue;
 
-        // Initialize the networktables key for this fluid constant.
-        NetworkTable table = Config.constantsTable;
-        if (table != null) {
-            ntEntry = table.getEntry(getName());
-            ntEntry.setValue(value());
-            // Add a listener so we can change update the value.
-            ntEntry.addListener(entryNotification -> setValue(ntEntry.getValue()), NetworkTableEntry.kPersistent);
-        }
-        else {
-            ntEntry = null;
+        Robot.setOnStateChange(this::addEntry);
+    }
+
+    private void addEntry(RobotState state) {
+        if(state == RobotState.ROBOT_INIT) {
+            // Initialize the networktables key for this fluid constant.
+            NetworkTable table = Config.constantsTable;
+            if (table != null) {
+                ntEntry = table.getEntry(getName());
+                ntEntry.setValue(value());
+
+
+                System.out.println("Test");
+                // Add a listener so we can change update the value.
+                ntEntry.addListener(entryNotification -> {
+                    System.out.println("Hit");
+                    setValue(ntEntry.getValue());
+                }, NetworkTableEntry.kPersistent);
+            }
         }
     }
 

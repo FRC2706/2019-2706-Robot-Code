@@ -1,6 +1,8 @@
 package ca.team2706.frc.robot.config;
 
 import ca.team2706.frc.robot.Robot;
+import ca.team2706.frc.robot.RobotState;
+import ca.team2706.frc.robot.StateConsumer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -15,8 +17,10 @@ import java.util.Objects;
  * Config manager for the robot.
  */
 public class Config {
+    private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
+
     // #### Static constants ####
-    private static final String SAVE_FILE = "FluidConstants.txt";
+    private static final String SAVE_FILE = "/home/lvuser/FluidConstants.txt";
 
     // All Xbox controller constants.
     public static final int
@@ -53,7 +57,7 @@ public class Config {
 
     static {
         // Save the current constants when the robot disables.
-        Robot.setOnDisabled(Config::saveConstants);
+        Robot.setOnStateChange(Config::saveConstants);
     }
 
     /* Control bindings */
@@ -62,7 +66,6 @@ public class Config {
     // Operator controls
     public static final FluidConstant<Integer> OPERATOR_PRESS_A = constant("Operator Press A", XBOX_A_BUTTON);
 
-    private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
     /**
      * Creates a new integer fluid constant.
      * @param name The name for the constant type.
@@ -78,16 +81,18 @@ public class Config {
     /**
      * Saves all the value of the constants to a human-readable (but not machine readable) text file.
      */
-    private static void saveConstants() {
-        StringBuilder totalString = new StringBuilder();
+    private static void saveConstants(RobotState state) {
+        if(state == RobotState.DISABLED) {
+            StringBuilder totalString = new StringBuilder();
 
-        // Iterate through each constant and collect its file string value.
-        for (FluidConstant<?> constant : CONSTANTS) {
-            totalString.append(constant.toFileString()).append("\n");
+            // Iterate through each constant and collect its file string value.
+            for (FluidConstant<?> constant : CONSTANTS) {
+                totalString.append(constant.toFileString()).append("\n");
+            }
+
+            // Now just need to create and write to the file.
+            writeFile(totalString.toString());
         }
-
-        // Now just need to create and write to the file.
-        writeFile(totalString.toString());
     }
 
     /**

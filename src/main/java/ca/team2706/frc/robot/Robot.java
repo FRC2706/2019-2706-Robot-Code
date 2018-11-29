@@ -1,6 +1,5 @@
 package ca.team2706.frc.robot;
 
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 
 import java.util.ArrayList;
@@ -11,14 +10,14 @@ public class Robot extends TimedRobot {
         //RobotBase.startRobot(Robot::new);
     }
 
-    private static final ArrayList<Runnable> DISABLED_LISTENERS = new ArrayList<>();
+    private static final ArrayList<StateConsumer> STATE_LISTENERS = new ArrayList<>();
 
     /**
      * Sets the given listener to be called when the robot is disabled.
      * @param listener The listener to be invoked when the robot is disabled.
      */
-    public static void setOnDisabled(Runnable listener) {
-        DISABLED_LISTENERS.add(listener);
+    public static void setOnStateChange(StateConsumer listener) {
+        STATE_LISTENERS.add(listener);
     }
 
     /**
@@ -26,6 +25,18 @@ public class Robot extends TimedRobot {
      */
     public void disabledInit() {
         // Iterate through each of the disabled listeners and call them.
-        DISABLED_LISTENERS.forEach(action -> action.run());
+        STATE_LISTENERS.forEach(action -> action.accept(RobotState.DISABLED));
+    }
+
+    public void disabledPeriodic() {
+       // System.out.println(Config.DRIVER_PRESS_A.value());
+    }
+
+    public void teleopPeriodic() {
+        //System.out.println(Config.DRIVER_PRESS_A.value());
+    }
+
+    public void robotInit() {
+        STATE_LISTENERS.forEach(action -> action.accept(RobotState.ROBOT_INIT));
     }
 }

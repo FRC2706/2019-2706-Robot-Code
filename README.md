@@ -10,7 +10,7 @@ Our one request is that if you do find our code helpful, please send us an email
 Thanks, and enjoy!
 
 ## Run Code
-Ensure that Java 11 is installed on the computer before proceeding.
+Ensure that JDK 8 is installed on the computer before proceeding.
 
 ### From VS Code
 1. Make sure that the Java and WPILib plugin are both installed.

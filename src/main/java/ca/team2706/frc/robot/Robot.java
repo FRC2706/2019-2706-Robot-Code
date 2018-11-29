@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class Robot extends TimedRobot {
 
     public static void main(String[] args) {
-        RobotBase.startRobot(Robot::new);
+        //RobotBase.startRobot(Robot::new);
     }
 
     private static final ArrayList<Runnable> DISABLED_LISTENERS = new ArrayList<>();

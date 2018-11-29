@@ -15,27 +15,52 @@ import java.util.Objects;
  * Config manager for the robot.
  */
 public class Config {
-    // #### Solid constants ####
+    // #### Static constants ####
     private static final String SAVE_FILE = "FluidConstants.txt";
-    public static final int XBOX_A = 1;
+
+    // All Xbox controller constants.
+    public static final int
+            // Axis and triggers
+            XBOX_LEFT_AXIS = 0,
+            XBOX_RIGHT_AXIS = 1,
+            XBOX_BACK_LEFT_TRIGGER = 2,
+            XBOX_BACK_RIGHT_TRIGGER = 3,
+            XBOX_RIGHT_AXIS_X = 4,
+            XBOX_RIGHT_AXIS_Y = 5,
+            // Buttons
+            XBOX_A_BUTTON = 1,
+            XBOX_B_BUTTON = 2,
+            XBOX_X_BUTTON = 3,
+            XBOX_Y_BUTTON = 4,
+            XBOX_LB_BUTTON = 5,
+            XBOX_RB_BUTTON = 6,
+            XBOX_SELECT_BUTTON = 7,
+            XBOX_START_BUTTON = 8,
+            XBOX_LEFT_AXIS_BUTTON = 9,
+            XBOX_RIGHT_AXIS_BUTTON = 10,
+            // POV
+            XBOX_POV_UP = 0,
+            XBOX_POV_UP_RIGHT = 45,
+            XBOX_POV_RIGHT = 90,
+            XBOX_POV_DOWN_RIGHT = 135,
+            XBOX_POV_DOWN = 180,
+            XBOX_POV_DOWN_LEFT = 225,
+            XBOX_POV_LEFT = 270,
+            XBOX_POV_UP_LEFT = 315;
 
     // #### Fluid constants ####
     static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
 
     static {
         // Save the current constants when the robot disables.
-        Robot.setOnDisabled(isDisabled -> {
-            if (isDisabled) {
-                saveConstants();
-            }
-        });
+        Robot.setOnDisabled(Config::saveConstants);
     }
 
     /* Control bindings */
     // Driver controls
-    public static final FluidConstant<Integer> DRIVER_PRESS_A = constant("Driver Press A", XBOX_A);
+    public static final FluidConstant<Integer> DRIVER_PRESS_A = constant("Driver Press A", XBOX_A_BUTTON);
     // Operator controls
-    public static final FluidConstant<Integer> OPERATOR_PRESS_A = constant("Operator Press A", XBOX_A);
+    public static final FluidConstant<Integer> OPERATOR_PRESS_A = constant("Operator Press A", XBOX_A_BUTTON);
 
     private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
     /**

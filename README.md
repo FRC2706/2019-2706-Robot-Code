@@ -20,19 +20,19 @@ Ensure that JDK 8 is installed on the computer before proceeding.
 4. Select the command to run.
 ### From Eclipse
 1. Import the project as a Gradle Project.
-2. Select the desired run configuration from the dropdown menu beside the green "run" triangle.
+1. Select the desired run configuration from the dropdown menu beside the green "run" triangle.
 ### From IntelliJ
 1. Import the project as a Gradle Project, ensuring that the project format is directory based.
-2. Premade run configurations can be found in the runConfigurations folder. Simply copy the folder to inside the .idea folder.
-3. Select the desired run configuration from the dropdown menu beside the green "run" triangle.
-4. To run regular mode, click the green "run" triangle.
-5. To run debug mode, click the bug to the right of the green "run" triangle.
+1. Premade run configurations can be found in the runConfigurations folder. Simply copy the folder to inside the .idea folder.
+1. Select the desired run configuration from the dropdown menu beside the green "run" triangle.
+1. To run regular mode, click the green "run" triangle.
+1. To run debug mode, click the bug to the right of the green "run" triangle.
 ## From Terminal
 1. Open a terminal in the root of this project
-2. Type the appropriate command to run the gradlew file (e.g. "./gradlew") and then add "deploy"
-3. If the code should be offline, add "--offline"
-4. If the code should run in debug mode, add "-PdebugMode"
-5. Hit enter
+1. Type the appropriate command to run the gradlew file (e.g. "./gradlew") and then add "deploy"
+1. If the code should be offline, add "--offline"
+1. If the code should run in debug mode, add "-PdebugMode"
+1. Hit enter
 
 ## Want to help write robot code?
 

@@ -2,6 +2,7 @@ package ca.team2706.frc.robot.config;
 
 import ca.team2706.frc.robot.Robot;
 import ca.team2706.frc.robot.RobotState;
+import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableValue;
@@ -32,10 +33,14 @@ public class FluidConstant<A> {
         this.value = initialValue;
         this.deployedValue = initialValue;
 
-        Robot.setOnStateChange(this::addEntry);
+        Robot.setOnStateChange(this::addNTEntry);
     }
 
-    private void addEntry(RobotState state) {
+    /**
+     * Initializer for the Networktables Entry object for this fluid config object.
+     * @param state The robot's current state.
+     */
+    private void addNTEntry(RobotState state) {
         if(state == RobotState.ROBOT_INIT) {
             // Initialize the networktables key for this fluid constant.
             NetworkTable table = Config.constantsTable;
@@ -44,12 +49,10 @@ public class FluidConstant<A> {
                 ntEntry.setValue(value());
 
 
-                System.out.println("Test");
                 // Add a listener so we can change update the value.
                 ntEntry.addListener(entryNotification -> {
-                    System.out.println("Hit");
                     setValue(ntEntry.getValue());
-                }, NetworkTableEntry.kPersistent);
+                }, EntryListenerFlags.kUpdate);
             }
         }
     }
@@ -81,10 +84,10 @@ public class FluidConstant<A> {
     private void setValue(NetworkTableValue value) {
         if (canSet()) {
             Object objValue = value.getValue();
-            if (value().getClass().isInstance(objValue)) {
-                setValue((A) objValue);
-            }
-
+            setValue((A) objValue);
+        }
+        else {
+            updateNTEntry();
         }
     }
 

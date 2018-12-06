@@ -2,7 +2,6 @@ package ca.team2706.frc.robot.config;
 
 import ca.team2706.frc.robot.Robot;
 import ca.team2706.frc.robot.RobotState;
-import ca.team2706.frc.robot.StateConsumer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -55,16 +54,29 @@ public class Config {
     // #### Fluid constants ####
     static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
 
-    static {
-        // Save the current constants when the robot disables.
-        Robot.setOnStateChange(Config::saveConstants);
-    }
-
     /* Control bindings */
     // Driver controls
+    // Not an actual constant we'd have, just a demo.
     public static final FluidConstant<Integer> DRIVER_PRESS_A = constant("Driver Press A", XBOX_A_BUTTON);
     // Operator controls
+    // Not an actual constant we'd have, just a demo.
     public static final FluidConstant<Integer> OPERATOR_PRESS_A = constant("Operator Press A", XBOX_A_BUTTON);
+
+    static {
+        initialize();
+    }
+
+    private static boolean initialized = false;
+    /**
+     * Initializes the Config class.
+     */
+    public static void initialize() {
+        if (!initialized) {
+            Robot.setOnStateChange(Config::saveConstants);
+
+            initialized = true;
+        }
+    }
 
     /**
      * Creates a new integer fluid constant.
@@ -82,7 +94,7 @@ public class Config {
      * Saves all the value of the constants to a human-readable (but not machine readable) text file.
      */
     private static void saveConstants(RobotState state) {
-        if(state == RobotState.DISABLED) {
+        if (state == RobotState.DISABLED) {
             StringBuilder totalString = new StringBuilder();
 
             // Iterate through each constant and collect its file string value.

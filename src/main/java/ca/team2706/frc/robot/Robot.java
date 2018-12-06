@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot;
 
+import ca.team2706.frc.robot.config.Config;
 import edu.wpi.first.wpilibj.TimedRobot;
 
 import java.util.ArrayList;
@@ -7,7 +8,7 @@ import java.util.ArrayList;
 public class Robot extends TimedRobot {
 
     public static void main(String[] args) {
-        //RobotBase.startRobot(Robot::new);
+//        RobotBase.startRobot(Robot::new);
     }
 
     private static final ArrayList<StateConsumer> STATE_LISTENERS = new ArrayList<>();
@@ -26,18 +27,30 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         // Iterate through each of the disabled listeners and call them.
-        STATE_LISTENERS.forEach(action -> action.accept(RobotState.DISABLED));
+        onStateChange(RobotState.DISABLED);
     }
 
+    @Override
     public void disabledPeriodic() {
        // System.out.println(Config.DRIVER_PRESS_A.value());
     }
 
+    @Override
     public void teleopPeriodic() {
         //System.out.println(Config.DRIVER_PRESS_A.value());
     }
 
+    @Override
     public void robotInit() {
-        STATE_LISTENERS.forEach(action -> action.accept(RobotState.ROBOT_INIT));
+        Config.initialize();
+        onStateChange(RobotState.ROBOT_INIT);
+    }
+
+    /**
+     * Calls the state change event, executing the listeners.
+     * @param newState The robot's current (new) state.
+     */
+    private static void onStateChange(RobotState newState) {
+        STATE_LISTENERS.forEach(action -> action.accept(newState));
     }
 }

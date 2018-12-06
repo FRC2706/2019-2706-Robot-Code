@@ -6,5 +6,6 @@ public enum RobotState {
     DISABLED,
     AUTONOMOUS,
     TELEOP,
-    TEST
+    TEST,
+    SHUTDOWN
 }

@@ -32,12 +32,10 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
-       // System.out.println(Config.DRIVER_PRESS_A.value());
     }
 
     @Override
     public void teleopPeriodic() {
-        //System.out.println(Config.DRIVER_PRESS_A.value());
     }
 
     @Override

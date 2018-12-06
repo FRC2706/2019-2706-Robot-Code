@@ -54,14 +54,6 @@ public class Config {
     // #### Fluid constants ####
     static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
 
-    /* Control bindings */
-    // Driver controls
-    // Not an actual constant we'd have, just a demo.
-    public static final FluidConstant<Integer> DRIVER_PRESS_A = constant("Driver Press A", XBOX_A_BUTTON);
-    // Operator controls
-    // Not an actual constant we'd have, just a demo.
-    public static final FluidConstant<Integer> OPERATOR_PRESS_A = constant("Operator Press A", XBOX_A_BUTTON);
-
     static {
         initialize();
     }

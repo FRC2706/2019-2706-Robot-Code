@@ -16,12 +16,12 @@ public class FluidConstant<A> {
 
     // Fields
     A value;
-    final A deployedValue; // Keep track of the original value, the one which was deployed to the robot.
-    final String name;
+    private final A deployedValue; // Keep track of the original value, the one which was deployed to the robot.
+    private final String name;
     /**
      * The NetworkTables entry for this fluid constant.
      */
-    NetworkTableEntry ntEntry;
+    private NetworkTableEntry ntEntry;
 
     /**
      * Creates a new FluidConstant class.
@@ -50,9 +50,7 @@ public class FluidConstant<A> {
 
 
                 // Add a listener so we can change update the value.
-                ntEntry.addListener(entryNotification -> {
-                    setValue(ntEntry.getValue());
-                }, EntryListenerFlags.kUpdate);
+                ntEntry.addListener(entryNotification -> setValue(ntEntry.getValue()), EntryListenerFlags.kUpdate);
             }
         }
     }

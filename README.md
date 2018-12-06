@@ -10,18 +10,23 @@ Our one request is that if you do find our code helpful, please send us an email
 Thanks, and enjoy!
 
 ## Run Code
-### From IntelliJ
+Ensure that JDK 8 is installed on the computer before proceeding.
+
+### From VS Code
+1. Make sure that the Java and WPILib plugin are both installed.
+1. Open the project in VS Code.
+2. Open the command pallette with Ctrl + Shift + P.
+3. Search for the desired run configuration.
+4. Select the command to run.
+### From Eclipse
 1. Import the project as a Gradle Project.
-1. Click the dropdown to the left of the run button in the top right corner.
-1. Click edit configurations.
-1. Click the plus button in the top left of the new window, and select gradle project.
-1. Name the configuration, select this project for Gradle Project and set the task to "deploy"
-1. If the code should be offline, add "--offline" to arguments
-1. If the code should run in debug mode, add "-PdebugMode" to arguments
-1. Click OK
-1. Select the configuration from the dropdown menu
-1. To run regular mode, click the green triangle
-1. To run debug mode, click the bug to the right of the green triangle
+1. Select the desired run configuration from the dropdown menu beside the green "run" triangle.
+### From IntelliJ
+1. Import the project as a Gradle Project, ensuring that the project format is directory based.
+1. Premade run configurations can be found in the runConfigurations folder. Simply copy the folder to inside the .idea folder.
+1. Select the desired run configuration from the dropdown menu beside the green "run" triangle.
+1. To run regular mode, click the green "run" triangle.
+1. To run debug mode, click the bug to the right of the green "run" triangle.
 ## From Terminal
 1. Open a terminal in the root of this project
 1. Type the appropriate command to run the gradlew file (e.g. "./gradlew") and then add "deploy"

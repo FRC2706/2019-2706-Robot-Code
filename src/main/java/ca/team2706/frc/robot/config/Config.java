@@ -6,9 +6,13 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -19,7 +23,17 @@ public class Config {
     private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
 
     // #### Static constants ####
-    private static final String SAVE_FILE = "/home/lvuser/FluidConstants.txt";
+
+    /**
+     * Path to the file which identifies which
+     */
+    private static final Path ROBOT_ID_LOC = Paths.get(System.getProperty("user.home"), "robot.conf");
+    private static final Path SAVE_FILE = Paths.get(System.getProperty("user.home"), "FluidConstants.txt");
+
+    /**
+     * ID of the robot that code is running on
+     */
+    private static final int ROBOT_ID = getRobotId();
 
     // All Xbox controller constants.
     public static final int
@@ -71,6 +85,43 @@ public class Config {
     }
 
     /**
+     * Reads the robot type from the filesystem
+     *
+     * @return The integer ID of the robot defaulting to 0
+     */
+    private static int getRobotId() {
+        int id = 0;
+
+        try (BufferedReader reader = Files.newBufferedReader(ROBOT_ID_LOC)) {
+            id = Integer.parseInt(reader.readLine());
+        } catch (IOException | NumberFormatException e) {
+            id = 0;
+            e.printStackTrace();
+        }
+
+        return id;
+    }
+
+    /**
+     * Returns one of the values passed based on the robot ID
+     *
+     * @param first The first value (default value)
+     * @param more Other values that could be selected
+     * @param <T> The type of the value
+     * @return The value selected based on the ID of the robot
+     */
+    @SafeVarargs
+    private static <T> T robotSpecific(T first, T... more) {
+        // Return the first value if the robot id doesn't fall between second and last index
+        if(ROBOT_ID < 1 || ROBOT_ID > more.length) {
+            return first;
+        }
+        else {
+            return more[ROBOT_ID - 1];
+        }
+    }
+
+    /**
      * Creates a new integer fluid constant.
      * @param name The name for the constant type.
      * @param initialValue The initialValue of the constant.
@@ -105,7 +156,7 @@ public class Config {
      */
     private static void writeFile(String writable) {
         // Attempt to write the string to the file, catching any errors.
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(SAVE_FILE))){
+        try (BufferedWriter writer = Files.newBufferedWriter(SAVE_FILE)){
             writer.write(writable);
         } catch (IOException e) {
             DriverStation.reportWarning("Unable to save fluid constants to file.", true);

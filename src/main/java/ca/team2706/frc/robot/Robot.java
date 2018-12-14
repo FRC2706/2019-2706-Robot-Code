@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 public class Robot extends TimedRobot {
 
@@ -21,6 +22,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledInit() {
+        // If test mode was run, disable live window, and start scheduler
         if(LiveWindow.isEnabled()) {
             LiveWindow.setEnabled(false);
         }
@@ -76,6 +78,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void testInit() {
+        // Disable scheduler and run live window
         LiveWindow.setEnabled(true);
 
         // Iterate through each of the state-change listeners and call them.
@@ -92,11 +95,11 @@ public class Robot extends TimedRobot {
     /**
      * ArrayList of Robot State consumers to be invoked when the robot's state changes.
      */
-    private static final ArrayList<StateConsumer> STATE_LISTENERS = new ArrayList<>();
+    private static final ArrayList<Consumer<RobotState>> STATE_LISTENERS = new ArrayList<>();
 
     /**
      * Main method, called when the robot code is run like a desktop application.
-     * @param args
+     * @param args Arguments passed on startup
      */
     public static void main(String[] args) {
         Runtime.getRuntime().addShutdownHook(new Thread(Robot::shutdown));
@@ -109,7 +112,7 @@ public class Robot extends TimedRobot {
      * Sets the given listener to be called when the robot is disabled.
      * @param listener The listener to be invoked when the robot is disabled.
      */
-    public static void setOnStateChange(StateConsumer listener) {
+    public static void setOnStateChange(Consumer<RobotState> listener) {
         STATE_LISTENERS.add(listener);
     }
 

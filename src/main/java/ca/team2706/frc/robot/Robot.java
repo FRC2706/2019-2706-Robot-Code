@@ -8,6 +8,9 @@ import java.util.ArrayList;
 
 public class Robot extends TimedRobot {
 
+    /**
+     * Method run on robot initialization.
+     */
     @Override
     public void robotInit() {
         onStateChange(RobotState.ROBOT_INIT);
@@ -26,33 +29,51 @@ public class Robot extends TimedRobot {
         onStateChange(RobotState.DISABLED);
     }
 
+    /**
+     * Called periodically (every cycle) while the robot is disabled.
+     */
     @Override
     public void disabledPeriodic() {
         Scheduler.getInstance().run();
     }
 
+    /**
+     * Caled at the beginning of autonomous.
+     */
     @Override
     public void autonomousInit() {
         // Iterate through each of the state-change listeners and call them.
         onStateChange(RobotState.AUTONOMOUS);
     }
 
+    /**
+     * Called periodically (every cycle) while the robot is in autonomous mode.
+     */
     @Override
     public void autonomousPeriodic() {
         Scheduler.getInstance().run();
     }
 
+    /**
+     * Called when the robot enters teleop mode.
+     */
     @Override
     public void teleopInit() {
         // Iterate through each of the state-change listeners and call them.
         onStateChange(RobotState.TELEOP);
     }
 
+    /**
+     * Called periodically (every cycle) while the robot is in teleop mode.
+     */
     @Override
     public void teleopPeriodic() {
         Scheduler.getInstance().run();
     }
 
+    /**
+     * Called when the robot enters test mode.
+     */
     @Override
     public void testInit() {
         LiveWindow.setEnabled(true);
@@ -61,12 +82,22 @@ public class Robot extends TimedRobot {
         onStateChange(RobotState.TEST);
     }
 
+    /**
+     * Called periodically during test mode.
+     */
     @Override
     public void testPeriodic() { }
 
 
+    /**
+     * ArrayList of Robot State consumers to be invoked when the robot's state changes.
+     */
     private static final ArrayList<StateConsumer> STATE_LISTENERS = new ArrayList<>();
 
+    /**
+     * Main method, called when the robot code is run like a desktop application.
+     * @param args
+     */
     public static void main(String[] args) {
         Runtime.getRuntime().addShutdownHook(new Thread(Robot::shutdown));
 
@@ -90,6 +121,9 @@ public class Robot extends TimedRobot {
         STATE_LISTENERS.forEach(action -> action.accept(newState));
     }
 
+    /**
+     * Called when the robot is shutting down.
+     */
     private static void shutdown() {
         // Iterate through each of the state-change listeners and call them.
         Robot.onStateChange(RobotState.SHUTDOWN);

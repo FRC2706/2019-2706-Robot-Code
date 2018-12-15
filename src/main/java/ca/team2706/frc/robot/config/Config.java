@@ -65,6 +65,23 @@ public class Config {
             XBOX_POV_LEFT = 270,
             XBOX_POV_UP_LEFT = 315;
 
+    public static final int
+            CAN_SHORT = 10,
+            CAN_LONG = 100;
+
+    // DriveBase motor CAN IDs
+    public static final int
+            LEFT_FRONT_DRIVE_MOTOR_ID = robotSpecific(0, 0, 0),
+            LEFT_BACK_DRIVE_MOTOR_ID = robotSpecific(1, 1, 1),
+            RIGHT_FRONT_DRIVE_MOTOR_ID = robotSpecific(2, 2, 2),
+            RIGHT_BACK_DRIVE_MOTOR_ID = robotSpecific(3, 3, 3);
+
+    public static final int GYRO_ID = robotSpecific(4, 4, 4);
+
+    public static final double DRIVE_ENCODER_DPP
+            = robotSpecific(Math.PI / 8192.0, Math.PI / 8192.0, Math.PI / 8192.0);
+
+
     // #### Fluid constants ####
     static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
 

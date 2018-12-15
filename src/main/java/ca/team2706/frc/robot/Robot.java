@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot;
 
+import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -9,12 +10,20 @@ import java.util.function.Consumer;
 
 public class Robot extends TimedRobot {
 
+    private DriveBase driveBase;
+
+    public DriveBase getDriveBase() {
+        return driveBase;
+    }
+
     /**
      * Method run on robot initialization.
      */
     @Override
     public void robotInit() {
         onStateChange(RobotState.ROBOT_INIT);
+
+        driveBase = new DriveBase();
     }
 
     /**

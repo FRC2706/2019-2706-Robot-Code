@@ -15,96 +15,65 @@ public class Rumbler extends Command {
         DRIVER_JOYSTICK, OPERATOR_JOYSTICK, BOTH_JOYSTICKS
     }
 
-    private boolean isFinished = false;
-
-    /*
-     * An integer which is one DRIVER_JOYSTICK, OPERATOR_JOYSTICK or BOTH_JOYSTICKS values.
-     * Represents which controller to rumble
-     */
-    private final JoystickSelection controllerToRumble;
-
-    // How long to rumble
-    private final double timeOn;
-
-    // How much break between rumbles
-    private final double timeOff;
-
-    // How many times to repeat the pattern
-    private int repeatCount;
-
-    // The intensity setting for the rumble
-    private final double intensity;
-
     // The joysticks that will be rumbled
     private final Joystick driver;
     private final Joystick operator;
 
+    private boolean isFinished;
+
     // The last time in seconds of an event.
-    private double timePoint;
+    private long startTime;
 
     // States of the pattern
     private static final int RUMBLE = 0;
     private static final int BREAK = 1;
 
     // Indicate what part of the pattern we're in, RUMBLE or BREAK
-    int state;
+    private int state;
 
-
-    /**
-     * Class to rumble the controllers of the robot with the purpose of giving haptic feedback to
-     * the drivers for important events.
-     */
-    public Rumbler() {
-        // Just a default rumble of 1 second 1 time on both joysticks.
-        this(1.0, 0, 1, JoystickSelection.BOTH_JOYSTICKS, 1);
-    }
-
-    /**
-     * Class to rumble the controllers of the robot with the purpose of giving haptic feedback to
-     * the drivers for important events.
-     *
-     * @param timeOn How long to rumble
-     * @param timeOff How long to pause between rumbles
-     * @param repeatCount How long to repeat the pattern. Enter a negative number for infinite, but
-     *        DON'T FORGET TO CALL THE END() FUNCTION.
-     * @param controllerToRumble Which controller (one of DRIVER_JOYSTICK, OPERATOR_JOYSTICK or
-     *        BOTH_JOYSTICKS) to rumble.
-     */
-    public Rumbler(double timeOn, double timeOff, int repeatCount, JoystickSelection controllerToRumble) {
-        this(timeOn, timeOff, repeatCount, controllerToRumble, 1);
-    }
+    private RumblePattern currentPattern;
 
 
     /**
      * Class to rumble the controllers of the robot with the purpose of giving haptic feedback to
      * the drivers for important events.
      *
-     * @param timeOn How long to rumble
-     * @param timeOff How long to pause between rumbles
-     * @param repeatCount How long to repeat the pattern. Enter a negative number for infinite, but
-     *        DON'T FORGET TO CALL THE END() FUNCTION.
+     * @param timeOn             How long to rumble in milliseconds.
+     * @param timeOff            How long to pause between rumbles in milliseconds.
+     * @param repeatCount        How long to repeat the pattern. Enter a negative number for infinite, but
+     *                           <b>DON'T FORGET TO CALL THE END() FUNCTION.</b>
      * @param controllerToRumble Which controller (one of DRIVER_JOYSTICK, OPERATOR_JOYSTICK or
-     *        BOTH_JOYSTICKS)
-     * @param intensity The rumble intensity setting.  to rumble.
+     *                           BOTH_JOYSTICKS)
+     * @param intensity          The rumble intensity setting.  to rumble.
      */
-    public Rumbler(double timeOn, double timeOff, int repeatCount, JoystickSelection controllerToRumble,
+    public Rumbler(long timeOn, long timeOff, int repeatCount, JoystickSelection controllerToRumble,
                    double intensity) {
-        this.timeOn = timeOn;
-        this.timeOff = timeOff;
-        this.repeatCount = repeatCount;
-        this.intensity = intensity;
-
-        driver = OI.getInstance().getDriverJoystick();
-        operator = OI.getInstance().getOperatorJoystick();
-
-        this.controllerToRumble = controllerToRumble;
+        this(RumblePattern.createBasic(timeOn, timeOff, repeatCount, controllerToRumble, intensity));
 
         // Add this command to the scheduler.
         start();
     }
 
+    /**
+     * Constructs a new rumbler with the give patterns.
+     * @param pattern The pattern to be played on the controller(s).
+     */
+    public Rumbler(RumblePattern pattern) {
+        this.currentPattern = pattern;
+        driver = OI.getInstance().getDriverJoystick();
+        operator = OI.getInstance().getOperatorJoystick();
+        start();
+    }
+
+    @Override
+    public void start() {
+        super.start();
+        startTime = System.currentTimeMillis();
+    }
+
     @Override
     public void initialize() {
+        super.initialize();
         // Begin rumbling
         rumble(true);
     }
@@ -112,22 +81,15 @@ public class Rumbler extends Command {
     @Override
     protected void execute() {
         // Get the time passed since last time point
-        double timePassed = Timer.getFPGATimestamp() - timePoint;
+        long timeSinceStart = System.currentTimeMillis() - startTime;
 
-        boolean rumbleOver = (state == RUMBLE && timePassed > timeOn);
-        boolean breakOver = (state == BREAK && timePassed > timeOff);
-
-        if (rumbleOver) {
-            rumble(false);
-            if (repeatCount >= 0)
-                repeatCount--;
-        } else if (breakOver)
-            rumble(true);
+        boolean shouldRumble = currentPattern.shouldRumble(timeSinceStart);
+        rumble(shouldRumble);
     }
 
     @Override
     protected boolean isFinished() {
-        return repeatCount == 0 || isFinished;
+        return currentPattern.isOver(System.currentTimeMillis() - startTime) || isFinished;
     }
 
     /**
@@ -145,22 +107,19 @@ public class Rumbler extends Command {
      * @param on True to turn on rumble, false otherwise.
      */
     private void rumble(boolean on) {
-        // Set the time point, so we know when to start or stop rumbling
-        timePoint = Timer.getFPGATimestamp();
-
         // Set the state
         state = on ? RUMBLE : BREAK;
 
         // If rumble is on, full power. Otherwise, no power.
-        double rumbleIntensity = (on ? intensity : 0.0);
+        double rumbleIntensity = (on ? currentPattern.getRumbleIntensity() : 0.0);
 
         // Rumble the appropriate joysticks
-        if (controllerToRumble == JoystickSelection.DRIVER_JOYSTICK || controllerToRumble == JoystickSelection.BOTH_JOYSTICKS) {
+        if (currentPattern.getJoystick() == JoystickSelection.DRIVER_JOYSTICK || currentPattern.getJoystick() == JoystickSelection.BOTH_JOYSTICKS) {
             driver.setRumble(GenericHID.RumbleType.kRightRumble, rumbleIntensity);
             driver.setRumble(GenericHID.RumbleType.kLeftRumble, rumbleIntensity);
         }
 
-        if (controllerToRumble == JoystickSelection.OPERATOR_JOYSTICK || controllerToRumble == JoystickSelection.BOTH_JOYSTICKS) {
+        if (currentPattern.getJoystick() == JoystickSelection.OPERATOR_JOYSTICK || currentPattern.getJoystick() == JoystickSelection.BOTH_JOYSTICKS) {
             operator.setRumble(GenericHID.RumbleType.kRightRumble, rumbleIntensity);
             operator.setRumble(GenericHID.RumbleType.kLeftRumble, rumbleIntensity);
         }

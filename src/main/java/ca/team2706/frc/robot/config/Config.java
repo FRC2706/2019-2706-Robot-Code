@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -90,7 +89,7 @@ public class Config {
      * @return The integer ID of the robot defaulting to 0
      */
     private static int getRobotId() {
-        int id = 0;
+        int id;
 
         try (BufferedReader reader = Files.newBufferedReader(ROBOT_ID_LOC)) {
             id = Integer.parseInt(reader.readLine());

@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot.operatorFeedback;
 
+import ca.team2706.frc.robot.OI;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
@@ -10,7 +11,7 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class Rumbler extends Command {
 
-    public static enum JoystickSelection {
+    public enum JoystickSelection {
         DRIVER_JOYSTICK, OPERATOR_JOYSTICK, BOTH_JOYSTICKS
     }
 
@@ -20,23 +21,23 @@ public class Rumbler extends Command {
      * An integer which is one DRIVER_JOYSTICK, OPERATOR_JOYSTICK or BOTH_JOYSTICKS values.
      * Represents which controller to rumble
      */
-    JoystickSelection controllerToRumble;
+    private final JoystickSelection controllerToRumble;
 
     // How long to rumble
-    private double timeOn;
+    private final double timeOn;
 
     // How much break between rumbles
-    private double timeOff;
+    private final double timeOff;
 
     // How many times to repeat the pattern
     private int repeatCount;
 
     // The intensity setting for the rumble
-    private double intensity;
+    private final double intensity;
 
     // The joysticks that will be rumbled
-    private Joystick driver;
-    private Joystick operator;
+    private final Joystick driver;
+    private final Joystick operator;
 
     // The last time in seconds of an event.
     private double timePoint;
@@ -93,8 +94,8 @@ public class Rumbler extends Command {
         this.repeatCount = repeatCount;
         this.intensity = intensity;
 
-        driver = Robot.oi.getDriverJoystick();
-        operator = Robot.oi.getOperatorJoystick();
+        driver = OI.getInstance().getDriverJoystick();
+        operator = OI.getInstance().getOperatorJoystick();
 
         this.controllerToRumble = controllerToRumble;
 
@@ -129,10 +130,10 @@ public class Rumbler extends Command {
         return repeatCount == 0 || isFinished;
     }
 
-    @Override
     /**
      * Ends the command nicely, removing it from the command group.
      */
+    @Override
     public void end() {
         isFinished = true;
         rumble(false);

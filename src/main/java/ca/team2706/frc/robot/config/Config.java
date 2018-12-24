@@ -65,6 +65,12 @@ public class Config {
             XBOX_POV_LEFT = 270,
             XBOX_POV_UP_LEFT = 315;
 
+    // Values for driving robot with joystick
+    public static final boolean
+            TELEOP_SQUARE_JOYSTICK_INPUTS = true,
+            TELEOP_BRAKE = false;
+
+    // Timeouts for sending CAN bus commands
     public static final int
             CAN_SHORT = 10,
             CAN_LONG = 100;
@@ -76,11 +82,12 @@ public class Config {
             RIGHT_FRONT_DRIVE_MOTOR_ID = robotSpecific(2, 2, 2),
             RIGHT_BACK_DRIVE_MOTOR_ID = robotSpecific(3, 3, 3);
 
+    // CAN ID for the Pigeon
     public static final int GYRO_ID = robotSpecific(4, 4, 4);
 
+    // The amount of encoder ticks that the robot must drive to go one foot
     public static final double DRIVE_ENCODER_DPP
             = robotSpecific(Math.PI / 8192.0, Math.PI / 8192.0, Math.PI / 8192.0);
-
 
     // #### Fluid constants ####
     static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");

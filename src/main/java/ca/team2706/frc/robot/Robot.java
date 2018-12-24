@@ -10,9 +10,14 @@ import java.util.function.Consumer;
 
 public class Robot extends TimedRobot {
 
-    private DriveBase driveBase;
+    private static DriveBase driveBase;
 
-    public DriveBase getDriveBase() {
+    /**
+     * Gets the subsystem to drive the robot around
+     *
+     * @return The drive base subsystem
+     */
+    public static DriveBase getDriveBase() {
         return driveBase;
     }
 

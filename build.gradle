@@ -1,6 +1,6 @@
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2019.1.1-rc-1"
+    id "edu.wpi.first.GradleRIO" version "2019.1.1"
 }
 
 def ROBOT_MAIN_CLASS = "ca.team2706.frc.robot.Robot"

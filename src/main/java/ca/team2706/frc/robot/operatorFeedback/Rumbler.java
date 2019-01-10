@@ -50,7 +50,7 @@ public class Rumbler extends Command {
                    double intensity) {
         this(RumblePattern.createBasic(timeOn, timeOff, repeatCount, controllerToRumble, intensity));
 
-        // Add this command to the scheduler.
+        // add this command to the scheduler.
         start();
     }
 

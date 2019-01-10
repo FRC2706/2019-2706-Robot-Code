@@ -49,7 +49,7 @@ public class FluidConstant<A> {
                 ntEntry.setValue(value());
 
 
-                // Add a listener so we can change update the value.
+                // add a listener so we can change update the value.
                 ntEntry.addListener(entryNotification -> setValue(ntEntry.getValue()), EntryListenerFlags.kUpdate);
             }
         }

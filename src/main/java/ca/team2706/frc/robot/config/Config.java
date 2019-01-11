@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -81,6 +80,10 @@ public class Config {
             LEFT_BACK_DRIVE_MOTOR_ID = robotSpecific(1, 1, 1),
             RIGHT_FRONT_DRIVE_MOTOR_ID = robotSpecific(2, 2, 2),
             RIGHT_BACK_DRIVE_MOTOR_ID = robotSpecific(3, 3, 3);
+
+    public static final boolean
+            INVERT_LEFT_DRIVE = robotSpecific(false, false, false),
+            INVERT_RIGHT_DRIVE = robotSpecific(true, true, true);
 
     // CAN ID for the Pigeon
     public static final int GYRO_ID = robotSpecific(4, 4, 4);

@@ -1,14 +1,18 @@
 package ca.team2706.frc.robot.subsystems;
 
-import ca.team2706.frc.robot.talon.TalonEncoder;
-import ca.team2706.frc.robot.talon.TalonFactory;
+import ca.team2706.frc.robot.Sendables;
 import ca.team2706.frc.robot.config.Config;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
+import edu.wpi.first.wpilibj.SendableBase;
+import edu.wpi.first.wpilibj.SendableImpl;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 
 /**
  * Subsystem that controls the driving of the robot as well as certain sensors that are used for driving
@@ -19,28 +23,36 @@ public class DriveBase extends Subsystem {
     private final DifferentialDrive robotDriveBase;
 
     private final PigeonIMU gyro;
-    private final TalonEncoder leftEncoder, rightEncoder;
 
     /**
      * Creates a drive base, and initializes all required sensors and motors
      */
     public DriveBase() {
         // TODO: Configure motors from fluid config or from file
-        leftFrontMotor = TalonFactory.defaultConfig(Config.LEFT_FRONT_DRIVE_MOTOR_ID);
-        leftBackMotor = TalonFactory.defaultConfig(Config.LEFT_BACK_DRIVE_MOTOR_ID);
-        rightFrontMotor = TalonFactory.defaultConfig(Config.RIGHT_FRONT_DRIVE_MOTOR_ID);
-        rightBackMotor = TalonFactory.defaultConfig(Config.RIGHT_BACK_DRIVE_MOTOR_ID);
+        leftFrontMotor = new WPI_TalonSRX(Config.LEFT_FRONT_DRIVE_MOTOR_ID);
+        leftBackMotor = new WPI_TalonSRX(Config.LEFT_BACK_DRIVE_MOTOR_ID);
+        rightFrontMotor = new WPI_TalonSRX(Config.RIGHT_FRONT_DRIVE_MOTOR_ID);
+        rightBackMotor = new WPI_TalonSRX(Config.RIGHT_BACK_DRIVE_MOTOR_ID);
 
-        robotDriveBase = new DifferentialDrive(new SpeedControllerGroup(leftFrontMotor, leftBackMotor),
-                new SpeedControllerGroup(rightFrontMotor, rightBackMotor));
+        leftFrontMotor.configFactoryDefault(Config.CAN_LONG);
+        leftBackMotor.configFactoryDefault(Config.CAN_LONG);
+        rightFrontMotor.configFactoryDefault(Config.CAN_LONG);
+        rightBackMotor.configFactoryDefault(Config.CAN_LONG);
+
+        leftFrontMotor.setInverted(Config.INVERT_LEFT_DRIVE);
+        leftFrontMotor.setInverted(Config.INVERT_RIGHT_DRIVE);
+
+        leftBackMotor.follow(leftFrontMotor);
+        rightBackMotor.follow(rightFrontMotor);
+
+        leftBackMotor.setInverted(InvertType.FollowMaster);
+        leftBackMotor.setInverted(InvertType.FollowMaster);
+
+        robotDriveBase = new DifferentialDrive(leftFrontMotor, rightFrontMotor);
+        robotDriveBase.setRightSideInverted(false);
         robotDriveBase.setSafetyEnabled(false);
 
         gyro = new PigeonIMU(Config.GYRO_ID);
-        leftEncoder = new TalonEncoder(leftFrontMotor);
-        rightEncoder = new TalonEncoder(rightFrontMotor);
-
-        leftEncoder.setDistancePerPulse(Config.DRIVE_ENCODER_DPP);
-        rightEncoder.setDistancePerPulse(Config.DRIVE_ENCODER_DPP);
 
         // TODO: Also output data to logging/smartdashboard
         addChild("Left Front Motor", leftFrontMotor);
@@ -50,9 +62,27 @@ public class DriveBase extends Subsystem {
 
         addChild(robotDriveBase);
 
-        addChild(gyro);
-        addChild("Left Encoder", leftEncoder);
-        addChild("Right Encoder", rightEncoder);
+        addChild("Gyroscope", Sendables.newPigeonSendable(gyro));
+
+        addChild("Left Encoder", Sendables.newTalonEncoderSendable(leftFrontMotor));
+        addChild("Right Encoder", Sendables.newTalonEncoderSendable(rightFrontMotor));
+
+        setOpenLoopMode();
+    }
+
+    public void stop() {
+        leftFrontMotor.stopMotor();
+        rightFrontMotor.stopMotor();
+    }
+
+    private void selectEncodersStandard() {
+        leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+        rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+    }
+
+    public void setOpenLoopMode() {
+        stop();
+        selectEncodersStandard();
     }
 
     @Override
@@ -112,7 +142,7 @@ public class DriveBase extends Subsystem {
      * @return The distance of the left encoder
      */
     public double getLeftDistance() {
-        return leftEncoder.getDistance();
+        return leftFrontMotor.getSensorCollection().getQuadraturePosition() * Config.DRIVE_ENCODER_DPP;
     }
 
     /**
@@ -121,7 +151,7 @@ public class DriveBase extends Subsystem {
      * @return The distance of the right encoder
      */
     public double getRightDistance() {
-        return rightEncoder.getDistance();
+        return rightFrontMotor.getSensorCollection().getQuadraturePosition() * Config.DRIVE_ENCODER_DPP;
     }
 
     /**
@@ -130,7 +160,7 @@ public class DriveBase extends Subsystem {
      * @return The speed of the left encoder
      */
     public double getLeftSpeed() {
-        return leftEncoder.getRate();
+        return leftFrontMotor.getSensorCollection().getQuadratureVelocity() * Config.DRIVE_ENCODER_DPP * 10;
     }
 
     /**
@@ -139,7 +169,7 @@ public class DriveBase extends Subsystem {
      * @return The speed of the right encoder
      */
     public double getRightSpeed() {
-        return rightEncoder.getRate();
+        return rightFrontMotor.getSensorCollection().getQuadratureVelocity() * Config.DRIVE_ENCODER_DPP * 10;
     }
 
     /**
@@ -155,8 +185,8 @@ public class DriveBase extends Subsystem {
      * Resets the encoder values to 0 ticks
      */
     public void resetEncoders() {
-        leftEncoder.reset();
-        rightEncoder.reset();
+        leftFrontMotor.getSensorCollection().setQuadraturePosition(0, Config.CAN_SHORT);
+        rightFrontMotor.getSensorCollection().setQuadraturePosition(0, Config.CAN_SHORT);
     }
 
     /**

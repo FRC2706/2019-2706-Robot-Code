@@ -1,6 +1,10 @@
 package ca.team2706.frc.robot;
 
+<<<<<<< HEAD
 import ca.team2706.frc.robot.subsystems.DriveBase;
+=======
+import edu.wpi.first.wpilibj.RobotBase;
+>>>>>>> 33bf972d8984da4944e6d7cd6310d3a6b7de27fc
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -30,6 +34,12 @@ public class Robot extends TimedRobot {
 
         driveBase = new DriveBase();
     }
+
+    /**
+     * Called periodically (every cycle) while the robot is on.
+     */
+    @Override
+    public void robotPeriodic() { }
 
     /**
      * Called when the robot enters the disabled state.
@@ -118,8 +128,7 @@ public class Robot extends TimedRobot {
     public static void main(String[] args) {
         Runtime.getRuntime().addShutdownHook(new Thread(Robot::shutdown));
 
-        // TODO: Uncomment when using WPILib beta
-//        RobotBase.startRobot(Robot::new);
+        RobotBase.startRobot(Robot::new);
     }
 
     /**

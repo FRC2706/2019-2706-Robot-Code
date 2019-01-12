@@ -24,7 +24,6 @@ import java.util.Map;
 public class Config {
     private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
 
-    // #### Static constants ####
 
     /**
      * Path to the file which identifies which
@@ -41,6 +40,7 @@ public class Config {
 
     // #### Fluid constants ####
     static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
+    public static final FluidConstant<String> testAction = constant("testAction", XBOX_VALUE.XBOX_A_BUTTON.NTString);
 
     static {
         initialize();
@@ -169,7 +169,7 @@ public class Config {
         XBOX_POV_LEFT (270, "LEFT"),
         XBOX_POV_UP_LEFT (315, "UP_LEFT");
         
-        private String NTString = null;
+        private String NTString;
         private int port;
 
         XBOX_VALUE (int port, String NTString) {
@@ -193,16 +193,20 @@ public class Config {
 
 
         // Create a hashmap of 
-        private static final HashMap<String, String> hmap = new HashMap<>();
+        private static final HashMap<String, String> nameMap = new HashMap<>();
 
         static {
             for (XBOX_VALUE value : XBOX_VALUE.values()) {
-                hmap.put(value.getNTString(), value.name());
+                nameMap.put(value.getNTString(), value.name());
             }
         }
+        /**
+         * @param NTString
+         * @return The name of the constant corresponding to the string NTString
+         */
 
-        public static String getStaticPort(String NTString) {
-            return XBOX_VALUE.hmap.get(NTString);
+        public static String getConstantName(String NTString) {
+            return XBOX_VALUE.nameMap.get(NTString);
             
         }
 

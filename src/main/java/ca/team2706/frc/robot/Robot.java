@@ -3,9 +3,11 @@ package ca.team2706.frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-
 import java.util.ArrayList;
 import java.util.function.Consumer;
+import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.cscore.UsbCamera;
+
 
 public class Robot extends TimedRobot {
 
@@ -15,6 +17,10 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         onStateChange(RobotState.ROBOT_INIT);
+
+        // Usb Camera
+        UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
+        Runtime.getRuntime().addShutdownHook(new Thread(camera::free));
     }
 
     /**

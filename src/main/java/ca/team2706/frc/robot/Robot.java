@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot;
 
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -22,6 +23,12 @@ public class Robot extends TimedRobot {
         UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
         Runtime.getRuntime().addShutdownHook(new Thread(camera::free));
     }
+
+    /**
+     * Called periodically (every cycle) while the robot is on.
+     */
+    @Override
+    public void robotPeriodic() { }
 
     /**
      * Called when the robot enters the disabled state.
@@ -110,8 +117,7 @@ public class Robot extends TimedRobot {
     public static void main(String[] args) {
         Runtime.getRuntime().addShutdownHook(new Thread(Robot::shutdown));
 
-        // TODO: Uncomment when using WPILib beta
-//        RobotBase.startRobot(Robot::new);
+        RobotBase.startRobot(Robot::new);
     }
 
     /**

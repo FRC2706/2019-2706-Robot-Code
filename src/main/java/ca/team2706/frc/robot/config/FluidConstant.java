@@ -79,6 +79,7 @@ public class FluidConstant<A> {
      * Sets the value of this constant to the specified networktables value.
      * @param value The value to which
      */
+    @SuppressWarnings("unchecked")
     private void setValue(NetworkTableValue value) {
         if (canSet()) {
             Object objValue = value.getValue();

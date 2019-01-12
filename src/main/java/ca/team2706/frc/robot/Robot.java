@@ -6,11 +6,15 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import java.util.ArrayList;
 import java.util.function.Consumer;
+
+import ca.team2706.frc.robot.config.Config;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.cscore.UsbCamera;
 
 
 public class Robot extends TimedRobot {
+
+    OI oi;
 
     /**
      * Method run on robot initialization.
@@ -19,9 +23,11 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         onStateChange(RobotState.ROBOT_INIT);
 
+        oi = new OI();
+
         // Usb Camera
-        UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
-        Runtime.getRuntime().addShutdownHook(new Thread(camera::free));
+        // UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
+        // Runtime.getRuntime().addShutdownHook(new Thread(camera::free));
     }
 
     /**
@@ -117,6 +123,7 @@ public class Robot extends TimedRobot {
     public static void main(String[] args) {
         Runtime.getRuntime().addShutdownHook(new Thread(Robot::shutdown));
 
+        Config.initialize();
         RobotBase.startRobot(Robot::new);
     }
 

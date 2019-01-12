@@ -41,7 +41,7 @@ public class OI {
         this(new Joystick(0), new Joystick(1));
     }
 
-    private final String staticName = Config.XBOX_VALUE.getConstantName(Config.testAction.value());
+    
 
     /**
      * Initializes Oi with non-default joysticks
@@ -56,15 +56,13 @@ public class OI {
         // The Joystick for controlling the mechanisms of the robot
         this.controlStick = controlStick;
 
-        
-
-
-
-        JoystickButton joystickButton = new JoystickButton(driverStick, XBOX_VALUE.valueOf(staticName).getPort());
+        JoystickButton joystickButton = new FluidJoystickButton(driverStick, Config.testAction);
 
         PrintCommand printCommand = new PrintCommand("Command!");
 
         joystickButton.whenPressed(printCommand);
+
+        
 
     }
 

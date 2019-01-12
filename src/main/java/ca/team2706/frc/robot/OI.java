@@ -3,6 +3,7 @@ package ca.team2706.frc.robot;
 import java.lang.reflect.Field;
 
 import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.config.Config.XBOX_VALUE;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
@@ -40,6 +41,8 @@ public class OI {
         this(new Joystick(0), new Joystick(1));
     }
 
+    private final String staticName = Config.XBOX_VALUE.getConstantName(Config.testAction.value());
+
     /**
      * Initializes Oi with non-default joysticks
      * 
@@ -53,7 +56,11 @@ public class OI {
         // The Joystick for controlling the mechanisms of the robot
         this.controlStick = controlStick;
 
-        JoystickButton joystickButton = new JoystickButton(driverStick, Config.XBOX_VALUE.XBOX_A_BUTTON.getPort());
+        
+
+
+
+        JoystickButton joystickButton = new JoystickButton(driverStick, XBOX_VALUE.valueOf(staticName).getPort());
 
         PrintCommand printCommand = new PrintCommand("Command!");
 

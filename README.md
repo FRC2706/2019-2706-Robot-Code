@@ -1,5 +1,7 @@
 # 2019-2706-Robot-Code
-The main robot code for the Merge Robotics (2706) robot for the 2019 FIRST Deep Space challenge. 
+The main robot code for the Merge Robotics (2706) robot for the 2019 FIRST Deep Space challenge.
+
+[![Build Status](https://travis-ci.com/FRC2706/2019-2706-Robot-Code.svg?branch=master)](https://travis-ci.com/FRC2706/2019-2706-Robot-Code) 
 
 ## Attribution and license
 

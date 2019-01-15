@@ -104,12 +104,16 @@ public class DriveBase extends Subsystem {
 
     }
 
-    private final Command defaultCommand = new ArcadeDriveWithJoystick(new Joystick(0), 4, 5);
+    private Command defaultCommand;
 
     @Override
     // Have the default command set from OI
     protected void initDefaultCommand() {
         // TODO: Move to OI
+
+        if(defaultCommand == null) {
+             defaultCommand = new ArcadeDriveWithJoystick(new Joystick(0), 4, 5);
+        }
         setDefaultCommand(defaultCommand);
     }
 

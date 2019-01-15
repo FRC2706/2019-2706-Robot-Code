@@ -4,6 +4,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
@@ -104,11 +106,17 @@ public class Robot extends TimedRobot {
      */
     private static final ArrayList<Consumer<RobotState>> STATE_LISTENERS = new ArrayList<>();
 
+    private static final Logger LOGGER = LogManager.getLogger(Robot.class.getName());
+
     /**
      * Main method, called when the robot code is run like a desktop application.
      * @param args Arguments passed on startup
      */
     public static void main(String[] args) {
+        LOGGER.debug("Debug Message Logged !!!");
+        LOGGER.info("Info Message Logged !!!");
+        LOGGER.error("Error Message Logged !!!", new NullPointerException("NullError"));
+
         Runtime.getRuntime().addShutdownHook(new Thread(Robot::shutdown));
 
         RobotBase.startRobot(Robot::new);

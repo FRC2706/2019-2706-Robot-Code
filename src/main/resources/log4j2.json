@@ -1,0 +1,26 @@
+{
+  "configuration": {
+    "status": "error",
+    "name": "JSONConfigDemo",
+    "packages": "ca.team2706.robot",
+    "ThresholdFilter": {
+      "level": "debug"
+    },
+    "appenders": {
+      "Console": {
+        "name": "STDOUT",
+        "PatternLayout": {
+          "pattern": "TEST: %d [%t] %-5p %c - %m%n"
+        }
+      }
+    },
+    "loggers": {
+      "root": {
+        "level": "debug",
+        "AppenderRef": {
+          "ref": "STDOUT"
+        }
+      }
+    }
+  }
+}

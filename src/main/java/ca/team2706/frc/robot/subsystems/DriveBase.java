@@ -1,15 +1,18 @@
 package ca.team2706.frc.robot.subsystems;
 
 import ca.team2706.frc.robot.Sendables;
+import ca.team2706.frc.robot.commands.ArcadeDriveWithJoystick;
 import ca.team2706.frc.robot.config.Config;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SendableBase;
 import edu.wpi.first.wpilibj.SendableImpl;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
@@ -39,6 +42,11 @@ public class DriveBase extends Subsystem {
         rightFrontMotor.configFactoryDefault(Config.CAN_LONG);
         rightBackMotor.configFactoryDefault(Config.CAN_LONG);
 
+        leftFrontMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
+        leftBackMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
+        rightFrontMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
+        rightBackMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
+
         leftFrontMotor.setInverted(Config.INVERT_LEFT_DRIVE);
         leftFrontMotor.setInverted(Config.INVERT_RIGHT_DRIVE);
 
@@ -47,6 +55,8 @@ public class DriveBase extends Subsystem {
 
         leftBackMotor.setInverted(InvertType.FollowMaster);
         leftBackMotor.setInverted(InvertType.FollowMaster);
+
+        enableCurrentLimit(Config.DRIVEBASE_CURRENT_LIMIT);
 
         robotDriveBase = new DifferentialDrive(leftFrontMotor, rightFrontMotor);
         robotDriveBase.setRightSideInverted(false);
@@ -83,11 +93,25 @@ public class DriveBase extends Subsystem {
     public void setOpenLoopMode() {
         stop();
         selectEncodersStandard();
+        reset();
     }
+
+    public void enableCurrentLimit(boolean enable) {
+        leftFrontMotor.enableCurrentLimit(enable);
+        leftBackMotor.enableCurrentLimit(enable);
+        rightFrontMotor.enableCurrentLimit(enable);
+        rightBackMotor.enableCurrentLimit(enable);
+
+    }
+
+    private final Command defaultCommand = new ArcadeDriveWithJoystick(new Joystick(0), 4, 5);
 
     @Override
     // Have the default command set from OI
-    protected void initDefaultCommand() {}
+    protected void initDefaultCommand() {
+        // TODO: Move to OI
+        setDefaultCommand(defaultCommand);
+    }
 
     /**
      * Changes whether the drive motors should coast or brake when output is 0

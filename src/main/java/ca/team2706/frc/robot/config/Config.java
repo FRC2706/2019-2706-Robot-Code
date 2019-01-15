@@ -85,6 +85,8 @@ public class Config {
             INVERT_LEFT_DRIVE = robotSpecific(false, false, false),
             INVERT_RIGHT_DRIVE = robotSpecific(true, true, true);
 
+    public static final boolean DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);
+
     // CAN ID for the Pigeon
     public static final int GYRO_ID = robotSpecific(4, 4, 4);
 

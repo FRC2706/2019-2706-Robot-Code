@@ -24,7 +24,7 @@ public class Config {
     // #### Static constants ####
 
     /**
-     * Path to the file which identifies which
+     * Path to the file which identifies which robot we're working with.
      */
     private static final Path ROBOT_ID_LOC = Paths.get(System.getProperty("user.home"), "robot.conf");
     private static final Path SAVE_FILE = Paths.get(System.getProperty("user.home"), "FluidConstants.txt");
@@ -78,7 +78,6 @@ public class Config {
     public static void initialize() {
         if (!initialized) {
             Robot.setOnStateChange(Config::saveConstants);
-
             initialized = true;
         }
     }
@@ -89,7 +88,7 @@ public class Config {
      * @return The integer ID of the robot defaulting to 0
      */
     private static int getRobotId() {
-        int id = 0;
+        int id;
 
         try (BufferedReader reader = Files.newBufferedReader(ROBOT_ID_LOC)) {
             id = Integer.parseInt(reader.readLine());

@@ -10,12 +10,15 @@ import java.util.function.Consumer;
 
 public class Robot extends TimedRobot {
 
+    private static boolean isInitialized;
+
     /**
      * Method run on robot initialization.
      */
     @Override
     public void robotInit() {
         onStateChange(RobotState.ROBOT_INIT);
+        isInitialized = true;
     }
 
     /**
@@ -120,6 +123,14 @@ public class Robot extends TimedRobot {
      */
     public static void setOnStateChange(Consumer<RobotState> listener) {
         STATE_LISTENERS.add(listener);
+    }
+
+    /**
+     * Determines if the current instance of the robot has been initialized.
+     * @return True if the robot has been initialized, false otherwise.
+     */
+    public static boolean isIsInitialized() {
+        return isInitialized;
     }
 
     /**

@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 public class FluidConstant<A> {
 
     // Fields
-    A value;
+    private A value;
     private final A deployedValue; // Keep track of the original value, the one which was deployed to the robot.
     private final String name;
     /**
@@ -33,15 +33,15 @@ public class FluidConstant<A> {
         this.value = initialValue;
         this.deployedValue = initialValue;
 
-        Robot.setOnStateChange(this::addNTEntry);
+        Robot.setOnStateChange(robotState -> addNTEntry());
+        addNTEntry();
     }
 
     /**
      * Initializer for the Networktables Entry object for this fluid config object.
-     * @param state The robot's current state.
      */
-    private void addNTEntry(RobotState state) {
-        if(state == RobotState.ROBOT_INIT) {
+    private void addNTEntry() {
+        if(Robot.isIsInitialized()) {
             // Initialize the networktables key for this fluid constant.
             NetworkTable table = Config.constantsTable;
             if (table != null) {

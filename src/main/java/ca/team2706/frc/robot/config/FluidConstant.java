@@ -44,7 +44,7 @@ public class FluidConstant<A> {
         if(Robot.isIsInitialized()) {
             // Initialize the networktables key for this fluid constant.
             NetworkTable table = Config.constantsTable;
-            if (table != null) {
+            if (table != null && ntEntry == null) {
                 ntEntry = table.getEntry(getName());
                 ntEntry.setValue(value());
 

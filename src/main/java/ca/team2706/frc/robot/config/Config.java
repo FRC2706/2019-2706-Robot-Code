@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -44,8 +43,8 @@ public class Config {
             XBOX_BACK_RIGHT_TRIGGER = 3,
             XBOX_RIGHT_AXIS_X = 4,
             XBOX_RIGHT_AXIS_Y = 5,
-            // Buttons
-            XBOX_A_BUTTON = 1,
+    // Buttons
+    XBOX_A_BUTTON = 1,
             XBOX_B_BUTTON = 2,
             XBOX_X_BUTTON = 3,
             XBOX_Y_BUTTON = 4,
@@ -55,8 +54,8 @@ public class Config {
             XBOX_START_BUTTON = 8,
             XBOX_LEFT_AXIS_BUTTON = 9,
             XBOX_RIGHT_AXIS_BUTTON = 10,
-            // POV
-            XBOX_POV_UP = 0,
+    // POV
+    XBOX_POV_UP = 0,
             XBOX_POV_UP_RIGHT = 45,
             XBOX_POV_RIGHT = 90,
             XBOX_POV_DOWN_RIGHT = 135,
@@ -73,6 +72,7 @@ public class Config {
     }
 
     private static boolean initialized = false;
+
     /**
      * Initializes the Config class.
      */
@@ -106,24 +106,24 @@ public class Config {
      * Returns one of the values passed based on the robot ID
      *
      * @param first The first value (default value)
-     * @param more Other values that could be selected
-     * @param <T> The type of the value
+     * @param more  Other values that could be selected
+     * @param <T>   The type of the value
      * @return The value selected based on the ID of the robot
      */
     @SafeVarargs
     private static <T> T robotSpecific(T first, T... more) {
         // Return the first value if the robot id doesn't fall between second and last index
-        if(ROBOT_ID < 1 || ROBOT_ID > more.length) {
+        if (ROBOT_ID < 1 || ROBOT_ID > more.length) {
             return first;
-        }
-        else {
+        } else {
             return more[ROBOT_ID - 1];
         }
     }
 
     /**
      * Creates a new integer fluid constant.
-     * @param name The name for the constant type.
+     *
+     * @param name         The name for the constant type.
      * @param initialValue The initialValue of the constant.
      * @return A new FluidConstant object representing the constant.
      */
@@ -152,11 +152,12 @@ public class Config {
 
     /**
      * Writes the given string to a file on the Roborio.
+     *
      * @param writable The string to be written to file.
      */
     private static void writeFile(String writable) {
         // Attempt to write the string to the file, catching any errors.
-        try (BufferedWriter writer = Files.newBufferedWriter(SAVE_FILE)){
+        try (BufferedWriter writer = Files.newBufferedWriter(SAVE_FILE)) {
             writer.write(writable);
         } catch (IOException e) {
             DriverStation.reportWarning("Unable to save fluid constants to file.", true);

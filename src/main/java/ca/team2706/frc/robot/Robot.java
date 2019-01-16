@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot;
 
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -18,12 +19,19 @@ public class Robot extends TimedRobot {
     }
 
     /**
+     * Called periodically (every cycle) while the robot is on.
+     */
+    @Override
+    public void robotPeriodic() {
+    }
+
+    /**
      * Called when the robot enters the disabled state.
      */
     @Override
     public void disabledInit() {
         // If test mode was run, disable live window, and start scheduler
-        if(LiveWindow.isEnabled()) {
+        if (LiveWindow.isEnabled()) {
             LiveWindow.setEnabled(false);
         }
 
@@ -89,7 +97,8 @@ public class Robot extends TimedRobot {
      * Called periodically during test mode.
      */
     @Override
-    public void testPeriodic() { }
+    public void testPeriodic() {
+    }
 
 
     /**
@@ -99,17 +108,18 @@ public class Robot extends TimedRobot {
 
     /**
      * Main method, called when the robot code is run like a desktop application.
+     *
      * @param args Arguments passed on startup
      */
     public static void main(String[] args) {
         Runtime.getRuntime().addShutdownHook(new Thread(Robot::shutdown));
 
-        // TODO: Uncomment when using WPILib beta
-//        RobotBase.startRobot(Robot::new);
+        RobotBase.startRobot(Robot::new);
     }
 
     /**
      * Sets the given listener to be called when the robot is disabled.
+     *
      * @param listener The listener to be invoked when the robot is disabled.
      */
     public static void setOnStateChange(Consumer<RobotState> listener) {
@@ -118,6 +128,7 @@ public class Robot extends TimedRobot {
 
     /**
      * Calls the state change event, executing the listeners.
+     *
      * @param newState The robot's current (new) state.
      */
     private static void onStateChange(RobotState newState) {

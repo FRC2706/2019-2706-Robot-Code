@@ -36,7 +36,6 @@ public class Config {
      */
     private static final int ROBOT_ID = getRobotId();
 
-   
 
     // #### Fluid constants ####
     static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
@@ -47,6 +46,7 @@ public class Config {
     }
 
     private static boolean initialized = false;
+
     /**
      * Initializes the Config class.
      */
@@ -80,24 +80,24 @@ public class Config {
      * Returns one of the values passed based on the robot ID
      *
      * @param first The first value (default value)
-     * @param more Other values that could be selected
-     * @param <T> The type of the value
+     * @param more  Other values that could be selected
+     * @param <T>   The type of the value
      * @return The value selected based on the ID of the robot
      */
     @SafeVarargs
     private static <T> T robotSpecific(T first, T... more) {
         // Return the first value if the robot id doesn't fall between second and last index
-        if(ROBOT_ID < 1 || ROBOT_ID > more.length) {
+        if (ROBOT_ID < 1 || ROBOT_ID > more.length) {
             return first;
-        }
-        else {
+        } else {
             return more[ROBOT_ID - 1];
         }
     }
 
     /**
      * Creates a new integer fluid constant.
-     * @param name The name for the constant type.
+     *
+     * @param name         The name for the constant type.
      * @param initialValue The initialValue of the constant.
      * @return A new FluidConstant object representing the constant.
      */
@@ -126,11 +126,12 @@ public class Config {
 
     /**
      * Writes the given string to a file on the Roborio.
+     *
      * @param writable The string to be written to file.
      */
     private static void writeFile(String writable) {
         // Attempt to write the string to the file, catching any errors.
-        try (BufferedWriter writer = Files.newBufferedWriter(SAVE_FILE)){
+        try (BufferedWriter writer = Files.newBufferedWriter(SAVE_FILE)) {
             writer.write(writable);
         } catch (IOException e) {
             DriverStation.reportWarning("Unable to save fluid constants to file.", true);

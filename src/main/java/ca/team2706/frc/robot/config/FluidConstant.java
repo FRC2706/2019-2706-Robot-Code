@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 
 /**
  * Class to represent all type of fluid constants.
+ *
  * @author Kyle Anderson
  */
 public class FluidConstant<A> {
@@ -25,7 +26,8 @@ public class FluidConstant<A> {
 
     /**
      * Creates a new FluidConstant class.
-     * @param name The name of the constant used when printing it to file.
+     *
+     * @param name         The name of the constant used when printing it to file.
      * @param initialValue The initial value of the constant.
      */
     public FluidConstant(String name, A initialValue) {
@@ -38,10 +40,11 @@ public class FluidConstant<A> {
 
     /**
      * Initializer for the Networktables Entry object for this fluid config object.
+     *
      * @param state The robot's current state.
      */
     private void addNTEntry(RobotState state) {
-        if(state == RobotState.ROBOT_INIT) {
+        if (state == RobotState.ROBOT_INIT) {
             // Initialize the networktables key for this fluid constant.
             NetworkTable table = Config.constantsTable;
             if (table != null) {
@@ -57,6 +60,7 @@ public class FluidConstant<A> {
 
     /**
      * Gets the current value of this constant.
+     *
      * @return The current value of this constant.
      */
     public A value() {
@@ -65,6 +69,7 @@ public class FluidConstant<A> {
 
     /**
      * Sets the value of this constant to a new value. Will only set constants if {@link #canSet()} returns true.
+     *
      * @param value The value to which the constant should be set.
      */
     public void setValue(A value) {
@@ -77,6 +82,7 @@ public class FluidConstant<A> {
 
     /**
      * Sets the value of this constant to the specified networktables value.
+     *
      * @param value The value to which
      */
     @SuppressWarnings("unchecked")
@@ -84,8 +90,7 @@ public class FluidConstant<A> {
         if (canSet()) {
             Object objValue = value.getValue();
             setValue((A) objValue);
-        }
-        else {
+        } else {
             updateNTEntry();
         }
     }
@@ -101,6 +106,7 @@ public class FluidConstant<A> {
 
     /**
      * Determines if fluid constants should be allowed to be set.
+     *
      * @return True if fluid constants should be allowed to be set, false otherwise.
      */
     private static boolean canSet() {
@@ -109,6 +115,7 @@ public class FluidConstant<A> {
 
     /**
      * Gets the name of this constant.
+     *
      * @return The name of this constant, as a string.
      */
     public String getName() {
@@ -118,6 +125,7 @@ public class FluidConstant<A> {
     /**
      * Creates a human-readable string to be displayed in a file showing the default value
      * of this fluid constant alongside its current value.
+     *
      * @return The string to be printed to file, with no newline character added.
      */
     public String toFileString() {

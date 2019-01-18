@@ -1,6 +1,5 @@
 package ca.team2706.frc.robot;
 
-import java.lang.reflect.Field;
 
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.config.Config.XBOX_VALUE;
@@ -61,8 +60,7 @@ public class OI {
         PrintCommand printCommand = new PrintCommand("Command!");
 
         joystickButton.whenPressed(printCommand);
-
-        
+      
 
     }
 

@@ -10,10 +10,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 public class FluidJoystickButton extends JoystickButton {
 
     private final GenericHID m_joystick;
-    private final FluidConstant<String> joystickPort;
-
-    // private final String staticName = Config.XBOX_VALUE.getConstantName(Config.testAction.value());
-    
+    private final FluidConstant<String> joystickPort;    
     
     public FluidJoystickButton(GenericHID genericHID, FluidConstant<String> joystickPort) {
         super(genericHID, getPortValue(joystickPort));
@@ -23,8 +20,8 @@ public class FluidJoystickButton extends JoystickButton {
     }
 
     private static int getPortValue(FluidConstant<String> NTValue) {
-        String staticName = Config.XBOX_VALUE.getConstantName(NTValue.value());
-        return Config.XBOX_VALUE.valueOf(staticName).getPort();
+        //String staticName = Config.XBOX_VALUE.getConstantName(NTValue.value());
+        return Config.XBOX_VALUE.valueOf(Config.XBOX_VALUE.getConstantName(NTValue.value())).getPort();
     }
 
     @Override

@@ -185,14 +185,14 @@ public class Config {
         }
 
         /**
-         * @return the port
+         * @return the port value of the current enum
          */
         public int getPort() {
             return port;
         }
 
 
-        // Create a hashmap of 
+        // Create a hashmap of NetworkTable values and enums
         private static final HashMap<String, String> nameMap = new HashMap<>();
 
         static {

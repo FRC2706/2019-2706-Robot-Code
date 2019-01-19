@@ -46,9 +46,6 @@ public class BlingController extends Command {
          * Since patterns from different periods won't run at the same time, you only have to
          * make sure you put patterns from the same period in proper order.
          */
-        // Test command
-        add(new TestPattern());
-
         // Do blank as a last priority
         add(new Blank());
     }

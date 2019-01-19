@@ -1,6 +1,6 @@
 package ca.team2706.frc.robot.commands;
 
-import ca.team2706.frc.robot.Robot;
+import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.command.Command;
 
 import java.util.function.Supplier;
@@ -27,7 +27,7 @@ public abstract class ArcadeDrive extends Command {
                           boolean squareInputs, boolean initBrake) {
         // Ensure that this command is the only one to run on the drive base
         // Requires must be included to use this command as a default command for the drive base
-        requires(Robot.getDriveBase());
+        requires(DriveBase.getInstance());
 
         this.forwardVal = forwardVal;
         this.rotateVal = rotateVal;
@@ -37,13 +37,16 @@ public abstract class ArcadeDrive extends Command {
 
     @Override
     public void initialize() {
-        Robot.getDriveBase().setBrakeMode(initBrake);
+        // Prepare for driving by human
+        DriveBase.getInstance().setOpenLoopMode();
+
+        DriveBase.getInstance().setBrakeMode(initBrake);
     }
 
     @Override
     public void execute() {
         // Pass values to drive base to make the robot move
-        Robot.getDriveBase().arcadeDrive(forwardVal.get(), rotateVal.get(), squareInputs);
+        DriveBase.getInstance().arcadeDrive(forwardVal.get(), rotateVal.get(), squareInputs);
     }
 
     @Override
@@ -52,6 +55,6 @@ public abstract class ArcadeDrive extends Command {
     @Override
     public void end() {
         // Ensure brake mode is same as when starting command since it may have been changed
-        Robot.getDriveBase().setBrakeMode(initBrake);
+        DriveBase.getInstance().setBrakeMode(initBrake);
     }
 }

@@ -11,17 +11,6 @@ import java.util.function.Consumer;
 
 public class Robot extends TimedRobot {
 
-    private static DriveBase driveBase;
-
-    /**
-     * Gets the subsystem to drive the robot around
-     *
-     * @return The drive base subsystem
-     */
-    public static DriveBase getDriveBase() {
-        return driveBase;
-    }
-
     /**
      * Method run on robot initialization.
      */
@@ -29,7 +18,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         onStateChange(RobotState.ROBOT_INIT);
 
-        driveBase = new DriveBase();
+        DriveBase.init();
     }
 
     /**

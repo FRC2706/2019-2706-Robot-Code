@@ -82,13 +82,15 @@ public class Config {
             RIGHT_BACK_DRIVE_MOTOR_ID = robotSpecific(4, 4, 4);
 
     public static final boolean
-            INVERT_LEFT_DRIVE = robotSpecific(false, false, false),
-            INVERT_RIGHT_DRIVE = robotSpecific(true, true, true);
+            INVERT_FRONT_LEFT_DRIVE = robotSpecific(false, false, false),
+            INVERT_BACK_LEFT_DRIVE = robotSpecific(false, false, false),
+            INVERT_FRONT_RIGHT_DRIVE = robotSpecific(true, true, true),
+            INVERT_BACK_RIGHT_DRIVE = robotSpecific(true, true, true);
 
     public static final boolean DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);
 
     // CAN ID for the Pigeon
-    public static final int GYRO_ID = robotSpecific(5, 5, 5);
+    public static final int GYRO_TALON_ID = robotSpecific(8, 8, 8);
 
     // The amount of encoder ticks that the robot must drive to go one foot
     public static final double DRIVE_ENCODER_DPP

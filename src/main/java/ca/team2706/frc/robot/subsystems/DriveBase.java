@@ -6,31 +6,55 @@ import ca.team2706.frc.robot.config.Config;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.SendableBase;
-import edu.wpi.first.wpilibj.SendableImpl;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 
 /**
  * Subsystem that controls the driving of the robot as well as certain sensors that are used for driving
  */
 public class DriveBase extends Subsystem {
 
+    private static DriveBase currentInstance;
+
+    public static DriveBase getInstance() {
+        if (currentInstance == null) {
+            init();
+        }
+
+        return currentInstance;
+    }
+
+    /**
+     * Initializes a new drive base object.
+     */
+    public static void init() {
+        currentInstance = new DriveBase();
+    }
+
+    /**
+     * Four drive Talons
+     */
     private final WPI_TalonSRX leftFrontMotor, leftBackMotor, rightFrontMotor, rightBackMotor;
+
+    /**
+     * Logic for controlling robot motion in teleop
+     */
     private final DifferentialDrive robotDriveBase;
 
+    /**
+     * Gyro to record robot heading
+     */
     private final PigeonIMU gyro;
 
     /**
      * Creates a drive base, and initializes all required sensors and motors
      */
-    public DriveBase() {
+    private DriveBase() {
         // TODO: Configure motors from fluid config or from file
         leftFrontMotor = new WPI_TalonSRX(Config.LEFT_FRONT_DRIVE_MOTOR_ID);
         leftBackMotor = new WPI_TalonSRX(Config.LEFT_BACK_DRIVE_MOTOR_ID);
@@ -47,14 +71,22 @@ public class DriveBase extends Subsystem {
         rightFrontMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
         rightBackMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
 
-        leftFrontMotor.setInverted(Config.INVERT_LEFT_DRIVE);
-        leftFrontMotor.setInverted(Config.INVERT_RIGHT_DRIVE);
+        leftFrontMotor.setInverted(Config.INVERT_FRONT_LEFT_DRIVE);
+        rightFrontMotor.setInverted(Config.INVERT_FRONT_RIGHT_DRIVE);
 
-        leftBackMotor.follow(leftFrontMotor);
-        rightBackMotor.follow(rightFrontMotor);
+        follow();
 
-        leftBackMotor.setInverted(InvertType.FollowMaster);
-        leftBackMotor.setInverted(InvertType.FollowMaster);
+        if(Config.INVERT_FRONT_LEFT_DRIVE == Config.INVERT_BACK_LEFT_DRIVE) {
+            leftBackMotor.setInverted(InvertType.FollowMaster);
+        } else {
+            leftBackMotor.setInverted(InvertType.OpposeMaster);
+        }
+
+        if(Config.INVERT_FRONT_RIGHT_DRIVE == Config.INVERT_BACK_RIGHT_DRIVE) {
+            rightBackMotor.setInverted(InvertType.FollowMaster);
+        } else {
+            rightBackMotor.setInverted(InvertType.OpposeMaster);
+        }
 
         enableCurrentLimit(Config.DRIVEBASE_CURRENT_LIMIT);
 
@@ -62,7 +94,7 @@ public class DriveBase extends Subsystem {
         robotDriveBase.setRightSideInverted(false);
         robotDriveBase.setSafetyEnabled(false);
 
-        gyro = new PigeonIMU(Config.GYRO_ID);
+        gyro = new PigeonIMU(new TalonSRX(Config.GYRO_TALON_ID));
 
         // TODO: Also output data to logging/smartdashboard
         addChild("Left Front Motor", leftFrontMotor);
@@ -72,30 +104,45 @@ public class DriveBase extends Subsystem {
 
         addChild(robotDriveBase);
 
-        addChild("Gyroscope", Sendables.newPigeonSendable(gyro));
+        //addChild("Gyroscope", Sendables.newPigeonSendable(gyro));
 
         addChild("Left Encoder", Sendables.newTalonEncoderSendable(leftFrontMotor));
         addChild("Right Encoder", Sendables.newTalonEncoderSendable(rightFrontMotor));
 
         setOpenLoopMode();
+        setBrakeMode(false);
     }
 
+
+    /**
+     * Stops the robot
+     */
     public void stop() {
         leftFrontMotor.stopMotor();
         rightFrontMotor.stopMotor();
     }
 
+    /**
+     * Selects local encoders and the current sensor
+     */
     private void selectEncodersStandard() {
         leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
         rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
     }
 
+    /**
+     * Switches the talons to a mode that is optimal for driving the robot using human input
+     */
     public void setOpenLoopMode() {
         stop();
         selectEncodersStandard();
         reset();
     }
 
+    /**
+     * Changes whether current limiting should be used
+     * @param enable Whether to enable the current or not
+     */
     public void enableCurrentLimit(boolean enable) {
         leftFrontMotor.enableCurrentLimit(enable);
         leftBackMotor.enableCurrentLimit(enable);
@@ -112,9 +159,18 @@ public class DriveBase extends Subsystem {
         // TODO: Move to OI
 
         if(defaultCommand == null) {
-             defaultCommand = new ArcadeDriveWithJoystick(new Joystick(0), 4, 5);
+             defaultCommand = new ArcadeDriveWithJoystick(new Joystick(0), 5, true,
+                     4, false);
         }
         setDefaultCommand(defaultCommand);
+    }
+
+    /**
+     * Has the slave motors follow the master motors
+     */
+    private void follow() {
+        leftBackMotor.follow(leftFrontMotor);
+        rightBackMotor.follow(rightFrontMotor);
     }
 
     /**
@@ -140,6 +196,7 @@ public class DriveBase extends Subsystem {
      */
     public void tankDrive(double leftSpeed, double rightSpeed, boolean squaredInputs) {
         robotDriveBase.tankDrive(leftSpeed, rightSpeed, squaredInputs);
+        follow();
     }
 
     /**
@@ -151,6 +208,7 @@ public class DriveBase extends Subsystem {
      */
     public void arcadeDrive(double forwardSpeed, double rotateSpeed, boolean squaredInputs) {
         robotDriveBase.arcadeDrive(forwardSpeed, rotateSpeed, squaredInputs);
+        follow();
     }
 
     /**
@@ -162,6 +220,7 @@ public class DriveBase extends Subsystem {
      */
     public void curvatureDrive(double forwardSpeed, double curveSpeed, boolean override) {
         robotDriveBase.curvatureDrive(forwardSpeed, curveSpeed, override);
+        follow();
     }
 
     /**

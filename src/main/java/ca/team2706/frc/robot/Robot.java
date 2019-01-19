@@ -12,18 +12,16 @@ import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.cscore.UsbCamera;
 
 
+/**
+ * Main Robot class
+ */
 public class Robot extends TimedRobot {
-
-    OI oi;
-
     /**
      * Method run on robot initialization.
      */
     @Override
     public void robotInit() {
         onStateChange(RobotState.ROBOT_INIT);
-
-        oi = new OI();
 
         // Usb Camera
         // UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);

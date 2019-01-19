@@ -15,7 +15,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
-import java.util.Map;
 
 
 /**
@@ -23,23 +22,6 @@ import java.util.Map;
  */
 public class Config {
     private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
-
-
-    /**
-     * Path to the file which identifies which
-     */
-    private static final Path ROBOT_ID_LOC = Paths.get(System.getProperty("user.home"), "robot.conf");
-    private static final Path SAVE_FILE = Paths.get(System.getProperty("user.home"), "FluidConstants.txt");
-
-    /**
-     * ID of the robot that code is running on
-     */
-    private static final int ROBOT_ID = getRobotId();
-
-
-    // #### Fluid constants ####
-    static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
-    public static final FluidConstant<String> testAction = constant("testAction", XBOX_VALUE.XBOX_A_BUTTON.NTString);
 
     static {
         initialize();
@@ -57,6 +39,101 @@ public class Config {
             initialized = true;
         }
     }
+
+    /**
+     * Path to the file which identifies which
+     */
+    private static final Path ROBOT_ID_LOC = Paths.get(System.getProperty("user.home"), "robot.conf");
+    private static final Path SAVE_FILE = Paths.get(System.getProperty("user.home"), "FluidConstants.txt");
+
+    /**
+     * ID of the robot that code is running on
+     */
+    private static final int ROBOT_ID = getRobotId();
+
+    /**
+     * Xbox controller binding information.
+     * Contains the link between the Xbox's buttons' port and the NetworkTables key used to describe the action.
+     */
+    public enum XboxValue {
+        // Axis and triggers
+        // Left on the Left Stick
+        XBOX_LEFT_STICK_X(0, "L_STICK_X"),
+        XBOX_LEFT_STICK_Y(1, "L_STICK_Y"),
+        XBOX_BACK_LEFT_TRIGGER(2, "L_TRIG"),
+        XBOX_BACK_RIGHT_TRIGGER(3, "R_TRIG"),
+        XBOX_RIGHT_STICK_X(4, "R_STICK_X"),
+        XBOX_RIGHT_STICK_Y(5, "R_STICK_Y"),
+
+        // Buttons
+        XBOX_A_BUTTON(1, "A"),
+        XBOX_B_BUTTON(2, "B"),
+        XBOX_X_BUTTON(3, "X"),
+        XBOX_Y_BUTTON(4, "Y"),
+        XBOX_LB_BUTTON(5, "LB"),
+        XBOX_RB_BUTTON(6, "RB"),
+        XBOX_SELECT_BUTTON(7, "SELECT"),
+        XBOX_START_BUTTON(8, "START"),
+        XBOX_LEFT_AXIS_BUTTON(9, "L_AXIS_BUTTON"),
+        XBOX_RIGHT_AXIS_BUTTON(10, "R_AXIS_BUTTON"),
+
+        // POV (The D-PAD on the XBOX Controller)
+        XBOX_POV_UP(0, "UP"),
+        XBOX_POV_UP_RIGHT(45, "UP_RIGHT"),
+        XBOX_POV_RIGHT(90, "RIGHT"),
+        XBOX_POV_DOWN_RIGHT(135, "DOWN_RIGHT"),
+        XBOX_POV_DOWN(180, "DOWN"),
+        XBOX_POV_DOWN_LEFT(225, "DOWN_LEFT"),
+        XBOX_POV_LEFT(270, "LEFT"),
+        XBOX_POV_UP_LEFT(315, "UP_LEFT");
+
+        private String NTString;
+        private int port;
+
+        XboxValue(int port, String NTString) {
+            this.NTString = NTString;
+            this.port = port;
+        }
+
+        /**
+         * @return the nTString
+         */
+        public String getNTString() {
+            return NTString;
+        }
+
+        /**
+         * @return the port
+         */
+        public int getPort() {
+            return port;
+        }
+
+
+        // Create a hashmap of the networktables entry and the
+        private static final HashMap<String, XboxValue> nameMap = new HashMap<>();
+
+        static {
+            for (XboxValue value : XboxValue.values()) {
+                nameMap.put(value.getNTString(), value);
+            }
+        }
+
+        /**
+         * Gets the XboxValue constant with the given NetworkTables key.
+         *
+         * @param ntKey The NetworkTables key for the constant.
+         * @return The constant object.
+         */
+        public static XboxValue getXboxValueFromNTKey(final String ntKey) {
+            return nameMap.get(ntKey);
+        }
+    }
+
+
+    // #### Fluid constants ####
+    static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
+    public static final FluidConstant<String> TEST_ACTION = constant("TEST_ACTION", XboxValue.XBOX_A_BUTTON.getNTString());
 
     /**
      * Reads the robot type from the filesystem
@@ -137,109 +214,4 @@ public class Config {
             DriverStation.reportWarning("Unable to save fluid constants to file.", true);
         }
     }
-
-    public enum XBOX_VALUE { 
-        // Axis and triggers
-        // Left on the Left Stick
-        XBOX_LEFT_STICK_X (0, "L_STICK_X"),
-        XBOX_LEFT_STICK_Y (1, "L_STICK_Y"),
-        XBOX_BACK_LEFT_TRIGGER (2, "L_TRIG"),
-        XBOX_BACK_RIGHT_TRIGGER (3, "R_TRIG"),
-        XBOX_RIGHT_STICK_X (4, "R_STICK_X"),
-        XBOX_RIGHT_STICK_Y (5, "R_STICK_Y"),
-
-        // Buttons
-        XBOX_A_BUTTON (1, "A"),
-        XBOX_B_BUTTON (2, "B"),
-        XBOX_X_BUTTON (3, "X"),
-        XBOX_Y_BUTTON (4, "Y"),
-        XBOX_LB_BUTTON (5, "LB"),
-        XBOX_RB_BUTTON (6, "RB"),
-        XBOX_SELECT_BUTTON (7, "SELECT"),
-        XBOX_START_BUTTON (8, "START"),
-        XBOX_LEFT_AXIS_BUTTON (9, "L_AXIS_BUTTON"),
-        XBOX_RIGHT_AXIS_BUTTON (10, "R_AXIS_BUTTON"),
-
-        // POV (The D-PAD on the XBOX Controller)
-        XBOX_POV_UP (0, "UP"),
-        XBOX_POV_UP_RIGHT (45, "UP_RIGHT"),
-        XBOX_POV_RIGHT (90, "RIGHT"),
-        XBOX_POV_DOWN_RIGHT (135, "DOWN_RIGHT"),
-        XBOX_POV_DOWN (180, "DOWN"),
-        XBOX_POV_DOWN_LEFT (225, "DOWN_LEFT"),
-        XBOX_POV_LEFT (270, "LEFT"),
-        XBOX_POV_UP_LEFT (315, "UP_LEFT");
-        
-        private String NTString;
-        private int port;
-
-        XBOX_VALUE (int port, String NTString) {
-            this.NTString = NTString;
-            this.port = port;
-        }
-
-        /**
-         * @return the nTString
-         */
-        public String getNTString() {
-            return NTString;
-        }
-
-        /**
-         * @return the port
-         */
-        public int getPort() {
-            return port;
-        }
-
-
-        // Create a hashmap of 
-        private static final HashMap<String, String> nameMap = new HashMap<>();
-
-        static {
-            for (XBOX_VALUE value : XBOX_VALUE.values()) {
-                nameMap.put(value.getNTString(), value.name());
-            }
-        }
-        /**
-         * @param NTString
-         * @return The name of the constant corresponding to the string NTString
-         */
-
-        public static String getConstantName(String NTString) {
-            return XBOX_VALUE.nameMap.get(NTString);
-            
-        }
-
-    }
-
-    // All Xbox controller constants.
-    // public static final int
-    //         // Axis and triggers
-    //         XBOX_LEFT_AXIS = 0,
-    //         XBOX_RIGHT_AXIS = 1,
-    //         XBOX_BACK_LEFT_TRIGGER = 2,
-    //         XBOX_BACK_RIGHT_TRIGGER = 3,
-    //         XBOX_RIGHT_AXIS_X = 4,
-    //         XBOX_RIGHT_AXIS_Y = 5,
-    //         // Buttons
-    //         XBOX_A_BUTTON = 1,
-    //         XBOX_B_BUTTON = 2,
-    //         XBOX_X_BUTTON = 3,
-    //         XBOX_Y_BUTTON = 4,
-    //         XBOX_LB_BUTTON = 5,
-    //         XBOX_RB_BUTTON = 6,
-    //         XBOX_SELECT_BUTTON = 7,
-    //         XBOX_START_BUTTON = 8,
-    //         XBOX_LEFT_AXIS_BUTTON = 9,
-    //         XBOX_RIGHT_AXIS_BUTTON = 10,
-    //         // POV
-    //         XBOX_POV_UP = 0,
-    //         XBOX_POV_UP_RIGHT = 45,
-    //         XBOX_POV_RIGHT = 90,
-    //         XBOX_POV_DOWN_RIGHT = 135,
-    //         XBOX_POV_DOWN = 180,
-    //         XBOX_POV_DOWN_LEFT = 225,
-    //         XBOX_POV_LEFT = 270,
-    //         XBOX_POV_UP_LEFT = 315;
 }

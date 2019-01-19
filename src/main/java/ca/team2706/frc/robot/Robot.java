@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot;
 
+import ca.team2706.frc.robot.subsystems.Bling;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -16,6 +17,9 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         onStateChange(RobotState.ROBOT_INIT);
+
+        // Initialize subsystems
+        Bling.init();
     }
 
     /**

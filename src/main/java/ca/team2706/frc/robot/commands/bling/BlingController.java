@@ -2,7 +2,6 @@ package ca.team2706.frc.robot.commands.bling;
 
 import ca.team2706.frc.robot.commands.bling.patterns.Blank;
 import ca.team2706.frc.robot.commands.bling.patterns.BlingPattern;
-import ca.team2706.frc.robot.commands.bling.patterns.TestPattern;
 import ca.team2706.frc.robot.subsystems.Bling;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -25,7 +24,7 @@ public class BlingController extends Command {
 
     boolean useMatchTime = false;
 
-    HashMap<Period, ArrayList<BlingPattern>> commands;
+    private HashMap<Period, ArrayList<BlingPattern>> commands;
 
     public BlingController() {
         requires(Bling.getInstance());
@@ -34,9 +33,9 @@ public class BlingController extends Command {
             private static final long serialVersionUID = 1L;
 
             {
-                put(Period.AUTONOMOUS, new ArrayList<BlingPattern>());
-                put(Period.CLIMB, new ArrayList<BlingPattern>());
-                put(Period.TELEOP_WITHOUT_CLIMB, new ArrayList<BlingPattern>());
+                put(Period.AUTONOMOUS, new ArrayList<>());
+                put(Period.CLIMB, new ArrayList<>());
+                put(Period.TELEOP_WITHOUT_CLIMB, new ArrayList<>());
             }
         };
 
@@ -46,9 +45,6 @@ public class BlingController extends Command {
          * Since patterns from different periods won't run at the same time, you only have to
          * make sure you put patterns from the same period in proper order.
          */
-        // Test command
-        add(new TestPattern());
-
         // Do blank as a last priority
         add(new Blank());
     }

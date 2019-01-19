@@ -2,6 +2,7 @@ package ca.team2706.frc.robot.commands.bling;
 
 import ca.team2706.frc.robot.commands.bling.patterns.Blank;
 import ca.team2706.frc.robot.commands.bling.patterns.BlingPattern;
+import ca.team2706.frc.robot.commands.bling.patterns.TestPattern;
 import ca.team2706.frc.robot.subsystems.Bling;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -10,29 +11,32 @@ import edu.wpi.first.wpilibj.command.Command;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Command to control the bling on the robot.
+ */
 public class BlingController extends Command {
 
     private BlingPattern currentPattern = null;
     private double startTime = 0;
 
-    public static final int AUTONOMOUS_PERIOD = 0;
-    public static final int TELEOP_WITHOUT_CLIMB = 1;
-    public static final int CLIMBING_PERIOD = 2;
+    public enum Period {
+        AUTONOMOUS, TELEOP_WITHOUT_CLIMB, CLIMB
+    }
 
     boolean useMatchTime = false;
 
-    HashMap<Integer, ArrayList<BlingPattern>> commands;
+    HashMap<Period, ArrayList<BlingPattern>> commands;
 
     public BlingController() {
         requires(Bling.getInstance());
 
-        commands = new HashMap<Integer, ArrayList<BlingPattern>>() {
+        commands = new HashMap<>() {
             private static final long serialVersionUID = 1L;
 
             {
-                put(AUTONOMOUS_PERIOD, new ArrayList<BlingPattern>());
-                put(CLIMBING_PERIOD, new ArrayList<BlingPattern>());
-                put(TELEOP_WITHOUT_CLIMB, new ArrayList<BlingPattern>());
+                put(Period.AUTONOMOUS, new ArrayList<BlingPattern>());
+                put(Period.CLIMB, new ArrayList<BlingPattern>());
+                put(Period.TELEOP_WITHOUT_CLIMB, new ArrayList<BlingPattern>());
             }
         };
 
@@ -42,10 +46,14 @@ public class BlingController extends Command {
          * Since patterns from different periods won't run at the same time, you only have to
          * make sure you put patterns from the same period in proper order.
          */
+        // Test command
+        add(new TestPattern());
+
         // Do blank as a last priority
         add(new Blank());
     }
 
+    @Override
     public void initialize() {
         startTime = Timer.getFPGATimestamp();
         // If it's already teleop when we start, just subtract 15 seconds to make it seem as though we're in teleop.
@@ -66,9 +74,8 @@ public class BlingController extends Command {
     public void add(BlingPattern commandToAdd) {
         // add it to its proper place.
         // Loop around all of the periods it can be in.
-        for (Integer i : commandToAdd.getPeriod()) {
+        for (Period period : commandToAdd.getPeriod()) {
             // add it to the periods it can be in
-            int period = i;
             commands.get(period).add(commandToAdd);
         }
     }
@@ -78,9 +85,10 @@ public class BlingController extends Command {
         return false;
     }
 
+    @Override
     public void execute() {
         // Get the current period
-        int currentPeriod = getCurrentPeriod();
+        final Period currentPeriod = getCurrentPeriod();
 
         // Loop around all the patterns for the current period, and evaluate the conditions
         for (BlingPattern pattern : commands.get(currentPeriod)) {
@@ -107,6 +115,7 @@ public class BlingController extends Command {
     /**
      * Called when the command is ended
      */
+    @Override
     public void end() {
         // Just clear the strip at the end.
         Bling.getInstance().clearStrip();
@@ -114,15 +123,20 @@ public class BlingController extends Command {
         currentPattern = null;
     }
 
-    private int getCurrentPeriod() {
-
-        if (DriverStation.getInstance().isAutonomous()) return AUTONOMOUS_PERIOD;
+    private Period getCurrentPeriod() {
+        final Period currentPeriod;
         // If we're using match time, use match time. Otherwise, use the other time.
-        double timeSinceStart = (useMatchTime) ? Timer.getMatchTime() : Timer.getFPGATimestamp() - startTime;
+        final double timeSinceStart = (useMatchTime) ? Timer.getMatchTime() : Timer.getFPGATimestamp() - startTime;
 
-        if (timeSinceStart <= 105) return TELEOP_WITHOUT_CLIMB;
-        else return CLIMBING_PERIOD;
+        if (DriverStation.getInstance().isAutonomous()) {
+            currentPeriod = Period.AUTONOMOUS;
+        } else if (timeSinceStart <= 105) {
+            currentPeriod = Period.TELEOP_WITHOUT_CLIMB;
+        } else {
+            currentPeriod = Period.CLIMB;
+        }
 
+        return currentPeriod;
     }
 
     /**

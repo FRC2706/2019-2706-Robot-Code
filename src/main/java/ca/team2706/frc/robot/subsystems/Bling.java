@@ -46,7 +46,7 @@ public class Bling extends Subsystem {
             GREEN = {0, 255, 0}, BLUE = {0, 0, 255}, RED = {255, 0, 0}, PURPLE = {128, 0, 128},
             YELLOW = {255, 255, 0};
 
-    public static final int GOODBRIGHTNESS = 128;
+    public static final int GOOD_BRIGHTNESS = 128, MAX_BRIGHTNESS  = 255;
 
     /**
      * The networktables key for the bling table.
@@ -55,7 +55,7 @@ public class Bling extends Subsystem {
 
 
     // Networktables entries for bling
-    NetworkTableEntry waitMSNT, redNT, greenNT, blueNT, repeatNT, brightnessNT, commandNT;
+    private NetworkTableEntry waitMSNT, redNT, greenNT, blueNT, repeatNT, brightnessNT, commandNT;
 
     private NetworkTable blingTable;
 
@@ -111,16 +111,16 @@ public class Bling extends Subsystem {
         patternToShow.runCommand();
 
         // Don't spam the pi with the same command, so determine if this is the same as the last command
-        if (isSameCommand) return;
+        if (!isSameCommand) {
+            lastRepeat = patternToShow.getRepeatCount();
+            lastLEDBrightness = patternToShow.getBrightness();
+            lastWaitMs = patternToShow.getWaitMS();
+            lastCommand = patternToShow.getCommand();
+            lastRGBArray = patternToShow.getRGB();
 
-        lastRepeat = patternToShow.getRepeatCount();
-        lastLEDBrightness = patternToShow.getBrightness();
-        lastWaitMs = patternToShow.getWaitMS();
-        lastCommand = patternToShow.getCommand();
-        lastRGBArray = patternToShow.getRGB();
-
-        // display pattern
-        display(patternToShow.getBrightness(), patternToShow.getWaitMS(), patternToShow.getRGB(), patternToShow.getCommand(), patternToShow.getRepeatCount());
+            // display pattern
+            display(patternToShow.getBrightness(), patternToShow.getWaitMS(), patternToShow.getRGB(), patternToShow.getCommand(), patternToShow.getRepeatCount());
+        }
 
     }
 

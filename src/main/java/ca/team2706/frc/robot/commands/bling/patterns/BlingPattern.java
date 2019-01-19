@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot.commands.bling.patterns;
 
+import ca.team2706.frc.robot.commands.bling.BlingController;
 import ca.team2706.frc.robot.subsystems.Bling;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -9,20 +10,19 @@ import java.util.List;
 /**
  * The template for Bling Patterns. Shouldn't be instantiated.
  *
- * @author eAUE (Kyle Anderson)
+ * @author Kyle Anderson
  */
 public abstract class BlingPattern {
     // The start time of the pattern.
     private double startTime;
 
     protected int[] rgbColourCode = new int[3];
-
     protected int repeatCount = 1000000;
-    protected int wait_ms = 50;
-    protected int LED_BRIGHTNESS = Bling.GOODBRIGHTNESS;
+    protected int waitMs = 50;
+    protected int ledBrightness = Bling.GOOD_BRIGHTNESS;
     protected String command = Bling.COLOUR_WIPE;
 
-    protected List<Integer> operationPeriod = new ArrayList<Integer>();
+    protected List<BlingController.Period> operationPeriod = new ArrayList<>();
 
     /**
      * True if the pattern has already been run at least once
@@ -77,13 +77,13 @@ public abstract class BlingPattern {
      * @return The brightness (from 0 to 255) of the LED strip when displaying this pattern
      */
     public int getBrightness() {
-        return LED_BRIGHTNESS;
+        return ledBrightness;
     }
 
     /**
      * Gets the string command type for the pattern. Should be one of the Bling subsystem's constants
      *
-     * @return
+     * @return The string command type for this pattern.
      */
     public String getCommand() {
         return command;
@@ -95,7 +95,7 @@ public abstract class BlingPattern {
      * @return The delay time between pattern segments in miliseconds
      */
     public int getWaitMS() {
-        return wait_ms;
+        return waitMs;
     }
 
     /**
@@ -103,7 +103,7 @@ public abstract class BlingPattern {
      *
      * @return A list of BlingController periods when this pattern is supposed to run, one of Teleop, Autonomous or Climb or a combination
      */
-    public List<Integer> getPeriod() {
+    public List<BlingController.Period> getPeriod() {
         return operationPeriod;
     }
 
@@ -129,5 +129,33 @@ public abstract class BlingPattern {
      */
     public void end() {
         hasRun = false;
+    }
+
+    /**
+     * Sets the rgb colour to be used.
+     * @param red Amount of red (0 to 255)
+     * @param green Amount of green (0 to 255)
+     * @param blue Amount of blue (0 to 255)
+     */
+    protected void setRgbColourCode(final int red, final int green, final int blue) {
+        rgbColourCode[0] = red;
+        rgbColourCode[1] = green;
+        rgbColourCode[2] = blue;
+    }
+
+    protected void setRepeatCount(int repeatCount) {
+        this.repeatCount = repeatCount;
+    }
+
+    protected void setWaitMs(int waitMs) {
+        this.waitMs = waitMs;
+    }
+
+    protected void setLedBrightness(int ledBrightness) {
+        this.ledBrightness = ledBrightness;
+    }
+
+    protected void setCommand(String command) {
+        this.command = command;
     }
 }

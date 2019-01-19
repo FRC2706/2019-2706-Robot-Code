@@ -49,6 +49,7 @@ dependencies {
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile "org.jmockit:jmockit"
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')

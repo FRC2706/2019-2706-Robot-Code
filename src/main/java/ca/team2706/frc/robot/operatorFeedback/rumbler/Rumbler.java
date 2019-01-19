@@ -1,9 +1,8 @@
-package ca.team2706.frc.robot.operatorFeedback;
+package ca.team2706.frc.robot.operatorFeedback.rumbler;
 
 import ca.team2706.frc.robot.OI;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
@@ -24,12 +23,10 @@ public class Rumbler extends Command {
     // The last time in seconds of an event.
     private long startTime;
 
-    // States of the pattern
-    private static final int RUMBLE = 0;
-    private static final int BREAK = 1;
-
-    // Indicate what part of the pattern we're in, RUMBLE or BREAK
-    private int state;
+    /**
+     * True if currently rumbling, false otherwise.
+     */
+    private boolean isRumbling;
 
     private RumblePattern currentPattern;
 
@@ -48,7 +45,7 @@ public class Rumbler extends Command {
      */
     public Rumbler(long timeOn, long timeOff, int repeatCount, JoystickSelection controllerToRumble,
                    double intensity) {
-        this(RumblePattern.createBasic(timeOn, timeOff, repeatCount, controllerToRumble, intensity));
+        this(new BasicRumble(timeOn, timeOff, repeatCount, controllerToRumble, intensity));
 
         // add this command to the scheduler.
         start();
@@ -102,13 +99,20 @@ public class Rumbler extends Command {
     }
 
     /**
+     * Determines if the controllers are currently being rumbled or not.
+     * @return True if currently rumbling, false otherwise.
+     */
+    public boolean isRumbling() {
+        return isRumbling;
+    }
+
+    /**
      * Function that toggles the state of the rumble
      *
      * @param on True to turn on rumble, false otherwise.
      */
     private void rumble(boolean on) {
-        // Set the state
-        state = on ? RUMBLE : BREAK;
+        isRumbling = on;
 
         // If rumble is on, full power. Otherwise, no power.
         double rumbleIntensity = (on ? currentPattern.getRumbleIntensity() : 0.0);

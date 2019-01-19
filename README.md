@@ -1,5 +1,7 @@
 # 2019-2706-Robot-Code
-The main robot code for the Merge Robotics (2706) robot for the 2019 FIRST Deep Space challenge. 
+The main robot code for the Merge Robotics (2706) robot for the 2019 FIRST Deep Space challenge.
+
+[![Build Status](https://travis-ci.com/FRC2706/2019-2706-Robot-Code.svg?branch=master)](https://travis-ci.com/FRC2706/2019-2706-Robot-Code) 
 
 ## Attribution and license
 
@@ -10,7 +12,7 @@ Our one request is that if you do find our code helpful, please send us an email
 Thanks, and enjoy!
 
 ## Run Code
-Ensure that JDK 8 is installed on the computer before proceeding.
+Ensure that JDK 11 is installed on the computer before proceeding.
 
 ### From VS Code
 1. Make sure that the Java and WPILib plugin are both installed.

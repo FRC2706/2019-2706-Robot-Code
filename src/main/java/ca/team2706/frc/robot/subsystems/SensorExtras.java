@@ -4,14 +4,29 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-import java.util.function.Consumer;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Extra sensors used on Plyboy for testing
  *
- * Remove any sensors that are used on the real robot in other parts of the code
+ * Remove any sensors that are used on the real robot from the allocation table
  */
 public class SensorExtras extends Subsystem {
+
+    /**
+     * Contains all sensors that should be allocated
+     *
+     * Remove any ports in use elsewhere on the robot
+     */
+    // Put above singleton pattern for better visibility
+    private static final Map<SensorType, int[]> allocationTable = Map.ofEntries(
+            Map.entry(SensorType.Talon, new int[] {5, 6, 7, 8}),
+            Map.entry(SensorType.Pwm, new int[] {0, 1, 2, 3}),
+            Map.entry(SensorType.AnalogInput, new int[] {0, 1}),
+            Map.entry(SensorType.Dio, new int[] {0, 1, 2, 3}),
+            Map.entry(SensorType.Relay, new int[] {0, 1})
+    );
 
     private static SensorExtras currentInstance;
 
@@ -37,94 +52,58 @@ public class SensorExtras extends Subsystem {
 
     /**
      * Creates sensor extras
-     *
-     * Remove sensors that are being used in other parts of the code from here
      */
     private SensorExtras() {
-        allocate(this::createTalon, 5, 8);
-        allocate(this::createPwm, 0, 4);
-        allocate(this::createAnalogInput, 0, 1);
-        allocate(this::createDio, 0, 4);
-        allocate(this::createRelay, 0, 1);
-    }
-
-    /**
-     * Allocates a TalonSRX
-     *
-     * @param port The CAN Bus port of the Talon
-     */
-    private void createTalon(int port) {
-        WPI_TalonSRX talon = new WPI_TalonSRX(port);
-        this.addChild("Unused Talon " + port, talon);
-    }
-
-    /**
-     * Allocates a PWM
-     *
-     * @param port The PWM port to allocate
-     */
-    private void createPwm(int port) {
-        PWM pwm = new PWM(port);
-        this.addChild("Unused PWM " + port, pwm);
-    }
-
-    /**
-     * Allocates an analog input
-     *
-     * @param port The analog input port to allocate
-     */
-    private void createAnalogInput(int port) {
-        AnalogInput analogInput = new AnalogInput(port);
-        this.addChild("Unused Analog Input " + port, analogInput);
-    }
-
-    /**
-     * Allocates a DIO
-     *
-     * @param port The DIO port to allocate
-     */
-    private void createDio(int port) {
-        DigitalOutput dio = new DigitalOutput(port);
-        this.addChild("Unused DIO " + port, dio);
-    }
-
-    /**
-     * Allocates a relay
-     *
-     * @param port The relay port to allocate
-     */
-    private void createRelay(int port) {
-        Relay relay = new Relay(port);
-        this.addChild("Unused Relay " + port, relay);
-    }
-
-    /**
-     * Allocates resources within a certain range
-     *
-     * @param allocation Reference to the allocator
-     * @param portStart The port to start allocating
-     * @param portEnd The port to stop allocating
-     */
-    private static void allocate(Consumer<Integer> allocation, int portStart, int portEnd) {
-        for(int i = portStart; i <= portEnd; i++) {
-            wrap(allocation, i);
-        }
-    }
-
-    /**
-     * Tries to allocate a resource, and reports a warning if the resource cannot be allocated
-     *
-     * @param allocation The reference to the allocator
-     * @param port The port to allocate
-     */
-    private static void wrap(Consumer<Integer> allocation, int port) {
-        try {
-            allocation.accept(port);
-        } catch(RuntimeException e) {
-            System.out.println("Sensor Extras Warning:\n\t" + e.getMessage());
+        // Iterate through each type of sensor
+        for(Map.Entry<SensorType, int[]> entry : allocationTable.entrySet()) {
+            // Iterate through each port that should be allocated for that sensor
+            for(int port : entry.getValue()) {
+                // Allocate the sensor, and add it to the subsystem in LiveWindow
+                entry.getKey().allocate(this, port);
+            }
         }
     }
 
     @Override
     protected void initDefaultCommand() {}
+
+    /**
+     * Represents a sensor type that can be allocated
+     */
+    private enum SensorType {
+        Talon("TalonSRX", WPI_TalonSRX::new),
+        Pwm("PWM", PWM::new),
+        AnalogInput("Analog Input", AnalogInput::new),
+        Dio("DIO", DigitalOutput::new),
+        Relay("Relay", Relay::new);
+
+        final String name;
+        final Function<Integer, Sendable> factory;
+
+        /**
+         * Creates a SensorType
+         *
+         * @param name The name of the sensor
+         * @param factory A reference to how to create the sensor
+         */
+        SensorType(String name, Function<Integer, Sendable> factory) {
+            this.name = name;
+            this.factory = factory;
+        }
+
+        /**
+         * Allocates a sensor and catches any exceptions that may occur
+         *
+         * @param subsystem The subsystem to add the sensor to
+         * @param port The port to allocate
+         */
+        void allocate(Subsystem subsystem, int port) {
+            try {
+                subsystem.addChild("Unused " + name, factory.apply(port));
+            } catch(RuntimeException e) {
+                System.out.println("Sensor Extras Warning for " + name + " " + port + " (Check Allocation Table):\n\t"
+                        + e.getMessage());
+            }
+        }
+    }
 }

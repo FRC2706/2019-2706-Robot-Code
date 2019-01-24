@@ -46,7 +46,7 @@ public class Bling extends Subsystem {
             GREEN = {0, 255, 0}, BLUE = {0, 0, 255}, RED = {255, 0, 0}, PURPLE = {128, 0, 128},
             YELLOW = {255, 255, 0};
 
-    public static final int GOOD_BRIGHTNESS = 128, MAX_BRIGHTNESS  = 255;
+    public static final int GOOD_BRIGHTNESS = 128, MAX_BRIGHTNESS = 255;
 
     /**
      * The networktables key for the bling table.
@@ -127,11 +127,11 @@ public class Bling extends Subsystem {
     /**
      * Displays the given type of LED pattern on the LED strip.
      *
-     * @param brightness The brightness, an integer between 0 and 255, 255 being full brightness
-     * @param waitMS        The amount of miliseconds to delay between each pattern
-     * @param rgb           The RGB colour code (red, green, blue) to display
-     * @param command       The type of pattern to display. Use one of the Bling class constants for patterns.
-     * @param repeatCount   The number of times to repeat the pattern
+     * @param brightness  The brightness, an integer between 0 and 255, 255 being full brightness
+     * @param waitMS      The amount of miliseconds to delay between each pattern
+     * @param rgb         The RGB colour code (red, green, blue) to display
+     * @param command     The type of pattern to display. Use one of the Bling class constants for patterns.
+     * @param repeatCount The number of times to repeat the pattern
      */
     public void display(int brightness, int waitMS, int[] rgb, String command, int repeatCount) {
         // Send pattern parameters to Networktables. The command one must be sent last because that's the cue for the pi to display the pattern

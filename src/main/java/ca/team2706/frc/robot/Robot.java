@@ -1,6 +1,7 @@
 package ca.team2706.frc.robot;
 
 import ca.team2706.frc.robot.subsystems.Bling;
+import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -20,6 +21,7 @@ public class Robot extends TimedRobot {
 
         // Initialize subsystems
         Bling.init();
+        DriveBase.init();
     }
 
     /**

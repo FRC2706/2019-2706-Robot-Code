@@ -18,10 +18,10 @@ public abstract class ArcadeDrive extends Command {
     /**
      * Creates the arcade drive
      *
-     * @param forwardVal The values to use for driving forward
-     * @param rotateVal The values to use for driving rotation
+     * @param forwardVal   The values to use for driving forward
+     * @param rotateVal    The values to use for driving rotation
      * @param squareInputs Whether to square the forward and rotation values
-     * @param initBrake Whether to start and end the command in brake or coast mode
+     * @param initBrake    Whether to start and end the command in brake or coast mode
      */
     protected ArcadeDrive(Supplier<Double> forwardVal, Supplier<Double> rotateVal,
                           boolean squareInputs, boolean initBrake) {

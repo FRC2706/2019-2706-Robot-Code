@@ -76,13 +76,13 @@ public class DriveBase extends Subsystem {
 
         follow();
 
-        if(Config.INVERT_FRONT_LEFT_DRIVE == Config.INVERT_BACK_LEFT_DRIVE) {
+        if (Config.INVERT_FRONT_LEFT_DRIVE == Config.INVERT_BACK_LEFT_DRIVE) {
             leftBackMotor.setInverted(InvertType.FollowMaster);
         } else {
             leftBackMotor.setInverted(InvertType.OpposeMaster);
         }
 
-        if(Config.INVERT_FRONT_RIGHT_DRIVE == Config.INVERT_BACK_RIGHT_DRIVE) {
+        if (Config.INVERT_FRONT_RIGHT_DRIVE == Config.INVERT_BACK_RIGHT_DRIVE) {
             rightBackMotor.setInverted(InvertType.FollowMaster);
         } else {
             rightBackMotor.setInverted(InvertType.OpposeMaster);
@@ -141,6 +141,7 @@ public class DriveBase extends Subsystem {
 
     /**
      * Changes whether current limiting should be used
+     *
      * @param enable Whether to enable the current or not
      */
     public void enableCurrentLimit(boolean enable) {
@@ -158,9 +159,9 @@ public class DriveBase extends Subsystem {
     protected void initDefaultCommand() {
         // TODO: Move to OI
 
-        if(defaultCommand == null) {
-             defaultCommand = new ArcadeDriveWithJoystick(new Joystick(0), 5, true,
-                     4, false);
+        if (defaultCommand == null) {
+            defaultCommand = new ArcadeDriveWithJoystick(new Joystick(0), 5, true,
+                    4, false);
         }
         setDefaultCommand(defaultCommand);
     }
@@ -190,8 +191,8 @@ public class DriveBase extends Subsystem {
     /**
      * Drives the robot by controlling the speed of the left and right motors individually
      *
-     * @param leftSpeed The speed for the left motors
-     * @param rightSpeed The speed for the right motors
+     * @param leftSpeed     The speed for the left motors
+     * @param rightSpeed    The speed for the right motors
      * @param squaredInputs Whether to square each of the values
      */
     public void tankDrive(double leftSpeed, double rightSpeed, boolean squaredInputs) {
@@ -202,8 +203,8 @@ public class DriveBase extends Subsystem {
     /**
      * Drives the robot by controlling the forward and rotation values
      *
-     * @param forwardSpeed The amount to drive forward
-     * @param rotateSpeed The amount to rotate
+     * @param forwardSpeed  The amount to drive forward
+     * @param rotateSpeed   The amount to rotate
      * @param squaredInputs Whether to square each of the values
      */
     public void arcadeDrive(double forwardSpeed, double rotateSpeed, boolean squaredInputs) {
@@ -215,8 +216,8 @@ public class DriveBase extends Subsystem {
      * Drives the robot by controlling the forward and amount of curve values
      *
      * @param forwardSpeed The amount to drive forward
-     * @param curveSpeed The amount that the robot should curve while driving
-     * @param override When true will only use rotation values
+     * @param curveSpeed   The amount that the robot should curve while driving
+     * @param override     When true will only use rotation values
      */
     public void curvatureDrive(double forwardSpeed, double curveSpeed, boolean override) {
         robotDriveBase.curvatureDrive(forwardSpeed, curveSpeed, override);

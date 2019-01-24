@@ -17,8 +17,8 @@ public class Sendables {
 
     /**
      * Creates a sendable to get and set the gyro heading
-     * @param pigeonIMU The gyro to keep track of
      *
+     * @param pigeonIMU The gyro to keep track of
      * @return The sendable with a get and set of the gyro heading
      */
     public static SendableBase newPigeonSendable(PigeonIMU pigeonIMU) {
@@ -32,8 +32,8 @@ public class Sendables {
 
     /**
      * Creates a sendable to get and set the encoder ticks
-     * @param talon The talon with an encoder attached to it
      *
+     * @param talon The talon with an encoder attached to it
      * @return The sendable with a get and set of the encoder ticks
      */
     public static SendableBase newTalonEncoderSendable(TalonSRX talon) {

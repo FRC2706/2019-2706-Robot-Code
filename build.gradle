@@ -49,6 +49,7 @@ dependencies {
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile "org.jmockit:jmockit:1.44"
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
@@ -57,6 +58,12 @@ dependencies {
 jar {
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
+}
+
+test {
+    afterEvaluate {
+        jvmArgs "-javaagent:${classpath.find { it.name.contains("jmockit") }.absolutePath}"
+    }
 }
 
 compileJava {

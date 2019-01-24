@@ -11,6 +11,7 @@ public class OI {
 
     /**
      * Gets the driver joystick.
+     *
      * @return The driver Joystick object.
      */
     public Joystick getDriverJoystick() {
@@ -19,6 +20,7 @@ public class OI {
 
     /**
      * Gets the operator joystick.
+     *
      * @return The operator Joystick object.
      */
     public Joystick getOperatorJoystick() {
@@ -38,7 +40,8 @@ public class OI {
 
     /**
      * Constructs a new OI object with the given joysticks.
-     * @param driverJoystick The driver joystick.
+     *
+     * @param driverJoystick   The driver joystick.
      * @param operatorJoystick The operator joystick object.
      */
     public OI(Joystick driverJoystick, Joystick operatorJoystick) {

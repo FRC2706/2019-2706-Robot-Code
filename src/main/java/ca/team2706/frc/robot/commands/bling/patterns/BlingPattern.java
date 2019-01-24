@@ -133,9 +133,10 @@ public abstract class BlingPattern {
 
     /**
      * Sets the rgb colour to be used.
-     * @param red Amount of red (0 to 255)
+     *
+     * @param red   Amount of red (0 to 255)
      * @param green Amount of green (0 to 255)
-     * @param blue Amount of blue (0 to 255)
+     * @param blue  Amount of blue (0 to 255)
      */
     protected void setRgbColourCode(final int red, final int green, final int blue) {
         rgbColourCode[0] = red;

@@ -1,6 +1,7 @@
 package ca.team2706.frc.robot;
 
 import ca.team2706.frc.robot.subsystems.Bling;
+import ca.team2706.frc.robot.subsystems.DriveBase;
 import ca.team2706.frc.robot.subsystems.SensorExtras;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -21,8 +22,9 @@ public class Robot extends TimedRobot {
 
         // Initialize subsystems
         Bling.init();
+		DriveBase.init();
 
-        // Ensure this is initialized last
+        // Make sure that this is initialized last
         SensorExtras.init();
     }
 

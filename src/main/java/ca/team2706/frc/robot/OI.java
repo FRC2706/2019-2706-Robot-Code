@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj.command.PrintCommand;
 // Operator Interface
 public class OI {
 
+    
+
     // Joystick for driving the robot around
     private final Joystick driverStick;
 
@@ -37,8 +39,26 @@ public class OI {
     /**
      * Initializes Oi using the two default real joysticks
      */
-    public OI() {
+    private OI() {
         this(new Joystick(0), new Joystick(1));
+    }
+
+    // The current instance of the OI object
+    private static OI currentInstance;
+
+    public static OI getInstance() {
+        if (currentInstance == null) {
+            init();
+        }
+
+        return currentInstance;
+    }
+
+    /**
+     * Initializes a new OI object.
+     */
+    public static void init() {
+        currentInstance = new OI();
     }
 
     
@@ -49,7 +69,7 @@ public class OI {
      * @param driverStick The driver joystick to use
      * @param controlStick The operator joystick to use
      */
-    public OI(Joystick driverStick, Joystick controlStick) {
+    private OI(Joystick driverStick, Joystick controlStick) {
         // Joystick for driving the robot around
         this.driverStick = driverStick;
 
@@ -61,6 +81,8 @@ public class OI {
         PrintCommand printCommand = new PrintCommand("Command!");
 
         joystickButton.whenPressed(printCommand);
+
+        joystickButton.close();
 
         
 

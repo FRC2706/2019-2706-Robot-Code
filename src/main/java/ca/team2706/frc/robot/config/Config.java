@@ -40,7 +40,9 @@ public class Config {
 
     // #### Fluid constants ####
     static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
-    public static final FluidConstant<String> testAction = constant("testAction", XBOX_VALUE.XBOX_A_BUTTON.NTString);
+
+    // Keeping a FluidConstant example for future reference (Delete when real FluidConstants are implemented)
+public static final FluidConstant<String> testAction = constant("testAction", XBOX_VALUE.XBOX_SELECT_BUTTON.NTString);
 
     static {
         initialize();
@@ -137,6 +139,9 @@ public class Config {
         }
     }
 
+    /**
+     * An enum to associate port values with NetworkTables values
+     */
     public enum XBOX_VALUE { 
         // Axis and triggers
         // Left on the Left Stick
@@ -193,11 +198,11 @@ public class Config {
 
 
         // Create a hashmap of 
-        private static final HashMap<String, String> nameMap = new HashMap<>();
+        private static final HashMap<String, XBOX_VALUE> nameMap = new HashMap<>();
 
         static {
             for (XBOX_VALUE value : XBOX_VALUE.values()) {
-                nameMap.put(value.getNTString(), value.name());
+                nameMap.put(value.getNTString(), value);
             }
         }
         /**
@@ -205,40 +210,10 @@ public class Config {
          * @return The name of the constant corresponding to the string NTString
          */
 
-        public static String getConstantName(String NTString) {
+        public static XBOX_VALUE getConstantName(String NTString) {
             return XBOX_VALUE.nameMap.get(NTString);
             
         }
 
     }
-
-    // All Xbox controller constants.
-    // public static final int
-    //         // Axis and triggers
-    //         XBOX_LEFT_AXIS = 0,
-    //         XBOX_RIGHT_AXIS = 1,
-    //         XBOX_BACK_LEFT_TRIGGER = 2,
-    //         XBOX_BACK_RIGHT_TRIGGER = 3,
-    //         XBOX_RIGHT_AXIS_X = 4,
-    //         XBOX_RIGHT_AXIS_Y = 5,
-    //         // Buttons
-    //         XBOX_A_BUTTON = 1,
-    //         XBOX_B_BUTTON = 2,
-    //         XBOX_X_BUTTON = 3,
-    //         XBOX_Y_BUTTON = 4,
-    //         XBOX_LB_BUTTON = 5,
-    //         XBOX_RB_BUTTON = 6,
-    //         XBOX_SELECT_BUTTON = 7,
-    //         XBOX_START_BUTTON = 8,
-    //         XBOX_LEFT_AXIS_BUTTON = 9,
-    //         XBOX_RIGHT_AXIS_BUTTON = 10,
-    //         // POV
-    //         XBOX_POV_UP = 0,
-    //         XBOX_POV_UP_RIGHT = 45,
-    //         XBOX_POV_RIGHT = 90,
-    //         XBOX_POV_DOWN_RIGHT = 135,
-    //         XBOX_POV_DOWN = 180,
-    //         XBOX_POV_DOWN_LEFT = 225,
-    //         XBOX_POV_LEFT = 270,
-    //         XBOX_POV_UP_LEFT = 315;
 }

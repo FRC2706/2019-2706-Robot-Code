@@ -165,6 +165,7 @@ public static final FluidConstant<String> testAction = constant("testAction", XB
         XBOX_RIGHT_AXIS_BUTTON (10, "R_AXIS_BUTTON"),
 
         // POV (The D-PAD on the XBOX Controller)
+        // Currently non-functional
         XBOX_POV_UP (0, "UP"),
         XBOX_POV_UP_RIGHT (45, "UP_RIGHT"),
         XBOX_POV_RIGHT (90, "RIGHT"),

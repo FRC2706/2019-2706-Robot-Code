@@ -4,12 +4,15 @@ import java.lang.reflect.Field;
 
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.config.Config.XBOX_VALUE;
+import ca.team2706.frc.robot.FluidWrappers.*;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.buttons.POVButton;
 import edu.wpi.first.wpilibj.command.PrintCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.command.PrintCommand;
+
 
 
 
@@ -77,6 +80,10 @@ public class OI {
         this.controlStick = controlStick;
 
         JoystickButton joystickButton = new FluidJoystickButton(driverStick, Config.testAction);
+
+        
+
+        POVButton povButton;
 
         PrintCommand printCommand = new PrintCommand("Command!");
 

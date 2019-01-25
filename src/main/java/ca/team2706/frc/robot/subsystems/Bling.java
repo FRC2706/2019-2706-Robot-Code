@@ -5,18 +5,21 @@ import ca.team2706.frc.robot.commands.bling.patterns.BlingPattern;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
+
+import java.util.Arrays;
 
 /**
  * Subsystem for controlling bling operations.
- *
- * @author Kyle Anderson
  */
 public class Bling extends Subsystem {
 
     private static Bling currentInstance;
 
+    /**
+     * Gets the current Bling subsystem object instance.
+     * @return The current Bling instance.
+     */
     public static Bling getInstance() {
         if (currentInstance == null) {
             init();
@@ -57,10 +60,8 @@ public class Bling extends Subsystem {
     // Networktables entries for bling
     private NetworkTableEntry waitMSNT, redNT, greenNT, blueNT, repeatNT, brightnessNT, commandNT;
 
-    private NetworkTable blingTable;
 
-
-    private Command defaultCommand;
+    private BlingController blingController;
 
     // Used to make sure we don't run the same command twice in a row.
     private int[] lastRGBArray = new int[3];
@@ -72,8 +73,8 @@ public class Bling extends Subsystem {
     /**
      * Class used as the basic part of handling bling commands.
      */
-    public Bling() {
-        blingTable = NetworkTableInstance.getDefault().getTable(NTKEY);
+    private Bling() {
+        final NetworkTable blingTable = NetworkTableInstance.getDefault().getTable(NTKEY);
 
         // Declare all the necessary variables to work with for networktables setting
         waitMSNT = blingTable.getEntry("wait_ms");
@@ -86,11 +87,11 @@ public class Bling extends Subsystem {
     }
 
     @Override
-    public Command getDefaultCommand() {
-        if (defaultCommand == null) {
-            defaultCommand = new BlingController();
+    public BlingController getDefaultCommand() {
+        if (blingController == null) {
+            blingController = new BlingController();
         }
-        return defaultCommand;
+        return blingController;
     }
 
     @Override
@@ -128,7 +129,7 @@ public class Bling extends Subsystem {
      * Displays the given type of LED pattern on the LED strip.
      *
      * @param brightness The brightness, an integer between 0 and 255, 255 being full brightness
-     * @param waitMS        The amount of miliseconds to delay between each pattern
+     * @param waitMS        The amount of milliseconds to delay between each pattern
      * @param rgb           The RGB colour code (red, green, blue) to display
      * @param command       The type of pattern to display. Use one of the Bling class constants for patterns.
      * @param repeatCount   The number of times to repeat the pattern
@@ -147,7 +148,7 @@ public class Bling extends Subsystem {
     private boolean isSameAsLastCommandRun(BlingPattern patternToShow) {
         return patternToShow.getBrightness() == lastLEDBrightness &&
                 patternToShow.getRepeatCount() == lastRepeat && patternToShow.getCommand().equals(lastCommand)
-                && patternToShow.getRGB().equals(lastRGBArray) && lastWaitMs == patternToShow.getWaitMS();
+                && Arrays.equals(patternToShow.getRGB(), lastRGBArray) && lastWaitMs == patternToShow.getWaitMS();
     }
 
     /**

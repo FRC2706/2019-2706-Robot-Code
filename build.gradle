@@ -61,6 +61,9 @@ jar {
 }
 
 test {
+    testLogging {
+        showStandardStreams = true
+    }
     afterEvaluate {
         jvmArgs "-javaagent:${classpath.find { it.name.contains("jmockit") }.absolutePath}"
     }

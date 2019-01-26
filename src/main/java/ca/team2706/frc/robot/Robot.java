@@ -1,8 +1,10 @@
 package ca.team2706.frc.robot;
 
-import ca.team2706.frc.robot.operatorFeedback.rumbler.BasicRumble;
-import ca.team2706.frc.robot.operatorFeedback.rumbler.Rumbler;
+import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.Bling;
+import ca.team2706.frc.robot.subsystems.DriveBase;
+import ca.team2706.frc.robot.subsystems.SensorExtras;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -11,8 +13,10 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
+/**
+ * Main Robot class
+ */
 public class Robot extends TimedRobot {
-
     /**
      * Method run on robot initialization.
      */
@@ -21,7 +25,17 @@ public class Robot extends TimedRobot {
         onStateChange(RobotState.ROBOT_INIT);
 
         // Initialize subsystems
+        OI.init();
         Bling.init();
+        DriveBase.init();
+
+        // Make sure that this is initialized last
+        SensorExtras.init();
+
+        // The USB camera used on the Robot, not enabled during simulation mode
+        if (Config.ENABLE_CAMERA) {
+            CameraServer.getInstance().startAutomaticCapture();
+        }
     }
 
     /**
@@ -29,6 +43,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
+
     }
 
     /**
@@ -106,7 +121,6 @@ public class Robot extends TimedRobot {
     public void testPeriodic() {
     }
 
-
     /**
      * ArrayList of Robot State consumers to be invoked when the robot's state changes.
      */
@@ -120,6 +134,7 @@ public class Robot extends TimedRobot {
     public static void main(String[] args) {
         Runtime.getRuntime().addShutdownHook(new Thread(Robot::shutdown));
 
+        Config.initialize();
         RobotBase.startRobot(Robot::new);
     }
 

@@ -24,7 +24,7 @@ public class BlingController extends Command {
 
     boolean useMatchTime = false;
 
-    HashMap<Period, ArrayList<BlingPattern>> commands;
+    private HashMap<Period, ArrayList<BlingPattern>> commands;
 
     public BlingController() {
         requires(Bling.getInstance());

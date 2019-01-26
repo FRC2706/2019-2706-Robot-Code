@@ -8,21 +8,23 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.DriverStation;
 
+import java.util.ArrayList;
+
 /**
  * Class to represent all type of fluid constants.
- *
- * @author Kyle Anderson
  */
 public class FluidConstant<A> {
 
     // Fields
-    A value;
+    private A value;
     private final A deployedValue; // Keep track of the original value, the one which was deployed to the robot.
     private final String name;
+
     /**
      * The NetworkTables entry for this fluid constant.
      */
     private NetworkTableEntry ntEntry;
+    private ArrayList<FluidChangeListener<A>> listeners = new ArrayList<>();
 
     /**
      * Creates a new FluidConstant class.
@@ -30,7 +32,7 @@ public class FluidConstant<A> {
      * @param name         The name of the constant used when printing it to file.
      * @param initialValue The initial value of the constant.
      */
-    public FluidConstant(String name, A initialValue) {
+    FluidConstant(String name, A initialValue) {
         this.name = name;
         this.value = initialValue;
         this.deployedValue = initialValue;
@@ -68,6 +70,15 @@ public class FluidConstant<A> {
     }
 
     /**
+     * Adds a listener to be called when the constant's value is changed.
+     *
+     * @param valueListener The listener.
+     */
+    public void addChangeListener(FluidChangeListener<A> valueListener) {
+        listeners.add(valueListener);
+    }
+
+    /**
      * Sets the value of this constant to a new value. Will only set constants if {@link #canSet()} returns true.
      *
      * @param value The value to which the constant should be set.
@@ -75,8 +86,10 @@ public class FluidConstant<A> {
     public void setValue(A value) {
         // Only allow the changing of the fluid constant while disabled.
         if (canSet()) {
+            final A oldValue = value;
             this.value = value;
             updateNTEntry(); // Update the Networktables entry if the value changed.
+            listeners.forEach(aConsumer -> aConsumer.changed(oldValue, value));
         }
     }
 

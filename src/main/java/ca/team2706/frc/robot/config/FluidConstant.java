@@ -44,7 +44,7 @@ public class FluidConstant<A> {
      * Initializer for the Networktables Entry object for this fluid config object.
      */
     private void addNTEntry() {
-        if (Robot.isIsInitialized()) {
+        if (Robot.isInitialized()) {
             // Initialize the networktables key for this fluid constant.
             NetworkTable table = Config.constantsTable;
             if (table != null && ntEntry == null) {

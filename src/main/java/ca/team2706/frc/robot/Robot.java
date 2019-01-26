@@ -158,7 +158,7 @@ public class Robot extends TimedRobot {
      *
      * @return True if the robot has been initialized, false otherwise.
      */
-    public static boolean isIsInitialized() {
+    public static boolean isInitialized() {
         return isInitialized;
     }
 

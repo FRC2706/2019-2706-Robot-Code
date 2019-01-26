@@ -1,8 +1,6 @@
 package ca.team2706.frc.robot.operatorFeedback.rumbler;
 
 public class BasicRumble extends RumblePattern {
-
-    // Couple of variables that I need.
     private final int repeatCount;
     private final long timeOff;
     private final long timeOn;

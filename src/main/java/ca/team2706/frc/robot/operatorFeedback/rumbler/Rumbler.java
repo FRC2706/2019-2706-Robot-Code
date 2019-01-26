@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
- * @author Kyle Anderson
+ *
  */
 public class Rumbler extends Command {
 
@@ -43,7 +43,7 @@ public class Rumbler extends Command {
                    double intensity) {
         this(new BasicRumble(timeOn, timeOff, repeatCount, controllerToRumble, intensity));
 
-        // add this command to the scheduler.
+        // Add this command to the scheduler.
         start();
     }
 

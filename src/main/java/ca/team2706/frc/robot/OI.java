@@ -58,6 +58,7 @@ public class OI {
 
     /**
      * Gets the driver joystick.
+     *
      * @return The driver joystick.
      */
     public Joystick getDriverStick() {
@@ -66,6 +67,7 @@ public class OI {
 
     /**
      * Gets the operator joystick.
+     *
      * @return The operator joystick.
      */
     public Joystick getControlStick() {

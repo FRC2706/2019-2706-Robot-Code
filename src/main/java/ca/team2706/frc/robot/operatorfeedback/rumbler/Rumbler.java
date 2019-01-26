@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
- *
+ * Class for running rumble patterns on the robot.
  */
 public class Rumbler extends Command {
 

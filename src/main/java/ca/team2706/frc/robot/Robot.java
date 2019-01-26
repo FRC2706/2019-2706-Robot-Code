@@ -25,14 +25,15 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         onStateChange(RobotState.ROBOT_INIT);
 
-        OI.init();
-
         // Initialize subsystems
         Bling.init();
         DriveBase.init();
 
-        // Make sure that this is initialized last
+        // Make sure that this is last initialized subsystem
         SensorExtras.init();
+
+        // OI depends on subsystems, so initialize it after
+        OI.init();
     }
 
     /**

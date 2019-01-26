@@ -13,13 +13,12 @@ import static junit.framework.TestCase.assertEquals;
 
 
 public class BlingControllerTest {
+    @Tested
+    private BlingController blingController;
 
     // Since DriverStation is accessed statically (it's a singleton), we have to mock all instances of it.
     @Mocked
     private DriverStation station;
-
-    @Tested
-    private BlingController blingController;
 
     /**
      * Tests getting the robot's operation period while not in a real match.

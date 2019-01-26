@@ -142,7 +142,6 @@ public class Robot extends TimedRobot {
     public static void main(String[] args) {
         Runtime.getRuntime().addShutdownHook(new Thread(Robot::shutdown));
 
-        Config.init();
         RobotBase.startRobot(Robot::new);
     }
 

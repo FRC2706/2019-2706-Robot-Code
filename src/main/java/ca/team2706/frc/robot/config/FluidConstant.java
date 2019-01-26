@@ -1,6 +1,7 @@
 package ca.team2706.frc.robot.config;
 
 import ca.team2706.frc.robot.Robot;
+import ca.team2706.frc.robot.RobotState;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -8,6 +9,7 @@ import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.DriverStation;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 /**
  * Class to represent all type of fluid constants.
@@ -25,6 +27,9 @@ public class FluidConstant<A> {
     private NetworkTableEntry ntEntry;
     private ArrayList<FluidChangeListener<A>> listeners = new ArrayList<>();
 
+    // Listener for when the robot's state is changed.
+    private final Consumer<RobotState> robotStateListener = this::addNTEntry;
+
     /**
      * Creates a new FluidConstant class.
      *
@@ -36,25 +41,38 @@ public class FluidConstant<A> {
         this.value = initialValue;
         this.deployedValue = initialValue;
 
-        Robot.setOnStateChange(robotState -> addNTEntry());
-        addNTEntry();
+        if (Robot.isInitialized()) {
+            addNTEntry();
+        } else {
+            Robot.setOnStateChange(robotStateListener);
+        }
     }
 
     /**
-     * Initializer for the Networktables Entry object for this fluid config object.
+     * Initializer for the Networktables Entry object for this fluid constant object.
+     *
+     * @param newState The new robot's state.
+     */
+    private void addNTEntry(RobotState newState) {
+        if (newState == RobotState.ROBOT_INIT) {
+            addNTEntry();
+            Robot.removeStateListener(robotStateListener);
+        }
+    }
+
+    /**
+     * Initializer for the Networktables entry object for this fluid constant object.
      */
     private void addNTEntry() {
-        if (Robot.isInitialized()) {
-            // Initialize the networktables key for this fluid constant.
-            NetworkTable table = Config.constantsTable;
-            if (table != null && ntEntry == null) {
-                ntEntry = table.getEntry(getName());
-                ntEntry.setValue(value());
+        // Initialize the networktables key for this fluid constant.
+        NetworkTable table = Config.constantsTable;
+        if (table != null && ntEntry == null) {
+            ntEntry = table.getEntry(getName());
+            ntEntry.setValue(value());
 
 
-                // Add a listener so we can change update the value.
-                ntEntry.addListener(entryNotification -> setValue(ntEntry.getValue()), EntryListenerFlags.kUpdate);
-            }
+            // Add a listener so we can change update the value.
+            ntEntry.addListener(entryNotification -> setValue(ntEntry.getValue()), EntryListenerFlags.kUpdate);
         }
     }
 

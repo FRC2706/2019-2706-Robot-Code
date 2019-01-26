@@ -155,6 +155,15 @@ public class Robot extends TimedRobot {
     }
 
     /**
+     * Removes a state listener so that it is no longer subscribed to robot state change events.
+     *
+     * @param listener The listener to be removed.
+     */
+    public static void removeStateListener(Consumer<RobotState> listener) {
+        STATE_LISTENERS.remove(listener);
+    }
+
+    /**
      * Determines if the current instance of the robot has been initialized.
      *
      * @return True if the robot has been initialized, false otherwise.

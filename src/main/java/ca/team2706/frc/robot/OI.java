@@ -1,3 +1,4 @@
+
 package ca.team2706.frc.robot;
 
 import ca.team2706.frc.robot.FluidWrappers.FluidPOVButton;
@@ -70,12 +71,7 @@ public class OI {
         
     }
 
-    public Joystick getDriverJoystick() {
-        return driverStick;
-    }
 
-    public Joystick getOperatorJoystick() {
-        return controlStick;
-    }
+    
+}
 
-} 

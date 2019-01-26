@@ -1,5 +1,7 @@
 # 2019-2706-Robot-Code
-The main robot code for the Merge Robotics (2706) robot for the 2019 FIRST Deep Space challenge. 
+The main robot code for the Merge Robotics (2706) robot for the 2019 FIRST Deep Space challenge.
+
+[![Build Status](https://travis-ci.com/FRC2706/2019-2706-Robot-Code.svg?branch=master)](https://travis-ci.com/FRC2706/2019-2706-Robot-Code) 
 
 ## Attribution and license
 
@@ -10,7 +12,7 @@ Our one request is that if you do find our code helpful, please send us an email
 Thanks, and enjoy!
 
 ## Run Code
-Ensure that JDK 8 is installed on the computer before proceeding.
+Ensure that JDK 11 is installed on the computer before proceeding.
 
 ### From VS Code
 1. Make sure that the Java and WPILib plugin are both installed.
@@ -24,6 +26,7 @@ Ensure that JDK 8 is installed on the computer before proceeding.
 ### From IntelliJ
 1. Import the project as a Gradle Project, ensuring that the project format is directory based.
 1. Premade run configurations can be found in the runConfigurations folder. Simply copy the folder to inside the .idea folder.
+1. After copying, head to File--> Close Project and then reopen the project right after to get IntelliJ to detect the new run configurations.
 1. Select the desired run configuration from the dropdown menu beside the green "run" triangle.
 1. To run regular mode, click the green "run" triangle.
 1. To run debug mode, click the bug to the right of the green "run" triangle.

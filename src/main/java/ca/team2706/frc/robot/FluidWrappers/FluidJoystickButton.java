@@ -1,4 +1,4 @@
-package ca.team2706.frc.robot;
+package ca.team2706.frc.robot.FluidWrappers;
 
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.config.FluidConstant;

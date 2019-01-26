@@ -1,3 +1,4 @@
+
 package ca.team2706.frc.robot.config;
 
 import ca.team2706.frc.robot.Robot;
@@ -21,35 +22,17 @@ import java.util.Objects;
  * Config manager for the robot.
  */
 public class Config {
-    private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
+    
 
     static {
         initialize();
     }
 
-    private static boolean initialized = false;
+    
 
-    /**
-     * Initializes the Config class.
-     */
-    public static void initialize() {
-        if (!initialized) {
-            Robot.setOnStateChange(Config::saveConstants);
+ 
 
-            initialized = true;
-        }
-    }
-
-    /**
-     * Path to the file which identifies which
-     */
-    private static final Path ROBOT_ID_LOC = Paths.get(System.getProperty("user.home"), "robot.conf");
-    private static final Path SAVE_FILE = Paths.get(System.getProperty("user.home"), "FluidConstants.txt");
-
-    /**
-     * ID of the robot that code is running on
-     */
-    private static final int ROBOT_ID = getRobotId();
+    
 
     /**
      * Xbox controller binding information.
@@ -214,5 +197,81 @@ public class Config {
             DriverStation.reportWarning("Unable to save fluid constants to file.", true);
         }
     }
+
+
+    private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
+
+    // #### Static constants ####
+
+    /**
+     * Path to the file which identifies which
+     */
+    private static final Path ROBOT_ID_LOC = Paths.get(System.getProperty("user.home"), "robot.conf");
+    private static final Path SAVE_FILE = Paths.get(System.getProperty("user.home"), "FluidConstants.txt");
+
+    /**
+     * ID of the robot that code is running on
+     */
+    private static final int ROBOT_ID = getRobotId();
+
+    
+
+    // Values for driving robot with joystick
+    public static final boolean
+            TELEOP_SQUARE_JOYSTICK_INPUTS = true,
+            TELEOP_BRAKE = false;
+
+    // Timeouts for sending CAN bus commands
+    public static final int
+            CAN_SHORT = 10,
+            CAN_LONG = 100;
+
+    // DriveBase motor CAN IDs
+    public static final int
+            LEFT_FRONT_DRIVE_MOTOR_ID = robotSpecific(1, 1, 1),
+            LEFT_BACK_DRIVE_MOTOR_ID = robotSpecific(3, 3, 3),
+            RIGHT_FRONT_DRIVE_MOTOR_ID = robotSpecific(2, 2, 2),
+            RIGHT_BACK_DRIVE_MOTOR_ID = robotSpecific(4, 4, 4);
+
+    public static final boolean
+            INVERT_FRONT_LEFT_DRIVE = robotSpecific(false, false, false),
+            INVERT_BACK_LEFT_DRIVE = robotSpecific(false, false, false),
+            INVERT_FRONT_RIGHT_DRIVE = robotSpecific(true, true, true),
+            INVERT_BACK_RIGHT_DRIVE = robotSpecific(true, true, true);
+
+    public static final boolean DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);
+
+    // CAN ID for the Pigeon
+    public static final int GYRO_TALON_ID = robotSpecific(8, 8, 8);
+
+    // The amount of encoder ticks that the robot must drive to go one foot
+    public static final double DRIVE_ENCODER_DPP
+            = robotSpecific(Math.PI / 8192.0, Math.PI / 8192.0, Math.PI / 8192.0);
+            
+    static {
+        initialize();
+    }
+
+    private static boolean initialized = false;
+
+    /**
+     * Initializes the Config class.
+     */
+    public static void initialize() {
+        if (!initialized) {
+            Robot.setOnStateChange(Config::saveConstants);
+
+            initialized = true;
+        }
+    }
+
+   
+
+  
+
+
+  
+
+   
 }
 

@@ -39,7 +39,12 @@ public class FluidPOVButton extends POVButton {
 
   private static int getPortValue(FluidConstant<String> angle) {
     return Config.XboxValue.getXboxValueFromNTKey(angle.value()).getPort();
-}
+  }
+
+  @Override
+    public boolean get() {
+      return joystick.getPOV(m_povNumber) == getPortValue(angle);
+    }
 
 
     

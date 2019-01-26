@@ -134,7 +134,7 @@ public class Config {
     // #### Fluid constants ####
     static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
     public static final FluidConstant<String> TEST_ACTION = constant("TEST_ACTION", XboxValue.XBOX_A_BUTTON.getNTString());
-
+    public static final FluidConstant<String> POV_TEST_ACTION = constant("POV_TEST_ACTION", XboxValue.XBOX_POV_UP.getNTString());
     /**
      * Reads the robot type from the filesystem
      *

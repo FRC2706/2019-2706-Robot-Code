@@ -1,45 +1,37 @@
-package ca.team2706.frc.robot.FluidWrappers;
+package ca.team2706.frc.robot;
 
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.config.FluidConstant;
-import ca.team2706.frc.robot.config.Config.XboxValue;
 import edu.wpi.first.wpilibj.GenericHID;
-
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 /**
- * @author Justin Toft
- * Class to enable dynamic button changes in Network Tables using fluid constants
+ * JoystickButton set up for using a FluidConstant binding.
  */
 public class FluidJoystickButton extends JoystickButton {
 
     private final GenericHID m_joystick;
     private final FluidConstant<String> joystickPort;
 
-    
     /**
-     * 
-     * @param genericHID The Joystick to be used
-     * @param joystickPort The FluidConstant for the button
+     * Constructs a FluidJoystickButton with the given GenericHID interface and action binding.
+     * @param genericHID The GenericHID interface object.
+     * @param actionBindig The action (such as "run motor") to which the joystick is bound.
      */
-    public FluidJoystickButton(GenericHID genericHID, FluidConstant<String> joystickPort) {
-        super(genericHID, getPortValue(joystickPort));
+    public FluidJoystickButton(GenericHID genericHID, FluidConstant<String> actionBindig) {
+        super(genericHID, getPortValue(actionBindig));
 
         m_joystick = genericHID;
-        this.joystickPort = joystickPort;
+        this.joystickPort = actionBindig;
     }
 
     /**
-     * 
-     * @param joystickPort FluidConstant for the JoystickButton
-     * @return The port of the button on the controller
+     * Gets the port value currently set to the action's binding.
+     * @param fluidConstant The fluid constant action of which to find the port value.
+     * @return The port value for the binding.
      */
-    private static int getPortValue(FluidConstant<String> joystickPort) {
-        // joystickPort.value();
-        // XBOX_VALUE staticName = Config.XBOX_VALUE.getConstantName(joystickPort.value()).getPort();
-        // staticName.getPort();
-        return Config.XboxValue.getXboxValueFromNTKey(joystickPort.value()).getPort();
-        //return Config.XBOX_VALUE.staticName.getPort();
+    private static int getPortValue(FluidConstant<String> fluidConstant) {
+        return Config.XboxValue.getXboxValueFromNTKey(fluidConstant.value()).getPort();
     }
 
     @Override

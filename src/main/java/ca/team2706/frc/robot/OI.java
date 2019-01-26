@@ -1,6 +1,8 @@
 package ca.team2706.frc.robot;
 
+import ca.team2706.frc.robot.FluidWrappers.FluidPOVButton;
 import ca.team2706.frc.robot.config.Config;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.POVButton;
@@ -33,11 +35,11 @@ public class OI {
      * @return The current instance of OI.
      */
     public static OI getInstance() {
-        initialize();
+        init();
         return currentInstance;
     }
 
-    private static void initialize() {
+    public static void init() {
         if (currentInstance == null) {
             currentInstance = new OI();
         }
@@ -63,17 +65,11 @@ public class OI {
         // The Joystick for controlling the mechanisms of the robot
         this.controlStick = controlStick;
 
-        JoystickButton joystickButton = new FluidJoystickButton(driverStick, Config.TEST_ACTION);
-
+        // Example FluidJoystickButton  
+        //JoystickButton joystickButton = new FluidJoystickButton(driverStick, Config.TEST_ACTION);
         
-
-        POVButton povButton;
-
-        PrintCommand printCommand = new PrintCommand("Command!");
-
-        joystickButton.whenPressed(printCommand);
     }
-    
+
     public Joystick getDriverJoystick() {
         return driverStick;
     }

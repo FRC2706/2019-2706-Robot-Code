@@ -23,6 +23,8 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         onStateChange(RobotState.ROBOT_INIT);
 
+        OI.init();
+
         // Usb Camera
         // UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
         // Runtime.getRuntime().addShutdownHook(new Thread(camera::free));

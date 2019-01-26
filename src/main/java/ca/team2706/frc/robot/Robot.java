@@ -145,8 +145,8 @@ public class Robot extends TimedRobot {
 
         Runtime.getRuntime().addShutdownHook(new Thread(Robot::shutdown));
 
-        Config.initialize();
-        RobotBase.startRobot(Robot::new);
+        //Config.initialize();
+//        RobotBase.startRobot(Robot::new);
     }
 
     /**

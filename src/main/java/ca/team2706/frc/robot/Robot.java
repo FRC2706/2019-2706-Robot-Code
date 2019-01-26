@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot;
 
+import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.Bling;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import ca.team2706.frc.robot.config.Config;
@@ -12,10 +13,6 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
-
-
-
-
 /**
  * Main Robot class
  */
@@ -26,7 +23,6 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         onStateChange(RobotState.ROBOT_INIT);
-
 
         OI.init();
 

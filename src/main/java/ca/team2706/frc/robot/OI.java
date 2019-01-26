@@ -1,12 +1,10 @@
 package ca.team2706.frc.robot;
 
-import ca.team2706.frc.robot.FluidWrappers.FluidPOVButton;
-import ca.team2706.frc.robot.config.Config;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.POVButton;
 import edu.wpi.first.wpilibj.command.PrintCommand;
+
 
 /**
  * This class is the glue that binds the controls on the physical operator interface to the commands

@@ -1,16 +1,10 @@
-package ca.team2706.frc.robot.FluidWrappers;
+package ca.team2706.frc.robot.fluidwrappers;
 
-import ca.team2706.frc.robot.config.FluidConstant;
-import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.config.FluidConstant;
 import ca.team2706.frc.robot.config.Config.XboxValue;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.buttons.POVButton;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
-
-
 
 /**
  * FluidPOVButton
@@ -22,8 +16,8 @@ public class FluidPOVButton extends POVButton {
     private final GenericHID joystick;
     private final FluidConstant<String> angle;
     private final int m_povNumber;
-
-    /**
+    
+  /**
    * Creates a POV button for triggering commands.
    *
    * @param joystick The GenericHID object that has the POV
@@ -39,7 +33,7 @@ public class FluidPOVButton extends POVButton {
   }
 
   private static int getPortValue(FluidConstant<String> angle) {
-    return Config.XboxValue.getXboxValueFromNTKey(angle.value()).getPort();
+    return XboxValue.getXboxValueFromNTKey(angle.value()).getPort();
   }
 
   @Override

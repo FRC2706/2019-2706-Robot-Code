@@ -1,5 +1,7 @@
 package ca.team2706.frc.robot;
 
+import ca.team2706.frc.robot.commands.ArcadeDriveWithJoystick;
+import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.Joystick;
 
 
@@ -55,5 +57,9 @@ public class OI {
 
         // The Joystick for controlling the mechanisms of the robot
         this.controlStick = controlStick;
-    }
+
+        // Set subsystem default commands
+        DriveBase.getInstance().setDefaultCommand(
+                new ArcadeDriveWithJoystick(driverStick, 5, true, 4, false));
+    } 
 }

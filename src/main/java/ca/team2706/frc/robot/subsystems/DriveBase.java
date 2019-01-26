@@ -54,7 +54,6 @@ public class DriveBase extends Subsystem {
      * Creates a drive base, and initializes all required sensors and motors
      */
     private DriveBase() {
-        // TODO: Configure motors from fluid config or from file
         leftFrontMotor = new WPI_TalonSRX(Config.LEFT_FRONT_DRIVE_MOTOR_ID);
         leftBackMotor = new WPI_TalonSRX(Config.LEFT_BACK_DRIVE_MOTOR_ID);
         rightFrontMotor = new WPI_TalonSRX(Config.RIGHT_FRONT_DRIVE_MOTOR_ID);
@@ -103,7 +102,7 @@ public class DriveBase extends Subsystem {
 
         addChild(robotDriveBase);
 
-        //addChild("Gyroscope", Sendables.newPigeonSendable(gyro));
+        addChild("Gyroscope", Sendables.newPigeonSendable(gyro));
 
         addChild("Left Encoder", Sendables.newTalonEncoderSendable(leftFrontMotor));
         addChild("Right Encoder", Sendables.newTalonEncoderSendable(rightFrontMotor));
@@ -154,15 +153,7 @@ public class DriveBase extends Subsystem {
     private Command defaultCommand;
 
     @Override
-    // Have the default command set from OI
     protected void initDefaultCommand() {
-        // TODO: Move to OI
-
-        if (defaultCommand == null) {
-            defaultCommand = new ArcadeDriveWithJoystick(new Joystick(0), 5, true,
-                    4, false);
-        }
-        setDefaultCommand(defaultCommand);
     }
 
     /**

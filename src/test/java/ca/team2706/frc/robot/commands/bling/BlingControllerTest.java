@@ -21,6 +21,9 @@ public class BlingControllerTest {
     @Mocked
     private DriverStation station;
 
+    @Mocked
+    private Thing thing;
+
     @Before
     public void setUp() {
         blingController = new BlingController();
@@ -32,6 +35,9 @@ public class BlingControllerTest {
     @Test
     public void testGetOperationPeriodDuringRealMatch() {
         new Expectations() {{
+            DriverStation.getInstance();
+            result = station;
+
             station.isFMSAttached();
             result = true;
 
@@ -105,4 +111,10 @@ public class BlingControllerTest {
 //        assertEquals(BlingController.Period.TELEOP_WITHOUT_CLIMB, blingController.getCurrentPeriod());
 //        assertEquals(BlingController.Period.CLIMB, blingController.getCurrentPeriod());
 //    }
+
+    private class Thing {
+        Thing() {
+            System.out.println("Constructor was called.");
+        }
+    }
 }

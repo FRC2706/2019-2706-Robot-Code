@@ -28,6 +28,7 @@ public class Robot extends TimedRobot {
 
         OI.init();
 
+        // Initialize subsystems
         Bling.init();
         DriveBase.init();
     }

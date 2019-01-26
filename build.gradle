@@ -67,4 +67,3 @@ compileJava {
 wrapper {
     gradleVersion = '5.0'
 }
-

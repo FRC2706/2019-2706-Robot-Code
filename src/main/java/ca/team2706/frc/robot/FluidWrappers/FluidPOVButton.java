@@ -45,7 +45,4 @@ public class FluidPOVButton extends POVButton {
     public boolean get() {
       return joystick.getPOV(m_povNumber) == getPortValue(angle);
     }
-
-
-    
 }

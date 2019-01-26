@@ -22,17 +22,139 @@ import java.util.Objects;
  * Config manager for the robot.
  */
 public class Config {
-    
+
+    private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
+
+    // #### Static constants ####
+
+    /**
+     * Path to the file which identifies which
+     */
+    private static final Path ROBOT_ID_LOC = Paths.get(System.getProperty("user.home"), "robot.conf");
+    private static final Path SAVE_FILE = Paths.get(System.getProperty("user.home"), "FluidConstants.txt");
+
+    /**
+     * ID of the robot that code is running on
+     */
+    private static final int ROBOT_ID = getRobotId();
+
+    // All Xbox controller constants.
+    public static final int
+            // Axis and triggers
+            XBOX_LEFT_AXIS = 0,
+            XBOX_RIGHT_AXIS = 1,
+            XBOX_BACK_LEFT_TRIGGER = 2,
+            XBOX_BACK_RIGHT_TRIGGER = 3,
+            XBOX_RIGHT_AXIS_X = 4,
+            XBOX_RIGHT_AXIS_Y = 5,
+    // Buttons
+    XBOX_A_BUTTON = 1,
+            XBOX_B_BUTTON = 2,
+            XBOX_X_BUTTON = 3,
+            XBOX_Y_BUTTON = 4,
+            XBOX_LB_BUTTON = 5,
+            XBOX_RB_BUTTON = 6,
+            XBOX_SELECT_BUTTON = 7,
+            XBOX_START_BUTTON = 8,
+            XBOX_LEFT_AXIS_BUTTON = 9,
+            XBOX_RIGHT_AXIS_BUTTON = 10,
+    // POV
+    XBOX_POV_UP = 0,
+            XBOX_POV_UP_RIGHT = 45,
+            XBOX_POV_RIGHT = 90,
+            XBOX_POV_DOWN_RIGHT = 135,
+            XBOX_POV_DOWN = 180,
+            XBOX_POV_DOWN_LEFT = 225,
+            XBOX_POV_LEFT = 270,
+            XBOX_POV_UP_LEFT = 315;
+
+    // Values for driving robot with joystick
+    public static final boolean
+            TELEOP_SQUARE_JOYSTICK_INPUTS = true,
+            TELEOP_BRAKE = false;
+
+    // Timeouts for sending CAN bus commands
+    public static final int
+            CAN_SHORT = 10,
+            CAN_LONG = 100;
+
+    // DriveBase motor CAN IDs
+    public static final int
+            LEFT_FRONT_DRIVE_MOTOR_ID = robotSpecific(1, 1, 1),
+            LEFT_BACK_DRIVE_MOTOR_ID = robotSpecific(3, 3, 3),
+            RIGHT_FRONT_DRIVE_MOTOR_ID = robotSpecific(2, 2, 2),
+            RIGHT_BACK_DRIVE_MOTOR_ID = robotSpecific(4, 4, 4);
+
+    public static final boolean
+            INVERT_FRONT_LEFT_DRIVE = robotSpecific(false, false, false),
+            INVERT_BACK_LEFT_DRIVE = robotSpecific(false, false, false),
+            INVERT_FRONT_RIGHT_DRIVE = robotSpecific(true, true, true),
+            INVERT_BACK_RIGHT_DRIVE = robotSpecific(true, true, true);
+
+    public static final boolean DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);
+
+    // CAN ID for the Pigeon
+    public static final int GYRO_TALON_ID = robotSpecific(8, 8, 8);
+
+    // The amount of encoder ticks that the robot must drive to go one foot
+    public static final double DRIVE_ENCODER_DPP
+            = robotSpecific(Math.PI / 8192.0, Math.PI / 8192.0, Math.PI / 8192.0);
+
+    // #### Fluid constants ####
+    static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
 
     static {
         initialize();
     }
 
+    private static boolean initialized = false;
+
+    /**
+     * Initializes the Config class.
+     */
+    public static void initialize() {
+        if (!initialized) {
+            Robot.setOnStateChange(Config::saveConstants);
+
+            initialized = true;
+        }
+    }
+
+    /**
+     * Saves all the value of the constants to a human-readable (but not machine readable) text file.
+     */
+    private static void saveConstants(RobotState state) {
+        if (state == RobotState.DISABLED) {
+            StringBuilder totalString = new StringBuilder();
+
+            // Iterate through each constant and collect its file string value.
+            for (FluidConstant<?> constant : CONSTANTS) {
+                totalString.append(constant.toFileString()).append("\n");
+            }
+
+            // Now just need to create and write to the file.
+            writeFile(totalString.toString());
+        }
+    }
+
+    /**
+     * Writes the given string to a file on the Roborio.
+     *
+     * @param writable The string to be written to file.
+     */
+    private static void writeFile(String writable) {
+        // Attempt to write the string to the file, catching any errors.
+        try (BufferedWriter writer = Files.newBufferedWriter(SAVE_FILE)) {
+            writer.write(writable);
+        } catch (IOException e) {
+            DriverStation.reportWarning("Unable to save fluid constants to file.", true);
+        }
+    }
     
 
- 
-
-    
+    static {
+        initialize();
+    }
 
     /**
      * Xbox controller binding information.
@@ -115,7 +237,6 @@ public class Config {
 
 
     // #### Fluid constants ####
-    static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
     public static final FluidConstant<String> TEST_ACTION = constant("TEST_ACTION", XboxValue.XBOX_A_BUTTON.getNTString());
     public static final FluidConstant<String> POV_TEST_ACTION = constant("POV_TEST_ACTION", XboxValue.XBOX_POV_UP.getNTString());
     /**
@@ -166,112 +287,4 @@ public class Config {
         Objects.requireNonNull(CONSTANTS).add(constant);
         return constant;
     }
-
-    /**
-     * Saves all the value of the constants to a human-readable (but not machine readable) text file.
-     */
-    private static void saveConstants(RobotState state) {
-        if (state == RobotState.DISABLED) {
-            StringBuilder totalString = new StringBuilder();
-
-            // Iterate through each constant and collect its file string value.
-            for (FluidConstant<?> constant : CONSTANTS) {
-                totalString.append(constant.toFileString()).append("\n");
-            }
-
-            // Now just need to create and write to the file.
-            writeFile(totalString.toString());
-        }
-    }
-
-    /**
-     * Writes the given string to a file on the Roborio.
-     *
-     * @param writable The string to be written to file.
-     */
-    private static void writeFile(String writable) {
-        // Attempt to write the string to the file, catching any errors.
-        try (BufferedWriter writer = Files.newBufferedWriter(SAVE_FILE)) {
-            writer.write(writable);
-        } catch (IOException e) {
-            DriverStation.reportWarning("Unable to save fluid constants to file.", true);
-        }
-    }
-
-
-    private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
-
-    // #### Static constants ####
-
-    /**
-     * Path to the file which identifies which
-     */
-    private static final Path ROBOT_ID_LOC = Paths.get(System.getProperty("user.home"), "robot.conf");
-    private static final Path SAVE_FILE = Paths.get(System.getProperty("user.home"), "FluidConstants.txt");
-
-    /**
-     * ID of the robot that code is running on
-     */
-    private static final int ROBOT_ID = getRobotId();
-
-    
-
-    // Values for driving robot with joystick
-    public static final boolean
-            TELEOP_SQUARE_JOYSTICK_INPUTS = true,
-            TELEOP_BRAKE = false;
-
-    // Timeouts for sending CAN bus commands
-    public static final int
-            CAN_SHORT = 10,
-            CAN_LONG = 100;
-
-    // DriveBase motor CAN IDs
-    public static final int
-            LEFT_FRONT_DRIVE_MOTOR_ID = robotSpecific(1, 1, 1),
-            LEFT_BACK_DRIVE_MOTOR_ID = robotSpecific(3, 3, 3),
-            RIGHT_FRONT_DRIVE_MOTOR_ID = robotSpecific(2, 2, 2),
-            RIGHT_BACK_DRIVE_MOTOR_ID = robotSpecific(4, 4, 4);
-
-    public static final boolean
-            INVERT_FRONT_LEFT_DRIVE = robotSpecific(false, false, false),
-            INVERT_BACK_LEFT_DRIVE = robotSpecific(false, false, false),
-            INVERT_FRONT_RIGHT_DRIVE = robotSpecific(true, true, true),
-            INVERT_BACK_RIGHT_DRIVE = robotSpecific(true, true, true);
-
-    public static final boolean DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);
-
-    // CAN ID for the Pigeon
-    public static final int GYRO_TALON_ID = robotSpecific(8, 8, 8);
-
-    // The amount of encoder ticks that the robot must drive to go one foot
-    public static final double DRIVE_ENCODER_DPP
-            = robotSpecific(Math.PI / 8192.0, Math.PI / 8192.0, Math.PI / 8192.0);
-            
-    static {
-        initialize();
-    }
-
-    private static boolean initialized = false;
-
-    /**
-     * Initializes the Config class.
-     */
-    public static void initialize() {
-        if (!initialized) {
-            Robot.setOnStateChange(Config::saveConstants);
-
-            initialized = true;
-        }
-    }
-
-   
-
-  
-
-
-  
-
-   
 }
-

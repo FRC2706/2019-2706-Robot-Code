@@ -1,4 +1,3 @@
-
 package ca.team2706.frc.robot.config;
 
 import ca.team2706.frc.robot.Robot;
@@ -150,7 +149,7 @@ public class Config {
             DriverStation.reportWarning("Unable to save fluid constants to file.", true);
         }
     }
-    
+
 
     static {
         initialize();
@@ -239,6 +238,7 @@ public class Config {
     // #### Fluid constants ####
     public static final FluidConstant<String> TEST_ACTION = constant("TEST_ACTION", XboxValue.XBOX_A_BUTTON.getNTString());
     public static final FluidConstant<String> POV_TEST_ACTION = constant("POV_TEST_ACTION", XboxValue.XBOX_POV_UP.getNTString());
+
     /**
      * Reads the robot type from the filesystem
      *

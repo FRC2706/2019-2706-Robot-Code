@@ -1,4 +1,3 @@
-
 package ca.team2706.frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -10,7 +9,6 @@ import edu.wpi.first.wpilibj.Joystick;
  */
 public class OI {
 
-    
 
     // Joystick for driving the robot around
     private final Joystick driverStick;
@@ -61,6 +59,6 @@ public class OI {
 
         // Example FluidJoystickButton  
         //JoystickButton joystickButton = new FluidJoystickButton(driverStick, Config.TEST_ACTION);
-        
+
     }
 }

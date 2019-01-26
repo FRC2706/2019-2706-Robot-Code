@@ -15,7 +15,8 @@ public class FluidJoystickButton extends JoystickButton {
 
     /**
      * Constructs a FluidJoystickButton with the given GenericHID interface and action binding.
-     * @param genericHID The GenericHID interface object.
+     *
+     * @param genericHID   The GenericHID interface object.
      * @param actionBindig The action (such as "run motor") to which the joystick is bound.
      */
     public FluidJoystickButton(GenericHID genericHID, FluidConstant<String> actionBindig) {
@@ -27,6 +28,7 @@ public class FluidJoystickButton extends JoystickButton {
 
     /**
      * Gets the port value currently set to the action's binding.
+     *
      * @param fluidConstant The fluid constant action of which to find the port value.
      * @return The port value for the binding.
      */
@@ -39,4 +41,4 @@ public class FluidJoystickButton extends JoystickButton {
         return m_joystick.getRawButton(getPortValue(joystickPort));
     }
 
- }
+}

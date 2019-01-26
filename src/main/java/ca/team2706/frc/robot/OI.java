@@ -2,11 +2,7 @@ package ca.team2706.frc.robot;
 
 import ca.team2706.frc.robot.commands.ArcadeDriveWithJoystick;
 import ca.team2706.frc.robot.subsystems.DriveBase;
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import edu.wpi.first.wpilibj.command.PrintCommand;
-
 
 /**
  * This class is the glue that binds the controls on the physical operator interface to the commands
@@ -63,7 +59,7 @@ public class OI {
         // Set subsystem default commands
         DriveBase.getInstance().setDefaultCommand(
                 new ArcadeDriveWithJoystick(driverStick, 5, true, 4, false));
-        }
+    }
 
     /**
      * Gets the driver joystick.

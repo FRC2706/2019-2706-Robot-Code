@@ -1,22 +1,18 @@
 package ca.team2706.frc.robot;
 
+import java.util.ArrayList;
+import java.util.function.Consumer;
+
 import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.sensors.AnalogSelector;
 import ca.team2706.frc.robot.subsystems.Bling;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import ca.team2706.frc.robot.subsystems.SensorExtras;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.PrintCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-
-import java.util.ArrayList;
-import java.util.function.Consumer;
-
 
 /**
  * Main Robot class

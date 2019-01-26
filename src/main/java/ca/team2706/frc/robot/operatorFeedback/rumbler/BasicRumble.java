@@ -9,11 +9,12 @@ public class BasicRumble extends RumblePattern {
 
     /**
      * Creates a new basic rumble pattern.
-     * @param timeOn Milliseconds to rumble each cycle.
-     * @param timeOff Milliseconds to not rumble for each cycle.
-     * @param repeatCount The number of cycles to repeat.
+     *
+     * @param timeOn             Milliseconds to rumble each cycle.
+     * @param timeOff            Milliseconds to not rumble for each cycle.
+     * @param repeatCount        The number of cycles to repeat.
      * @param controllerToRumble Which controllers to rumble.
-     * @param rumbleIntensity The intensity of the rumble (between 0 and 1.0)
+     * @param rumbleIntensity    The intensity of the rumble (between 0 and 1.0)
      */
     public BasicRumble(final long timeOn,
                        final long timeOff,

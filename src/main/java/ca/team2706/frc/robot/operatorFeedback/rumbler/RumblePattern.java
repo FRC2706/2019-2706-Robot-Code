@@ -30,6 +30,7 @@ public abstract class RumblePattern {
 
     /**
      * Determines if this pattern should be rumbling given the amount of time that the pattern has been on.
+     *
      * @param millisecondsOn The amount of time that the pattern has been on.
      * @return True if the pattern should currently be rumbling, false otherwise.
      */
@@ -37,6 +38,7 @@ public abstract class RumblePattern {
 
     /**
      * Determines if this rumbler pattern is over, given the amount of time that the pattern has been running.
+     *
      * @param millisecondsOn The number of milliseconds that this pattern has been running.
      * @return True if the pattern is over and false otherwise.
      */

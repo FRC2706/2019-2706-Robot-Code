@@ -53,6 +53,7 @@ public class Rumbler extends Command {
 
     /**
      * Constructs a new rumbler with the give patterns.
+     *
      * @param pattern The pattern to be played on the controller(s).
      */
     public Rumbler(RumblePattern pattern) {
@@ -100,6 +101,7 @@ public class Rumbler extends Command {
 
     /**
      * Determines if the controllers are currently being rumbled or not.
+     *
      * @return True if currently rumbling, false otherwise.
      */
     public boolean isRumbling() {

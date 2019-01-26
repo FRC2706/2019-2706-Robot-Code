@@ -15,9 +15,6 @@ import edu.wpi.cscore.UsbCamera;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
-
-
-
 /**
  * Main Robot class
  */

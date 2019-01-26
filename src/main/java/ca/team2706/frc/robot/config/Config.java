@@ -69,6 +69,8 @@ public class Config {
     public static final double DRIVE_ENCODER_DPP
             = robotSpecific(Math.PI / 8192.0, Math.PI / 8192.0, Math.PI / 8192.0);
 
+    public static final boolean ENABLE_CAMERA = robotSpecific(true, true, false);
+
     // #### Fluid constants ####
     static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
 

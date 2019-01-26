@@ -121,9 +121,7 @@ public class Robot extends TimedRobot {
      * Called periodically during test mode.
      */
     @Override
-    public void testPeriodic() {
-    }
-
+    public void testPeriodic() { }
 
     /**
      * ArrayList of Robot State consumers to be invoked when the robot's state changes.

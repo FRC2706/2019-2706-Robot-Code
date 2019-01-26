@@ -28,11 +28,11 @@ public class Robot extends TimedRobot {
         Bling.init();
         DriveBase.init();
 
+        // Make sure that this is last initialized subsystem
+        SensorExtras.init();
+
         // OI depends on subsystems, so initialize it after
         OI.init();
-
-        // Make sure that this is initialized last
-        SensorExtras.init();
 
         // The USB camera used on the Robot, not enabled during simulation mode
         if (Config.ENABLE_CAMERA) {

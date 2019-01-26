@@ -61,8 +61,8 @@ public class Config {
 
     public static final boolean DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);
 
-    // CAN ID for the Pigeon
-    public static final int GYRO_TALON_ID = robotSpecific(8, 8, 8);
+    // Talon ID for the Pigeon
+    public static final int GYRO_TALON_ID = robotSpecific(5, 5, 5);
 
     // The amount of encoder ticks that the robot must drive to go one foot
     public static final double DRIVE_ENCODER_DPP

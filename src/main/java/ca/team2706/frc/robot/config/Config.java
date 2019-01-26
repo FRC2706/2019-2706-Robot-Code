@@ -20,6 +20,10 @@ import java.util.Objects;
  * Config manager for the robot.
  */
 public class Config {
+    static {
+        init();
+    }
+
     private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
 
     // #### Static constants ####
@@ -73,16 +77,12 @@ public class Config {
     // #### Fluid constants ####
     static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
 
-    static {
-        initialize();
-    }
-
     private static boolean initialized = false;
 
     /**
      * Initializes the Config class.
      */
-    public static void initialize() {
+    public static void init() {
         if (!initialized) {
             Robot.setOnStateChange(Config::saveConstants);
 

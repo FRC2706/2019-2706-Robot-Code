@@ -5,6 +5,7 @@ import ca.team2706.frc.robot.subsystems.Bling;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import ca.team2706.frc.robot.config.Config;
 
+import ca.team2706.frc.robot.subsystems.SensorExtras;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -29,6 +30,9 @@ public class Robot extends TimedRobot {
         // Initialize subsystems
         Bling.init();
         DriveBase.init();
+
+        // Make sure that this is initialized last
+        SensorExtras.init();
     }
 
     /**

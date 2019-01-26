@@ -36,10 +36,7 @@ public class SensorExtras extends Subsystem {
      * @return The subsystem singleton
      */
     public static SensorExtras getInstance() {
-        if (currentInstance == null) {
-            init();
-        }
-
+        init();
         return currentInstance;
     }
 
@@ -47,7 +44,9 @@ public class SensorExtras extends Subsystem {
      * Initializes the subsystem
      */
     public static void init() {
-        currentInstance = new SensorExtras();
+        if (currentInstance == null) {
+            currentInstance = new SensorExtras();
+        }
     }
 
     /**
@@ -99,7 +98,7 @@ public class SensorExtras extends Subsystem {
          */
         void allocate(Subsystem subsystem, int port) {
             try {
-                subsystem.addChild("Unused " + name, factory.apply(port));
+                subsystem.addChild("Unused " + name + " " + port, factory.apply(port));
             } catch(RuntimeException e) {
                 System.out.println("Sensor Extras Warning for " + name + " " + port + " (Check Allocation Table):\n\t"
                         + e.getMessage());

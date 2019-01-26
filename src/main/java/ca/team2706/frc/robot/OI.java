@@ -1,4 +1,3 @@
-
 package ca.team2706.frc.robot;
 
 import ca.team2706.frc.robot.FluidWrappers.FluidPOVButton;
@@ -9,15 +8,11 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.POVButton;
 import edu.wpi.first.wpilibj.command.PrintCommand;
 
-
-
 /**
  * This class is the glue that binds the controls on the physical operator interface to the commands
  * and command groups that allow control of the robot.
  */
 public class OI {
-
-    
 
     // Joystick for driving the robot around
     private final Joystick driverStick;
@@ -65,13 +60,5 @@ public class OI {
 
         // The Joystick for controlling the mechanisms of the robot
         this.controlStick = controlStick;
-
-        // Example FluidJoystickButton  
-        //JoystickButton joystickButton = new FluidJoystickButton(driverStick, Config.TEST_ACTION);
-        
-    }
-
-
-    
+    } 
 }
-

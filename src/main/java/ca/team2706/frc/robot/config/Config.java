@@ -1,4 +1,3 @@
-
 package ca.team2706.frc.robot.config;
 
 import ca.team2706.frc.robot.Robot;
@@ -14,15 +13,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Objects;
-
+import java.util.HashMap;
 
 /**
  * Config manager for the robot.
  */
 public class Config {
-
     private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
 
     // #### Static constants ####
@@ -38,35 +35,7 @@ public class Config {
      */
     private static final int ROBOT_ID = getRobotId();
 
-    // All Xbox controller constants.
-    public static final int
-            // Axis and triggers
-            XBOX_LEFT_AXIS = 0,
-            XBOX_RIGHT_AXIS = 1,
-            XBOX_BACK_LEFT_TRIGGER = 2,
-            XBOX_BACK_RIGHT_TRIGGER = 3,
-            XBOX_RIGHT_AXIS_X = 4,
-            XBOX_RIGHT_AXIS_Y = 5,
-    // Buttons
-    XBOX_A_BUTTON = 1,
-            XBOX_B_BUTTON = 2,
-            XBOX_X_BUTTON = 3,
-            XBOX_Y_BUTTON = 4,
-            XBOX_LB_BUTTON = 5,
-            XBOX_RB_BUTTON = 6,
-            XBOX_SELECT_BUTTON = 7,
-            XBOX_START_BUTTON = 8,
-            XBOX_LEFT_AXIS_BUTTON = 9,
-            XBOX_RIGHT_AXIS_BUTTON = 10,
-    // POV
-    XBOX_POV_UP = 0,
-            XBOX_POV_UP_RIGHT = 45,
-            XBOX_POV_RIGHT = 90,
-            XBOX_POV_DOWN_RIGHT = 135,
-            XBOX_POV_DOWN = 180,
-            XBOX_POV_DOWN_LEFT = 225,
-            XBOX_POV_LEFT = 270,
-            XBOX_POV_UP_LEFT = 315;
+    
 
     // Values for driving robot with joystick
     public static final boolean
@@ -121,6 +90,55 @@ public class Config {
     }
 
     /**
+     * Reads the robot type from the filesystem
+     *
+     * @return The integer ID of the robot defaulting to 0
+     */
+    private static int getRobotId() {
+        int id;
+
+        try (BufferedReader reader = Files.newBufferedReader(ROBOT_ID_LOC)) {
+            id = Integer.parseInt(reader.readLine());
+        } catch (IOException | NumberFormatException e) {
+            id = 0;
+            e.printStackTrace();
+        }
+
+        return id;
+    }
+
+    /**
+     * Returns one of the values passed based on the robot ID
+     *
+     * @param first The first value (default value)
+     * @param more  Other values that could be selected
+     * @param <T>   The type of the value
+     * @return The value selected based on the ID of the robot
+     */
+    @SafeVarargs
+    private static <T> T robotSpecific(T first, T... more) {
+        // Return the first value if the robot id doesn't fall between second and last index
+        if (ROBOT_ID < 1 || ROBOT_ID > more.length) {
+            return first;
+        } else {
+            return more[ROBOT_ID - 1];
+        }
+    }
+
+    /**
+     * Creates a new integer fluid constant.
+     *
+     * @param name         The name for the constant type.
+     * @param initialValue The initialValue of the constant.
+     * @return A new FluidConstant object representing the constant.
+     */
+    private static <A> FluidConstant<A> constant(final String name, final A initialValue) {
+        FluidConstant<A> constant = new FluidConstant<>(name, initialValue);
+        Objects.requireNonNull(CONSTANTS).add(constant);
+        return constant;
+    }
+
+    /**
      * Saves all the value of the constants to a human-readable (but not machine readable) text file.
      */
     private static void saveConstants(RobotState state) {
@@ -149,11 +167,6 @@ public class Config {
         } catch (IOException e) {
             DriverStation.reportWarning("Unable to save fluid constants to file.", true);
         }
-    }
-    
-
-    static {
-        initialize();
     }
 
     /**
@@ -233,58 +246,5 @@ public class Config {
         public static XboxValue getXboxValueFromNTKey(final String ntKey) {
             return nameMap.get(ntKey);
         }
-    }
-
-
-    // #### Fluid constants ####
-    public static final FluidConstant<String> TEST_ACTION = constant("TEST_ACTION", XboxValue.XBOX_A_BUTTON.getNTString());
-    public static final FluidConstant<String> POV_TEST_ACTION = constant("POV_TEST_ACTION", XboxValue.XBOX_POV_UP.getNTString());
-    /**
-     * Reads the robot type from the filesystem
-     *
-     * @return The integer ID of the robot defaulting to 0
-     */
-    private static int getRobotId() {
-        int id = 0;
-
-        try (BufferedReader reader = Files.newBufferedReader(ROBOT_ID_LOC)) {
-            id = Integer.parseInt(reader.readLine());
-        } catch (IOException | NumberFormatException e) {
-            id = 0;
-            e.printStackTrace();
-        }
-
-        return id;
-    }
-
-    /**
-     * Returns one of the values passed based on the robot ID
-     *
-     * @param first The first value (default value)
-     * @param more  Other values that could be selected
-     * @param <T>   The type of the value
-     * @return The value selected based on the ID of the robot
-     */
-    @SafeVarargs
-    private static <T> T robotSpecific(T first, T... more) {
-        // Return the first value if the robot id doesn't fall between second and last index
-        if (ROBOT_ID < 1 || ROBOT_ID > more.length) {
-            return first;
-        } else {
-            return more[ROBOT_ID - 1];
-        }
-    }
-
-    /**
-     * Creates a new integer fluid constant.
-     *
-     * @param name         The name for the constant type.
-     * @param initialValue The initialValue of the constant.
-     * @return A new FluidConstant object representing the constant.
-     */
-    private static <A> FluidConstant<A> constant(final String name, final A initialValue) {
-        FluidConstant<A> constant = new FluidConstant<>(name, initialValue);
-        Objects.requireNonNull(CONSTANTS).add(constant);
-        return constant;
     }
 }

@@ -9,23 +9,23 @@ import java.util.function.Function;
 
 /**
  * Extra sensors used on Plyboy for testing
- *
+ * <p>
  * Remove any sensors that are used on the real robot from the allocation table
  */
 public class SensorExtras extends Subsystem {
 
     /**
      * Contains all sensors that should be allocated
-     *
+     * <p>
      * Remove any ports in use elsewhere on the robot
      */
     // Put above singleton pattern for better visibility
     private static final Map<SensorType, int[]> allocationTable = Map.ofEntries(
-            Map.entry(SensorType.Talon, new int[] {5, 6, 7, 8}),
-            Map.entry(SensorType.Pwm, new int[] {0, 1, 2, 3}),
-            Map.entry(SensorType.AnalogInput, new int[] {0, 1}),
-            Map.entry(SensorType.Dio, new int[] {0, 1, 2, 3}),
-            Map.entry(SensorType.Relay, new int[] {0, 1})
+            Map.entry(SensorType.Talon, new int[]{5, 6, 7, 8}),
+            Map.entry(SensorType.Pwm, new int[]{0, 1, 2, 3}),
+            Map.entry(SensorType.AnalogInput, new int[]{0, 1}),
+            Map.entry(SensorType.Dio, new int[]{0, 1, 2, 3}),
+            Map.entry(SensorType.Relay, new int[]{0, 1})
     );
 
     private static SensorExtras currentInstance;
@@ -54,9 +54,9 @@ public class SensorExtras extends Subsystem {
      */
     private SensorExtras() {
         // Iterate through each type of sensor
-        for(Map.Entry<SensorType, int[]> entry : allocationTable.entrySet()) {
+        for (Map.Entry<SensorType, int[]> entry : allocationTable.entrySet()) {
             // Iterate through each port that should be allocated for that sensor
-            for(int port : entry.getValue()) {
+            for (int port : entry.getValue()) {
                 // Allocate the sensor, and add it to the subsystem in LiveWindow
                 entry.getKey().allocate(this, port);
             }
@@ -64,7 +64,8 @@ public class SensorExtras extends Subsystem {
     }
 
     @Override
-    protected void initDefaultCommand() {}
+    protected void initDefaultCommand() {
+    }
 
     /**
      * Represents a sensor type that can be allocated
@@ -82,7 +83,7 @@ public class SensorExtras extends Subsystem {
         /**
          * Creates a SensorType
          *
-         * @param name The name of the sensor
+         * @param name    The name of the sensor
          * @param factory A reference to how to create the sensor
          */
         SensorType(String name, Function<Integer, Sendable> factory) {
@@ -94,12 +95,12 @@ public class SensorExtras extends Subsystem {
          * Allocates a sensor and catches any exceptions that may occur
          *
          * @param subsystem The subsystem to add the sensor to
-         * @param port The port to allocate
+         * @param port      The port to allocate
          */
         void allocate(Subsystem subsystem, int port) {
             try {
                 subsystem.addChild("Unused " + name + " " + port, factory.apply(port));
-            } catch(RuntimeException e) {
+            } catch (RuntimeException e) {
                 System.out.println("Sensor Extras Warning for " + name + " " + port + " (Check Allocation Table):\n\t"
                         + e.getMessage());
             }

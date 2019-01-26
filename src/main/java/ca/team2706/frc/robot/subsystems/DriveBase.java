@@ -1,7 +1,6 @@
 package ca.team2706.frc.robot.subsystems;
 
 import ca.team2706.frc.robot.Sendables;
-import ca.team2706.frc.robot.commands.ArcadeDriveWithJoystick;
 import ca.team2706.frc.robot.config.Config;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
@@ -9,7 +8,8 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
-import edu.wpi.first.wpilibj.Joystick;
+
+import ca.team2706.frc.robot.sensors.AnalogSelector;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -49,6 +49,11 @@ public class DriveBase extends Subsystem {
      * Gyro to record robot heading
      */
     private final PigeonIMU gyro;
+
+    /**
+     * Analog Selector
+     */
+    private final AnalogSelector selector;
 
     /**
      * Creates a drive base, and initializes all required sensors and motors
@@ -94,6 +99,8 @@ public class DriveBase extends Subsystem {
 
         gyro = new PigeonIMU(new TalonSRX(Config.GYRO_TALON_ID));
 
+        selector = new AnalogSelector(Config.SELECTOR_ID);
+
         // TODO: Also output data to logging/smartdashboard
         addChild("Left Front Motor", leftFrontMotor);
         addChild("Left Back Motor", leftBackMotor);
@@ -103,12 +110,17 @@ public class DriveBase extends Subsystem {
         addChild(robotDriveBase);
 
         addChild("Gyroscope", Sendables.newPigeonSendable(gyro));
+        addChild("Selecotr", selector);
 
         addChild("Left Encoder", Sendables.newTalonEncoderSendable(leftFrontMotor));
         addChild("Right Encoder", Sendables.newTalonEncoderSendable(rightFrontMotor));
 
         setOpenLoopMode();
         setBrakeMode(false);
+    }
+
+    public int getAnalogSelectorIndex(){
+        return selector.getIndex();
     }
 
 

@@ -1,18 +1,10 @@
 package ca.team2706.frc.robot;
 
-import java.lang.reflect.Field;
-
 import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.config.Config.XBOX_VALUE;
-import ca.team2706.frc.robot.FluidWrappers.*;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.POVButton;
 import edu.wpi.first.wpilibj.command.PrintCommand;
-import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.command.PrintCommand;
-
 
 
 
@@ -20,7 +12,6 @@ import edu.wpi.first.wpilibj.command.PrintCommand;
  * This class is the glue that binds the controls on the physical operator interface to the commands
  * and command groups that allow control of the robot.
  */
-// Operator Interface
 public class OI {
 
     
@@ -31,12 +22,25 @@ public class OI {
     // Joystick for controlling the mechanisms of the robot
     private final Joystick controlStick;
 
-    public Joystick getDriverJoystick() {
-        return driverStick;
+    /**
+     * Current instance of the OI class.
+     */
+    private static OI currentInstance;
+
+    /**
+     * Gets the current instance of the OI class.
+     *
+     * @return The current instance of OI.
+     */
+    public static OI getInstance() {
+        initialize();
+        return currentInstance;
     }
 
-    public Joystick getOperatorJoystick() {
-        return controlStick;
+    private static void initialize() {
+        if (currentInstance == null) {
+            currentInstance = new OI();
+        }
     }
 
     /**
@@ -46,30 +50,10 @@ public class OI {
         this(new Joystick(0), new Joystick(1));
     }
 
-    // The current instance of the OI object
-    private static OI currentInstance;
-
-    public static OI getInstance() {
-        if (currentInstance == null) {
-            init();
-        }
-
-        return currentInstance;
-    }
-
-    /**
-     * Initializes a new OI object.
-     */
-    public static void init() {
-        currentInstance = new OI();
-    }
-
-    
-
     /**
      * Initializes Oi with non-default joysticks
-     * 
-     * @param driverStick The driver joystick to use
+     *
+     * @param driverStick  The driver joystick to use
      * @param controlStick The operator joystick to use
      */
     private OI(Joystick driverStick, Joystick controlStick) {
@@ -79,7 +63,7 @@ public class OI {
         // The Joystick for controlling the mechanisms of the robot
         this.controlStick = controlStick;
 
-        JoystickButton joystickButton = new FluidJoystickButton(driverStick, Config.testAction);
+        JoystickButton joystickButton = new FluidJoystickButton(driverStick, Config.TEST_ACTION);
 
         
 
@@ -88,11 +72,14 @@ public class OI {
         PrintCommand printCommand = new PrintCommand("Command!");
 
         joystickButton.whenPressed(printCommand);
+    }
+    
+    public Joystick getDriverJoystick() {
+        return driverStick;
+    }
 
-        joystickButton.close();
-
-        
-
+    public Joystick getOperatorJoystick() {
+        return controlStick;
     }
 
 } 

@@ -2,7 +2,7 @@ package ca.team2706.frc.robot.FluidWrappers;
 
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.config.FluidConstant;
-import ca.team2706.frc.robot.config.Config.XBOX_VALUE;
+import ca.team2706.frc.robot.config.Config.XboxValue;
 import edu.wpi.first.wpilibj.GenericHID;
 
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
@@ -38,7 +38,7 @@ public class FluidJoystickButton extends JoystickButton {
         // joystickPort.value();
         // XBOX_VALUE staticName = Config.XBOX_VALUE.getConstantName(joystickPort.value()).getPort();
         // staticName.getPort();
-        return Config.XBOX_VALUE.getConstantName(joystickPort.value()).getPort();
+        return Config.XboxValue.getXboxValueFromNTKey(joystickPort.value()).getPort();
         //return Config.XBOX_VALUE.staticName.getPort();
     }
 

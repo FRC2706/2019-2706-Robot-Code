@@ -15,7 +15,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
-import java.util.Map;
 
 
 /**
@@ -24,6 +23,22 @@ import java.util.Map;
 public class Config {
     private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
 
+    static {
+        initialize();
+    }
+
+    private static boolean initialized = false;
+
+    /**
+     * Initializes the Config class.
+     */
+    public static void initialize() {
+        if (!initialized) {
+            Robot.setOnStateChange(Config::saveConstants);
+
+            initialized = true;
+        }
+    }
 
     /**
      * Path to the file which identifies which
@@ -36,29 +51,89 @@ public class Config {
      */
     private static final int ROBOT_ID = getRobotId();
 
-   
+    /**
+     * Xbox controller binding information.
+     * Contains the link between the Xbox's buttons' port and the NetworkTables key used to describe the action.
+     */
+    public enum XboxValue {
+        // Axis and triggers
+        // Left on the Left Stick
+        XBOX_LEFT_STICK_X(0, "L_STICK_X"),
+        XBOX_LEFT_STICK_Y(1, "L_STICK_Y"),
+        XBOX_BACK_LEFT_TRIGGER(2, "L_TRIG"),
+        XBOX_BACK_RIGHT_TRIGGER(3, "R_TRIG"),
+        XBOX_RIGHT_STICK_X(4, "R_STICK_X"),
+        XBOX_RIGHT_STICK_Y(5, "R_STICK_Y"),
+
+        // Buttons
+        XBOX_A_BUTTON(1, "A"),
+        XBOX_B_BUTTON(2, "B"),
+        XBOX_X_BUTTON(3, "X"),
+        XBOX_Y_BUTTON(4, "Y"),
+        XBOX_LB_BUTTON(5, "LB"),
+        XBOX_RB_BUTTON(6, "RB"),
+        XBOX_SELECT_BUTTON(7, "SELECT"),
+        XBOX_START_BUTTON(8, "START"),
+        XBOX_LEFT_AXIS_BUTTON(9, "L_AXIS_BUTTON"),
+        XBOX_RIGHT_AXIS_BUTTON(10, "R_AXIS_BUTTON"),
+
+        // POV (The D-PAD on the XBOX Controller)
+        XBOX_POV_UP(0, "UP"),
+        XBOX_POV_UP_RIGHT(45, "UP_RIGHT"),
+        XBOX_POV_RIGHT(90, "RIGHT"),
+        XBOX_POV_DOWN_RIGHT(135, "DOWN_RIGHT"),
+        XBOX_POV_DOWN(180, "DOWN"),
+        XBOX_POV_DOWN_LEFT(225, "DOWN_LEFT"),
+        XBOX_POV_LEFT(270, "LEFT"),
+        XBOX_POV_UP_LEFT(315, "UP_LEFT");
+
+        private String NTString;
+        private int port;
+
+        XboxValue(int port, String NTString) {
+            this.NTString = NTString;
+            this.port = port;
+        }
+
+        /**
+         * @return the nTString
+         */
+        public String getNTString() {
+            return NTString;
+        }
+
+        /**
+         * @return the port
+         */
+        public int getPort() {
+            return port;
+        }
+
+
+        // Create a hashmap of the networktables entry and the
+        private static final HashMap<String, XboxValue> nameMap = new HashMap<>();
+
+        static {
+            for (XboxValue value : XboxValue.values()) {
+                nameMap.put(value.getNTString(), value);
+            }
+        }
+
+        /**
+         * Gets the XboxValue constant with the given NetworkTables key.
+         *
+         * @param ntKey The NetworkTables key for the constant.
+         * @return The constant object.
+         */
+        public static XboxValue getXboxValueFromNTKey(final String ntKey) {
+            return nameMap.get(ntKey);
+        }
+    }
+
 
     // #### Fluid constants ####
     static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
-
-    // Keeping a FluidConstant example for future reference (Delete when real FluidConstants are implemented)
-public static final FluidConstant<String> testAction = constant("testAction", XBOX_VALUE.XBOX_SELECT_BUTTON.NTString);
-
-    static {
-        initialize();
-    }
-
-    private static boolean initialized = false;
-    /**
-     * Initializes the Config class.
-     */
-    public static void initialize() {
-        if (!initialized) {
-            Robot.setOnStateChange(Config::saveConstants);
-
-            initialized = true;
-        }
-    }
+    public static final FluidConstant<String> TEST_ACTION = constant("TEST_ACTION", XboxValue.XBOX_A_BUTTON.getNTString());
 
     /**
      * Reads the robot type from the filesystem
@@ -82,24 +157,24 @@ public static final FluidConstant<String> testAction = constant("testAction", XB
      * Returns one of the values passed based on the robot ID
      *
      * @param first The first value (default value)
-     * @param more Other values that could be selected
-     * @param <T> The type of the value
+     * @param more  Other values that could be selected
+     * @param <T>   The type of the value
      * @return The value selected based on the ID of the robot
      */
     @SafeVarargs
     private static <T> T robotSpecific(T first, T... more) {
         // Return the first value if the robot id doesn't fall between second and last index
-        if(ROBOT_ID < 1 || ROBOT_ID > more.length) {
+        if (ROBOT_ID < 1 || ROBOT_ID > more.length) {
             return first;
-        }
-        else {
+        } else {
             return more[ROBOT_ID - 1];
         }
     }
 
     /**
      * Creates a new integer fluid constant.
-     * @param name The name for the constant type.
+     *
+     * @param name         The name for the constant type.
      * @param initialValue The initialValue of the constant.
      * @return A new FluidConstant object representing the constant.
      */
@@ -128,93 +203,16 @@ public static final FluidConstant<String> testAction = constant("testAction", XB
 
     /**
      * Writes the given string to a file on the Roborio.
+     *
      * @param writable The string to be written to file.
      */
     private static void writeFile(String writable) {
         // Attempt to write the string to the file, catching any errors.
-        try (BufferedWriter writer = Files.newBufferedWriter(SAVE_FILE)){
+        try (BufferedWriter writer = Files.newBufferedWriter(SAVE_FILE)) {
             writer.write(writable);
         } catch (IOException e) {
             DriverStation.reportWarning("Unable to save fluid constants to file.", true);
         }
     }
-
-    /**
-     * An enum to associate port values with NetworkTables values
-     */
-    public enum XBOX_VALUE { 
-        // Axis and triggers
-        // Left on the Left Stick
-        XBOX_LEFT_STICK_X (0, "L_STICK_X"),
-        XBOX_LEFT_STICK_Y (1, "L_STICK_Y"),
-        XBOX_BACK_LEFT_TRIGGER (2, "L_TRIG"),
-        XBOX_BACK_RIGHT_TRIGGER (3, "R_TRIG"),
-        XBOX_RIGHT_STICK_X (4, "R_STICK_X"),
-        XBOX_RIGHT_STICK_Y (5, "R_STICK_Y"),
-
-        // Buttons
-        XBOX_A_BUTTON (1, "A"),
-        XBOX_B_BUTTON (2, "B"),
-        XBOX_X_BUTTON (3, "X"),
-        XBOX_Y_BUTTON (4, "Y"),
-        XBOX_LB_BUTTON (5, "LB"),
-        XBOX_RB_BUTTON (6, "RB"),
-        XBOX_SELECT_BUTTON (7, "SELECT"),
-        XBOX_START_BUTTON (8, "START"),
-        XBOX_LEFT_AXIS_BUTTON (9, "L_AXIS_BUTTON"),
-        XBOX_RIGHT_AXIS_BUTTON (10, "R_AXIS_BUTTON"),
-
-        // POV (The D-PAD on the XBOX Controller)
-        // Currently non-functional
-        XBOX_POV_UP (0, "UP"),
-        XBOX_POV_UP_RIGHT (45, "UP_RIGHT"),
-        XBOX_POV_RIGHT (90, "RIGHT"),
-        XBOX_POV_DOWN_RIGHT (135, "DOWN_RIGHT"),
-        XBOX_POV_DOWN (180, "DOWN"),
-        XBOX_POV_DOWN_LEFT (225, "DOWN_LEFT"),
-        XBOX_POV_LEFT (270, "LEFT"),
-        XBOX_POV_UP_LEFT (315, "UP_LEFT");
-        
-        private String NTString;
-        private int port;
-
-        XBOX_VALUE (int port, String NTString) {
-            this.NTString = NTString;
-            this.port = port;
-        }
-
-        /**
-         * @return the nTString
-         */
-        public String getNTString() {
-            return NTString;
-        }
-
-        /**
-         * @return the port
-         */
-        public int getPort() {
-            return port;
-        }
-
-
-        // Create a hashmap of 
-        private static final HashMap<String, XBOX_VALUE> nameMap = new HashMap<>();
-
-        static {
-            for (XBOX_VALUE value : XBOX_VALUE.values()) {
-                nameMap.put(value.getNTString(), value);
-            }
-        }
-        /**
-         * @param NTString
-         * @return The name of the constant corresponding to the string NTString
-         */
-
-        public static XBOX_VALUE getConstantName(String NTString) {
-            return XBOX_VALUE.nameMap.get(NTString);
-            
-        }
-
-    }
 }
+

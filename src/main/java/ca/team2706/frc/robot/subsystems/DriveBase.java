@@ -102,7 +102,7 @@ public class DriveBase extends Subsystem {
 
         addChild(robotDriveBase);
 
-        //addChild("Gyroscope", Sendables.newPigeonSendable(gyro));
+        addChild("Gyroscope", Sendables.newPigeonSendable(gyro));
 
         addChild("Left Encoder", Sendables.newTalonEncoderSendable(leftFrontMotor));
         addChild("Right Encoder", Sendables.newTalonEncoderSendable(rightFrontMotor));

@@ -13,8 +13,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * Config manager for the robot.
@@ -35,7 +35,6 @@ public class Config {
      */
     private static final int ROBOT_ID = getRobotId();
 
-    
 
     // Values for driving robot with joystick
     public static final boolean

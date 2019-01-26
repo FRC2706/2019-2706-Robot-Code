@@ -3,14 +3,12 @@ package ca.team2706.frc.robot;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.Bling;
 import ca.team2706.frc.robot.subsystems.DriveBase;
-
 import ca.team2706.frc.robot.subsystems.SensorExtras;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.cameraserver.*;
-import edu.wpi.cscore.UsbCamera;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
@@ -121,7 +119,8 @@ public class Robot extends TimedRobot {
      * Called periodically during test mode.
      */
     @Override
-    public void testPeriodic() { }
+    public void testPeriodic() {
+    }
 
     /**
      * ArrayList of Robot State consumers to be invoked when the robot's state changes.

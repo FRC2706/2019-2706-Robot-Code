@@ -1,16 +1,16 @@
 package ca.team2706.frc.robot.config;
 
 import ca.team2706.frc.robot.Robot;
-import ca.team2706.frc.robot.RobotState;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.DriverStation;
 
+import java.util.ArrayList;
+
 /**
  * Class to represent all type of fluid constants.
- * @author Kyle Anderson
  */
 public class FluidConstant<A> {
 
@@ -18,17 +18,20 @@ public class FluidConstant<A> {
     private A value;
     private final A deployedValue; // Keep track of the original value, the one which was deployed to the robot.
     private final String name;
+
     /**
      * The NetworkTables entry for this fluid constant.
      */
     private NetworkTableEntry ntEntry;
+    private ArrayList<FluidChangeListener<A>> listeners = new ArrayList<>();
 
     /**
      * Creates a new FluidConstant class.
-     * @param name The name of the constant used when printing it to file.
+     *
+     * @param name         The name of the constant used when printing it to file.
      * @param initialValue The initial value of the constant.
      */
-    public FluidConstant(String name, A initialValue) {
+    FluidConstant(String name, A initialValue) {
         this.name = name;
         this.value = initialValue;
         this.deployedValue = initialValue;
@@ -41,7 +44,7 @@ public class FluidConstant<A> {
      * Initializer for the Networktables Entry object for this fluid config object.
      */
     private void addNTEntry() {
-        if(Robot.isIsInitialized()) {
+        if (Robot.isIsInitialized()) {
             // Initialize the networktables key for this fluid constant.
             NetworkTable table = Config.constantsTable;
             if (table != null && ntEntry == null) {
@@ -57,6 +60,7 @@ public class FluidConstant<A> {
 
     /**
      * Gets the current value of this constant.
+     *
      * @return The current value of this constant.
      */
     public A value() {
@@ -64,19 +68,32 @@ public class FluidConstant<A> {
     }
 
     /**
+     * Adds a listener to be called when the constant's value is changed.
+     *
+     * @param valueListener The listener.
+     */
+    public void addChangeListener(FluidChangeListener<A> valueListener) {
+        listeners.add(valueListener);
+    }
+
+    /**
      * Sets the value of this constant to a new value. Will only set constants if {@link #canSet()} returns true.
+     *
      * @param value The value to which the constant should be set.
      */
     public void setValue(A value) {
         // Only allow the changing of the fluid constant while disabled.
         if (canSet()) {
+            final A oldValue = value;
             this.value = value;
             updateNTEntry(); // Update the Networktables entry if the value changed.
+            listeners.forEach(aConsumer -> aConsumer.changed(oldValue, value));
         }
     }
 
     /**
      * Sets the value of this constant to the specified networktables value.
+     *
      * @param value The value to which
      */
     @SuppressWarnings("unchecked")
@@ -84,8 +101,7 @@ public class FluidConstant<A> {
         if (canSet()) {
             Object objValue = value.getValue();
             setValue((A) objValue);
-        }
-        else {
+        } else {
             updateNTEntry();
         }
     }
@@ -101,6 +117,7 @@ public class FluidConstant<A> {
 
     /**
      * Determines if fluid constants should be allowed to be set.
+     *
      * @return True if fluid constants should be allowed to be set, false otherwise.
      */
     private static boolean canSet() {
@@ -109,6 +126,7 @@ public class FluidConstant<A> {
 
     /**
      * Gets the name of this constant.
+     *
      * @return The name of this constant, as a string.
      */
     public String getName() {
@@ -118,6 +136,7 @@ public class FluidConstant<A> {
     /**
      * Creates a human-readable string to be displayed in a file showing the default value
      * of this fluid constant alongside its current value.
+     *
      * @return The string to be printed to file, with no newline character added.
      */
     public String toFileString() {

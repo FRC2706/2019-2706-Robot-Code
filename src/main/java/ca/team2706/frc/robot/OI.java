@@ -1,9 +1,6 @@
 package ca.team2706.frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import edu.wpi.first.wpilibj.buttons.POVButton;
-import edu.wpi.first.wpilibj.command.PrintCommand;
 
 
 /**
@@ -58,5 +55,5 @@ public class OI {
 
         // The Joystick for controlling the mechanisms of the robot
         this.controlStick = controlStick;
-    } 
+    }
 }

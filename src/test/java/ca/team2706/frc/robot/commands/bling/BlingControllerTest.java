@@ -1,6 +1,5 @@
 package ca.team2706.frc.robot.commands.bling;
 
-import ca.team2706.frc.robot.subsystems.Bling;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import mockit.Expectations;
@@ -8,26 +7,19 @@ import mockit.Mocked;
 import mockit.Tested;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
+import static junit.framework.TestCase.assertEquals;
+
 
 public class BlingControllerTest {
-
-    @Tested
-    private BlingController blingController;
 
     // Since DriverStation is accessed statically (it's a singleton), we have to mock all instances of it.
     @Mocked
     private DriverStation station;
 
-    @Mocked
-    private Thing thing;
-
-    @Before
-    public void setUp() {
-        blingController = new BlingController();
-    }
+    @Tested
+    private BlingController blingController;
 
     /**
      * Tests getting the robot's operation period while not in a real match.
@@ -48,6 +40,7 @@ public class BlingControllerTest {
         new Expectations(Timer.class) {{
             Timer.getMatchTime();
             returns(15D, 135D, 30D, 29D, 0D);
+            times = 5;
         }};
 
         // Need to initialize the controller.
@@ -111,10 +104,4 @@ public class BlingControllerTest {
 //        assertEquals(BlingController.Period.TELEOP_WITHOUT_CLIMB, blingController.getCurrentPeriod());
 //        assertEquals(BlingController.Period.CLIMB, blingController.getCurrentPeriod());
 //    }
-
-    private class Thing {
-        Thing() {
-            System.out.println("Constructor was called.");
-        }
-    }
 }

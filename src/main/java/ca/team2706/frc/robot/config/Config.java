@@ -74,7 +74,7 @@ public class Config {
     static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
 
     static {
-        initialize();
+        init();
     }
 
     private static boolean initialized = false;
@@ -82,7 +82,7 @@ public class Config {
     /**
      * Initializes the Config class.
      */
-    public static void initialize() {
+    public static void init() {
         if (!initialized) {
             Robot.setOnStateChange(Config::saveConstants);
 

@@ -28,6 +28,8 @@ public class Robot extends TimedRobot {
         onStateChange(RobotState.ROBOT_INIT);
         isInitialized = true;
 
+        Config.init();
+
         // Initialize subsystems
         Bling.init();
         DriveBase.init();
@@ -140,7 +142,7 @@ public class Robot extends TimedRobot {
     public static void main(String[] args) {
         Runtime.getRuntime().addShutdownHook(new Thread(Robot::shutdown));
 
-        Config.initialize();
+        Config.init();
         RobotBase.startRobot(Robot::new);
     }
 

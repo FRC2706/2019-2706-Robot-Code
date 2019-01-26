@@ -1,5 +1,7 @@
 package ca.team2706.frc.robot;
 
+import ca.team2706.frc.robot.commands.ArcadeDriveWithJoystick;
+import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.Joystick;
 
 
@@ -8,7 +10,6 @@ import edu.wpi.first.wpilibj.Joystick;
  * and command groups that allow control of the robot.
  */
 public class OI {
-
     // Joystick for driving the robot around
     private final Joystick driverStick;
 
@@ -55,5 +56,27 @@ public class OI {
 
         // The Joystick for controlling the mechanisms of the robot
         this.controlStick = controlStick;
+
+        // Set subsystem default commands
+        DriveBase.getInstance().setDefaultCommand(
+                new ArcadeDriveWithJoystick(driverStick, 5, true, 4, false));
+    }
+
+    /**
+     * Gets the driver joystick.
+     *
+     * @return The driver joystick.
+     */
+    public Joystick getDriverStick() {
+        return driverStick;
+    }
+
+    /**
+     * Gets the operator joystick.
+     *
+     * @return The operator joystick.
+     */
+    public Joystick getControlStick() {
+        return controlStick;
     }
 }

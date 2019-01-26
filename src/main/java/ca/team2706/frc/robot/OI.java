@@ -1,58 +1,62 @@
 package ca.team2706.frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.buttons.POVButton;
+import edu.wpi.first.wpilibj.command.PrintCommand;
+
 
 /**
- * @author Kyle Anderson
+ * This class is the glue that binds the controls on the physical operator interface to the commands
+ * and command groups that allow control of the robot.
  */
 public class OI {
 
-    private final Joystick driverJoystick;
+    // Joystick for driving the robot around
+    private final Joystick driverStick;
+
+    // Joystick for controlling the mechanisms of the robot
+    private final Joystick controlStick;
 
     /**
-     * Gets the driver joystick.
-     *
-     * @return The driver Joystick object.
+     * Current instance of the OI class.
      */
-    public Joystick getDriverJoystick() {
-        return driverJoystick;
-    }
-
-    /**
-     * Gets the operator joystick.
-     *
-     * @return The operator Joystick object.
-     */
-    public Joystick getOperatorJoystick() {
-        return operatorJoystick;
-    }
-
-    private final Joystick operatorJoystick;
-
-    /**
-     * Constructs a new OI object with the default joysticks.
-     */
-    public OI() {
-        this(new Joystick(0), new Joystick(1));
-    }
-
     private static OI currentInstance;
 
     /**
-     * Constructs a new OI object with the given joysticks.
+     * Gets the current instance of the OI class.
      *
-     * @param driverJoystick   The driver joystick.
-     * @param operatorJoystick The operator joystick object.
+     * @return The current instance of OI.
      */
-    public OI(Joystick driverJoystick, Joystick operatorJoystick) {
-        this.driverJoystick = driverJoystick;
-        this.operatorJoystick = operatorJoystick;
+    public static OI getInstance() {
+        init();
+        return currentInstance;
     }
 
-    public static OI getInstance() {
+    public static void init() {
         if (currentInstance == null) {
             currentInstance = new OI();
         }
-        return currentInstance;
     }
+
+    /**
+     * Initializes Oi using the two default real joysticks
+     */
+    private OI() {
+        this(new Joystick(0), new Joystick(1));
+    }
+
+    /**
+     * Initializes Oi with non-default joysticks
+     *
+     * @param driverStick  The driver joystick to use
+     * @param controlStick The operator joystick to use
+     */
+    private OI(Joystick driverStick, Joystick controlStick) {
+        // Joystick for driving the robot around
+        this.driverStick = driverStick;
+
+        // The Joystick for controlling the mechanisms of the robot
+        this.controlStick = controlStick;
+    } 
 }

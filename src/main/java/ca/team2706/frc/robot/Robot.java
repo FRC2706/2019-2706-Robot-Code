@@ -1,7 +1,10 @@
 package ca.team2706.frc.robot;
 
+import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.Bling;
 import ca.team2706.frc.robot.subsystems.DriveBase;
+import ca.team2706.frc.robot.config.Config;
+
 import ca.team2706.frc.robot.subsystems.SensorExtras;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -11,14 +14,18 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
+/**
+ * Main Robot class
+ */
 public class Robot extends TimedRobot {
-
     /**
      * Method run on robot initialization.
      */
     @Override
     public void robotInit() {
         onStateChange(RobotState.ROBOT_INIT);
+
+        OI.init();
 
         // Initialize subsystems
         Bling.init();
@@ -124,6 +131,7 @@ public class Robot extends TimedRobot {
     public static void main(String[] args) {
         Runtime.getRuntime().addShutdownHook(new Thread(Robot::shutdown));
 
+        Config.initialize();
         RobotBase.startRobot(Robot::new);
     }
 

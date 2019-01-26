@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
+import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -47,6 +48,11 @@ public class DriveBase extends Subsystem {
      * Gyro to record robot heading
      */
     private final PigeonIMU gyro;
+
+    /**
+     * Purple light that goes on the robot
+     */
+    private final PWM light;
 
     /**
      * Creates a drive base, and initializes all required sensors and motors
@@ -92,6 +98,9 @@ public class DriveBase extends Subsystem {
 
         gyro = new PigeonIMU(new TalonSRX(Config.GYRO_TALON_ID));
 
+        light = new PWM(Config.PURPE_LIGHT);
+        light.setRaw(4095);
+
         // TODO: Also output data to logging/smartdashboard
         addChild("Left Front Motor", leftFrontMotor);
         addChild("Left Back Motor", leftBackMotor);
@@ -104,6 +113,8 @@ public class DriveBase extends Subsystem {
 
         addChild("Left Encoder", Sendables.newTalonEncoderSendable(leftFrontMotor));
         addChild("Right Encoder", Sendables.newTalonEncoderSendable(rightFrontMotor));
+
+        addChild("Merge Light", light);
 
         setOpenLoopMode();
         setBrakeMode(false);

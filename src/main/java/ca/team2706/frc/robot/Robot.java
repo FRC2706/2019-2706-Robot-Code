@@ -38,6 +38,7 @@ public class Robot extends TimedRobot {
         // Make sure that this is initialized last
         SensorExtras.init();
 
+        // The USB camera used on the Robot, not enabled during simulation mode
         if (Config.ENABLE_CAMERA) {
             CameraServer.getInstance().startAutomaticCapture();
         }
@@ -48,6 +49,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
+
     }
 
     /**

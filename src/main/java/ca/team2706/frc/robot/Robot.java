@@ -3,9 +3,8 @@ package ca.team2706.frc.robot;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.Bling;
 import ca.team2706.frc.robot.subsystems.DriveBase;
-import ca.team2706.frc.robot.config.Config;
-
 import ca.team2706.frc.robot.subsystems.SensorExtras;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -34,6 +33,11 @@ public class Robot extends TimedRobot {
 
         // OI depends on subsystems, so initialize it after
         OI.init();
+
+        // The USB camera used on the Robot, not enabled during simulation mode
+        if (Config.ENABLE_CAMERA) {
+            CameraServer.getInstance().startAutomaticCapture();
+        }
     }
 
     /**
@@ -41,6 +45,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
+
     }
 
     /**
@@ -117,7 +122,6 @@ public class Robot extends TimedRobot {
     @Override
     public void testPeriodic() {
     }
-
 
     /**
      * ArrayList of Robot State consumers to be invoked when the robot's state changes.

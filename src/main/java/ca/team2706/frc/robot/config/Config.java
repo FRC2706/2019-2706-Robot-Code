@@ -13,8 +13,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * Config manager for the robot.
@@ -35,7 +35,6 @@ public class Config {
      */
     private static final int ROBOT_ID = getRobotId();
 
-    
 
     // Values for driving robot with joystick
     public static final boolean
@@ -68,6 +67,8 @@ public class Config {
     // The amount of encoder ticks that the robot must drive to go one foot
     public static final double DRIVE_ENCODER_DPP
             = robotSpecific(Math.PI / 8192.0, Math.PI / 8192.0, Math.PI / 8192.0);
+
+    public static final boolean ENABLE_CAMERA = robotSpecific(true, true, false);
 
     // #### Fluid constants ####
     static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");

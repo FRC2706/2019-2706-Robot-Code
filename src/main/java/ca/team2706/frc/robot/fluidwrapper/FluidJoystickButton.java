@@ -40,5 +40,4 @@ public class FluidJoystickButton extends JoystickButton {
     public boolean get() {
         return m_joystick.getRawButton(getPortValue(joystickPort));
     }
-
 }

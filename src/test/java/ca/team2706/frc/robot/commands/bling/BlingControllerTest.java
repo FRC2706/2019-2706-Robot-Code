@@ -25,10 +25,12 @@ public class BlingControllerTest {
      */
     @Test
     public void testGetOperationPeriodDuringRealMatch() {
-        new Expectations() {{
+        new Expectations(DriverStation.class) {{
             DriverStation.getInstance();
             result = station;
+        }};
 
+        new Expectations() {{
             station.isFMSAttached();
             result = true;
 

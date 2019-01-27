@@ -1,7 +1,10 @@
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2019.2.1"
+    id 'com.bmuschko.docker-remote-api' version '4.3.0'
 }
+
+apply from: 'gradle/integration-test.gradle'
 
 def ROBOT_MAIN_CLASS = "ca.team2706.frc.robot.Robot"
 

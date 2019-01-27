@@ -74,7 +74,7 @@ public class Config {
 
     public static final boolean ENABLE_CAMERA = robotSpecific(true, true, false);
 
-    public static final int PURPE_LIGHT = robotSpecific(3, 3, 3);
+    public static final int PURPLE_LIGHT = robotSpecific(3, 3, 3);
 
     // #### Fluid constants ####
     static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");

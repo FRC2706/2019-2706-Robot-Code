@@ -8,9 +8,9 @@ services:
 
 before_install:
   - docker pull wpilib/roborio-cross-ubuntu:2019-18.04
-  - docker run -d -p 127.0.0.1:80:4567 wpilib/roborio-cross-ubuntu:2019-18.04 "cd /root/roborio-cross-ubuntu; gradle assemble;"
+  - docker run -d -p 127.0.0.1:80:4567 wpilib/roborio-cross-ubuntu:2019-18.04 "ls -a; ./gradle assemble;"
   - docker ps -a
-  - docker run wpilib/roborio-cross-ubuntu:2019-18.04 /bin/sh -c "cd /root/roborio-cross-ubuntu; gradle check;"
+  - docker run wpilib/roborio-cross-ubuntu:2019-18.04 /bin/sh -c "./gradlew check;"
 
 script:
   - ./gradlew check

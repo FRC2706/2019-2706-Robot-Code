@@ -7,12 +7,12 @@ trigger:
   branches:
     include:
       - refs/heads/*
-	  
+
 pool:
   vmImage: 'Ubuntu-16.04'
 
-container: wpilib/roborio-cross-ubuntu:2019-18.04  
-  
+container: wpilib/roborio-cross-ubuntu:2019-18.04 
+
 steps:
 - task: Gradle@2
   inputs:

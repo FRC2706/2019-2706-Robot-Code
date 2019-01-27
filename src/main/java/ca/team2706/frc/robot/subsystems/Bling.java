@@ -21,10 +21,7 @@ public class Bling extends Subsystem {
      * @return The current Bling instance.
      */
     public static Bling getInstance() {
-        if (currentInstance == null) {
-            init();
-        }
-
+        init();
         return currentInstance;
     }
 
@@ -32,7 +29,9 @@ public class Bling extends Subsystem {
      * Initializes a new bling object.
      */
     public static void init() {
-        currentInstance = new Bling();
+        if (currentInstance == null) {
+            currentInstance = new Bling();
+        }
     }
 
     // All of the pattern numbers
@@ -49,7 +48,7 @@ public class Bling extends Subsystem {
             GREEN = {0, 255, 0}, BLUE = {0, 0, 255}, RED = {255, 0, 0}, PURPLE = {128, 0, 128},
             YELLOW = {255, 255, 0};
 
-    public static final int GOOD_BRIGHTNESS = 128, MAX_BRIGHTNESS  = 255;
+    public static final int GOOD_BRIGHTNESS = 128, MAX_BRIGHTNESS = 255;
 
     /**
      * The networktables key for the bling table.

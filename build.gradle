@@ -4,8 +4,6 @@ plugins {
     id 'com.bmuschko.docker-remote-api' version '4.3.0'
 }
 
-apply from: 'gradle/integration-test.gradle'
-
 def ROBOT_MAIN_CLASS = "ca.team2706.frc.robot.Robot"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
@@ -43,6 +41,7 @@ def includeDesktopSupport = true
 // Maven central needed for JUnit
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
@@ -53,6 +52,37 @@ dependencies {
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile "org.jmockit:jmockit:1.44"
+}
+
+import com.bmuschko.gradle.docker.tasks.container.*
+import com.bmuschko.gradle.docker.tasks.image.*
+
+task pullImage(type: DockerPullImage) {
+    repository = 'wpilib/roborio-cross-ubuntu'
+    tag = '2019-18.04'
+}
+
+task createContainer(type: DockerCreateContainer) {
+    dependsOn pullImage
+    targetImageId pullImage.getImageId()
+    portBindings = ['8080:8080']
+    autoRemove = true
+}
+
+task startContainer(type: DockerStartContainer) {
+    dependsOn createContainer
+    targetContainerId createContainer.getContainerId()
+}
+
+task stopContainer(type: DockerStopContainer) {
+    targetContainerId startContainer.getContainerId()
+}
+
+task integrationTest(type: Test) {
+    description = 'Run automated testing using the wpilib docker'
+    group = 'verification'
+    dependsOn startContainer
+    finalizedBy stopContainer
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')

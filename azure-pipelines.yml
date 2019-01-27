@@ -4,7 +4,9 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/java
 
 trigger:
-
+  branches:
+    include:
+      - refs/heads/*
 
 pool:
   vmImage: 'Ubuntu-16.04'

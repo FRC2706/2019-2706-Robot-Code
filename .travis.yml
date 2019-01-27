@@ -3,6 +3,18 @@ language: java
 jdk:
   oraclejdk11
 
+services:
+  - docker
+
+before_install:
+  - docker pull wpilib/roborio-cross-ubuntu
+  - docker run -d -p 127.0.0.1:80:4567 wpilib/roborio-cross-ubuntu "cd /root/roborio-cross-ubuntu; ./gradlew assemble;"
+  - docker ps -a
+  - docker run wpilib/roborio-cross-ubuntu /bin/sh -c "cd /root/roborio-cross-ubuntu; ./gradlew check;"
+
+script:
+  - ./gradlew check
+
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/

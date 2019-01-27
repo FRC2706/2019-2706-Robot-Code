@@ -13,7 +13,6 @@ pool:
 
 steps:
 - task: Gradle@2
-- script: docker build -t $(dockerId)/$(imageName) . # include other options to meet your needs
   inputs:
     workingDirectory: ''
     gradleWrapperFile: 'gradlew'

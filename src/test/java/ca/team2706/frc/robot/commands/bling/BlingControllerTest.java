@@ -2,9 +2,7 @@ package ca.team2706.frc.robot.commands.bling;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import mockit.Expectations;
-import mockit.Mocked;
-import mockit.Tested;
+import mockit.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,34 +23,36 @@ public class BlingControllerTest {
      */
     @Test
     public void testGetOperationPeriodDuringRealMatch() {
-        new Expectations(DriverStation.class) {{
-            DriverStation.getInstance();
-            result = station;
-        }};
+        new MockDriverStation();
 
-        new Expectations() {{
-            station.isFMSAttached();
-            result = true;
-
-            station.isAutonomous();
-            returns(true, false);
-        }};
-
-        new Expectations(Timer.class) {{
-            Timer.getMatchTime();
-            returns(15D, 135D, 30D, 29D, 0D);
-            times = 5;
-        }};
-
-        // Need to initialize the controller.
-        blingController.initialize();
-
-
-        assertEquals(BlingController.Period.AUTONOMOUS, blingController.getCurrentPeriod());
-        assertEquals(BlingController.Period.TELEOP_WITHOUT_CLIMB, blingController.getCurrentPeriod());
-        assertEquals(BlingController.Period.TELEOP_WITHOUT_CLIMB, blingController.getCurrentPeriod());
-        assertEquals(BlingController.Period.CLIMB, blingController.getCurrentPeriod());
-        assertEquals(BlingController.Period.CLIMB, blingController.getCurrentPeriod());
+//        new Expectations(DriverStation.class) {{
+//            DriverStation.getInstance();
+//            result = station;
+//        }};
+//
+//        new Expectations() {{
+//            station.isFMSAttached();
+//            result = true;
+//
+//            station.isAutonomous();
+//            returns(true, false);
+//        }};
+//
+//        new Expectations(Timer.class) {{
+//            Timer.getMatchTime();
+//            returns(15D, 135D, 30D, 29D, 0D);
+//            times = 5;
+//        }};
+//
+//        // Need to initialize the controller.
+//        blingController.initialize();
+//
+//
+//        assertEquals(BlingController.Period.AUTONOMOUS, blingController.getCurrentPeriod());
+//        assertEquals(BlingController.Period.TELEOP_WITHOUT_CLIMB, blingController.getCurrentPeriod());
+//        assertEquals(BlingController.Period.TELEOP_WITHOUT_CLIMB, blingController.getCurrentPeriod());
+//        assertEquals(BlingController.Period.CLIMB, blingController.getCurrentPeriod());
+//        assertEquals(BlingController.Period.CLIMB, blingController.getCurrentPeriod());
     }
 //
 //    /**
@@ -105,4 +105,11 @@ public class BlingControllerTest {
 //        assertEquals(BlingController.Period.TELEOP_WITHOUT_CLIMB, blingController.getCurrentPeriod());
 //        assertEquals(BlingController.Period.CLIMB, blingController.getCurrentPeriod());
 //    }
+
+    private class MockDriverStation extends MockUp<DriverStation> {
+        @Mock
+        private void $init() {
+            System.out.println("Hit mocked constructor.");
+        }
+    }
 }

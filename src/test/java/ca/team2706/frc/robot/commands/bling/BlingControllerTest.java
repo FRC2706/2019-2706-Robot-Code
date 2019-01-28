@@ -1,6 +1,5 @@
 package ca.team2706.frc.robot.commands.bling;
 
-import ca.team2706.frc.robot.subsystems.Bling;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import mockit.Expectations;
@@ -18,7 +17,7 @@ public class BlingControllerTest {
 
     /* Since DriverStation is accessed statically (it's a singleton), we have to mock all instances of
     it and stub out the static initializer */
-    @Mocked(stubOutClassInitialization=true)
+    @Mocked(stubOutClassInitialization = true)
     private DriverStation station;
 
     @Before
@@ -69,9 +68,9 @@ public class BlingControllerTest {
         }};
 
         new Expectations(Timer.class) {{
-           Timer.getFPGATimestamp();
-           // First one is to get the start time.
-           returns(0D, 0D, 15D, 120D);
+            Timer.getFPGATimestamp();
+            // First one is to get the start time.
+            returns(0D, 0D, 15D, 120D);
         }};
 
         blingController.initialize();

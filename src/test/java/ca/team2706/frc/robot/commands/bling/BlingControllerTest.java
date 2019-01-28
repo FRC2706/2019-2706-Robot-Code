@@ -16,8 +16,9 @@ public class BlingControllerTest {
     @Tested
     private BlingController blingController;
 
-    // Since DriverStation is accessed statically (it's a singleton), we have to mock all instances of it.
-    @Mocked
+    /* Since DriverStation is accessed statically (it's a singleton), we have to mock all instances of
+    it and stub out the static initializer */
+    @Mocked(stubOutClassInitialization=true)
     private DriverStation station;
 
     @Before

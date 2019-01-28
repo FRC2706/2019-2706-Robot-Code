@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.command.Command;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 
 /**
  * Command to control the bling on the robot.
@@ -33,20 +34,14 @@ public class BlingController extends Command {
 
     private boolean useMatchTime;
 
-    private HashMap<Period, ArrayList<BlingPattern>> commands;
+    private final HashMap<Period, ArrayList<BlingPattern>> commands = new HashMap<>();
 
     public BlingController() {
         requires(Bling.getInstance());
 
-        commands = new HashMap<>() {
-            private static final long serialVersionUID = 1L;
-
-            {
-                put(Period.AUTONOMOUS, new ArrayList<>());
-                put(Period.CLIMB, new ArrayList<>());
-                put(Period.TELEOP_WITHOUT_CLIMB, new ArrayList<>());
-            }
-        };
+        commands.put(Period.AUTONOMOUS, new ArrayList<>());
+        commands.put(Period.CLIMB, new ArrayList<>());
+        commands.put(Period.TELEOP_WITHOUT_CLIMB, new ArrayList<>());
 
         /* Make and add the bling patterns.
          * They need to be created in order of highest to lowest priority.
@@ -96,22 +91,23 @@ public class BlingController extends Command {
         // Get the current period
         final Period currentPeriod = getCurrentPeriod();
 
-        // Loop around all the patterns for the current period, and evaluate the conditions
-        for (BlingPattern pattern : commands.get(currentPeriod)) {
-            // Break at the first positive return. 
-            if (pattern.conditionsMet()) {
+        // Filter and find the first pattern whose conditions have been met.
+        Optional<BlingPattern> patternOptional = commands.get(currentPeriod).stream()
+                .filter(BlingPattern::conditionsMet)
+                .findFirst();
 
-                /* Detect if the new pattern whose conditions are met was the last pattern to run.
-                 * If not, end the last pattern that ran, and start the new one.
-                 * Reset the pattern that we're no longer running
-                 */
-                if (currentPattern != null && !currentPattern.equals(pattern)) {
-                    currentPattern.end();
-                    pattern.initialize();
-                }
-                currentPattern = pattern;
-                break;
+        // If there is a pattern, begin processing.
+        if (patternOptional.isPresent()) {
+            final BlingPattern pattern = patternOptional.get();
+            /* Detect if the new pattern whose conditions are met was the last pattern to run.
+             * If not, end the last pattern that ran, and start the new one.
+             * Reset the pattern that we're no longer running
+             */
+            if (currentPattern != null && !currentPattern.equals(patternOptional)) {
+                currentPattern.end();
+                pattern.initialize();
             }
+            currentPattern = pattern;
         }
 
         // Now that we've selected the pattern, run it.

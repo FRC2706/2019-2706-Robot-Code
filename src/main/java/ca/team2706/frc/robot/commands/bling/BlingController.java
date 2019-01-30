@@ -16,9 +16,13 @@ import java.util.Optional;
  */
 public class BlingController extends Command {
 
+
     private BlingPattern currentPattern = null;
     private double startTime = 0;
 
+    /**
+     * Possible periods of the robot.
+     */
     public enum Period {
         AUTONOMOUS, TELEOP_WITHOUT_CLIMB, CLIMB
     }
@@ -43,6 +47,13 @@ public class BlingController extends Command {
         commands.put(Period.CLIMB, new ArrayList<>());
         commands.put(Period.TELEOP_WITHOUT_CLIMB, new ArrayList<>());
 
+        addPatterns();
+    }
+
+    /**
+     * Adds the bling patterns to be used.
+     */
+    private void addPatterns() {
         /* Make and add the bling patterns.
          * They need to be created in order of highest to lowest priority.
          *
@@ -58,7 +69,7 @@ public class BlingController extends Command {
         startTime = Timer.getFPGATimestamp();
         /* If it's already teleop when we start, just subtract the autonomous time
         to make it seem as though we're in teleop. */
-        if (!DriverStation.getInstance().isOperatorControl()) startTime -= AUTONOMOUS_TIME;
+        if (DriverStation.getInstance().isOperatorControl()) startTime -= AUTONOMOUS_TIME;
 
         // If the FMS is attached, use the real match times.
         useMatchTime = DriverStation.getInstance().isFMSAttached();
@@ -72,7 +83,7 @@ public class BlingController extends Command {
      *
      * @param commandToAdd The command to add to the controller's queue.
      */
-    public void add(BlingPattern commandToAdd) {
+    private void add(BlingPattern commandToAdd) {
         // add it to its proper place.
         // Loop around all of the periods it can be in.
         for (Period period : commandToAdd.getPeriod()) {
@@ -103,15 +114,17 @@ public class BlingController extends Command {
              * If not, end the last pattern that ran, and start the new one.
              * Reset the pattern that we're no longer running
              */
-            if (currentPattern != null && !currentPattern.equals(patternOptional)) {
-                currentPattern.end();
+            if (currentPattern == null || !currentPattern.equals(pattern)) {
+                if (currentPattern != null) {
+                    currentPattern.end();
+                }
                 pattern.initialize();
-            }
-            currentPattern = pattern;
-        }
+                currentPattern = pattern;
 
-        // Now that we've selected the pattern, run it.
-        runCurrentPattern();
+                // Now that we've selected the pattern, run it.
+                runCurrentPattern();
+            }
+        }
     }
 
     /**

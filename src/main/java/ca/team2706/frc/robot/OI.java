@@ -1,67 +1,82 @@
 package ca.team2706.frc.robot;
 
-
-import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.config.Config.XBOX_VALUE;
-import edu.wpi.first.wpilibj.DriverStation;
+import ca.team2706.frc.robot.commands.ArcadeDriveWithJoystick;
+import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import edu.wpi.first.wpilibj.command.PrintCommand;
-import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.command.PrintCommand;
-
 
 
 /**
  * This class is the glue that binds the controls on the physical operator interface to the commands
  * and command groups that allow control of the robot.
  */
-// Operator Interface
 public class OI {
-
     // Joystick for driving the robot around
     private final Joystick driverStick;
 
     // Joystick for controlling the mechanisms of the robot
     private final Joystick controlStick;
 
-    public Joystick getDriverJoystick() {
-        return driverStick;
+    /**
+     * Current instance of the OI class.
+     */
+    private static OI currentInstance;
+
+    /**
+     * Gets the current instance of the OI class.
+     *
+     * @return The current instance of OI.
+     */
+    public static OI getInstance() {
+        init();
+        return currentInstance;
     }
 
-    public Joystick getOperatorJoystick() {
-        return controlStick;
+    public static void init() {
+        if (currentInstance == null) {
+            currentInstance = new OI();
+        }
     }
 
     /**
      * Initializes Oi using the two default real joysticks
      */
-    public OI() {
+    private OI() {
         this(new Joystick(0), new Joystick(1));
     }
 
-    
-
     /**
      * Initializes Oi with non-default joysticks
-     * 
-     * @param driverStick The driver joystick to use
+     *
+     * @param driverStick  The driver joystick to use
      * @param controlStick The operator joystick to use
      */
-    public OI(Joystick driverStick, Joystick controlStick) {
+    private OI(Joystick driverStick, Joystick controlStick) {
         // Joystick for driving the robot around
         this.driverStick = driverStick;
 
         // The Joystick for controlling the mechanisms of the robot
         this.controlStick = controlStick;
 
-        JoystickButton joystickButton = new FluidJoystickButton(driverStick, Config.testAction);
-
-        PrintCommand printCommand = new PrintCommand("Command!");
-
-        joystickButton.whenPressed(printCommand);
-      
-
+        // Set subsystem default commands
+        DriveBase.getInstance().setDefaultCommand(
+                new ArcadeDriveWithJoystick(driverStick, 5, true, 4, false));
     }
 
-} 
+    /**
+     * Gets the driver joystick.
+     *
+     * @return The driver joystick.
+     */
+    public Joystick getDriverStick() {
+        return driverStick;
+    }
+
+    /**
+     * Gets the operator joystick.
+     *
+     * @return The operator joystick.
+     */
+    public Joystick getControlStick() {
+        return controlStick;
+    }
+}

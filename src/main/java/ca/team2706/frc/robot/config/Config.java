@@ -2,6 +2,7 @@ package ca.team2706.frc.robot.config;
 
 import ca.team2706.frc.robot.Robot;
 import ca.team2706.frc.robot.RobotState;
+import ca.team2706.frc.robot.config.FluidConstant;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -17,13 +18,11 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.Map;
 
-
 /**
  * Config manager for the robot.
  */
 public class Config {
     private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
-
 
     /**
      * Path to the file which identifies which
@@ -35,12 +34,6 @@ public class Config {
      * ID of the robot that code is running on
      */
     private static final int ROBOT_ID = getRobotId();
-
-   
-
-    // #### Fluid constants ####
-    static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
-    public static final FluidConstant<String> testAction = constant("testAction", XBOX_VALUE.XBOX_A_BUTTON.NTString);
 
     static {
         initialize();
@@ -58,13 +51,71 @@ public class Config {
         }
     }
 
+    static {
+        init();
+    }
+
+
+    // #### Static constants ####
+
+    // Values for driving robot with joystick
+    public static final boolean
+            TELEOP_SQUARE_JOYSTICK_INPUTS = true,
+            TELEOP_BRAKE = false;
+
+    // Timeouts for sending CAN bus commands
+    public static final int
+            CAN_SHORT = 10,
+            CAN_LONG = 100;
+
+    // DriveBase motor CAN IDs
+    public static final int
+            LEFT_FRONT_DRIVE_MOTOR_ID = robotSpecific(1, 1, 1),
+            LEFT_BACK_DRIVE_MOTOR_ID = robotSpecific(3, 3, 3),
+            RIGHT_FRONT_DRIVE_MOTOR_ID = robotSpecific(2, 2, 2),
+            RIGHT_BACK_DRIVE_MOTOR_ID = robotSpecific(4, 4, 4);
+
+    public static final boolean
+            INVERT_FRONT_LEFT_DRIVE = robotSpecific(false, false, false),
+            INVERT_BACK_LEFT_DRIVE = robotSpecific(false, false, false),
+            INVERT_FRONT_RIGHT_DRIVE = robotSpecific(true, true, true),
+            INVERT_BACK_RIGHT_DRIVE = robotSpecific(true, true, true);
+
+    public static final boolean DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);
+
+    // Talon ID for the Pigeon
+    public static final int GYRO_TALON_ID = robotSpecific(5, 5, 5);
+
+    // The amount of encoder ticks that the robot must drive to go one foot
+    public static final double DRIVE_ENCODER_DPP
+            = robotSpecific(Math.PI / 8192.0, Math.PI / 8192.0, Math.PI / 8192.0);
+
+    public static final boolean ENABLE_CAMERA = robotSpecific(true, true, false);
+
+    public static final int PURPE_LIGHT = robotSpecific(3, 3, 3);
+
+    // #### Fluid constants ####
+    static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
+
+
+    /**
+     * Initializes the Config class.
+     */
+    public static void init() {
+        if (!initialized) {
+            Robot.setOnStateChange(Config::saveConstants);
+
+            initialized = true;
+        }
+    }
+
     /**
      * Reads the robot type from the filesystem
      *
      * @return The integer ID of the robot defaulting to 0
      */
     private static int getRobotId() {
-        int id = 0;
+        int id;
 
         try (BufferedReader reader = Files.newBufferedReader(ROBOT_ID_LOC)) {
             id = Integer.parseInt(reader.readLine());
@@ -80,24 +131,24 @@ public class Config {
      * Returns one of the values passed based on the robot ID
      *
      * @param first The first value (default value)
-     * @param more Other values that could be selected
-     * @param <T> The type of the value
+     * @param more  Other values that could be selected
+     * @param <T>   The type of the value
      * @return The value selected based on the ID of the robot
      */
     @SafeVarargs
     private static <T> T robotSpecific(T first, T... more) {
         // Return the first value if the robot id doesn't fall between second and last index
-        if(ROBOT_ID < 1 || ROBOT_ID > more.length) {
+        if (ROBOT_ID < 1 || ROBOT_ID > more.length) {
             return first;
-        }
-        else {
+        } else {
             return more[ROBOT_ID - 1];
         }
     }
 
     /**
      * Creates a new integer fluid constant.
-     * @param name The name for the constant type.
+     *
+     * @param name         The name for the constant type.
      * @param initialValue The initialValue of the constant.
      * @return A new FluidConstant object representing the constant.
      */
@@ -126,53 +177,58 @@ public class Config {
 
     /**
      * Writes the given string to a file on the Roborio.
+     *
      * @param writable The string to be written to file.
      */
     private static void writeFile(String writable) {
         // Attempt to write the string to the file, catching any errors.
-        try (BufferedWriter writer = Files.newBufferedWriter(SAVE_FILE)){
+        try (BufferedWriter writer = Files.newBufferedWriter(SAVE_FILE)) {
             writer.write(writable);
         } catch (IOException e) {
             DriverStation.reportWarning("Unable to save fluid constants to file.", true);
         }
     }
 
-    public enum XBOX_VALUE { 
+    /**
+     * Xbox controller binding information.
+     * Contains the link between the Xbox's buttons' port and the NetworkTables key used to describe the action.
+     */
+    public enum XboxValue {
         // Axis and triggers
         // Left on the Left Stick
-        XBOX_LEFT_STICK_X (0, "L_STICK_X"),
-        XBOX_LEFT_STICK_Y (1, "L_STICK_Y"),
-        XBOX_BACK_LEFT_TRIGGER (2, "L_TRIG"),
-        XBOX_BACK_RIGHT_TRIGGER (3, "R_TRIG"),
-        XBOX_RIGHT_STICK_X (4, "R_STICK_X"),
-        XBOX_RIGHT_STICK_Y (5, "R_STICK_Y"),
+        XBOX_LEFT_STICK_X(0, "L_STICK_X"),
+        XBOX_LEFT_STICK_Y(1, "L_STICK_Y"),
+        XBOX_BACK_LEFT_TRIGGER(2, "L_TRIG"),
+        XBOX_BACK_RIGHT_TRIGGER(3, "R_TRIG"),
+        XBOX_RIGHT_STICK_X(4, "R_STICK_X"),
+        XBOX_RIGHT_STICK_Y(5, "R_STICK_Y"),
 
         // Buttons
-        XBOX_A_BUTTON (1, "A"),
-        XBOX_B_BUTTON (2, "B"),
-        XBOX_X_BUTTON (3, "X"),
-        XBOX_Y_BUTTON (4, "Y"),
-        XBOX_LB_BUTTON (5, "LB"),
-        XBOX_RB_BUTTON (6, "RB"),
-        XBOX_SELECT_BUTTON (7, "SELECT"),
-        XBOX_START_BUTTON (8, "START"),
-        XBOX_LEFT_AXIS_BUTTON (9, "L_AXIS_BUTTON"),
-        XBOX_RIGHT_AXIS_BUTTON (10, "R_AXIS_BUTTON"),
+        XBOX_A_BUTTON(1, "A"),
+        XBOX_B_BUTTON(2, "B"),
+        XBOX_X_BUTTON(3, "X"),
+        XBOX_Y_BUTTON(4, "Y"),
+        XBOX_LB_BUTTON(5, "LB"),
+        XBOX_RB_BUTTON(6, "RB"),
+        XBOX_SELECT_BUTTON(7, "SELECT"),
+        XBOX_START_BUTTON(8, "START"),
+        XBOX_LEFT_AXIS_BUTTON(9, "L_AXIS_BUTTON"),
+        XBOX_RIGHT_AXIS_BUTTON(10, "R_AXIS_BUTTON"),
 
         // POV (The D-PAD on the XBOX Controller)
-        XBOX_POV_UP (0, "UP"),
-        XBOX_POV_UP_RIGHT (45, "UP_RIGHT"),
-        XBOX_POV_RIGHT (90, "RIGHT"),
-        XBOX_POV_DOWN_RIGHT (135, "DOWN_RIGHT"),
-        XBOX_POV_DOWN (180, "DOWN"),
-        XBOX_POV_DOWN_LEFT (225, "DOWN_LEFT"),
-        XBOX_POV_LEFT (270, "LEFT"),
-        XBOX_POV_UP_LEFT (315, "UP_LEFT");
-        
+        XBOX_POV_UP(0, "UP"),
+        XBOX_POV_UP_RIGHT(45, "UP_RIGHT"),
+        XBOX_POV_RIGHT(90, "RIGHT"),
+        XBOX_POV_DOWN_RIGHT(135, "DOWN_RIGHT"),
+        XBOX_POV_DOWN(180, "DOWN"),
+        XBOX_POV_DOWN_LEFT(225, "DOWN_LEFT"),
+        XBOX_POV_LEFT(270, "LEFT"),
+        XBOX_POV_UP_LEFT(315, "UP_LEFT");
+
         private String NTString;
         private int port;
 
-        XBOX_VALUE (int port, String NTString) {
+        XboxValue(int port, String NTString) {
             this.NTString = NTString;
             this.port = port;
         }
@@ -185,60 +241,31 @@ public class Config {
         }
 
         /**
-         * @return the port value of the current enum
+         * @return the port
          */
         public int getPort() {
             return port;
         }
 
 
-        // Create a hashmap of NetworkTable values and enums
-        private static final HashMap<String, String> nameMap = new HashMap<>();
+        // Create a hashmap of the networktables entry and the
+        private static final HashMap<String, XboxValue> nameMap = new HashMap<>();
 
         static {
-            for (XBOX_VALUE value : XBOX_VALUE.values()) {
-                nameMap.put(value.getNTString(), value.name());
+            for (XboxValue value : XboxValue.values()) {
+                nameMap.put(value.getNTString(), value);
             }
         }
+
         /**
-         * @param NTString
-         * @return The name of the constant corresponding to the string NTString
+         * Gets the XboxValue constant with the given NetworkTables key.
+         *
+         * @param ntKey The NetworkTables key for the constant.
+         * @return The constant object.
          */
-
-        public static String getConstantName(String NTString) {
-            return XBOX_VALUE.nameMap.get(NTString);
-            
+        public static XboxValue getXboxValueFromNTKey(final String ntKey) {
+            return nameMap.get(ntKey);
         }
-
     }
-
-    // All Xbox controller constants.
-    // public static final int
-    //         // Axis and triggers
-    //         XBOX_LEFT_AXIS = 0,
-    //         XBOX_RIGHT_AXIS = 1,
-    //         XBOX_BACK_LEFT_TRIGGER = 2,
-    //         XBOX_BACK_RIGHT_TRIGGER = 3,
-    //         XBOX_RIGHT_AXIS_X = 4,
-    //         XBOX_RIGHT_AXIS_Y = 5,
-    //         // Buttons
-    //         XBOX_A_BUTTON = 1,
-    //         XBOX_B_BUTTON = 2,
-    //         XBOX_X_BUTTON = 3,
-    //         XBOX_Y_BUTTON = 4,
-    //         XBOX_LB_BUTTON = 5,
-    //         XBOX_RB_BUTTON = 6,
-    //         XBOX_SELECT_BUTTON = 7,
-    //         XBOX_START_BUTTON = 8,
-    //         XBOX_LEFT_AXIS_BUTTON = 9,
-    //         XBOX_RIGHT_AXIS_BUTTON = 10,
-    //         // POV
-    //         XBOX_POV_UP = 0,
-    //         XBOX_POV_UP_RIGHT = 45,
-    //         XBOX_POV_RIGHT = 90,
-    //         XBOX_POV_DOWN_RIGHT = 135,
-    //         XBOX_POV_DOWN = 180,
-    //         XBOX_POV_DOWN_LEFT = 225,
-    //         XBOX_POV_LEFT = 270,
-    //         XBOX_POV_UP_LEFT = 315;
 }
+

@@ -79,7 +79,7 @@ public class BlingControllerTest {
         new Expectations(Timer.class) {{
             Timer.getFPGATimestamp();
             // First one is to get the start time.
-            returns(0D, 0D, 15D, 120D);
+            returns(0D, 0D, 15D, 121D);
         }};
 
         blingController.initialize();
@@ -98,8 +98,8 @@ public class BlingControllerTest {
             station.isFMSAttached();
             result = false;
 
-            station.isAutonomous();
-            result = false;
+            station.isOperatorControl();
+            result = true;
         }};
 
         new Expectations(Timer.class) {{

@@ -77,7 +77,7 @@ public class Robot extends TimedRobot {
         Scheduler.getInstance().run();
     }
 
-    private Command[] commands = {};
+    private final Command[] commands = {};
 
     /**
      * Caled at the beginning of autonomous.
@@ -86,7 +86,12 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         // Iterate through each of the state-change listeners and call them.
         onStateChange(RobotState.AUTONOMOUS);
+    }
 
+    /*
+    * Checks to see if the desired command is assigned and runs 0 or does nothing if not
+    * */
+    private void SelecotrInit(){
         // The index based the voltage of the selector
         int index = DriveBase.getInstance().getAnalogSelectorIndex();
 
@@ -96,7 +101,6 @@ public class Robot extends TimedRobot {
         } else if (commands.length > 0 && commands[0] != null) {
             commands[0].start();
         }
-
     }
 
     /**

@@ -21,6 +21,7 @@ public class AnalogSelector extends SendableBase {
     public void initSendable(SendableBuilder builder) {
         builder.addDoubleProperty("Voltage", analogInput::getAverageVoltage, null);
         builder.addDoubleProperty("Index", this::getIndex, null);
+        addChild(analogInput);
     }
 
     public int getIndex() {

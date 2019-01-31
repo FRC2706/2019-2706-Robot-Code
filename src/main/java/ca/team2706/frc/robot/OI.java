@@ -57,8 +57,7 @@ public class OI {
         this.controlStick = controlStick;
 
         // Set subsystem default commands
-        DriveBase.getInstance().setDefaultCommand(
-                new ArcadeDriveWithJoystick(driverStick, 5, true, 4, false));
+        DriveBase.getInstance().setDefaultCommand(new ArcadeDriveWithJoystick(driverStick, 5, true, 4, false));
     }
 
     /**

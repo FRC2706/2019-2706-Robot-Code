@@ -88,10 +88,10 @@ public class Robot extends TimedRobot {
         onStateChange(RobotState.AUTONOMOUS);
     }
 
-    /*
-    * Checks to see if the desired command is assigned and runs 0 or does nothing if not
-    * */
-    private void SelecotrInit(){
+    /**
+     * Checks to see if the desired command is assigned and runs 0 or does nothing if not
+     */
+    private void selectorInit(){
         // The index based the voltage of the selector
         int index = DriveBase.getInstance().getAnalogSelectorIndex();
 

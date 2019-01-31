@@ -9,36 +9,61 @@ import edu.wpi.first.wpilibj.command.Command;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 
 /**
  * Command to control the bling on the robot.
  */
 public class BlingController extends Command {
 
+
     private BlingPattern currentPattern = null;
     private double startTime = 0;
 
+    /**
+     * Possible periods of the robot.
+     */
     public enum Period {
         AUTONOMOUS, TELEOP_WITHOUT_CLIMB, CLIMB
     }
 
-    boolean useMatchTime = false;
+    /**
+     * How long (in seconds) that teleop lasts (including climb time)
+     */
+    private static double TELEOP_TIME = 135;
+    /**
+     * How long (in seconds) the autonomous/sandstorm period lasts.
+     */
+    private static double AUTONOMOUS_TIME = 15;
 
-    private HashMap<Period, ArrayList<BlingPattern>> commands;
+    /**
+     * How long the climb period at the end of the match is (in seconds)
+     */
+    private static double CLIMB_TIME = 30;
+
+    /**
+     * How long the entire match is (in seconds).
+     */
+    private static double TOTAL_TIME = 150;
+
+    private boolean useMatchTime;
+
+    private final HashMap<Period, ArrayList<BlingPattern>> commands = new HashMap<>();
 
     public BlingController() {
         requires(Bling.getInstance());
 
-        commands = new HashMap<>() {
-            private static final long serialVersionUID = 1L;
+        commands.put(Period.AUTONOMOUS, new ArrayList<>());
+        commands.put(Period.CLIMB, new ArrayList<>());
+        commands.put(Period.TELEOP_WITHOUT_CLIMB, new ArrayList<>());
 
-            {
-                put(Period.AUTONOMOUS, new ArrayList<>());
-                put(Period.CLIMB, new ArrayList<>());
-                put(Period.TELEOP_WITHOUT_CLIMB, new ArrayList<>());
-            }
-        };
+        addPatterns();
+    }
 
+    /**
+     * Adds the bling patterns to be used.
+     */
+    private void addPatterns() {
         /* Make and add the bling patterns.
          * They need to be created in order of highest to lowest priority.
          *
@@ -52,11 +77,12 @@ public class BlingController extends Command {
     @Override
     public void initialize() {
         startTime = Timer.getFPGATimestamp();
-        // If it's already teleop when we start, just subtract 15 seconds to make it seem as though we're in teleop.
-        if (!DriverStation.getInstance().isOperatorControl()) startTime -= 15;
+        /* If it's already teleop when we start, just subtract the autonomous time
+        to make it seem as though we're in teleop. */
+        if (DriverStation.getInstance().isOperatorControl()) startTime -= AUTONOMOUS_TIME;
 
-        // If the match time provided is not below 0, it's valid and we're in a game and use it.
-        useMatchTime = Timer.getMatchTime() >= 0;
+        // If the FMS is attached, use the real match times.
+        useMatchTime = DriverStation.getInstance().isFMSAttached();
     }
 
     /**
@@ -67,7 +93,7 @@ public class BlingController extends Command {
      *
      * @param commandToAdd The command to add to the controller's queue.
      */
-    public void add(BlingPattern commandToAdd) {
+    private void add(BlingPattern commandToAdd) {
         // add it to its proper place.
         // Loop around all of the periods it can be in.
         for (Period period : commandToAdd.getPeriod()) {
@@ -86,26 +112,29 @@ public class BlingController extends Command {
         // Get the current period
         final Period currentPeriod = getCurrentPeriod();
 
-        // Loop around all the patterns for the current period, and evaluate the conditions
-        for (BlingPattern pattern : commands.get(currentPeriod)) {
-            // Break at the first positive return. 
-            if (pattern.conditionsMet()) {
+        // Filter and find the first pattern whose conditions have been met.
+        Optional<BlingPattern> patternOptional = commands.get(currentPeriod).stream()
+                .filter(BlingPattern::conditionsMet)
+                .findFirst();
 
-                /* Detect if the new pattern whose conditions are met was the last pattern to run.
-                 * If not, end the last pattern that ran, and start the new one.
-                 * Reset the pattern that we're no longer running
-                 */
-                if (currentPattern != null && !currentPattern.equals(pattern)) {
+        // If there is a pattern, begin processing.
+        if (patternOptional.isPresent()) {
+            final BlingPattern pattern = patternOptional.get();
+            /* Detect if the new pattern whose conditions are met was the last pattern to run.
+             * If not, end the last pattern that ran, and start the new one.
+             * Reset the pattern that we're no longer running
+             */
+            if (currentPattern == null || !currentPattern.equals(pattern)) {
+                if (currentPattern != null) {
                     currentPattern.end();
-                    pattern.initialize();
                 }
+                pattern.initialize();
                 currentPattern = pattern;
-                break;
+
+                // Now that we've selected the pattern, run it.
+                runCurrentPattern();
             }
         }
-
-        // Now that we've selected the pattern, run it.
-        runCurrentPattern();
     }
 
     /**
@@ -119,20 +148,34 @@ public class BlingController extends Command {
         currentPattern = null;
     }
 
-    private Period getCurrentPeriod() {
+    /**
+     * Determines the robot's current period.
+     *
+     * @return The current robot period.
+     */
+    public Period getCurrentPeriod() {
         final Period currentPeriod;
         // If we're using match time, use match time. Otherwise, use the other time.
-        final double timeSinceStart = (useMatchTime) ? Timer.getMatchTime() : Timer.getFPGATimestamp() - startTime;
+        final double timeIntoMatch = getTimeSinceStartOfMatch();
 
         if (DriverStation.getInstance().isAutonomous()) {
             currentPeriod = Period.AUTONOMOUS;
-        } else if (timeSinceStart <= 105) {
+        } else if (timeIntoMatch <= TOTAL_TIME - CLIMB_TIME) {
             currentPeriod = Period.TELEOP_WITHOUT_CLIMB;
         } else {
             currentPeriod = Period.CLIMB;
         }
 
         return currentPeriod;
+    }
+
+    /**
+     * Gets the time into the match, in seconds.
+     *
+     * @return How long it's been since the start of the match, in seconds.
+     */
+    public double getTimeSinceStartOfMatch() {
+        return (useMatchTime) ? TELEOP_TIME - Timer.getMatchTime() + AUTONOMOUS_TIME : Timer.getFPGATimestamp() - startTime;
     }
 
     /**

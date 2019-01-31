@@ -98,7 +98,7 @@ public class DriveBase extends Subsystem {
 
         gyro = new PigeonIMU(new TalonSRX(Config.GYRO_TALON_ID));
 
-        light = new PWM(Config.PURPE_LIGHT);
+        light = new PWM(Config.PURPLE_LIGHT);
         light.setRaw(4095);
 
         // TODO: Also output data to logging/smartdashboard

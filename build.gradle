@@ -81,6 +81,7 @@ task stopContainer(type: DockerStopContainer) {
 task integrationTest(type: Test) {
     description = 'Run automated testing using the wpilib docker'
     group = 'verification'
+    jvmArgs "-javaagent:${classpath.find { it.name.contains("jmockit") }.absolutePath}"
     dependsOn startContainer
     finalizedBy stopContainer
 }

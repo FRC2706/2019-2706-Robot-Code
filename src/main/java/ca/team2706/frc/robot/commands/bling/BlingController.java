@@ -28,13 +28,23 @@ public class BlingController extends Command {
     }
 
     /**
-     * How long (in seconds) that teleop lasts.
+     * How long (in seconds) that teleop lasts (including climb time)
      */
     private static double TELEOP_TIME = 135;
     /**
      * How long (in seconds) the autonomous/sandstorm period lasts.
      */
     private static double AUTONOMOUS_TIME = 15;
+
+    /**
+     * How long the climb period at the end of the match is (in seconds)
+     */
+    private static double CLIMB_TIME = 30;
+
+    /**
+     * How long the entire match is (in seconds).
+     */
+    private static double TOTAL_TIME = 150;
 
     private boolean useMatchTime;
 
@@ -150,7 +160,7 @@ public class BlingController extends Command {
 
         if (DriverStation.getInstance().isAutonomous()) {
             currentPeriod = Period.AUTONOMOUS;
-        } else if (timeIntoMatch <= 120) {
+        } else if (timeIntoMatch <= TOTAL_TIME - CLIMB_TIME) {
             currentPeriod = Period.TELEOP_WITHOUT_CLIMB;
         } else {
             currentPeriod = Period.CLIMB;

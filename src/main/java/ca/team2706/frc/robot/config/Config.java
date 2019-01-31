@@ -68,6 +68,9 @@ public class Config {
     // Talon ID for the Pigeon
     public static final int GYRO_TALON_ID = robotSpecific(5, 5, 5);
 
+    // Selector Channel
+    public static final int SELECTOR_ID = robotSpecific(0, 0, 0);
+
     // The amount of encoder ticks that the robot must drive to go one foot
     public static final double DRIVE_ENCODER_DPP
             = robotSpecific(Math.PI / 8192.0, Math.PI / 8192.0, Math.PI / 8192.0);

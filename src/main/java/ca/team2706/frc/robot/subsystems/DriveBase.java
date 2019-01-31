@@ -8,6 +8,8 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
+import ca.team2706.frc.robot.sensors.AnalogSelector;
+
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -50,9 +52,15 @@ public class DriveBase extends Subsystem {
     private final PigeonIMU gyro;
 
     /**
+     * Analog Selector
+     */
+    private final AnalogSelector selector;
+
+     /*
      * Purple light that goes on the robot
      */
     private final PWM light;
+
 
     /**
      * Creates a drive base, and initializes all required sensors and motors
@@ -98,7 +106,10 @@ public class DriveBase extends Subsystem {
 
         gyro = new PigeonIMU(new TalonSRX(Config.GYRO_TALON_ID));
 
+        selector = new AnalogSelector(Config.SELECTOR_ID);
+
         light = new PWM(Config.PURPLE_LIGHT);
+
         light.setRaw(4095);
 
         // TODO: Also output data to logging/smartdashboard
@@ -110,6 +121,7 @@ public class DriveBase extends Subsystem {
         addChild(robotDriveBase);
 
         addChild("Gyroscope", Sendables.newPigeonSendable(gyro));
+        addChild("Selector", selector);
 
         addChild("Left Encoder", Sendables.newTalonEncoderSendable(leftFrontMotor));
         addChild("Right Encoder", Sendables.newTalonEncoderSendable(rightFrontMotor));
@@ -118,6 +130,10 @@ public class DriveBase extends Subsystem {
 
         setOpenLoopMode();
         setBrakeMode(false);
+    }
+
+    public int getAnalogSelectorIndex(){
+        return selector.getIndex();
     }
 
 

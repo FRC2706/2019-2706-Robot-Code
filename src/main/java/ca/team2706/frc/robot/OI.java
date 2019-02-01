@@ -1,6 +1,6 @@
 package ca.team2706.frc.robot;
 
-import ca.team2706.frc.robot.commands.ArcadeDriveWithJoystick;
+import ca.team2706.frc.robot.commands.drivebase.ArcadeDriveWithJoystick;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.Joystick;
 

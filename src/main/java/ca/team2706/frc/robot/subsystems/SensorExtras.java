@@ -23,7 +23,7 @@ public class SensorExtras extends Subsystem {
     private static final Map<SensorType, int[]> allocationTable = Map.ofEntries(
             Map.entry(SensorType.Talon, new int[]{5, 6, 7, 8}),
             Map.entry(SensorType.Pwm, new int[]{0, 1, 2}),
-            Map.entry(SensorType.AnalogInput, new int[]{0, 1}),
+            Map.entry(SensorType.AnalogInput, new int[]{1}),
             Map.entry(SensorType.Dio, new int[]{0, 1, 2, 3}),
             Map.entry(SensorType.Relay, new int[]{0, 1})
     );

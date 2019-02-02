@@ -3,9 +3,7 @@ package ca.team2706.frc.robot.subsystems;
 import ca.team2706.frc.robot.Sendables;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.sensors.AnalogSelector;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.InvertType;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
@@ -170,6 +168,36 @@ public class DriveBase extends Subsystem {
     }
 
     /**
+     * Selects local encoders and the current sensor
+     */
+    private void selectEncodersSum() {
+        leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_SHORT);
+        rightFrontMotor.configRemoteFeedbackFilter(leftFrontMotor.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, 0, Config.CAN_SHORT);
+
+        rightFrontMotor.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Config.CAN_SHORT);
+        rightFrontMotor.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative, Config.CAN_SHORT);
+
+        rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, 0, Config.CAN_SHORT);
+        rightFrontMotor.configSelectedFeedbackCoefficient(Config.DRIVE_ENCODER_DPP / 2);
+
+        leftFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_LEFT.value());
+        rightFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_RIGHT.value());
+
+        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Config.CAN_SHORT);
+        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Config.CAN_SHORT);
+        leftFrontMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Config.CAN_SHORT);
+
+        leftFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
+        rightFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
+
+        rightFrontMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
+        rightFrontMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
+        rightFrontMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value());
+
+        rightFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
+    }
+
+    /**
      * Sets the talons to a disabled mode
      */
     public void setDisabledMode() {
@@ -194,6 +222,20 @@ public class DriveBase extends Subsystem {
             driveMode = DriveMode.OpenLoopVoltage;
         }
     }
+
+    /**
+     * Sets the talons to a disabled mode
+     */
+    public void setPositionNoGyroMode() {
+        if (driveMode != DriveMode.Disabled) {
+            stop();
+            selectEncodersSum();
+            reset();
+
+            driveMode = DriveMode.Disabled;
+        }
+    }
+
 
     /**
      * Changes whether current limiting should be used
@@ -278,6 +320,16 @@ public class DriveBase extends Subsystem {
         follow();
     }
 
+    public void setPosition(double setpoint, double speed) {
+        leftFrontMotor.configClosedLoopPeakOutput(0, speed);
+        rightFrontMotor.configClosedLoopPeakOutput(0, speed);
+
+        rightFrontMotor.set(ControlMode.Position, setpoint);
+        leftFrontMotor.follow(rightFrontMotor);
+
+        follow();
+    }
+
     /**
      * Get the distance travelled by the left encoder in feet
      *
@@ -346,6 +398,14 @@ public class DriveBase extends Subsystem {
         resetGyro();
     }
 
+    public double getLeftError() {
+        return leftFrontMotor.getClosedLoopError(0);
+    }
+
+    public double getRightError() {
+        return rightFrontMotor.getClosedLoopError(0);
+    }
+
     /**
      * The drive mode of the robot
      */
@@ -358,6 +418,11 @@ public class DriveBase extends Subsystem {
         /**
          * Standard open loop voltage control
          */
-        OpenLoopVoltage;
+        OpenLoopVoltage,
+
+        /**
+         * Performs closed loop position control without heading support
+         */
+        PositionNoGyro;
     }
 }

@@ -20,6 +20,8 @@ import java.util.function.Consumer;
 public class Robot extends TimedRobot {
     private static boolean isInitialized;
 
+    private Command[] commands;
+
 
     /**
      * Method run on robot initialization.
@@ -45,6 +47,12 @@ public class Robot extends TimedRobot {
         if (Config.ENABLE_CAMERA) {
             CameraServer.getInstance().startAutomaticCapture();
         }
+
+        commands = new Command[] {
+                OI.getInstance().driveCommand,
+                OI.getInstance().driveCommand,
+                new StraightDrive(() -> 0.2, () -> 5.0, () -> 100)
+        };
     }
 
     /**
@@ -76,8 +84,6 @@ public class Robot extends TimedRobot {
     public void disabledPeriodic() {
         Scheduler.getInstance().run();
     }
-
-    private final Command[] commands = {};
 
     /**
      * Caled at the beginning of autonomous.

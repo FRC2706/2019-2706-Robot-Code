@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 
 public class AnalogSelector extends SendableBase {
 
-    private static final Range[] voltages = {new Range(0, 2.5), new Range(2.5, 2.75),
+    private static final Range[] VOLTAGE_RANGES = {new Range(0, 2.5), new Range(2.5, 2.75),
             new Range(2.75, 3.1), new Range(3.1, 3.5), new Range(3.5, 3.75),
             new Range(3.75, 3.95), new Range(3.95, 4.1), new Range(4.1, 4.2),
             new Range(4.2, 4.3), new Range(4.3, 4.4), new Range(4.4, 4.5),
@@ -30,9 +30,9 @@ public class AnalogSelector extends SendableBase {
 
         int index = 0;
         // Check each voltage range
-        for (int i = 0; i < voltages.length; i++) {
+        for (int i = 0; i < VOLTAGE_RANGES.length; i++) {
             // Check if the voltage is within the current voltage range
-            if (voltages[i].isWithin(voltage)) {
+            if (VOLTAGE_RANGES[i].isWithin(voltage)) {
                 index = i;
                 break;
             }

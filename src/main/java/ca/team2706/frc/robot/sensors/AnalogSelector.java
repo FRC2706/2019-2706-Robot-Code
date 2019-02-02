@@ -31,7 +31,7 @@ public class AnalogSelector extends SendableBase {
         // Check each voltage range
         for (int i = 0; i < voltages.length; i++) {
             // Get the current voltage
-            
+
             // Check if the voltage is within the current voltage range
             if (voltage >= voltages[i].min && voltage < voltages[i].max) {
                 // The selector is within this range

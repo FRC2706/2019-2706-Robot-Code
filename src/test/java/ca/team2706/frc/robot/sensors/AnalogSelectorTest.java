@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot.sensors;
 
+import mockit.Injectable;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,13 +28,14 @@ public class AnalogSelectorTest {
         return ((range.min + range.max) / 2);
     }
 
-    @Before
-    public void setup() {
-        analogSelector = new AnalogSelector(0);
-    }
-
+    /**
+     * Tests to ensure that the autonomous selector determines the right selected index given the voltage.
+     * @param channel The channel with which the
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
     @Test
-    public void testGetIndex() throws NoSuchFieldException, IllegalAccessException {
+    public void testGetIndex(@Injectable("0") int channel) throws NoSuchFieldException, IllegalAccessException {
 
         // The voltages from the AnalogSelector Class
         Field field = analogSelector.getClass().getDeclaredField("voltages");

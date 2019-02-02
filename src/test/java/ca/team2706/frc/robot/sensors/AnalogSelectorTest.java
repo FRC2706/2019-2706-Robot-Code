@@ -18,7 +18,7 @@ import static junit.framework.TestCase.assertEquals;
  * Class to test the AnalogSector on the robot
  */
 public class AnalogSelectorTest {
-    @Mocked
+    @Mocked(stubOutClassInitialization = true)
     AnalogInput analogInput;
     @Tested
     private AnalogSelector analogSelector;

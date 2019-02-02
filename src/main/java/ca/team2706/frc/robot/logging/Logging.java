@@ -11,8 +11,7 @@ public class Logging {
     private static final Logger LOGGER = LogManager.getLogger(Robot.class.getName());
 
     public static void init() {
-        Logging.d("debug log");
-        Logging.i("start logging");
+        Logging.i("Starting to log");
     }
 
     public static void d(Object message) {
@@ -62,6 +61,3 @@ public class Logging {
         }
     }
 }
-
-
-

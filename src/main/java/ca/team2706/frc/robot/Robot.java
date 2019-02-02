@@ -11,8 +11,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
@@ -21,7 +19,6 @@ import java.util.function.Consumer;
  * Main Robot class
  */
 public class Robot extends TimedRobot {
-
     private static boolean isInitialized;
 
     /**
@@ -44,9 +41,9 @@ public class Robot extends TimedRobot {
         // OI depends on subsystems, so initialize it after
         OI.init();
 
-         //The USB camera used on the Robot, not enabled during simulation mode
+        // The USB camera used on the Robot, not enabled during simulation mode
         if (Config.ENABLE_CAMERA) {
-            //CameraServer.getInstance().startAutomaticCapture();
+            CameraServer.getInstance().startAutomaticCapture();
         }
     }
 
@@ -162,7 +159,6 @@ public class Robot extends TimedRobot {
      * @param args Arguments passed on startup
      */
     public static void main(String[] args) {
-
         Logging.init();
 
         Runtime.getRuntime().addShutdownHook(new Thread(Robot::shutdown));

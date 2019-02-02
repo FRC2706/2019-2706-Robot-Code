@@ -28,26 +28,35 @@ public class AnalogSelector extends SendableBase {
 
         final double voltage = analogInput.getAverageVoltage();
 
+        int index = 0;
         // Check each voltage range
         for (int i = 0; i < voltages.length; i++) {
-            // Get the current voltage
-
             // Check if the voltage is within the current voltage range
-            if (voltage >= voltages[i].min && voltage < voltages[i].max) {
-                // The selector is within this range
-                return i;
+            if (voltages[i].isWithin(voltage)) {
+                index = i;
+                break;
             }
         }
 
-        // Default to index of 0
-        return 0;
+        return index;
     }
+
     public static class Range {
         public final double min, max;
 
-        public Range (double min, double max) {
+        public Range(double min, double max) {
             this.min = min;
             this.max = max;
+        }
+
+        /**
+         * Determines if the number is within this range.
+         *
+         * @param number The number to be tested.
+         * @return True if it's within range, false otherwise.
+         */
+        public boolean isWithin(final double number) {
+            return min <= number && number <= max;
         }
     }
 }

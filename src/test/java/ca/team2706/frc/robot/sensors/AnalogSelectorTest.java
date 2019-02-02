@@ -13,13 +13,13 @@ import mockit.Tested;
 
 import static junit.framework.TestCase.assertEquals;
 
-// d
 /**
  * Class to test the AnalogSector on the robot
  */
 public class AnalogSelectorTest {
     @Mocked
     AnalogInput analogInput;
+
     @Tested
     private AnalogSelector analogSelector;
 

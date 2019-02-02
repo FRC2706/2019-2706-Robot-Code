@@ -1,8 +1,5 @@
 package ca.team2706.frc.robot;
 
-import java.util.ArrayList;
-import java.util.function.Consumer;
-
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.Bling;
 import ca.team2706.frc.robot.subsystems.DriveBase;
@@ -13,6 +10,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+
+import java.util.ArrayList;
+import java.util.function.Consumer;
 
 /**
  * Main Robot class
@@ -91,7 +91,7 @@ public class Robot extends TimedRobot {
     /**
      * Checks to see if the desired command is assigned and runs 0 or does nothing if not
      */
-    private void selectorInit(){
+    private void selectorInit() {
         // The index based the voltage of the selector
         int index = DriveBase.getInstance().getAnalogSelectorIndex();
 

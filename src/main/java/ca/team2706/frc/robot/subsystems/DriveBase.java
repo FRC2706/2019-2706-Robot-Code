@@ -2,14 +2,13 @@ package ca.team2706.frc.robot.subsystems;
 
 import ca.team2706.frc.robot.Sendables;
 import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.sensors.AnalogSelector;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
-import ca.team2706.frc.robot.sensors.AnalogSelector;
-
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -61,7 +60,7 @@ public class DriveBase extends Subsystem {
      */
     private final AnalogSelector selector;
 
-     /*
+    /*
      * Purple light that goes on the robot
      */
     private final PWM light;
@@ -141,7 +140,7 @@ public class DriveBase extends Subsystem {
      *
      * @return The index from 1-12 or 0 if unplugged
      */
-    public int getAnalogSelectorIndex(){
+    public int getAnalogSelectorIndex() {
         return selector.getIndex();
     }
 
@@ -174,7 +173,7 @@ public class DriveBase extends Subsystem {
      * Sets the talons to a disabled mode
      */
     public void setDisabledMode() {
-        if(driveMode != DriveMode.Disabled) {
+        if (driveMode != DriveMode.Disabled) {
             stop();
 
             reset();
@@ -187,7 +186,7 @@ public class DriveBase extends Subsystem {
      * Switches the talons to a mode that is optimal for driving the robot using human input
      */
     public void setOpenLoopVoltageMode() {
-        if(driveMode != DriveMode.OpenLoopVoltage) {
+        if (driveMode != DriveMode.OpenLoopVoltage) {
             stop();
             selectEncodersStandard();
             reset();

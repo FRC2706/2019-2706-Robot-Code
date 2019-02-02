@@ -1,15 +1,15 @@
 package ca.team2706.frc.robot.subsystems;
 
 import ca.team2706.frc.robot.Sendables;
-import ca.team2706.frc.robot.commands.ArcadeDriveWithJoystick;
 import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.sensors.AnalogSelector;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -36,6 +36,11 @@ public class DriveBase extends Subsystem {
     }
 
     /**
+     * The mode that the robot is driving with
+     */
+    private DriveMode driveMode;
+
+    /**
      * Four drive Talons
      */
     private final WPI_TalonSRX leftFrontMotor, leftBackMotor, rightFrontMotor, rightBackMotor;
@@ -49,6 +54,16 @@ public class DriveBase extends Subsystem {
      * Gyro to record robot heading
      */
     private final PigeonIMU gyro;
+
+    /**
+     * Analog Selector
+     */
+    private final AnalogSelector selector;
+
+    /*
+     * Purple light that goes on the robot
+     */
+    private final PWM light;
 
     /**
      * Creates a drive base, and initializes all required sensors and motors
@@ -94,6 +109,12 @@ public class DriveBase extends Subsystem {
 
         gyro = new PigeonIMU(new TalonSRX(Config.GYRO_TALON_ID));
 
+        selector = new AnalogSelector(Config.SELECTOR_ID);
+
+        light = new PWM(Config.PURPLE_LIGHT);
+
+        light.setRaw(4095);
+
         // TODO: Also output data to logging/smartdashboard
         addChild("Left Front Motor", leftFrontMotor);
         addChild("Left Back Motor", leftBackMotor);
@@ -103,14 +124,34 @@ public class DriveBase extends Subsystem {
         addChild(robotDriveBase);
 
         addChild("Gyroscope", Sendables.newPigeonSendable(gyro));
+        addChild("Selector", selector);
 
         addChild("Left Encoder", Sendables.newTalonEncoderSendable(leftFrontMotor));
         addChild("Right Encoder", Sendables.newTalonEncoderSendable(rightFrontMotor));
 
-        setOpenLoopMode();
+        addChild("Merge Light", light);
+
+        setDisabledMode();
         setBrakeMode(false);
     }
 
+    /**
+     * Gets the analog selector's index
+     *
+     * @return The index from 1-12 or 0 if unplugged
+     */
+    public int getAnalogSelectorIndex() {
+        return selector.getIndex();
+    }
+
+    /**
+     * Gets the drivemode that the robot is currently in
+     *
+     * @return The current drive mode
+     */
+    public DriveMode getDriveMode() {
+        return driveMode;
+    }
 
     /**
      * Stops the robot
@@ -129,12 +170,29 @@ public class DriveBase extends Subsystem {
     }
 
     /**
+     * Sets the talons to a disabled mode
+     */
+    public void setDisabledMode() {
+        if (driveMode != DriveMode.Disabled) {
+            stop();
+
+            reset();
+
+            driveMode = DriveMode.Disabled;
+        }
+    }
+
+    /**
      * Switches the talons to a mode that is optimal for driving the robot using human input
      */
-    public void setOpenLoopMode() {
-        stop();
-        selectEncodersStandard();
-        reset();
+    public void setOpenLoopVoltageMode() {
+        if (driveMode != DriveMode.OpenLoopVoltage) {
+            stop();
+            selectEncodersStandard();
+            reset();
+
+            driveMode = DriveMode.OpenLoopVoltage;
+        }
     }
 
     /**
@@ -186,6 +244,8 @@ public class DriveBase extends Subsystem {
      * @param squaredInputs Whether to square each of the values
      */
     public void tankDrive(double leftSpeed, double rightSpeed, boolean squaredInputs) {
+        setOpenLoopVoltageMode();
+
         robotDriveBase.tankDrive(leftSpeed, rightSpeed, squaredInputs);
         follow();
     }
@@ -198,6 +258,8 @@ public class DriveBase extends Subsystem {
      * @param squaredInputs Whether to square each of the values
      */
     public void arcadeDrive(double forwardSpeed, double rotateSpeed, boolean squaredInputs) {
+        setOpenLoopVoltageMode();
+
         robotDriveBase.arcadeDrive(forwardSpeed, rotateSpeed, squaredInputs);
         follow();
     }
@@ -210,6 +272,8 @@ public class DriveBase extends Subsystem {
      * @param override     When true will only use rotation values
      */
     public void curvatureDrive(double forwardSpeed, double curveSpeed, boolean override) {
+        setOpenLoopVoltageMode();
+
         robotDriveBase.curvatureDrive(forwardSpeed, curveSpeed, override);
         follow();
     }
@@ -280,5 +344,20 @@ public class DriveBase extends Subsystem {
     public void reset() {
         resetEncoders();
         resetGyro();
+    }
+
+    /**
+     * The drive mode of the robot
+     */
+    public enum DriveMode {
+        /**
+         * There is no control mode active
+         */
+        Disabled,
+
+        /**
+         * Standard open loop voltage control
+         */
+        OpenLoopVoltage;
     }
 }

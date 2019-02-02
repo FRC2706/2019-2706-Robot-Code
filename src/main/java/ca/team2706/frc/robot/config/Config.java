@@ -20,6 +20,10 @@ import java.util.Objects;
  * Config manager for the robot.
  */
 public class Config {
+    static {
+        init();
+    }
+
     private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
 
     // #### Static constants ####
@@ -64,25 +68,26 @@ public class Config {
     // Talon ID for the Pigeon
     public static final int GYRO_TALON_ID = robotSpecific(5, 5, 5);
 
+    // Selector Channel
+    public static final int SELECTOR_ID = robotSpecific(0, 0, 0);
+
     // The amount of encoder ticks that the robot must drive to go one foot
     public static final double DRIVE_ENCODER_DPP
             = robotSpecific(Math.PI / 8192.0, Math.PI / 8192.0, Math.PI / 8192.0);
 
     public static final boolean ENABLE_CAMERA = robotSpecific(true, true, false);
 
+    public static final int PURPLE_LIGHT = robotSpecific(3, 3, 3);
+
     // #### Fluid constants ####
     static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
-
-    static {
-        initialize();
-    }
 
     private static boolean initialized = false;
 
     /**
      * Initializes the Config class.
      */
-    public static void initialize() {
+    public static void init() {
         if (!initialized) {
             Robot.setOnStateChange(Config::saveConstants);
 

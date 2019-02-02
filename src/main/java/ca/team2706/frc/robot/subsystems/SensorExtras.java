@@ -22,9 +22,9 @@ public class SensorExtras extends Subsystem {
     // Put above singleton pattern for better visibility
     private static final Map<SensorType, int[]> allocationTable = Map.ofEntries(
             Map.entry(SensorType.Talon, new int[]{5, 6, 7, 8}),
-            Map.entry(SensorType.Pwm, new int[]{0, 1, 2}),
+            Map.entry(SensorType.Pwm, new int[]{0, 1, 2, 4}),
             Map.entry(SensorType.AnalogInput, new int[]{1}),
-            Map.entry(SensorType.Dio, new int[]{0, 1, 2, 3}),
+            Map.entry(SensorType.Dio, new int[]{0, 1, 2, 3, 4}),
             Map.entry(SensorType.Relay, new int[]{0, 1})
     );
 
@@ -74,7 +74,7 @@ public class SensorExtras extends Subsystem {
         Talon("TalonSRX", WPI_TalonSRX::new),
         Pwm("PWM", PWM::new),
         AnalogInput("Analog Input", AnalogInput::new),
-        Dio("DIO", DigitalOutput::new),
+        Dio("DIO", DigitalInput::new),
         Relay("Relay", Relay::new);
 
         final String name;

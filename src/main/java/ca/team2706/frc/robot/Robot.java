@@ -1,6 +1,7 @@
 package ca.team2706.frc.robot;
 
 import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.logging.Logging;
 import ca.team2706.frc.robot.subsystems.Bling;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import ca.team2706.frc.robot.subsystems.SensorExtras;
@@ -131,17 +132,14 @@ public class Robot extends TimedRobot {
      */
     private static final ArrayList<Consumer<RobotState>> STATE_LISTENERS = new ArrayList<>();
 
-    private static final Logger LOGGER = LogManager.getLogger(Robot.class.getName());
-
     /**
      * Main method, called when the robot code is run like a desktop application.
      *
      * @param args Arguments passed on startup
      */
     public static void main(String[] args) {
-        LOGGER.debug("Debug Message Logged !!!");
-        LOGGER.info("Info Message Logged !!!");
-        LOGGER.error("Error Message Logged !!!", new NullPointerException("NullError"));
+
+        Logging.init();
 
         Runtime.getRuntime().addShutdownHook(new Thread(Robot::shutdown));
 

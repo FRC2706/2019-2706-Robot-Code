@@ -4,12 +4,26 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="--- %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
+        <RollingFile name="fileLogger" fileName="/u/log-info-${date:yyyy-MM-dd'_'HH-mm-ss}.log"
+                     filePattern="/u/log-info-%d{yyyy-MM-dd}.log">
+            <PatternLayout>
+                <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+                <SizeBasedTriggeringPolicy size="8 MB" />
+            </Policies>
+        </RollingFile>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout   pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n" />
+        </Console>
     </Appenders>
     <Loggers>
         <Logger name="ca.team2706.frc.robot.Robot" level="trace" additivity="false">
-            <AppenderRef ref="Console"/>
+            <AppenderRef ref="Console" level = "info"/>
+            <AppenderRef ref="fileLogger" level= "trace"/>
         </Logger>
-        <Root level="error">
+        <Root level="debug">
             <AppenderRef ref="Console"/>
         </Root>
     </Loggers>

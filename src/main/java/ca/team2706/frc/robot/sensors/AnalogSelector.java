@@ -25,11 +25,13 @@ public class AnalogSelector extends SendableBase {
     }
 
     public int getIndex() {
+
+        final double voltage = analogInput.getAverageVoltage();
+
         // Check each voltage range
         for (int i = 0; i < voltages.length; i++) {
             // Get the current voltage
-            double voltage = analogInput.getAverageVoltage();
-
+            
             // Check if the voltage is within the current voltage range
             if (voltage >= voltages[i].min && voltage < voltages[i].max) {
                 // The selector is within this range
@@ -40,11 +42,10 @@ public class AnalogSelector extends SendableBase {
         // Default to index of 0
         return 0;
     }
-
-    private static class Range {
+    public static class Range {
         public final double min, max;
 
-        Range(double min, double max) {
+        public Range (double min, double max) {
             this.min = min;
             this.max = max;
         }

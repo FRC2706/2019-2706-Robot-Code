@@ -28,20 +28,20 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         onStateChange(RobotState.ROBOT_INIT);
 
-//        // Initialize subsystems
-//        Bling.init();
-//        DriveBase.init();
-//
-//        // Make sure that this is last initialized subsystem
-//        SensorExtras.init();
-//
-//        // OI depends on subsystems, so initialize it after
-//        OI.init();
+        // Initialize subsystems
+        Bling.init();
+        DriveBase.init();
 
-        // The USB camera used on the Robot, not enabled during simulation mode
-//        if (Config.ENABLE_CAMERA) {
-//            CameraServer.getInstance().startAutomaticCapture();
-//        }
+        // Make sure that this is last initialized subsystem
+        SensorExtras.init();
+
+        // OI depends on subsystems, so initialize it after
+        OI.init();
+
+         //The USB camera used on the Robot, not enabled during simulation mode
+        if (Config.ENABLE_CAMERA) {
+            CameraServer.getInstance().startAutomaticCapture();
+        }
     }
 
     /**
@@ -143,8 +143,8 @@ public class Robot extends TimedRobot {
 
         Runtime.getRuntime().addShutdownHook(new Thread(Robot::shutdown));
 
-        //Config.initialize();
-//        RobotBase.startRobot(Robot::new);
+        Config.initialize();
+        RobotBase.startRobot(Robot::new);
     }
 
     /**

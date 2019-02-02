@@ -1,4 +1,4 @@
-package ca.team2706.frc.robot.commands.bling;
+package ca.team2706.frc.robot.sensors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +13,7 @@ import mockit.Tested;
 
 import static junit.framework.TestCase.assertEquals;
 
+// d
 /**
  * Class to test the AnalogSector on the robot
  */

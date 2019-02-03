@@ -1,6 +1,5 @@
 package ca.team2706.frc.robot.subsystems;
 
-import ca.team2706.frc.robot.sensors.AnalogSelector;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
@@ -18,35 +17,35 @@ import static org.junit.Assert.assertEquals;
 
 public class DriveBaseTest {
 
-    @Tested
+    @Tested(stubOutClassInitialization = true)
     private DriveBase driveBase;
 
-    @Mocked
+    @Mocked(stubOutClassInitialization = true)
     private WPI_TalonSRX talon;
 
-    @Mocked
+    @Mocked(stubOutClassInitialization = true)
     private PWM pwm;
 
-    @Mocked
+    @Mocked(stubOutClassInitialization = true)
     private AnalogInput analogInput;
 
-    @Mocked
+    @Mocked(stubOutClassInitialization = true)
     private PigeonIMU pigeon;
 
-    @Mocked
+    @Mocked(stubOutClassInitialization = true)
     private DifferentialDrive differentialDrive;
 
     @Mocked(stubOutClassInitialization = true)
     private CTREJNIWrapper jni;
 
-    @Mocked
+    @Mocked(stubOutClassInitialization = true)
     private MotControllerJNI motControllerJNI;
 
     @Injectable
     private SensorCollection sensorCollection;
 
     @Before
-    public void setUp() throws NoSuchFieldException, IllegalAccessException {
+    public void setUp() {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;

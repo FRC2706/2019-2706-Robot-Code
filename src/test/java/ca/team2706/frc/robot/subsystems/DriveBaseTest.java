@@ -46,7 +46,7 @@ public class DriveBaseTest {
     private SensorCollection sensorCollection;
 
     @Before
-    public void setUp() throws NoSuchFieldException, IllegalAccessException {
+    public void setUp() {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;

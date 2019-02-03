@@ -21,25 +21,25 @@ public class DriveBaseTest {
     @Tested
     private DriveBase driveBase;
 
-    @Mocked
+    @Mocked(stubOutClassInitialization = true)
     private WPI_TalonSRX talon;
 
-    @Mocked
+    @Mocked(stubOutClassInitialization = true)
     private PWM pwm;
 
-    @Mocked
+    @Mocked(stubOutClassInitialization = true)
     private AnalogInput analogInput;
 
-    @Mocked
+    @Mocked(stubOutClassInitialization = true)
     private PigeonIMU pigeon;
 
-    @Mocked
+    @Mocked(stubOutClassInitialization = true)
     private DifferentialDrive differentialDrive;
 
     @Mocked(stubOutClassInitialization = true)
     private CTREJNIWrapper jni;
 
-    @Mocked
+    @Mocked(stubOutClassInitialization = true)
     private MotControllerJNI motControllerJNI;
 
     @Injectable

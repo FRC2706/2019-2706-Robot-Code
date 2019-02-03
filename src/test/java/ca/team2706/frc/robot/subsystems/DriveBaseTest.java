@@ -27,6 +27,7 @@ public class DriveBaseTest {
 
     private AnalogInput analogInput;
 
+    @Mocked(stubOutClassInitialization = true)
     private PigeonIMU pigeon;
 
     private DifferentialDrive differentialDrive;

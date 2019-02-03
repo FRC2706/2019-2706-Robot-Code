@@ -17,7 +17,7 @@ import static org.junit.Assert.assertEquals;
 
 public class DriveBaseTest {
 
-    @Tested(stubOutClassInitialization = true)
+    @Tested
     private DriveBase driveBase;
 
     @Mocked(stubOutClassInitialization = true)

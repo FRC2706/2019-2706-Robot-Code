@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 
 public class AnalogSelector extends SendableBase {
 
-    private static final Range[] voltages = {new Range(0, 2.5), new Range(2.5, 2.75),
+    private static final Range[] VOLTAGE_RANGES = {new Range(0, 2.5), new Range(2.5, 2.75),
             new Range(2.75, 3.1), new Range(3.1, 3.5), new Range(3.5, 3.75),
             new Range(3.75, 3.95), new Range(3.95, 4.1), new Range(4.1, 4.2),
             new Range(4.2, 4.3), new Range(4.3, 4.4), new Range(4.4, 4.5),
@@ -25,28 +25,38 @@ public class AnalogSelector extends SendableBase {
     }
 
     public int getIndex() {
-        // Check each voltage range
-        for (int i = 0; i < voltages.length; i++) {
-            // Get the current voltage
-            double voltage = analogInput.getAverageVoltage();
 
+        final double voltage = analogInput.getAverageVoltage();
+
+        int index = 0;
+        // Check each voltage range
+        for (int i = 0; i < VOLTAGE_RANGES.length; i++) {
             // Check if the voltage is within the current voltage range
-            if (voltage >= voltages[i].min && voltage < voltages[i].max) {
-                // The selector is within this range
-                return i;
+            if (VOLTAGE_RANGES[i].isWithin(voltage)) {
+                index = i;
+                break;
             }
         }
 
-        // Default to index of 0
-        return 0;
+        return index;
     }
 
-    private static class Range {
+    public static class Range {
         public final double min, max;
 
-        Range(double min, double max) {
+        public Range(double min, double max) {
             this.min = min;
             this.max = max;
+        }
+
+        /**
+         * Determines if the number is within this range.
+         *
+         * @param number The number to be tested.
+         * @return True if it's within range, false otherwise.
+         */
+        public boolean isWithin(final double number) {
+            return min <= number && number <= max;
         }
     }
 }

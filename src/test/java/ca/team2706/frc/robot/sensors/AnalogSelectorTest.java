@@ -36,9 +36,7 @@ public class AnalogSelectorTest {
     public void testGetIndex(@Injectable("0") int channel) throws NoSuchFieldException, IllegalAccessException {
 
         // The voltages from the AnalogSelector Class
-        Field field = AnalogSelector.class.getDeclaredField("VOLTAGE_RANGES");
-        field.setAccessible(true);
-        AnalogSelector.Range[] ranges = (AnalogSelector.Range[]) field.get(analogSelector);
+	AnalogSelector.Range[] ranges = AnalogSelector.getVoltageRanges();
 
         // Sets the middle possible voltage for each index and iterates through them
         new Expectations() {{

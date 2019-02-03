@@ -171,7 +171,7 @@ public class Config {
         try (BufferedWriter writer = Files.newBufferedWriter(SAVE_FILE)) {
             writer.write(writable);
         } catch (IOException e) {
-            DriverStation.reportWarning("Unable to save fluid constants to file.", true);
+            DriverStation.reportWarning("Unable to save fluid constants to file.", false);
         }
     }
 

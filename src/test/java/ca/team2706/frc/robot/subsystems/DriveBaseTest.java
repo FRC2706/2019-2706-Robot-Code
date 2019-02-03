@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import mockit.*;
@@ -20,25 +21,25 @@ public class DriveBaseTest {
     @Tested
     private DriveBase driveBase;
 
-    @Mocked(stubOutClassInitialization = true)
+    @Mocked
     private WPI_TalonSRX talon;
 
-    @Mocked(stubOutClassInitialization = true)
+    @Mocked
     private PWM pwm;
 
-    @Mocked(stubOutClassInitialization = true)
-    private AnalogSelector analogSelector;
+    @Mocked
+    private AnalogInput analogInput;
 
-    @Mocked(stubOutClassInitialization = true)
+    @Mocked
     private PigeonIMU pigeon;
 
-    @Mocked(stubOutClassInitialization = true)
+    @Mocked
     private DifferentialDrive differentialDrive;
 
     @Mocked(stubOutClassInitialization = true)
     private CTREJNIWrapper jni;
 
-    @Mocked(stubOutClassInitialization = true)
+    @Mocked
     private MotControllerJNI motControllerJNI;
 
     @Injectable

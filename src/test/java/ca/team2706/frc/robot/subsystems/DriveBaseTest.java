@@ -1,6 +1,5 @@
 package ca.team2706.frc.robot.subsystems;
 
-import ca.team2706.frc.robot.sensors.AnalogSelector;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.SensorCollection;

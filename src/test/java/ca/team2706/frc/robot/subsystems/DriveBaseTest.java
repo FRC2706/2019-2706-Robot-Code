@@ -35,7 +35,7 @@ public class DriveBaseTest {
     @Mocked(stubOutClassInitialization = true)
     private CTREJNIWrapper jni;
 
-
+    @Mocked(stubOutClassInitialization = true)
     private MotControllerJNI motControllerJNI;
 
     @Injectable

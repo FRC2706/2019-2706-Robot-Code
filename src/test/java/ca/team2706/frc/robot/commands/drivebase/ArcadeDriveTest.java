@@ -1,16 +1,16 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
+import ca.team2706.frc.robot.subsystems.DriveBase;
 import mockit.Expectations;
 import mockit.Mocked;
 import mockit.Tested;
+import mockit.Verifications;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.function.Supplier;
 
 public class ArcadeDriveTest {
-    @Tested
-    private ArcadeDrive arcadeDrive;
 
     @Mocked
     private Supplier<Double> forwardVal;
@@ -19,37 +19,49 @@ public class ArcadeDriveTest {
     private Supplier<Double> rotateVal;
 
     @Mocked
-    private boolean squareInputs;
+    private DriveBase driveBase;
 
-    @Mocked
-    private boolean initBrake;
+    @Test
+    public void testBrakeModeOn() {
+        testBrakeMode(true);
+    }
 
-    @Before
-    public void setUp() {
-        arcadeDrive = new ArcadeDrive(forwardVal, rotateVal, squareInputs, initBrake) {
-            @Override
-            public boolean isFinished() {
-                return false;
-            }
-        };
+    @Test
+    public void testBrakeModeOff() {
+        testBrakeMode(false);
     }
 
     /**
-     * Tests starting the robot in teleop and having the bling detect the period properly.
+     * Makes sure that the brake mode gets set to the correct value at the end of the match
      */
-    @Test
-    public void testBrakeMode() {
+    public void testBrakeMode(boolean brake) {
         new Expectations() {{
             forwardVal.get();
             result = 0.0;
 
             rotateVal.get();
             result = 0.0;
-
-            squareInputs;
-            result = false;
-
         }};
 
+        ArcadeDrive arcadeDrive = new ArcadeDrive(forwardVal, rotateVal, false, brake) {
+            @Override
+            public boolean isFinished() {
+                return false;
+            }
+        };
+
+        arcadeDrive.initialize();
+
+        new Verifications() {{
+           DriveBase.getInstance().setBrakeMode(brake);
+        }};
+
+        arcadeDrive.execute();
+
+        arcadeDrive.end();
+
+        new Verifications() {{
+            DriveBase.getInstance().setBrakeMode(brake);
+        }};
     }
 }

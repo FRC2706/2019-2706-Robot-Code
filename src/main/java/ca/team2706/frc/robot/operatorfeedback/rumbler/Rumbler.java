@@ -5,6 +5,8 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
 
+import java.time.Clock;
+
 /**
  * Class for running rumble patterns on the robot.
  */
@@ -60,7 +62,7 @@ public class Rumbler extends Command {
     @Override
     public void start() {
         super.start();
-        startTime = System.currentTimeMillis();
+        startTime = getCurrentTime();
     }
 
     @Override
@@ -71,7 +73,7 @@ public class Rumbler extends Command {
     @Override
     protected void execute() {
         // Get the time passed since last time point
-        long timeSinceStart = System.currentTimeMillis() - startTime;
+        long timeSinceStart = getCurrentTime() - startTime;
 
         boolean shouldRumble = currentPattern.shouldRumble(timeSinceStart);
         rumble(shouldRumble);
@@ -79,7 +81,7 @@ public class Rumbler extends Command {
 
     @Override
     protected boolean isFinished() {
-        return currentPattern.isOver(System.currentTimeMillis() - startTime) || isFinished;
+        return currentPattern.isOver(getCurrentTime() - startTime) || isFinished;
     }
 
     /**
@@ -126,6 +128,15 @@ public class Rumbler extends Command {
                 operator.setRumble(GenericHID.RumbleType.kLeftRumble, rumbleIntensity);
             }
         }
+    }
+
+    /**
+     * Gets the current time, in milliseconds.
+     *
+     * @return The current time in milliseconds.
+     */
+    private long getCurrentTime() {
+        return Clock.systemDefaultZone().millis();
     }
 
 }

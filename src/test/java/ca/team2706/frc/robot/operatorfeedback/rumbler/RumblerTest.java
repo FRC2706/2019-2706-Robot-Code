@@ -7,7 +7,9 @@ import mockit.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import static junit.framework.TestCase.assertFalse;
+import java.time.Clock;
+
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class RumblerTest {
@@ -247,20 +249,17 @@ public class RumblerTest {
         }};
     }
 
+    /**
+     * Tests going through an entire rumbler pattern realistically, with changing conditions
+     * and time passing.
+     */
     @Test
-    public void testRealisticPattern() {
-        new MockUp<System>() {
-            @Mock
-            public long currentTimeMillis() {
-                return 0;
-            }
-        };
-
-//        new Expectations() {{
-//            System.currentTimeMillis();
-//            returns(0, 50, 100, 150, 200, 300, 500, 550, 590, 700, 800, 2000);
-//            times = 12;
-//        }};
+    public void testRealisticPattern(@Mocked final Clock clock) {
+        new Expectations() {{
+            clock.millis();
+            returns(0L, 50L, 50L, 100L, 100L, 150L, 150L, 200L, 200L, 300L, 300L,
+                    500L, 500L, 550L, 550L, 590L, 590L, 700L, 700L, 800L, 800L, 2000L, 2000L);
+        }};
 
         RumblePattern pattern = new RumblePattern() {
             @Override
@@ -277,10 +276,14 @@ public class RumblerTest {
             public Rumbler.JoystickSelection getJoystick() {
                 return Rumbler.JoystickSelection.BOTH_JOYSTICKS;
             }
+
+            @Override
+            public double getRumbleIntensity() {
+                return 1.0;
+            }
         };
 
         Rumbler rumbler = new Rumbler(pattern);
-        rumbler.start();
         rumbler.initialize();
 
         runRumbler(rumbler, 2);
@@ -295,37 +298,37 @@ public class RumblerTest {
         assertTrue(rumbler.isRumbling());
 
         assertTrue(rumbler.isFinished());
-
         rumbler.end();
 
         new Verifications() {{
             // Verifications for turning on.
-            driverStick.setRumble(GenericHID.RumbleType.kLeftRumble, withNotEqual(0));
+            driverStick.setRumble(GenericHID.RumbleType.kLeftRumble, withNotEqual(0D));
             times = 3;
-            driverStick.setRumble(GenericHID.RumbleType.kRightRumble, withNotEqual(0));
+            driverStick.setRumble(GenericHID.RumbleType.kRightRumble, withNotEqual(0D));
             times = 3;
 
-            operatorStick.setRumble(GenericHID.RumbleType.kLeftRumble, withNotEqual(0));
+            operatorStick.setRumble(GenericHID.RumbleType.kLeftRumble, withNotEqual(0D));
             times = 3;
-            operatorStick.setRumble(GenericHID.RumbleType.kRightRumble, withNotEqual(0));
+            operatorStick.setRumble(GenericHID.RumbleType.kRightRumble, withNotEqual(0D));
             times = 3;
 
 
             // Verifications for turning off.
-            driverStick.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
+            driverStick.setRumble(GenericHID.RumbleType.kLeftRumble, 0D);
             times = 3;
-            driverStick.setRumble(GenericHID.RumbleType.kRightRumble, 0);
+            driverStick.setRumble(GenericHID.RumbleType.kRightRumble, 0D);
             times = 3;
 
-            operatorStick.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
+            operatorStick.setRumble(GenericHID.RumbleType.kLeftRumble, 0D);
             times = 3;
-            operatorStick.setRumble(GenericHID.RumbleType.kRightRumble, 0);
+            operatorStick.setRumble(GenericHID.RumbleType.kRightRumble, 0D);
             times = 3;
         }};
     }
 
     /**
-     * Runs the {@link Rumbler#execute()} method <code>numTimes</code> number of times.
+     * Runs the {@link Rumbler#execute()} and {@link Rumbler#isFinished()} methods <code>numTimes</code> number of times,
+     * simulating actual usage.
      *
      * @param rumbler  The rumbler class to be run.
      * @param numTimes The number of times to call the execute method.
@@ -333,6 +336,7 @@ public class RumblerTest {
     private static void runRumbler(Rumbler rumbler, int numTimes) {
         for (int i = 0; i < numTimes; i++) {
             rumbler.execute();
+            rumbler.isFinished();
         }
     }
 

@@ -46,17 +46,14 @@ public class Logging {
         LOGGER.error(message, t);
     }
 
-    public static Logger getLogger ()
-    {
+    public static Logger getLogger() {
         return LOGGER;
     }
 
-    public static void disable(boolean doDisable)
-    {
+    public static void disable(boolean doDisable) {
         if (doDisable) {
             Configurator.setLevel("ca.team2706.frc.robot.Robot", Level.ERROR);
-        }
-        else {
+        } else {
             Configurator.setLevel("ca.team2706.frc.robot.Robot", Level.ALL);
         }
     }

@@ -10,18 +10,18 @@
                 <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</pattern>
             </PatternLayout>
             <Policies>
-                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
-                <SizeBasedTriggeringPolicy size="8 MB" />
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="8 MB"/>
             </Policies>
         </RollingFile>
         <Console name="console" target="SYSTEM_OUT">
-            <PatternLayout   pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n" />
+            <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"/>
         </Console>
     </Appenders>
     <Loggers>
         <AsyncLogger name="ca.team2706.frc.robot.Robot" level="trace" additivity="false">
-            <AppenderRef ref="Console" level = "info"/>
-            <AppenderRef ref="fileLogger" level= "trace"/>
+            <AppenderRef ref="Console" level="info"/>
+            <AppenderRef ref="fileLogger" level="trace"/>
         </AsyncLogger>
         <AsyncRoot level="debug">
             <AppenderRef ref="Console"/>

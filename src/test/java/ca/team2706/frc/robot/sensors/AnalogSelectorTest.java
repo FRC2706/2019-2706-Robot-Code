@@ -13,7 +13,6 @@ import mockit.Tested;
 
 import static junit.framework.TestCase.assertEquals;
 
-// d
 /**
  * Class to test the AnalogSector on the robot
  */
@@ -43,13 +42,9 @@ public class AnalogSelectorTest {
         // Sets the middle possible voltage for each index and iterates through them
         new Expectations() {{
             analogInput.getAverageVoltage();
-            try {
                 result = new double[]{getMid(ranges[0]), getMid(ranges[1]), getMid(ranges[2]), getMid(ranges[3]),
                         getMid(ranges[4]), getMid(ranges[5]), getMid(ranges[6]), getMid(ranges[7]), getMid(ranges[8]), getMid(ranges[9]),
                         getMid(ranges[10]), getMid(ranges[11]), getMid(ranges[12])};
-            } catch (NullPointerException e) {
-                System.out.println(e.toString());
-            }
         }};
 
         // Checks all the voltages against their expected outputs

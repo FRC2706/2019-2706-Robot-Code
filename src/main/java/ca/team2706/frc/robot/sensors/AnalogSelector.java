@@ -15,13 +15,13 @@ public class AnalogSelector extends SendableBase {
 
     public AnalogSelector(int channel) {
         this.analogInput = new AnalogInput(channel);
+        addChild(analogInput);
     }
 
     @Override
     public void initSendable(SendableBuilder builder) {
         builder.addDoubleProperty("Voltage", analogInput::getAverageVoltage, null);
         builder.addDoubleProperty("Index", this::getIndex, null);
-        addChild(analogInput);
     }
 
     public int getIndex() {

@@ -66,8 +66,6 @@ public class Rumbler extends Command {
     @Override
     public void initialize() {
         super.initialize();
-        // Begin rumbling
-        rumble(true);
     }
 
     @Override
@@ -108,22 +106,25 @@ public class Rumbler extends Command {
      * @param on True to turn on rumble, false otherwise.
      */
     private void rumble(boolean on) {
-        isRumbling = on;
+        // If we're already doing the thing that we're supposed to be, don't spam.
+        if (on != isRumbling()) {
+            isRumbling = on;
 
-        // If rumble is on, full power. Otherwise, no power.
-        double rumbleIntensity = (on ? currentPattern.getRumbleIntensity() : 0.0);
+            // If rumble is on, full power. Otherwise, no power.
+            double rumbleIntensity = (on ? currentPattern.getRumbleIntensity() : 0.0);
 
-        // Rumble the appropriate joysticks
-        if (currentPattern.getJoystick() == JoystickSelection.DRIVER_JOYSTICK || currentPattern.getJoystick() == JoystickSelection.BOTH_JOYSTICKS) {
-            final Joystick driver = OI.getInstance().getDriverStick();
-            driver.setRumble(GenericHID.RumbleType.kRightRumble, rumbleIntensity);
-            driver.setRumble(GenericHID.RumbleType.kLeftRumble, rumbleIntensity);
-        }
+            // Rumble the appropriate joysticks
+            if (currentPattern.getJoystick() == JoystickSelection.DRIVER_JOYSTICK || currentPattern.getJoystick() == JoystickSelection.BOTH_JOYSTICKS) {
+                final Joystick driver = OI.getInstance().getDriverStick();
+                driver.setRumble(GenericHID.RumbleType.kRightRumble, rumbleIntensity);
+                driver.setRumble(GenericHID.RumbleType.kLeftRumble, rumbleIntensity);
+            }
 
-        if (currentPattern.getJoystick() == JoystickSelection.OPERATOR_JOYSTICK || currentPattern.getJoystick() == JoystickSelection.BOTH_JOYSTICKS) {
-            final Joystick operator = OI.getInstance().getControlStick();
-            operator.setRumble(GenericHID.RumbleType.kRightRumble, rumbleIntensity);
-            operator.setRumble(GenericHID.RumbleType.kLeftRumble, rumbleIntensity);
+            if (currentPattern.getJoystick() == JoystickSelection.OPERATOR_JOYSTICK || currentPattern.getJoystick() == JoystickSelection.BOTH_JOYSTICKS) {
+                final Joystick operator = OI.getInstance().getControlStick();
+                operator.setRumble(GenericHID.RumbleType.kRightRumble, rumbleIntensity);
+                operator.setRumble(GenericHID.RumbleType.kLeftRumble, rumbleIntensity);
+            }
         }
     }
 

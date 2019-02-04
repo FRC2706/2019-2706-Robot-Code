@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import java.lang.reflect.Field;
 
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Class to test the AnalogSector on the robot

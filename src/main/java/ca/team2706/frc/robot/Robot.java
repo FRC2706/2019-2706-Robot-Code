@@ -1,7 +1,7 @@
 package ca.team2706.frc.robot;
 
 import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.logging.Logging;
+import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.Bling;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import ca.team2706.frc.robot.subsystems.SensorExtras;
@@ -159,7 +159,7 @@ public class Robot extends TimedRobot {
      * @param args Arguments passed on startup
      */
     public static void main(String[] args) {
-        Logging.init();
+        Log.init();
 
         Runtime.getRuntime().addShutdownHook(new Thread(Robot::shutdown));
 

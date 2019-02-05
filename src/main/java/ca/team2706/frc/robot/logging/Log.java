@@ -1,6 +1,7 @@
 package ca.team2706.frc.robot.logging;
 
 import ca.team2706.frc.robot.Robot;
+import edu.wpi.first.wpilibj.DriverStation;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,7 +10,7 @@ import org.apache.logging.log4j.core.config.Configurator;
 /**
  * Logs to USB and console at levels debug, info, warning, error
  */
-public class Logging {
+public class Log {
 
     private static final Logger LOGGER = LogManager.getLogger(Robot.class.getName());
 
@@ -17,7 +18,8 @@ public class Logging {
      *Starts logging
      */
     public static void init() {
-        Logging.i("Starting to log");
+        Log.i("Starting to log");
+        Log.e("this is a test error message");
     }
 
     /**
@@ -29,7 +31,7 @@ public class Logging {
     }
 
     /**
-     *Debug log with exception
+     * Debug log with exception
      * @param message The object (or String) message to log
      * @param t The Throwable to log
      */
@@ -38,7 +40,7 @@ public class Logging {
     }
 
     /**
-     *Info log
+     * Info log
      * @param message The object (or String) message to log
      */
     public static void i(Object message) {
@@ -46,7 +48,7 @@ public class Logging {
     }
 
     /**
-     *Info log with exception
+     * Info log with exception
      * @param message The object (or String) message to log
      * @param t The Throwable to log
      */
@@ -55,49 +57,53 @@ public class Logging {
     }
 
     /**
-     *Warning log
+     * Warning log
      * @param message The object (or String) message to log
      */
     public static void w(Object message) {
         LOGGER.warn(message);
+        DriverStation.reportWarning((String) message, true);
     }
 
     /**
-     *Warning log with exception
+     * Warning log with exception
      * @param message The object (or String) message to log
      * @param t The Throwable to log
      */
     public static void w(Object message, Throwable t) {
         LOGGER.warn(message, t);
+        DriverStation.reportWarning((String) message, true);
     }
 
     /**
-     *Error log
+     * Error log
      * @param message The object (or String) message to log
      */
     public static void e(Object message) {
         LOGGER.error(message);
+        DriverStation.reportError((String) message, true);
     }
 
     /**
-     *Error log with exception
+     * Error log with exception
      * @param message The object (or String) message to log
      * @param t The Throwable to log
      */
     public static void e(Object message, Throwable t) {
         LOGGER.error(message, t);
+        DriverStation.reportError((String) message, true);
     }
 
     /**
-     *Returns the logger
-     * @return logger
+     * Returns the logger
+     * @return The logger used to log
      */
     public static Logger getLogger() {
         return LOGGER;
     }
 
     /**
-     *Disables logging sets the log level
+     * Disables logging sets the log level
      * @param doDisable
      */
     public static void disable(boolean doDisable) {

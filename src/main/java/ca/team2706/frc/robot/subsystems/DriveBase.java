@@ -329,7 +329,8 @@ public class DriveBase extends Subsystem {
 
     /**
      * Goes to a position with the closed loop Talon PIDs using only encoder information
-     * @param speed The speed from 0 to 1
+     *
+     * @param speed    The speed from 0 to 1
      * @param setpoint The setpoint to go to in feet
      */
     public void setPositionNoGyro(double speed, double setpoint) {

@@ -90,7 +90,6 @@ public class Config {
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_D = constant("drive-D", 0.0);
 
 
-
     // #### Fluid constants ####
     static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
 

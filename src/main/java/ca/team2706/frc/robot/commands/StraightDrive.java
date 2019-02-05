@@ -32,8 +32,9 @@ public class StraightDrive extends Command {
 
     /**
      * Creates a straight drive command with constant values
-     * @param speed The maximum speed of the robot
-     * @param position The position to go to in feet
+     *
+     * @param speed         The maximum speed of the robot
+     * @param position      The position to go to in feet
      * @param minDoneCycles The minimum number of cycles for the robot to be within
      *                      the target zone before the command ends
      */
@@ -43,8 +44,9 @@ public class StraightDrive extends Command {
 
     /**
      * Creates a straight drive command with references to values
-     * @param speed The maximum speed of the robot
-     * @param position The position to go to in feet
+     *
+     * @param speed         The maximum speed of the robot
+     * @param position      The position to go to in feet
      * @param minDoneCycles The minimum number of cycles for the robot to be within
      *                      the target zone before the command ends
      */
@@ -70,10 +72,9 @@ public class StraightDrive extends Command {
 
     @Override
     public boolean isFinished() {
-        if(DriveBase.getInstance().getRightError() <= TARGET_RANGE) {
+        if (DriveBase.getInstance().getRightError() <= TARGET_RANGE) {
             doneCycles++;
-        }
-        else {
+        } else {
             doneCycles = 0;
         }
 

@@ -6,6 +6,8 @@ import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.Bling;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import ca.team2706.frc.robot.subsystems.SensorExtras;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
@@ -20,7 +22,6 @@ import java.util.function.Consumer;
  */
 public class Robot extends TimedRobot {
     private static boolean isInitialized;
-
 
     private Command[] commands;
 
@@ -46,10 +47,11 @@ public class Robot extends TimedRobot {
 
         // The USB camera used on the Robot, not enabled during simulation mode
         if (Config.ENABLE_CAMERA) {
-//            CameraServer.getInstance().startAutomaticCapture();
+            UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+            camera.setConnectVerbose(0);
         }
 
-        commands = new Command[] {
+        commands = new Command[]{
                 OI.getInstance().driveCommand,                               // 0
                 OI.getInstance().driveCommand,                               // 1
                 new StraightDrive(0.2, 2.0, 100)  // 2

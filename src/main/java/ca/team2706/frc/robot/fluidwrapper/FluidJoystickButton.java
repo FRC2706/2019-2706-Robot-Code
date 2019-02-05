@@ -16,7 +16,7 @@ public class FluidJoystickButton extends JoystickButton {
     /**
      * Constructs a FluidJoystickButton with the given GenericHID interface and action binding.
      *
-     * @param genericHID   The GenericHID interface object.
+     * @param genericHID    The GenericHID interface object.
      * @param actionBinding The action (such as "run motor") to which the joystick is bound.
      */
     public FluidJoystickButton(GenericHID genericHID, FluidConstant<String> actionBinding) {

@@ -1,7 +1,6 @@
 package ca.team2706.frc.robot.logging;
 
 import ca.team2706.frc.robot.Robot;
-import edu.wpi.first.wpilibj.DriverStation;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,7 +18,6 @@ public class Log {
      */
     public static void init() {
         Log.i("Starting to log");
-        Log.e("this is a test error message");
     }
 
     /**
@@ -62,7 +60,6 @@ public class Log {
      */
     public static void w(Object message) {
         LOGGER.warn(message);
-        DriverStation.reportWarning((String) message, true);
     }
 
     /**
@@ -72,7 +69,6 @@ public class Log {
      */
     public static void w(Object message, Throwable t) {
         LOGGER.warn(message, t);
-        DriverStation.reportWarning((String) message, true);
     }
 
     /**
@@ -81,7 +77,6 @@ public class Log {
      */
     public static void e(Object message) {
         LOGGER.error(message);
-        DriverStation.reportError((String) message, true);
     }
 
     /**
@@ -91,7 +86,6 @@ public class Log {
      */
     public static void e(Object message, Throwable t) {
         LOGGER.error(message, t);
-        DriverStation.reportError((String) message, true);
     }
 
     /**
@@ -104,7 +98,7 @@ public class Log {
 
     /**
      * Disables logging sets the log level
-     * @param doDisable
+     * @param doDisable whether to enable or disable logging
      */
     public static void disable(boolean doDisable) {
         if (doDisable) {

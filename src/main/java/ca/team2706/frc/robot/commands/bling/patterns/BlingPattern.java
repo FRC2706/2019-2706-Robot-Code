@@ -48,7 +48,7 @@ public abstract class BlingPattern {
     /**
      * Analyzes whether or not the conditions for this pattern are being met,
      * and returns a boolean based on this.
-     * This should be overriden for real bling commands, as by default it returns false every time.
+     * This should be overridden for real bling commands, as by default it returns false every time.
      *
      * @return True if this bling pattern's operating conditions are met, false
      * otherwise.
@@ -65,7 +65,7 @@ public abstract class BlingPattern {
     }
 
     /**
-     * Gets the repeat counnt for the pattern
+     * Gets the repeat count for the pattern
      *
      * @return The repeat count (number of times to repeat) of the pattern
      */
@@ -92,7 +92,7 @@ public abstract class BlingPattern {
     /**
      * Get the delay time between pattern segments
      *
-     * @return The delay time between pattern segments in miliseconds
+     * @return The delay time between pattern segments in milliseconds
      */
     public int getWaitMS() {
         return waitMs;
@@ -108,7 +108,7 @@ public abstract class BlingPattern {
     }
 
     /**
-     * Called by bling every time the command is run, which would be about every 20 miliseconds.
+     * Called by bling every time the command is run, which would be about every 20 milliseconds.
      * If the command would like to run something while it is being displayed,
      * it should be run here.
      */

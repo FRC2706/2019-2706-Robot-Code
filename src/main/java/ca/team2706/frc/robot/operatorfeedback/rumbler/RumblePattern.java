@@ -20,7 +20,7 @@ public abstract class RumblePattern {
     /**
      * Gets the joystick selection for which joystick should be rumbling.
      *
-     * @return
+     * @return Which joystick(s) should be rumbling.
      */
     public Rumbler.JoystickSelection getJoystick() {
         return joystick;

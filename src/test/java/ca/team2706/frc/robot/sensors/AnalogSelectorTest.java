@@ -62,7 +62,7 @@ public class AnalogSelectorTest {
         assertEquals(10, analogSelector.getIndex());
         assertEquals(11, analogSelector.getIndex());
         assertEquals(12, analogSelector.getIndex());
-        assertEquals(1,analogSelector.getIndex());
+        assertEquals(1, analogSelector.getIndex());
         assertEquals(3, analogSelector.getIndex());
     }
 }

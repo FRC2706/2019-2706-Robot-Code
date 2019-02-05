@@ -14,7 +14,7 @@ public class Log {
     private static final Logger LOGGER = LogManager.getLogger(Robot.class.getName());
 
     /**
-     *Starts logging
+     * Starts logging
      */
     public static void init() {
         Log.i("Starting to log");
@@ -22,6 +22,7 @@ public class Log {
 
     /**
      * Debug log
+     *
      * @param message The object (or String) message to log
      */
     public static void d(Object message) {
@@ -30,8 +31,9 @@ public class Log {
 
     /**
      * Debug log with exception
+     *
      * @param message The object (or String) message to log
-     * @param t The Throwable to log
+     * @param t       The Throwable to log
      */
     public static void d(Object message, Throwable t) {
         LOGGER.debug(message, t);
@@ -39,6 +41,7 @@ public class Log {
 
     /**
      * Info log
+     *
      * @param message The object (or String) message to log
      */
     public static void i(Object message) {
@@ -47,8 +50,9 @@ public class Log {
 
     /**
      * Info log with exception
+     *
      * @param message The object (or String) message to log
-     * @param t The Throwable to log
+     * @param t       The Throwable to log
      */
     public static void i(Object message, Throwable t) {
         LOGGER.info(message, t);
@@ -56,6 +60,7 @@ public class Log {
 
     /**
      * Warning log
+     *
      * @param message The object (or String) message to log
      */
     public static void w(Object message) {
@@ -64,8 +69,9 @@ public class Log {
 
     /**
      * Warning log with exception
+     *
      * @param message The object (or String) message to log
-     * @param t The Throwable to log
+     * @param t       The Throwable to log
      */
     public static void w(Object message, Throwable t) {
         LOGGER.warn(message, t);
@@ -73,6 +79,7 @@ public class Log {
 
     /**
      * Error log
+     *
      * @param message The object (or String) message to log
      */
     public static void e(Object message) {
@@ -81,8 +88,9 @@ public class Log {
 
     /**
      * Error log with exception
+     *
      * @param message The object (or String) message to log
-     * @param t The Throwable to log
+     * @param t       The Throwable to log
      */
     public static void e(Object message, Throwable t) {
         LOGGER.error(message, t);
@@ -90,6 +98,7 @@ public class Log {
 
     /**
      * Returns the logger
+     *
      * @return The logger used to log
      */
     public static Logger getLogger() {
@@ -98,6 +107,7 @@ public class Log {
 
     /**
      * Disables logging sets the log level
+     *
      * @param doDisable whether to enable or disable logging
      */
     public static void disable(boolean doDisable) {

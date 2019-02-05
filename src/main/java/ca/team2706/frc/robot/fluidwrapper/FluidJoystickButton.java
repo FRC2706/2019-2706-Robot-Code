@@ -1,4 +1,4 @@
-package ca.team2706.frc.robot.fluidwrappers;
+package ca.team2706.frc.robot.fluidwrapper;
 
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.config.FluidConstant;
@@ -17,13 +17,13 @@ public class FluidJoystickButton extends JoystickButton {
      * Constructs a FluidJoystickButton with the given GenericHID interface and action binding.
      *
      * @param genericHID   The GenericHID interface object.
-     * @param actionBindig The action (such as "run motor") to which the joystick is bound.
+     * @param actionBinding The action (such as "run motor") to which the joystick is bound.
      */
-    public FluidJoystickButton(GenericHID genericHID, FluidConstant<String> actionBindig) {
-        super(genericHID, getPortValue(actionBindig));
+    public FluidJoystickButton(GenericHID genericHID, FluidConstant<String> actionBinding) {
+        super(genericHID, getPortValue(actionBinding));
 
         m_joystick = genericHID;
-        this.joystickPort = actionBindig;
+        this.joystickPort = actionBinding;
     }
 
     /**

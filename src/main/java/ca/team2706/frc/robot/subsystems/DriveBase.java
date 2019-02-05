@@ -448,6 +448,6 @@ public class DriveBase extends Subsystem {
         /**
          * Performs closed loop position control without heading support
          */
-        PositionNoGyro;
+        PositionNoGyro
     }
 }

@@ -89,7 +89,7 @@ public class Robot extends TimedRobot {
     }
 
     /**
-     * Caled at the beginning of autonomous.
+     * Called at the beginning of autonomous.
      */
     @Override
     public void autonomousInit() {

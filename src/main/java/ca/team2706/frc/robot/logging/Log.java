@@ -1,6 +1,10 @@
 package ca.team2706.frc.robot.logging;
 
 import ca.team2706.frc.robot.Robot;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 
 /**
  * Logs to USB and console at levels debug, info, warning, error

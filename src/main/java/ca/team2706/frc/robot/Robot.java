@@ -1,10 +1,12 @@
 package ca.team2706.frc.robot;
 
+import ca.team2706.frc.robot.commands.StraightDrive;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.Bling;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import ca.team2706.frc.robot.subsystems.SensorExtras;
+import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -20,6 +22,8 @@ import java.util.function.Consumer;
  */
 public class Robot extends TimedRobot {
     private static boolean isInitialized;
+
+    private Command[] commands;
 
     /**
      * Method run on robot initialization.
@@ -43,8 +47,15 @@ public class Robot extends TimedRobot {
 
         // The USB camera used on the Robot, not enabled during simulation mode
         if (Config.ENABLE_CAMERA) {
-            CameraServer.getInstance().startAutomaticCapture();
+            UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+            camera.setConnectVerbose(0);
         }
+
+        commands = new Command[]{
+                OI.getInstance().driveCommand,                               // 0
+                OI.getInstance().driveCommand,                               // 1
+                new StraightDrive(0.2, 2.0, 100)  // 2
+        };
     }
 
     /**
@@ -77,15 +88,15 @@ public class Robot extends TimedRobot {
         Scheduler.getInstance().run();
     }
 
-    private final Command[] commands = {};
-
     /**
-     * Caled at the beginning of autonomous.
+     * Called at the beginning of autonomous.
      */
     @Override
     public void autonomousInit() {
         // Iterate through each of the state-change listeners and call them.
         onStateChange(RobotState.AUTONOMOUS);
+
+        selectorInit();
     }
 
     /**

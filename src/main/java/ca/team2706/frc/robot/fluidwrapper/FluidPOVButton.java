@@ -1,4 +1,4 @@
-package ca.team2706.frc.robot.fluidwrappers;
+package ca.team2706.frc.robot.fluidwrapper;
 
 import ca.team2706.frc.robot.config.Config.XboxValue;
 import ca.team2706.frc.robot.config.FluidConstant;

@@ -1,10 +1,10 @@
 package ca.team2706.frc.robot;
 
+import ca.team2706.frc.robot.commands.StraightDrive;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.Bling;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import ca.team2706.frc.robot.subsystems.SensorExtras;
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
@@ -45,13 +45,13 @@ public class Robot extends TimedRobot {
 
         // The USB camera used on the Robot, not enabled during simulation mode
         if (Config.ENABLE_CAMERA) {
-            CameraServer.getInstance().startAutomaticCapture();
+//            CameraServer.getInstance().startAutomaticCapture();
         }
 
         commands = new Command[] {
-                OI.getInstance().driveCommand,
-                OI.getInstance().driveCommand,
-                new StraightDrive(() -> 0.2, () -> 5.0, () -> 100)
+                OI.getInstance().driveCommand,                               // 0
+                OI.getInstance().driveCommand,                               // 1
+                new StraightDrive(0.2, 2.0, 100)  // 2
         };
     }
 
@@ -92,6 +92,8 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         // Iterate through each of the state-change listeners and call them.
         onStateChange(RobotState.AUTONOMOUS);
+
+        selectorInit();
     }
 
     /**

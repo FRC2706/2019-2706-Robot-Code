@@ -165,6 +165,11 @@ public class DriveBase extends Subsystem {
     private void selectEncodersStandard() {
         leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
         rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+
+        leftFrontMotor.configNeutralDeadband(Config.DRIVE_OPEN_LOOP_DEADBAND.value());
+        rightFrontMotor.configNeutralDeadband(Config.DRIVE_OPEN_LOOP_DEADBAND.value());
+        leftBackMotor.configNeutralDeadband(Config.DRIVE_OPEN_LOOP_DEADBAND.value());
+        rightBackMotor.configNeutralDeadband(Config.DRIVE_OPEN_LOOP_DEADBAND.value());
     }
 
     /**
@@ -178,7 +183,7 @@ public class DriveBase extends Subsystem {
         rightFrontMotor.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative, Config.CAN_SHORT);
 
         rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, 0, Config.CAN_SHORT);
-        rightFrontMotor.configSelectedFeedbackCoefficient(Config.DRIVE_ENCODER_DPP / 2);
+        rightFrontMotor.configSelectedFeedbackCoefficient(0.5, 0, Config.CAN_SHORT);
 
         leftFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_LEFT.value());
         rightFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_RIGHT.value());
@@ -189,6 +194,8 @@ public class DriveBase extends Subsystem {
 
         leftFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
         rightFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
+        leftBackMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
+        rightBackMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
 
         rightFrontMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
         rightFrontMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
@@ -227,12 +234,12 @@ public class DriveBase extends Subsystem {
      * Sets the talons to a disabled mode
      */
     public void setPositionNoGyroMode() {
-        if (driveMode != DriveMode.Disabled) {
+        if (driveMode != DriveMode.PositionNoGyro) {
             stop();
             selectEncodersSum();
             reset();
 
-            driveMode = DriveMode.Disabled;
+            driveMode = DriveMode.PositionNoGyro;
         }
     }
 
@@ -320,11 +327,18 @@ public class DriveBase extends Subsystem {
         follow();
     }
 
-    public void setPosition(double setpoint, double speed) {
+    /**
+     * Goes to a position with the closed loop Talon PIDs using only encoder information
+     * @param speed The speed from 0 to 1
+     * @param setpoint The setpoint to go to in feet
+     */
+    public void setPositionNoGyro(double speed, double setpoint) {
+        setPositionNoGyroMode();
+
         leftFrontMotor.configClosedLoopPeakOutput(0, speed);
         rightFrontMotor.configClosedLoopPeakOutput(0, speed);
 
-        rightFrontMotor.set(ControlMode.Position, setpoint);
+        rightFrontMotor.set(ControlMode.Position, setpoint / Config.DRIVE_ENCODER_DPP);
         leftFrontMotor.follow(rightFrontMotor);
 
         follow();
@@ -398,12 +412,22 @@ public class DriveBase extends Subsystem {
         resetGyro();
     }
 
+    /**
+     * Gets the error for the left motor
+     *
+     * @return The error in feet
+     */
     public double getLeftError() {
-        return leftFrontMotor.getClosedLoopError(0);
+        return leftFrontMotor.getClosedLoopError(0) * Config.DRIVE_ENCODER_DPP;
     }
 
+    /**
+     * Gets the error for the right motor
+     *
+     * @return The error in feet
+     */
     public double getRightError() {
-        return rightFrontMotor.getClosedLoopError(0);
+        return rightFrontMotor.getClosedLoopError(0) * Config.DRIVE_ENCODER_DPP;
     }
 
     /**

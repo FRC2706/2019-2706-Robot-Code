@@ -1,6 +1,6 @@
 package ca.team2706.frc.robot;
 
-import ca.team2706.frc.robot.commands.StraightDrive;
+import ca.team2706.frc.robot.commands.drivebase.StraightDrive;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.Bling;
@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -48,7 +49,9 @@ public class Robot extends TimedRobot {
         // The USB camera used on the Robot, not enabled during simulation mode
         if (Config.ENABLE_CAMERA) {
             UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-            camera.setConnectVerbose(0);
+            if (isReal()) {
+                camera.setConnectVerbose(0);
+            }
         }
 
         commands = new Command[]{
@@ -162,7 +165,7 @@ public class Robot extends TimedRobot {
     /**
      * ArrayList of Robot State consumers to be invoked when the robot's state changes.
      */
-    private static final ArrayList<Consumer<RobotState>> STATE_LISTENERS = new ArrayList<>();
+    private static final List<Consumer<RobotState>> STATE_LISTENERS = new ArrayList<>();
 
     /**
      * Main method, called when the robot code is run like a desktop application.

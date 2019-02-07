@@ -24,6 +24,19 @@ public class Config {
         init();
     }
 
+    private static boolean initialized = false;
+
+    /**
+     * Initializes the Config class.
+     */
+    public static void init() {
+        if (!initialized) {
+            Robot.setOnStateChange(Config::saveConstants);
+
+            initialized = true;
+        }
+    }
+
     private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
 
     // #### Static constants ####
@@ -79,6 +92,10 @@ public class Config {
 
     public static final int PURPLE_LIGHT = robotSpecific(3, 3, 3);
 
+
+    // #### Fluid constants ####
+    static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
+
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_DEADBAND = constant("drive-deadband", 0.001);
     public static final FluidConstant<Double> DRIVE_OPEN_LOOP_DEADBAND = constant("drive-deadband", 0.04);
 
@@ -88,23 +105,6 @@ public class Config {
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_P = constant("drive-P", 0.1);
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_I = constant("drive-I", 0.0);
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_D = constant("drive-D", 0.0);
-
-
-    // #### Fluid constants ####
-    static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
-
-    private static boolean initialized = false;
-
-    /**
-     * Initializes the Config class.
-     */
-    public static void init() {
-        if (!initialized) {
-            Robot.setOnStateChange(Config::saveConstants);
-
-            initialized = true;
-        }
-    }
 
     /**
      * Reads the robot type from the filesystem

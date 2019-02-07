@@ -28,6 +28,10 @@ public class SendablesTest {
     @Injectable
     NetworkTableEntry entry;
 
+    /**
+     * Checks the correct name was added to LiveWindow for the Pigeon sendable
+     * @param pigeon The pigeon to add
+     */
     @Test
     public void pigeonNameTest(@Injectable PigeonIMU pigeon) {
         sendableBase = Sendables.newPigeonSendable(pigeon);
@@ -42,6 +46,10 @@ public class SendablesTest {
         }};
     }
 
+    /**
+     * Checks the correct name was added to LiveWindow for the Talon sendable
+     * @param talon The talon to add
+     */
     @Test
     public void talonNameTest(@Injectable WPI_TalonSRX talon) {
         sendableBase = Sendables.newTalonEncoderSendable(talon);
@@ -55,6 +63,10 @@ public class SendablesTest {
         }};
     }
 
+    /**
+     * Checks the LiveWindow is setting the Network Tables entry to the talon encoders
+     * @param talon The talon to add to LiveWindow
+     */
     @Test
     public void newTalonSendableUpdateTest(@Injectable WPI_TalonSRX talon) {
         new Expectations() {{
@@ -83,6 +95,10 @@ public class SendablesTest {
         }};
     }
 
+    /**
+     * Checks the LiveWindow is setting the talon encoder value from the Network Tables entry
+     * @param talon The talon to add to LiveWindow
+     */
     @Test
     public void newTalonSendableCreateTest(@Injectable WPI_TalonSRX talon, @Injectable NetworkTableValue value) {
         new Expectations() {{
@@ -124,16 +140,20 @@ public class SendablesTest {
         }};
     }
 
+    /**
+     * Checks the LiveWindow is setting the Network Tables entry to the pigeon angle
+     * @param pigeon The pigeon to add to LiveWindow
+     */
     @Test
-    public void newPigeonSendableUpdateTest(@Injectable PigeonIMU pigeonIMU) {
+    public void newPigeonSendableUpdateTest(@Injectable PigeonIMU pigeon) {
         new Expectations() {{
-            pigeonIMU.getFusedHeading();
+            pigeon.getFusedHeading();
             returns(-5.0, 0.0, 5.0);
             table.getEntry(Sendables.PIGEON_NAME);
             result = entry;
         }};
 
-        sendableBase = Sendables.newPigeonSendable(pigeonIMU);
+        sendableBase = Sendables.newPigeonSendable(pigeon);
 
         SendableBuilderImpl builder = new SendableBuilderImpl();
         builder.setTable(table);
@@ -150,6 +170,10 @@ public class SendablesTest {
         }};
     }
 
+    /**
+     * Checks the LiveWindow is setting the pigeon rotation value from the Network Tables entry
+     * @param pigeon The pigeon to add to LiveWindow
+     */
     @Test
     public void newPigeonSendableCreateTest(@Injectable PigeonIMU pigeon, @Injectable NetworkTableValue value) {
         new Expectations() {{

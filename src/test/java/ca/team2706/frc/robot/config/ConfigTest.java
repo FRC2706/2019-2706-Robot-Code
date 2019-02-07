@@ -41,8 +41,16 @@ public class ConfigTest {
         }};
     }
 
+    /**
+     * Checks that the robot identifies itself correctly from a file
+     *
+     * @throws IOException For setting readLine() expectations
+     * @throws NoSuchMethodException In case the method to get the robot id can't be found
+     * @throws InvocationTargetException In case the method to get the robot id can't be invoked
+     * @throws IllegalAccessException In case this test was to hacky for Java
+     */
     @Test
-    public void loadFileTest() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {
+    public void loadFileTest() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         new Expectations() {{
             bufferedReader.readLine();
             returns("-5", "0", "4", "two");
@@ -57,8 +65,16 @@ public class ConfigTest {
         assertEquals(0, robotIdMethod.invoke(null));
     }
 
+    /**
+     * Checks that the correct item is returned for a {@code robotSpecific()} invocation
+     *
+     * @throws NoSuchMethodException In case robotSpecific() can't be found
+     * @throws InvocationTargetException In case robotSpecific() can't be invoked
+     * @throws IllegalAccessException In case this test was to hacky for Java (it is pretty close)
+     * @throws NoSuchFieldException In case the robotId field couldn't be modified
+     */
     @Test
-    public void robotSpecificTests() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException, NoSuchFieldException {
+    public void robotSpecificTests() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {
         Field robotIdField = Config.class.getDeclaredField("ROBOT_ID");
         robotIdField.setAccessible(true);
 

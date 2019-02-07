@@ -52,6 +52,9 @@ public class DriveBaseTest {
         }};
     }
 
+    /**
+     * Ensures that the control mode for the drivebase is correct
+     */
     @Test
     public void testControlMode() {
         assertEquals(DriveBase.DriveMode.Disabled, driveBase.getDriveMode());

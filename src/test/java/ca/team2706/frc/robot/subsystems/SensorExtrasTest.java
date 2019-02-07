@@ -51,6 +51,9 @@ public class SensorExtrasTest {
         field1.set(null, null);
     }
 
+    /**
+     * Ensures that the exception for allocating the same object twice is handled
+     */
     @Test
     public void handleExceptionTest() {
         System.setOut(new PrintStream(outContent));
@@ -70,6 +73,9 @@ public class SensorExtrasTest {
         System.setErr(originalErr);
     }
 
+    /**
+     * Test that the first PWM gets added to LiveWindow
+     */
     @Test
     public void allocationTest() {
         new Verifications() {{

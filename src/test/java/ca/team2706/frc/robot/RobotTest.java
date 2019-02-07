@@ -85,6 +85,13 @@ public class RobotTest {
         }};
     }
 
+    /**
+     * Tests that the state listener calls and sets the correct states
+     *
+     * @throws NoSuchMethodException In case the shutdown method can't be found
+     * @throws InvocationTargetException In case the shutdown method can't be invoked
+     * @throws IllegalAccessException In case the reflection is illegal
+     */
     @Test
     public void testStates() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         StateTest stateTest = new StateTest();
@@ -131,9 +138,19 @@ public class RobotTest {
         Robot.removeStateListener(stateTest);
     }
 
+    /**
+     * Holds state information
+     */
     private static class StateTest implements Consumer<RobotState> {
 
+        /**
+         * The state that the robot was changed to
+         */
         RobotState robotState;
+
+        /**
+         * Whether the robot was initialized
+         */
         boolean isInitialized;
 
         @Override
@@ -143,8 +160,11 @@ public class RobotTest {
         }
     }
 
+    /**
+     * Test that LiveWindow is enabled and disabled at the correct times
+     */
     @Test
-    public void testLiveWindowAndScheduler() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void testLiveWindowAndScheduler() {
         new Expectations() {{
             LiveWindow.isEnabled();
             returns(false, true, false);

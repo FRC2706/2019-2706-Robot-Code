@@ -1,38 +1,45 @@
 package ca.team2706.frc.robot.operatorfeedback.rumbler;
 
 import ca.team2706.frc.robot.OI;
+import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
-import mockit.*;
+import mockit.Expectations;
+import mockit.Mocked;
+import mockit.Verifications;
+import mockit.VerificationsInOrder;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.reflect.Field;
 import java.time.Clock;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class RumblerTest {
-    @Injectable
+    @Mocked
     private Joystick driverStick;
 
-    @Injectable
+    @Mocked
     private Joystick operatorStick;
 
     @Mocked
-    private OI oi;
+    private DriveBase driveBase;
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Before
-    public void setUp() {
-        new Expectations() {{
-            oi.getDriverStick();
-            result = driverStick;
-            minTimes = 0;
+    public void setUp() throws NoSuchFieldException, IllegalAccessException {
+        // I should re-initialize OI for each time.
+        Field currentInstanceField = OI.class.getDeclaredField("currentInstance");
+        currentInstanceField.setAccessible(true);
+        currentInstanceField.set(null, null);
 
-            oi.getControlStick();
+        new Expectations() {{
+            new Joystick(0);
+            result = driverStick;
+
+            new Joystick(1);
             result = operatorStick;
-            minTimes = 0;
         }};
     }
 
@@ -56,6 +63,11 @@ public class RumblerTest {
             public Rumbler.JoystickSelection getJoystick() {
                 return Rumbler.JoystickSelection.BOTH_JOYSTICKS;
             }
+
+            @Override
+            public double getRumbleIntensity() {
+                return 1.0;
+            }
         };
 
         Rumbler rumbler = new Rumbler(pattern);
@@ -65,11 +77,15 @@ public class RumblerTest {
         assertTrue(rumbler.isRumbling());
 
         new Verifications() {{
-            driverStick.setRumble(GenericHID.RumbleType.kLeftRumble, withNotEqual(0));
-            driverStick.setRumble(GenericHID.RumbleType.kRightRumble, withNotEqual(0));
+            driverStick.setRumble(GenericHID.RumbleType.kLeftRumble, withNotEqual(0D));
+            times = 1;
+            driverStick.setRumble(GenericHID.RumbleType.kRightRumble, withNotEqual(0D));
+            times = 1;
 
-            operatorStick.setRumble(GenericHID.RumbleType.kLeftRumble, withNotEqual(0));
-            operatorStick.setRumble(GenericHID.RumbleType.kRightRumble, withNotEqual(0));
+            operatorStick.setRumble(GenericHID.RumbleType.kLeftRumble, withNotEqual(0D));
+            times = 1;
+            operatorStick.setRumble(GenericHID.RumbleType.kRightRumble, withNotEqual(0D));
+            times = 1;
         }};
     }
 
@@ -79,7 +95,6 @@ public class RumblerTest {
     @Test
     public void testStopsRumble() {
         RumblePattern pattern = new RumblePattern() {
-
             int times = 0;
 
             @Override
@@ -97,6 +112,11 @@ public class RumblerTest {
             public Rumbler.JoystickSelection getJoystick() {
                 return Rumbler.JoystickSelection.BOTH_JOYSTICKS;
             }
+
+            @Override
+            public double getRumbleIntensity() {
+                return 1.0;
+            }
         };
 
         Rumbler rumbler = new Rumbler(pattern);
@@ -106,11 +126,11 @@ public class RumblerTest {
         assertFalse(rumbler.isRumbling());
 
         new Verifications() {{
-            driverStick.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
-            driverStick.setRumble(GenericHID.RumbleType.kRightRumble, 0);
+            driverStick.setRumble(GenericHID.RumbleType.kLeftRumble, 0D);
+            driverStick.setRumble(GenericHID.RumbleType.kRightRumble, 0D);
 
-            operatorStick.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
-            operatorStick.setRumble(GenericHID.RumbleType.kRightRumble, 0);
+            operatorStick.setRumble(GenericHID.RumbleType.kLeftRumble, 0D);
+            operatorStick.setRumble(GenericHID.RumbleType.kRightRumble, 0D);
         }};
     }
 
@@ -196,8 +216,6 @@ public class RumblerTest {
     @Test
     public void testRightControllerIsRumbled() {
         RumblePattern pattern1 = new RumblePattern() {
-            int times = 0;
-
             @Override
             boolean shouldRumble(long millisecondsOn) {
                 return true;
@@ -326,6 +344,7 @@ public class RumblerTest {
         }};
     }
 
+
     /**
      * Runs the {@link Rumbler#execute()} and {@link Rumbler#isFinished()} methods <code>numTimes</code> number of times,
      * simulating actual usage.
@@ -333,11 +352,10 @@ public class RumblerTest {
      * @param rumbler  The rumbler class to be run.
      * @param numTimes The number of times to call the execute method.
      */
-    private static void runRumbler(Rumbler rumbler, int numTimes) {
+    private static void runRumbler(Rumbler rumbler, final int numTimes) {
         for (int i = 0; i < numTimes; i++) {
             rumbler.execute();
             rumbler.isFinished();
         }
     }
-
 }

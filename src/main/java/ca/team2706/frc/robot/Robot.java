@@ -1,12 +1,16 @@
 package ca.team2706.frc.robot;
 
+import ca.team2706.frc.robot.commands.StraightDrive;
 import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.Bling;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import ca.team2706.frc.robot.subsystems.SensorExtras;
+import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
@@ -19,6 +23,7 @@ import java.util.function.Consumer;
 public class Robot extends TimedRobot {
     private static boolean isInitialized;
 
+    private Command[] commands;
 
     /**
      * Method run on robot initialization.
@@ -42,8 +47,15 @@ public class Robot extends TimedRobot {
 
         // The USB camera used on the Robot, not enabled during simulation mode
         if (Config.ENABLE_CAMERA) {
-            CameraServer.getInstance().startAutomaticCapture();
+            UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+            camera.setConnectVerbose(0);
         }
+
+        commands = new Command[]{
+                OI.getInstance().driveCommand,                               // 0
+                OI.getInstance().driveCommand,                               // 1
+                new StraightDrive(0.2, 2.0, 100)  // 2
+        };
     }
 
     /**
@@ -77,12 +89,29 @@ public class Robot extends TimedRobot {
     }
 
     /**
-     * Caled at the beginning of autonomous.
+     * Called at the beginning of autonomous.
      */
     @Override
     public void autonomousInit() {
         // Iterate through each of the state-change listeners and call them.
         onStateChange(RobotState.AUTONOMOUS);
+
+        selectorInit();
+    }
+
+    /**
+     * Checks to see if the desired command is assigned and runs 0 or does nothing if not
+     */
+    private void selectorInit() {
+        // The index based the voltage of the selector
+        int index = DriveBase.getInstance().getAnalogSelectorIndex();
+
+        // Check to see if the command exists in the desired index
+        if (DriveBase.getInstance().getAnalogSelectorIndex() < commands.length && commands[index] != null) {
+            commands[DriveBase.getInstance().getAnalogSelectorIndex()].start();
+        } else if (commands.length > 0 && commands[0] != null) {
+            commands[0].start();
+        }
     }
 
     /**
@@ -127,6 +156,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void testPeriodic() {
+
     }
 
     /**
@@ -140,6 +170,8 @@ public class Robot extends TimedRobot {
      * @param args Arguments passed on startup
      */
     public static void main(String[] args) {
+        Log.init();
+
         Runtime.getRuntime().addShutdownHook(new Thread(Robot::shutdown));
 
         RobotBase.startRobot(Robot::new);

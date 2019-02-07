@@ -10,7 +10,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -69,13 +68,27 @@ public class Config {
     // Talon ID for the Pigeon
     public static final int GYRO_TALON_ID = robotSpecific(5, 5, 5);
 
+    // Selector Channel
+    public static final int SELECTOR_ID = robotSpecific(0, 0, 0);
+
     // The amount of encoder ticks that the robot must drive to go one foot
     public static final double DRIVE_ENCODER_DPP
             = robotSpecific(Math.PI / 8192.0, Math.PI / 8192.0, Math.PI / 8192.0);
 
     public static final boolean ENABLE_CAMERA = robotSpecific(true, true, false);
 
-    public static final int PURPE_LIGHT = robotSpecific(3, 3, 3);
+    public static final int PURPLE_LIGHT = robotSpecific(3, 3, 3);
+
+    public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_DEADBAND = constant("drive-deadband", 0.001);
+    public static final FluidConstant<Double> DRIVE_OPEN_LOOP_DEADBAND = constant("drive-deadband", 0.04);
+
+    public static final FluidConstant<Boolean> DRIVE_SUM_PHASE_LEFT = constant("drive-sum-phase-left", true);
+    public static final FluidConstant<Boolean> DRIVE_SUM_PHASE_RIGHT = constant("drive-sum-phase-right", true);
+
+    public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_P = constant("drive-P", 0.1);
+    public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_I = constant("drive-I", 0.0);
+    public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_D = constant("drive-D", 0.0);
+
 
     // #### Fluid constants ####
     static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
@@ -169,7 +182,7 @@ public class Config {
         try (BufferedWriter writer = Files.newBufferedWriter(SAVE_FILE)) {
             writer.write(writable);
         } catch (IOException e) {
-            DriverStation.reportWarning("Unable to save fluid constants to file.", true);
+            DriverStation.reportWarning("Unable to save fluid constants to file.", false);
         }
     }
 

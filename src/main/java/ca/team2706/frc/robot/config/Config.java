@@ -37,7 +37,7 @@ public class Config {
     /**
      * ID of the robot that code is running on
      */
-    private static final int ROBOT_ID = getRobotId();
+    private static int robotId = -1;
 
 
     // Values for driving robot with joystick
@@ -112,16 +112,17 @@ public class Config {
      * @return The integer ID of the robot defaulting to 0
      */
     private static int getRobotId() {
-        int id;
+        if(robotId < 0) {
+            try (BufferedReader reader = Files.newBufferedReader(ROBOT_ID_LOC)) {
+                robotId = Integer.parseInt(reader.readLine());
+            } catch (IOException | NumberFormatException e) {
+                robotId = 0;
+                e.printStackTrace();
+            }
 
-        try (BufferedReader reader = Files.newBufferedReader(ROBOT_ID_LOC)) {
-            id = Integer.parseInt(reader.readLine());
-        } catch (IOException | NumberFormatException e) {
-            id = 0;
-            e.printStackTrace();
         }
 
-        return id;
+        return robotId;
     }
 
     /**
@@ -135,10 +136,10 @@ public class Config {
     @SafeVarargs
     private static <T> T robotSpecific(T first, T... more) {
         // Return the first value if the robot id doesn't fall between second and last index
-        if (ROBOT_ID < 1 || ROBOT_ID > more.length) {
+        if (getRobotId() < 1 || getRobotId() > more.length) {
             return first;
         } else {
-            return more[ROBOT_ID - 1];
+            return more[getRobotId() - 1];
         }
     }
 

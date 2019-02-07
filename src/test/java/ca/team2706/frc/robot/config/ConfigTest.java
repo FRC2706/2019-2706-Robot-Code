@@ -48,9 +48,10 @@ public class ConfigTest {
      * @throws NoSuchMethodException In case the method to get the robot id can't be found
      * @throws InvocationTargetException In case the method to get the robot id can't be invoked
      * @throws IllegalAccessException In case this test was to hacky for Java
+     * @throws NoSuchFieldException In case the robotId field can't be found
      */
     @Test
-    public void loadFileTest() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void loadFileTest() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {
         new Expectations() {{
             bufferedReader.readLine();
             returns("-5", "0", "4", "two");
@@ -59,9 +60,19 @@ public class ConfigTest {
         Method robotIdMethod = Config.class.getDeclaredMethod("getRobotId");
         robotIdMethod.setAccessible(true);
 
+        Field robotIdField = Config.class.getDeclaredField("robotId");
+        robotIdField.setAccessible(true);
+
+        robotIdField.set(null, -1);
         assertEquals(-5, robotIdMethod.invoke(null));
+
+        robotIdField.set(null, -1);
         assertEquals(0, robotIdMethod.invoke(null));
+
+        robotIdField.set(null, -1);
         assertEquals(4, robotIdMethod.invoke(null));
+
+        robotIdField.set(null, -1);
         assertEquals(0, robotIdMethod.invoke(null));
     }
 
@@ -75,13 +86,8 @@ public class ConfigTest {
      */
     @Test
     public void robotSpecificTests() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {
-        Field robotIdField = Config.class.getDeclaredField("ROBOT_ID");
+        Field robotIdField = Config.class.getDeclaredField("robotId");
         robotIdField.setAccessible(true);
-
-        // Hack: DELETE FINAL MODIFIER
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(robotIdField, robotIdField.getModifiers() & ~Modifier.FINAL);
 
         Method robotSpecificMethod = Config.class.getDeclaredMethod("robotSpecific", Object.class, Object[].class);
         robotSpecificMethod.setAccessible(true);

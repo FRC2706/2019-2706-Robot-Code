@@ -8,6 +8,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
@@ -62,6 +63,19 @@ public class ConfigTest {
 
         writeToRobotIdFile(2);
         assertEquals(2, (int) getIdMethod.invoke(null));
+    }
+
+    /**
+     * Tests to ensure that if the robot ID file cannot be retrieved that the robot's id is zero.
+     */
+    @Test
+    public void testRobotIDIsZeroWhenNotSet() throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+        Files.delete(ID_FILE);
+
+        Method getIdMethod = Config.class.getDeclaredMethod("getRobotId");
+        getIdMethod.setAccessible(true);
+
+        assertEquals("Wrong robot ID found", 0, (int) getIdMethod.invoke(null));
     }
 
     /**

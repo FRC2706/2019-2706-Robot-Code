@@ -71,7 +71,7 @@ public class RobotTest {
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
         Field listenersField = Robot.class.getDeclaredField("STATE_LISTENERS");
         listenersField.setAccessible(true);
-        List<Consumer<RobotState>> listener = (List<Consumer<RobotState>>) listenersField.get(null);
+        List<?> listener = (List<?>) listenersField.get(null);
         listener.retainAll(Collections.emptySet());
 
         Field initializedField = Robot.class.getDeclaredField("isInitialized");

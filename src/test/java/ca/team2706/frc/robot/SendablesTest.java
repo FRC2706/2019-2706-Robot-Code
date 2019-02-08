@@ -75,8 +75,10 @@ public class SendablesTest {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
+
             sensorCollection.getQuadraturePosition();
             returns(-5, 0, 5);
+
             table.getEntry(Sendables.TALON_NAME);
             result = entry;
         }};
@@ -87,9 +89,10 @@ public class SendablesTest {
         builder.setTable(table);
         sendableBase.initSendable(builder);
 
-        builder.updateTable();
-        builder.updateTable();
-        builder.updateTable();
+        // Update the table three times.
+        for (int i = 0; i < 3; i++) {
+            builder.updateTable();
+        }
 
         new Verifications() {{
             entry.setDouble(-5);
@@ -108,12 +111,16 @@ public class SendablesTest {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
+
             table.getEntry(Sendables.TALON_NAME);
             result = entry;
+
             entry.isValid();
             result = true;
+
             value.getDouble();
             returns(-24.0, 2.0, 0.0);
+
             value.isDouble();
             result = true;
         }};
@@ -154,6 +161,7 @@ public class SendablesTest {
         new Expectations() {{
             pigeon.getFusedHeading();
             returns(-5.0, 0.0, 5.0);
+
             table.getEntry(Sendables.PIGEON_NAME);
             result = entry;
         }};
@@ -164,9 +172,10 @@ public class SendablesTest {
         builder.setTable(table);
         sendableBase.initSendable(builder);
 
-        builder.updateTable();
-        builder.updateTable();
-        builder.updateTable();
+        // Update the table three times.
+        for (int i = 0; i < 3; i++) {
+            builder.updateTable();
+        }
 
         new Verifications() {{
             entry.setDouble(-5.0);
@@ -186,10 +195,13 @@ public class SendablesTest {
             ;
             table.getEntry(Sendables.PIGEON_NAME);
             result = entry;
+
             entry.isValid();
             result = true;
+
             value.getDouble();
             returns(-24.0, 2.0, 0.0);
+
             value.isDouble();
             result = true;
         }};

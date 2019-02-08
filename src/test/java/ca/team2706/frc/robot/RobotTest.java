@@ -67,12 +67,13 @@ public class RobotTest {
     @Injectable
     private SensorCollection sensorCollection;
 
+    @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
         Field listenersField = Robot.class.getDeclaredField("STATE_LISTENERS");
         listenersField.setAccessible(true);
-        List<?> listener = (List<?>) listenersField.get(null);
-        listener.retainAll(Collections.emptySet());
+        List<Consumer<RobotState>> listener = (List<Consumer<RobotState>>) listenersField.get(null);
+        listener.retainAll(Collections.<Consumer<RobotState>>emptySet());
 
         Field initializedField = Robot.class.getDeclaredField("isInitialized");
         initializedField.setAccessible(true);
@@ -166,6 +167,7 @@ public class RobotTest {
     @Test
     public void testLiveWindowAndScheduler() {
         new Expectations() {{
+            //noinspection ResultOfMethodCallIgnored
             LiveWindow.isEnabled();
             returns(false, true, false);
         }};

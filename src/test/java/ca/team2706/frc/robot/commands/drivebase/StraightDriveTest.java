@@ -57,8 +57,8 @@ public class StraightDriveTest {
     /**
      * Tests that the command puts the drivetrain into the correct state
      *
-     * @param speed The speed to create the command with
-     * @param position The position to create the command with
+     * @param speed         The speed to create the command with
+     * @param position      The position to create the command with
      * @param minDoneCycles The minimum cycles to use
      */
     @Test
@@ -75,8 +75,8 @@ public class StraightDriveTest {
     /**
      * Tests that the setpoint commands are called and speed is limited each tick
      *
-     * @param speed The speed to inject
-     * @param position The position to inject
+     * @param speed         The speed to inject
+     * @param position      The position to inject
      * @param minDoneCycles The min cycles to inject
      */
     @Test
@@ -100,8 +100,8 @@ public class StraightDriveTest {
     /**
      * Tests that the command finishes in the right conditions
      *
-     * @param speed The speed to inject
-     * @param position The position to inject
+     * @param speed         The speed to inject
+     * @param position      The position to inject
      * @param minDoneCycles The min cycles to inject
      */
     @Test

@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -44,11 +43,11 @@ public class ConfigTest {
     /**
      * Checks that the robot identifies itself correctly from a file
      *
-     * @throws IOException For setting readLine() expectations
-     * @throws NoSuchMethodException In case the method to get the robot id can't be found
+     * @throws IOException               For setting readLine() expectations
+     * @throws NoSuchMethodException     In case the method to get the robot id can't be found
      * @throws InvocationTargetException In case the method to get the robot id can't be invoked
-     * @throws IllegalAccessException In case this test was to hacky for Java
-     * @throws NoSuchFieldException In case the robotId field can't be found
+     * @throws IllegalAccessException    In case this test was to hacky for Java
+     * @throws NoSuchFieldException      In case the robotId field can't be found
      */
     @Test
     public void loadFileTest() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {
@@ -79,10 +78,10 @@ public class ConfigTest {
     /**
      * Checks that the correct item is returned for a {@code robotSpecific()} invocation
      *
-     * @throws NoSuchMethodException In case robotSpecific() can't be found
+     * @throws NoSuchMethodException     In case robotSpecific() can't be found
      * @throws InvocationTargetException In case robotSpecific() can't be invoked
-     * @throws IllegalAccessException In case this test was to hacky for Java (it is pretty close)
-     * @throws NoSuchFieldException In case the robotId field couldn't be modified
+     * @throws IllegalAccessException    In case this test was to hacky for Java (it is pretty close)
+     * @throws NoSuchFieldException      In case the robotId field couldn't be modified
      */
     @Test
     public void robotSpecificTests() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {

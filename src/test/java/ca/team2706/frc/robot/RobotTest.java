@@ -88,9 +88,9 @@ public class RobotTest {
     /**
      * Tests that the state listener calls and sets the correct states
      *
-     * @throws NoSuchMethodException In case the shutdown method can't be found
+     * @throws NoSuchMethodException     In case the shutdown method can't be found
      * @throws InvocationTargetException In case the shutdown method can't be invoked
-     * @throws IllegalAccessException In case the reflection is illegal
+     * @throws IllegalAccessException    In case the reflection is illegal
      */
     @Test
     public void testStates() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {

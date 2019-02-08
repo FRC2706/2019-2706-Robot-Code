@@ -30,6 +30,7 @@ public class SendablesTest {
 
     /**
      * Checks the correct name was added to LiveWindow for the Pigeon sendable
+     *
      * @param pigeon The pigeon to add
      */
     @Test
@@ -48,6 +49,7 @@ public class SendablesTest {
 
     /**
      * Checks the correct name was added to LiveWindow for the Talon sendable
+     *
      * @param talon The talon to add
      */
     @Test
@@ -65,6 +67,7 @@ public class SendablesTest {
 
     /**
      * Checks the LiveWindow is setting the Network Tables entry to the talon encoders
+     *
      * @param talon The talon to add to LiveWindow
      */
     @Test
@@ -97,6 +100,7 @@ public class SendablesTest {
 
     /**
      * Checks the LiveWindow is setting the talon encoder value from the Network Tables entry
+     *
      * @param talon The talon to add to LiveWindow
      */
     @Test
@@ -142,6 +146,7 @@ public class SendablesTest {
 
     /**
      * Checks the LiveWindow is setting the Network Tables entry to the pigeon angle
+     *
      * @param pigeon The pigeon to add to LiveWindow
      */
     @Test
@@ -172,6 +177,7 @@ public class SendablesTest {
 
     /**
      * Checks the LiveWindow is setting the pigeon rotation value from the Network Tables entry
+     *
      * @param pigeon The pigeon to add to LiveWindow
      */
     @Test

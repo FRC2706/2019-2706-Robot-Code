@@ -209,6 +209,12 @@ public class DriveBase extends Subsystem {
         rightFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
     }
 
+    public void selectGyroSensor()
+    {
+
+    }
+
+
     /**
      * Sets the talons to a disabled mode
      */
@@ -248,6 +254,15 @@ public class DriveBase extends Subsystem {
         }
     }
 
+     public void setRotateMode()
+     {
+         if (driveMode != DriveMode.Rotate) {
+             stop();
+
+             reset();
+
+             driveMode = DriveMode.Rotate;
+         }     }
 
     /**
      * Changes whether current limiting should be used
@@ -361,6 +376,19 @@ public class DriveBase extends Subsystem {
         follow();
     }
 
+    public void setRotation(double speed, double setpoint) {
+        setRotateMode();
+
+        leftFrontMotor.configClosedLoopPeakOutput(0, speed);
+        rightFrontMotor.configClosedLoopPeakOutput(0, speed);
+
+        // TODO: Invert in opposite direction
+        rightFrontMotor.set(ControlMode.Position, setpoint);
+        leftFrontMotor.follow(rightFrontMotor);
+        
+        follow();
+    }
+
     /**
      * Get the distance travelled by the left encoder in feet
      *
@@ -464,6 +492,15 @@ public class DriveBase extends Subsystem {
         /**
          * Performs closed loop position control without heading support
          */
-        PositionNoGyro
+        PositionNoGyro,
+
+        /**
+         * Rotates the robot with the gyroscope
+         */
+        Rotate
+
+
     }
+
+
 }

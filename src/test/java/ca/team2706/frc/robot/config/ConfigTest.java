@@ -166,6 +166,7 @@ public class ConfigTest {
      */
     private void resetIdField() throws Exception {
         Field idField = Config.class.getDeclaredField("robotId");
-        setFinalStatic(idField, -1);
+        idField.setAccessible(true);
+        idField.set(null, -1);
     }
 }

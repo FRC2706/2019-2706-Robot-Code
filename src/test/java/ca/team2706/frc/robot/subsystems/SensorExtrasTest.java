@@ -40,7 +40,7 @@ public class SensorExtrasTest {
     private Relay relay;
 
     @Mocked
-    LiveWindow liveWindow;
+    private LiveWindow liveWindow;
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();

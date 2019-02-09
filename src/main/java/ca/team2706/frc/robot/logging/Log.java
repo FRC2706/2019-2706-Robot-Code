@@ -21,16 +21,15 @@ public class Log {
     public static void init() {
         Log.i("Starting to log");
 
-        Log.i("Robot Free Memory: " + ((double)Runtime.getRuntime().freeMemory()) / (1024 * 1024) + "MB");
-        Log.i("Allocated: " + ((double)Runtime.getRuntime().totalMemory()) / (1024 * 1024) + "MB");
-        Log.i("Available: " + ((double)Runtime.getRuntime().maxMemory()) / (1024 * 1024) + "MB");
+        Log.i("Robot Free Memory: " + ((double) Runtime.getRuntime().freeMemory()) / (1024 * 1024) + "MB");
+        Log.i("Allocated: " + ((double) Runtime.getRuntime().totalMemory()) / (1024 * 1024) + "MB");
+        Log.i("Available: " + ((double) Runtime.getRuntime().maxMemory()) / (1024 * 1024) + "MB");
 
         Log.i("Teleop game specific message: " + DriverStation.getInstance().getGameSpecificMessage());
         Robot.setOnStateChange(Log::printRobotState);
     }
 
-    private static void printRobotState(RobotState state)
-    {
+    private static void printRobotState(RobotState state) {
         Log.i("Robot State: " + state.name());
     }
 

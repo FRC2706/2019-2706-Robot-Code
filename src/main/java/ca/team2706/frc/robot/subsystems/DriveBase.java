@@ -205,10 +205,7 @@ public class DriveBase extends Subsystem {
         rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Config.CAN_SHORT);
         leftFrontMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Config.CAN_SHORT);
 
-        leftFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
-        rightFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
-        leftBackMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
-        rightBackMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
+        configDeadband(leftFrontMotor, rightFrontMotor);
 
         rightFrontMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
         rightFrontMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
@@ -219,16 +216,8 @@ public class DriveBase extends Subsystem {
 
     public void selectGyroSensor() {
         resetTalonConfiguration();
-        leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_SHORT);
-        rightFrontMotor.configRemoteFeedbackFilter(leftFrontMotor.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, 0, Config.CAN_SHORT);
-
-        rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, 0, Config.CAN_SHORT);
 
         rightFrontMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.Pigeon_Yaw, 0,Config.CAN_SHORT);
-        rightFrontMotor.configSelectedFeedbackCoefficient(1.0, 0, Config.CAN_SHORT);
-
-        rightFrontMotor.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Config.CAN_SHORT);
-        rightFrontMotor.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative, Config.CAN_SHORT);
 
         rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, 0, Config.CAN_SHORT);
 
@@ -237,25 +226,20 @@ public class DriveBase extends Subsystem {
         rightFrontMotor.setInverted(true);
         rightFrontMotor.setSensorPhase(true);
 
+        configDeadband(rightFrontMotor, leftFrontMotor);
+
+        rightFrontMotor.config_kP(0, Config.TURN_P.value());
+        rightFrontMotor.config_kI(0, Config.TURN_I.value());
+        rightFrontMotor.config_kD(0, Config.TURN_D.value());
+
+        rightFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
+    }
+
+    private void configDeadband(WPI_TalonSRX rightFrontMotor, WPI_TalonSRX leftFrontMotor) {
         rightFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
         leftFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
         leftBackMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
         rightBackMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
-
-        leftFrontMotor.configPeakOutputForward(+1.0, Config.CAN_SHORT);
-        leftFrontMotor.configPeakOutputReverse(-1.0, Config.CAN_SHORT);
-        rightFrontMotor.configPeakOutputForward(+1.0, Config.CAN_SHORT);
-        rightFrontMotor.configPeakOutputReverse(-1.0, Config.CAN_SHORT);
-
-        rightFrontMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
-        rightFrontMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
-        rightFrontMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value());
-
-        rightFrontMotor.config_kP(1, Config.TURN_P.value());
-        rightFrontMotor.config_kI(1, Config.TURN_I.value());
-        rightFrontMotor.config_kD(1, Config.TURN_D.value());
-
-        rightFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
     }
 
 
@@ -426,9 +410,10 @@ public class DriveBase extends Subsystem {
         leftFrontMotor.configClosedLoopPeakOutput(0, speed);
         rightFrontMotor.configClosedLoopPeakOutput(0, speed);
 
-        // TODO: Invert in opposite direction
         rightFrontMotor.set(ControlMode.Position, setpoint);
         leftFrontMotor.follow(rightFrontMotor);
+
+        leftFrontMotor.setInverted(InvertType.OpposeMaster);
 
         follow();
     }

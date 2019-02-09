@@ -67,6 +67,11 @@ public class DriveBase extends Subsystem {
     private final PWM light;
 
     /**
+     * Indicates whether the robot is in brake mode
+     */
+    private boolean brakeMode;
+
+    /**
      * Creates a drive base, and initializes all required sensors and motors
      */
     private DriveBase() {
@@ -286,6 +291,17 @@ public class DriveBase extends Subsystem {
         leftBackMotor.setNeutralMode(mode);
         rightFrontMotor.setNeutralMode(mode);
         rightBackMotor.setNeutralMode(mode);
+
+        brakeMode = brake;
+    }
+
+    /**
+     * Checks whether the robot is in brake mode
+     *
+     * @return True when the Talons have the neutral mode set to {@code NeutralMode.Brake}
+     */
+    public boolean isBrakeMode() {
+        return brakeMode;
     }
 
     /**

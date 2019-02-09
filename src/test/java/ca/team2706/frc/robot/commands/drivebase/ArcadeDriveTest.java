@@ -32,7 +32,7 @@ public class ArcadeDriveTest {
     /**
      * Makes sure that the brake mode gets set to the correct value at the end of the match
      */
-    public void testBrakeMode(boolean brake) {
+    private void testBrakeMode(boolean brake) {
         new Expectations() {{
             forwardVal.get();
             result = 0.0;

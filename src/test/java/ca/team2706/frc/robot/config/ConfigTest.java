@@ -19,10 +19,10 @@ import static org.junit.Assert.assertEquals;
 public class ConfigTest {
 
     @Injectable
-    BufferedReader bufferedReader;
+    private BufferedReader bufferedReader;
 
     @Mocked
-    Files files;
+    private Files files;
 
     @Before
     public void setUp() throws IOException, IllegalAccessException, NoSuchFieldException {
@@ -34,6 +34,7 @@ public class ConfigTest {
             Files.newBufferedReader(path);
             result = bufferedReader;
             minTimes = 0;
+
             bufferedReader.readLine();
             result = "0";
             minTimes = 0;

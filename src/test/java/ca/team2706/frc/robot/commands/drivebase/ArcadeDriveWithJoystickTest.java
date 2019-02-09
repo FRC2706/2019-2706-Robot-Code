@@ -34,10 +34,9 @@ public class ArcadeDriveWithJoystickTest {
 
         arcadeDrive.initialize();
 
-        arcadeDrive.execute();
-        arcadeDrive.execute();
-        arcadeDrive.execute();
-        arcadeDrive.execute();
+        for (int i = 0; i < 4; i++) {
+            arcadeDrive.execute();
+        }
 
         arcadeDrive.end();
 

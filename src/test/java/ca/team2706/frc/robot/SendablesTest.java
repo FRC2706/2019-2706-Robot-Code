@@ -173,6 +173,7 @@ public class SendablesTest {
         sendableBase.initSendable(builder);
 
         // Update the table three times.
+
         for (int i = 0; i < 3; i++) {
             builder.updateTable();
         }

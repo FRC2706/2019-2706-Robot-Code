@@ -16,7 +16,7 @@ import mockit.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class StraightDriveTest {
 
@@ -66,7 +66,7 @@ public class StraightDriveTest {
         assertEquals(DriveBase.DriveMode.Disabled, DriveBase.getInstance().getDriveMode());
         straightDrive.initialize();
         assertEquals(DriveBase.DriveMode.PositionNoGyro, DriveBase.getInstance().getDriveMode());
-        assertEquals(true, DriveBase.getInstance().isBrakeMode());
+        assertTrue(DriveBase.getInstance().isBrakeMode());
 
         straightDrive.end();
         assertEquals(DriveBase.DriveMode.Disabled, DriveBase.getInstance().getDriveMode());
@@ -117,22 +117,22 @@ public class StraightDriveTest {
 
         straightDrive.initialize();
 
-        assertEquals(false, straightDrive.isFinished());
-        assertEquals(false, straightDrive.isFinished());
-        assertEquals(false, straightDrive.isFinished());
-        assertEquals(false, straightDrive.isFinished());
-        assertEquals(false, straightDrive.isFinished());
-        assertEquals(false, straightDrive.isFinished());
-        assertEquals(false, straightDrive.isFinished());
-        assertEquals(false, straightDrive.isFinished());
-        assertEquals(false, straightDrive.isFinished());
-        assertEquals(true, straightDrive.isFinished());
+        assertFalse(straightDrive.isFinished());
+        assertFalse(straightDrive.isFinished());
+        assertFalse(straightDrive.isFinished());
+        assertFalse(straightDrive.isFinished());
+        assertFalse(straightDrive.isFinished());
+        assertFalse(straightDrive.isFinished());
+        assertFalse(straightDrive.isFinished());
+        assertFalse(straightDrive.isFinished());
+        assertFalse( straightDrive.isFinished());
+        assertTrue(straightDrive.isFinished());
 
         straightDrive.end();
 
         straightDrive.initialize();
 
-        assertEquals(false, straightDrive.isFinished());
+        assertFalse(straightDrive.isFinished());
 
         straightDrive.end();
     }

@@ -30,6 +30,10 @@ public class Log {
         Robot.setOnStateChange(Log::printRobotState);
     }
 
+    /**
+     * Logs the robot state
+     * @param state the state the robot is in
+     */
     private static void printRobotState(RobotState state)
     {
         Log.i("Robot State: " + state.name());

@@ -81,6 +81,12 @@ public class Config {
             RIGHT_FRONT_DRIVE_MOTOR_ID = robotSpecific(2, 2, 2),
             RIGHT_BACK_DRIVE_MOTOR_ID = robotSpecific(4, 4, 4);
 
+    public static final double INTAKE_MAX_SPEED = 0.5; //to be finalized later, this has yet to be tested
+
+    public static final double[] ENCODER_LIFT_PID_UP = {0.5, 0, 50}; //to be finalized later, these values have not yet been tested
+
+    public static final double[] ENCODER_LIFT_PID_DOWN = {0.5, 0.5, 160}; //to be finalized later, these values have not yet been tested
+
     public static final boolean
             INVERT_FRONT_LEFT_DRIVE = robotSpecific(false, false, false),
             INVERT_BACK_LEFT_DRIVE = robotSpecific(false, false, false),

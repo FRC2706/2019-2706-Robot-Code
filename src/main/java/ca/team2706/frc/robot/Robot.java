@@ -2,10 +2,12 @@ package ca.team2706.frc.robot;
 
 import ca.team2706.frc.robot.subsystems.Bling;
 import ca.team2706.frc.robot.subsystems.DriveBase;
+import ca.team2706.frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import ca.team2706.frc.robot.subsystems.ElevatorWithPID;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
@@ -22,6 +24,8 @@ public class Robot extends TimedRobot {
         // Initialize subsystems
         Bling.init();
         DriveBase.init();
+        Intake.init();
+        ElevatorWithPID.init();
     }
 
     /**

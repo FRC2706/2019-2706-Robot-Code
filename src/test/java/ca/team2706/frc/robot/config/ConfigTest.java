@@ -25,7 +25,7 @@ public class ConfigTest {
     @Injectable
     private BufferedReader reader;
 
-    @Mocked
+    @Injectable
     private BufferedWriter writer;
 
     @Mocked
@@ -33,10 +33,22 @@ public class ConfigTest {
 
     @Before
     public void setUp() throws Exception {
+        Field robotIdLocField = Config.class.getDeclaredField("ROBOT_ID_LOC");
+        robotIdLocField.setAccessible(true);
+        final Path robotIdLoc = (Path) robotIdLocField.get(null);
+
+        Field configSaveLocField = Config.class.getDeclaredField("SAVE_FILE");
+        configSaveLocField.setAccessible(true);
+        final Path saveFileLoc = (Path) configSaveLocField.get(null);
+
         new Expectations() {{
-            //noinspection ConstantConditions
-            Files.newBufferedReader((Path) any);
+
+            Files.newBufferedReader(robotIdLoc);
             result = reader;
+            minTimes = 0;
+
+            Files.newBufferedWriter(saveFileLoc);
+            result = writer;
             minTimes = 0;
 
             reader.readLine();
@@ -135,6 +147,12 @@ public class ConfigTest {
         assertEquals(a, robotSpecificMethod.invoke(null, a, makeArray()));
     }
 
+    /**
+     * Makes an array out of the given objects.
+     *
+     * @param objects The objects.
+     * @return An array of the given objects.
+     */
     private static Object[] makeArray(Object... objects) {
         return objects;
     }

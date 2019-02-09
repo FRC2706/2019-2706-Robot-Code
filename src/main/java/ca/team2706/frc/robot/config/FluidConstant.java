@@ -158,6 +158,6 @@ public class FluidConstant<A> {
      * @return The string to be printed to file, with no newline character added.
      */
     public String toFileString() {
-        return String.format("Deployed: %s || Current: %s", deployedValue, value);
+        return String.format("%s Deployed: %s || Current: %s", getName(), deployedValue, value);
     }
 }

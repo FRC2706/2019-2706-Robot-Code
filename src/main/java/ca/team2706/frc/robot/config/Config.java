@@ -120,7 +120,7 @@ public class Config {
                 robotId = Integer.parseInt(reader.readLine());
             } catch (IOException | NumberFormatException e) {
                 robotId = 0;
-                e.printStackTrace();
+                DriverStation.reportError("Could not find robot configuration file.", false);
             }
 
         }

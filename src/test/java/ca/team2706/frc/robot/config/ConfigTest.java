@@ -28,7 +28,7 @@ public class ConfigTest {
     @Injectable
     private BufferedWriter writer;
 
-    @Mocked
+    @Mocked(stubOutClassInitialization = true)
     private Files files;
 
     @Before

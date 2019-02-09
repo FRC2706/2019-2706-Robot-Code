@@ -161,6 +161,7 @@ public class ConfigTest {
     /**
      * Resets the robot id field back to something which will casue the robot to
      * check the file again.
+     *
      * @throws Exception When bad stuff happens.
      */
     private void resetIdField() throws Exception {

@@ -1,15 +1,13 @@
 package ca.team2706.frc.robot.subsystems;
 
 import ca.team2706.frc.robot.Sendables;
-import ca.team2706.frc.robot.commands.ArcadeDriveWithJoystick;
 import ca.team2706.frc.robot.config.Config;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.InvertType;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
+import ca.team2706.frc.robot.sensors.AnalogSelector;
+import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -22,10 +20,7 @@ public class DriveBase extends Subsystem {
     private static DriveBase currentInstance;
 
     public static DriveBase getInstance() {
-        if (currentInstance == null) {
-            init();
-        }
-
+        init();
         return currentInstance;
     }
 
@@ -33,8 +28,15 @@ public class DriveBase extends Subsystem {
      * Initializes a new drive base object.
      */
     public static void init() {
-        currentInstance = new DriveBase();
+        if (currentInstance == null) {
+            currentInstance = new DriveBase();
+        }
     }
+
+    /**
+     * The mode that the robot is driving with
+     */
+    private DriveMode driveMode;
 
     /**
      * Four drive Talons
@@ -52,10 +54,24 @@ public class DriveBase extends Subsystem {
     private final PigeonIMU gyro;
 
     /**
+     * Analog Selector
+     */
+    private final AnalogSelector selector;
+
+    /*
+     * Purple light that goes on the robot
+     */
+    private final PWM light;
+
+    /**
+     * Indicates whether the robot is in brake mode
+     */
+    private boolean brakeMode;
+
+    /**
      * Creates a drive base, and initializes all required sensors and motors
      */
     private DriveBase() {
-        // TODO: Configure motors from fluid config or from file
         leftFrontMotor = new WPI_TalonSRX(Config.LEFT_FRONT_DRIVE_MOTOR_ID);
         leftBackMotor = new WPI_TalonSRX(Config.LEFT_BACK_DRIVE_MOTOR_ID);
         rightFrontMotor = new WPI_TalonSRX(Config.RIGHT_FRONT_DRIVE_MOTOR_ID);
@@ -96,6 +112,12 @@ public class DriveBase extends Subsystem {
 
         gyro = new PigeonIMU(new TalonSRX(Config.GYRO_TALON_ID));
 
+        selector = new AnalogSelector(Config.SELECTOR_ID);
+
+        light = new PWM(Config.PURPLE_LIGHT);
+
+        light.setRaw(4095);
+
         // TODO: Also output data to logging/smartdashboard
         addChild("Left Front Motor", leftFrontMotor);
         addChild("Left Back Motor", leftBackMotor);
@@ -104,15 +126,35 @@ public class DriveBase extends Subsystem {
 
         addChild(robotDriveBase);
 
-        //addChild("Gyroscope", Sendables.newPigeonSendable(gyro));
+        addChild("Gyroscope", Sendables.newPigeonSendable(gyro));
+        addChild("Selector", selector);
 
         addChild("Left Encoder", Sendables.newTalonEncoderSendable(leftFrontMotor));
         addChild("Right Encoder", Sendables.newTalonEncoderSendable(rightFrontMotor));
 
-        setOpenLoopMode();
+        addChild("Merge Light", light);
+
+        setDisabledMode();
         setBrakeMode(false);
     }
 
+    /**
+     * Gets the analog selector's index
+     *
+     * @return The index from 1-12 or 0 if unplugged
+     */
+    public int getAnalogSelectorIndex() {
+        return selector.getIndex();
+    }
+
+    /**
+     * Gets the drivemode that the robot is currently in
+     *
+     * @return The current drive mode
+     */
+    public DriveMode getDriveMode() {
+        return driveMode;
+    }
 
     /**
      * Stops the robot
@@ -128,16 +170,84 @@ public class DriveBase extends Subsystem {
     private void selectEncodersStandard() {
         leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
         rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+
+        leftFrontMotor.configNeutralDeadband(Config.DRIVE_OPEN_LOOP_DEADBAND.value());
+        rightFrontMotor.configNeutralDeadband(Config.DRIVE_OPEN_LOOP_DEADBAND.value());
+        leftBackMotor.configNeutralDeadband(Config.DRIVE_OPEN_LOOP_DEADBAND.value());
+        rightBackMotor.configNeutralDeadband(Config.DRIVE_OPEN_LOOP_DEADBAND.value());
+    }
+
+    /**
+     * Selects local encoders and the current sensor
+     */
+    private void selectEncodersSum() {
+        leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_SHORT);
+        rightFrontMotor.configRemoteFeedbackFilter(leftFrontMotor.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, 0, Config.CAN_SHORT);
+
+        rightFrontMotor.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Config.CAN_SHORT);
+        rightFrontMotor.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative, Config.CAN_SHORT);
+
+        rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, 0, Config.CAN_SHORT);
+        rightFrontMotor.configSelectedFeedbackCoefficient(0.5, 0, Config.CAN_SHORT);
+
+        leftFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_LEFT.value());
+        rightFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_RIGHT.value());
+
+        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Config.CAN_SHORT);
+        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Config.CAN_SHORT);
+        leftFrontMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Config.CAN_SHORT);
+
+        leftFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
+        rightFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
+        leftBackMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
+        rightBackMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
+
+        rightFrontMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
+        rightFrontMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
+        rightFrontMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value());
+
+        rightFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
+    }
+
+    /**
+     * Sets the talons to a disabled mode
+     */
+    public void setDisabledMode() {
+        if (driveMode != DriveMode.Disabled) {
+            stop();
+
+            reset();
+
+            driveMode = DriveMode.Disabled;
+        }
     }
 
     /**
      * Switches the talons to a mode that is optimal for driving the robot using human input
      */
-    public void setOpenLoopMode() {
-        stop();
-        selectEncodersStandard();
-        reset();
+    public void setOpenLoopVoltageMode() {
+        if (driveMode != DriveMode.OpenLoopVoltage) {
+            stop();
+            selectEncodersStandard();
+            reset();
+
+            driveMode = DriveMode.OpenLoopVoltage;
+        }
     }
+
+    /**
+     * Sets the talons to a disabled mode
+     */
+    public void setPositionNoGyroMode() {
+        if (driveMode != DriveMode.PositionNoGyro) {
+            stop();
+            selectEncodersSum();
+            reset();
+
+            driveMode = DriveMode.PositionNoGyro;
+        }
+    }
+
 
     /**
      * Changes whether current limiting should be used
@@ -155,15 +265,7 @@ public class DriveBase extends Subsystem {
     private Command defaultCommand;
 
     @Override
-    // Have the default command set from OI
     protected void initDefaultCommand() {
-        // TODO: Move to OI
-
-        if (defaultCommand == null) {
-            defaultCommand = new ArcadeDriveWithJoystick(new Joystick(0), 5, true,
-                    4, false);
-        }
-        setDefaultCommand(defaultCommand);
     }
 
     /**
@@ -186,6 +288,17 @@ public class DriveBase extends Subsystem {
         leftBackMotor.setNeutralMode(mode);
         rightFrontMotor.setNeutralMode(mode);
         rightBackMotor.setNeutralMode(mode);
+
+        brakeMode = brake;
+    }
+
+    /**
+     * Checks whether the robot is in brake mode
+     *
+     * @return True when the Talons have the neutral mode set to {@code NeutralMode.Brake}
+     */
+    public boolean isBrakeMode() {
+        return brakeMode;
     }
 
     /**
@@ -196,6 +309,8 @@ public class DriveBase extends Subsystem {
      * @param squaredInputs Whether to square each of the values
      */
     public void tankDrive(double leftSpeed, double rightSpeed, boolean squaredInputs) {
+        setOpenLoopVoltageMode();
+
         robotDriveBase.tankDrive(leftSpeed, rightSpeed, squaredInputs);
         follow();
     }
@@ -208,6 +323,8 @@ public class DriveBase extends Subsystem {
      * @param squaredInputs Whether to square each of the values
      */
     public void arcadeDrive(double forwardSpeed, double rotateSpeed, boolean squaredInputs) {
+        setOpenLoopVoltageMode();
+
         robotDriveBase.arcadeDrive(forwardSpeed, rotateSpeed, squaredInputs);
         follow();
     }
@@ -220,7 +337,27 @@ public class DriveBase extends Subsystem {
      * @param override     When true will only use rotation values
      */
     public void curvatureDrive(double forwardSpeed, double curveSpeed, boolean override) {
+        setOpenLoopVoltageMode();
+
         robotDriveBase.curvatureDrive(forwardSpeed, curveSpeed, override);
+        follow();
+    }
+
+    /**
+     * Goes to a position with the closed loop Talon PIDs using only encoder information
+     *
+     * @param speed    The speed from 0 to 1
+     * @param setpoint The setpoint to go to in feet
+     */
+    public void setPositionNoGyro(double speed, double setpoint) {
+        setPositionNoGyroMode();
+
+        leftFrontMotor.configClosedLoopPeakOutput(0, speed);
+        rightFrontMotor.configClosedLoopPeakOutput(0, speed);
+
+        rightFrontMotor.set(ControlMode.Position, setpoint / Config.DRIVE_ENCODER_DPP);
+        leftFrontMotor.follow(rightFrontMotor);
+
         follow();
     }
 
@@ -290,5 +427,43 @@ public class DriveBase extends Subsystem {
     public void reset() {
         resetEncoders();
         resetGyro();
+    }
+
+    /**
+     * Gets the error for the left motor
+     *
+     * @return The error in feet
+     */
+    public double getLeftError() {
+        return leftFrontMotor.getClosedLoopError(0) * Config.DRIVE_ENCODER_DPP;
+    }
+
+    /**
+     * Gets the error for the right motor
+     *
+     * @return The error in feet
+     */
+    public double getRightError() {
+        return rightFrontMotor.getClosedLoopError(0) * Config.DRIVE_ENCODER_DPP;
+    }
+
+    /**
+     * The drive mode of the robot
+     */
+    public enum DriveMode {
+        /**
+         * There is no control mode active
+         */
+        Disabled,
+
+        /**
+         * Standard open loop voltage control
+         */
+        OpenLoopVoltage,
+
+        /**
+         * Performs closed loop position control without heading support
+         */
+        PositionNoGyro
     }
 }

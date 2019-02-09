@@ -5,23 +5,24 @@ import ca.team2706.frc.robot.commands.bling.patterns.BlingPattern;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
+
+import java.util.Arrays;
 
 /**
  * Subsystem for controlling bling operations.
- *
- * @author Kyle Anderson
  */
 public class Bling extends Subsystem {
 
     private static Bling currentInstance;
 
+    /**
+     * Gets the current Bling subsystem object instance.
+     *
+     * @return The current Bling instance.
+     */
     public static Bling getInstance() {
-        if (currentInstance == null) {
-            init();
-        }
-
+        init();
         return currentInstance;
     }
 
@@ -29,7 +30,9 @@ public class Bling extends Subsystem {
      * Initializes a new bling object.
      */
     public static void init() {
-        currentInstance = new Bling();
+        if (currentInstance == null) {
+            currentInstance = new Bling();
+        }
     }
 
     // All of the pattern numbers
@@ -57,10 +60,8 @@ public class Bling extends Subsystem {
     // Networktables entries for bling
     private NetworkTableEntry waitMSNT, redNT, greenNT, blueNT, repeatNT, brightnessNT, commandNT;
 
-    private NetworkTable blingTable;
 
-
-    private Command defaultCommand;
+    private BlingController blingController;
 
     // Used to make sure we don't run the same command twice in a row.
     private int[] lastRGBArray = new int[3];
@@ -72,8 +73,8 @@ public class Bling extends Subsystem {
     /**
      * Class used as the basic part of handling bling commands.
      */
-    public Bling() {
-        blingTable = NetworkTableInstance.getDefault().getTable(NTKEY);
+    private Bling() {
+        final NetworkTable blingTable = NetworkTableInstance.getDefault().getTable(NTKEY);
 
         // Declare all the necessary variables to work with for networktables setting
         waitMSNT = blingTable.getEntry("wait_ms");
@@ -86,11 +87,11 @@ public class Bling extends Subsystem {
     }
 
     @Override
-    public Command getDefaultCommand() {
-        if (defaultCommand == null) {
-            defaultCommand = new BlingController();
+    public BlingController getDefaultCommand() {
+        if (blingController == null) {
+            blingController = new BlingController();
         }
-        return defaultCommand;
+        return blingController;
     }
 
     @Override
@@ -104,50 +105,95 @@ public class Bling extends Subsystem {
      * @param patternToShow The bling pattern object whose pattern to show.
      */
     public void display(BlingPattern patternToShow) {
-
-        boolean isSameCommand = isSameAsLastCommandRun(patternToShow);
-
         // Run the command
         patternToShow.runCommand();
 
-        // Don't spam the pi with the same command, so determine if this is the same as the last command
-        if (!isSameCommand) {
-            lastRepeat = patternToShow.getRepeatCount();
-            lastLEDBrightness = patternToShow.getBrightness();
-            lastWaitMs = patternToShow.getWaitMS();
-            lastCommand = patternToShow.getCommand();
-            lastRGBArray = patternToShow.getRGB();
-
-            // display pattern
-            display(patternToShow.getBrightness(), patternToShow.getWaitMS(), patternToShow.getRGB(), patternToShow.getCommand(), patternToShow.getRepeatCount());
-        }
-
+        display(patternToShow.getBrightness(), patternToShow.getWaitMS(), patternToShow.getRGB(), patternToShow.getCommand(), patternToShow.getRepeatCount());
     }
 
     /**
      * Displays the given type of LED pattern on the LED strip.
      *
      * @param brightness  The brightness, an integer between 0 and 255, 255 being full brightness
-     * @param waitMS      The amount of miliseconds to delay between each pattern
+     * @param waitMS      The amount of milliseconds to delay between each pattern
      * @param rgb         The RGB colour code (red, green, blue) to display
      * @param command     The type of pattern to display. Use one of the Bling class constants for patterns.
      * @param repeatCount The number of times to repeat the pattern
      */
-    public void display(int brightness, int waitMS, int[] rgb, String command, int repeatCount) {
-        // Send pattern parameters to Networktables. The command one must be sent last because that's the cue for the pi to display the pattern
-        redNT.setNumber(rgb[0]);
-        greenNT.setNumber(rgb[1]);
-        blueNT.setNumber(rgb[2]);
-        repeatNT.setNumber(repeatCount);
-        waitMSNT.setNumber(waitMS);
-        brightnessNT.setNumber(brightness);
-        commandNT.setString(command);
+    public void display(final int brightness, final int waitMS, final int[] rgb, final String command, final int repeatCount) {
+        if (isValidCommand(brightness, waitMS, rgb, command, repeatCount)) {
+            // Don't spam the coprocessor with the same command, so determine if this is the same as the last command
+            if (!isSameAsLastCommandRun(brightness, waitMS, rgb, command, repeatCount)) {
+                lastRepeat = repeatCount;
+                lastLEDBrightness = brightness;
+                lastWaitMs = waitMS;
+                lastCommand = command;
+                lastRGBArray = rgb;
+
+                sendPattern(brightness, waitMS, rgb, command, repeatCount);
+            }
+        }
     }
 
-    private boolean isSameAsLastCommandRun(BlingPattern patternToShow) {
-        return patternToShow.getBrightness() == lastLEDBrightness &&
-                patternToShow.getRepeatCount() == lastRepeat && patternToShow.getCommand().equals(lastCommand)
-                && patternToShow.getRGB().equals(lastRGBArray) && lastWaitMs == patternToShow.getWaitMS();
+    private boolean isValidCommand(final int brightness, final int waitMS, final int[] rgb, final String command, final int repeatCount) {
+        boolean rgbIsGood = rgb != null && rgb.length == 3;
+
+        if (rgbIsGood) {
+            for (int colour : rgb) {
+                rgbIsGood = 0 <= colour && colour <= 255;
+                // As soon as the rgb is found not to be good, break.
+                if (!rgbIsGood) {
+                    break;
+                }
+            }
+        }
+
+        return 0 <= brightness && brightness <= Bling.MAX_BRIGHTNESS &&
+                waitMS >= 0 &&
+                rgbIsGood &&
+                repeatCount >= 0;
+    }
+
+    /**
+     * Determines if the command described by these parameters is the same as the last command that was run.
+     *
+     * @param brightness  The brightness, an integer between 0 and 255, 255 being full brightness
+     * @param waitMS      The amount of milliseconds to delay between each pattern
+     * @param rgb         The RGB colour code (red, green, blue) to display
+     * @param command     The type of pattern to display. Use one of the Bling class constants for patterns.
+     * @param repeatCount The number of times to repeat the pattern
+     * @return True if this pattern and the last are the same, false otherwise.
+     */
+    private boolean isSameAsLastCommandRun(final int brightness, final int waitMS, final int[] rgb, final String command, final int repeatCount) {
+        return brightness == lastLEDBrightness &&
+                repeatCount == lastRepeat &&
+                command.equals(lastCommand) &&
+                Arrays.equals(rgb, lastRGBArray) &&
+                waitMS == lastWaitMs;
+    }
+
+    /**
+     * Sends the given pattern to the coprocessor to dislay the pattern.
+     * <b>No verification or checking is done.</b>
+     *
+     * @param brightness  The brightness, an integer between 0 and 255, 255 being full brightness
+     * @param waitMS      The amount of milliseconds to delay between each pattern
+     * @param rgb         The RGB colour code (red, green, blue) to display
+     * @param command     The type of pattern to display. Use one of the Bling class constants for patterns.
+     * @param repeatCount The number of times to repeat the pattern
+     */
+    private void sendPattern(int brightness, int waitMS, int[] rgb, String command, int repeatCount) {
+        // Verify that the length of the rgb array is proper.
+        if (rgb.length >= 3) {
+            // Send pattern parameters to Networktables. The command one must be sent last because that's the cue for the pi to display the pattern
+            redNT.setDouble(rgb[0]);
+            greenNT.setDouble(rgb[1]);
+            blueNT.setDouble(rgb[2]);
+            repeatNT.setDouble(repeatCount);
+            waitMSNT.setDouble(waitMS);
+            brightnessNT.setDouble(brightness);
+            commandNT.setString(command);
+        }
     }
 
     /**
@@ -155,7 +201,7 @@ public class Bling extends Subsystem {
      */
     public void clearStrip() {
         int[] colour = new int[]{0, 0, 0};
-        display(0, 0, colour, CLEAR, 0);
+        sendPattern(0, 0, colour, CLEAR, 0);
     }
 
 }

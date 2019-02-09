@@ -1,3 +1,4 @@
+
 package ca.team2706.frc.robot.config;
 
 import ca.team2706.frc.robot.Robot;
@@ -13,12 +14,30 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 /**
  * Config manager for the robot.
  */
 public class Config {
+    static {
+        init();
+    }
+
+    private static boolean initialized = false;
+
+    /**
+     * Initializes the Config class.
+     */
+    public static void init() {
+        if (!initialized) {
+            Robot.setOnStateChange(Config::saveConstants);
+
+            initialized = true;
+        }
+    }
+
     private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
 
     // #### Static constants ####
@@ -32,37 +51,8 @@ public class Config {
     /**
      * ID of the robot that code is running on
      */
-    private static final int ROBOT_ID = getRobotId();
+    private static int robotId = -1;
 
-    // All Xbox controller constants.
-    public static final int
-            // Axis and triggers
-            XBOX_LEFT_AXIS = 0,
-            XBOX_RIGHT_AXIS = 1,
-            XBOX_BACK_LEFT_TRIGGER = 2,
-            XBOX_BACK_RIGHT_TRIGGER = 3,
-            XBOX_RIGHT_AXIS_X = 4,
-            XBOX_RIGHT_AXIS_Y = 5,
-    // Buttons
-    XBOX_A_BUTTON = 1,
-            XBOX_B_BUTTON = 2,
-            XBOX_X_BUTTON = 3,
-            XBOX_Y_BUTTON = 4,
-            XBOX_LB_BUTTON = 5,
-            XBOX_RB_BUTTON = 6,
-            XBOX_SELECT_BUTTON = 7,
-            XBOX_START_BUTTON = 8,
-            XBOX_LEFT_AXIS_BUTTON = 9,
-            XBOX_RIGHT_AXIS_BUTTON = 10,
-    // POV
-    XBOX_POV_UP = 0,
-            XBOX_POV_UP_RIGHT = 45,
-            XBOX_POV_RIGHT = 90,
-            XBOX_POV_DOWN_RIGHT = 135,
-            XBOX_POV_DOWN = 180,
-            XBOX_POV_DOWN_LEFT = 225,
-            XBOX_POV_LEFT = 270,
-            XBOX_POV_UP_LEFT = 315;
 
     // Values for driving robot with joystick
     public static final boolean
@@ -81,12 +71,6 @@ public class Config {
             RIGHT_FRONT_DRIVE_MOTOR_ID = robotSpecific(2, 2, 2),
             RIGHT_BACK_DRIVE_MOTOR_ID = robotSpecific(4, 4, 4);
 
-    public static final double INTAKE_MAX_SPEED = 0.5; //to be finalized later, this has yet to be tested
-
-    public static final double[] ENCODER_LIFT_PID_UP = {0.5, 0, 50}; //to be finalized later, these values have not yet been tested
-
-    public static final double[] ENCODER_LIFT_PID_DOWN = {0.5, 0.5, 160}; //to be finalized later, these values have not yet been tested
-
     public static final boolean
             INVERT_FRONT_LEFT_DRIVE = robotSpecific(false, false, false),
             INVERT_BACK_LEFT_DRIVE = robotSpecific(false, false, false),
@@ -95,32 +79,43 @@ public class Config {
 
     public static final boolean DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);
 
-    // CAN ID for the Pigeon
-    public static final int GYRO_TALON_ID = robotSpecific(8, 8, 8);
+    // Talon ID for the Pigeon
+    public static final int GYRO_TALON_ID = robotSpecific(5, 5, 5);
+
+    // Selector Channel
+    public static final int SELECTOR_ID = robotSpecific(0, 0, 0);
 
     // The amount of encoder ticks that the robot must drive to go one foot
     public static final double DRIVE_ENCODER_DPP
             = robotSpecific(Math.PI / 8192.0, Math.PI / 8192.0, Math.PI / 8192.0);
 
+    public static final boolean ENABLE_CAMERA = robotSpecific(true, true, false);
+
+    public static final int PURPLE_LIGHT = robotSpecific(3, 3, 3);
+
+    public static final int ARCADE_DRIVE_FORWARD = 5;
+    public static final int ARCADE_DRIVE_ROTATE = 4;
+
+    public static final double INTAKE_MAX_SPEED = 0.5; //to be finalized later, this has yet to be tested
+
+    public static final double[] ENCODER_LIFT_PID_UP = {0.5, 0, 50}; //to be finalized later, these values have not yet been tested
+
+    public static final double[] ENCODER_LIFT_PID_DOWN = {0.5, 0.5, 160}; //to be finalized later, these values have not yet been tested
+
+
+
     // #### Fluid constants ####
-    static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
+    static NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
 
-    static {
-        initialize();
-    }
+    public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_DEADBAND = constant("drive-deadband", 0.001);
+    public static final FluidConstant<Double> DRIVE_OPEN_LOOP_DEADBAND = constant("drive-deadband", 0.04);
 
-    private static boolean initialized = false;
+    public static final FluidConstant<Boolean> DRIVE_SUM_PHASE_LEFT = constant("drive-sum-phase-left", true);
+    public static final FluidConstant<Boolean> DRIVE_SUM_PHASE_RIGHT = constant("drive-sum-phase-right", true);
 
-    /**
-     * Initializes the Config class.
-     */
-    public static void initialize() {
-        if (!initialized) {
-            Robot.setOnStateChange(Config::saveConstants);
-
-            initialized = true;
-        }
-    }
+    public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_P = constant("drive-P", 0.1);
+    public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_I = constant("drive-I", 0.0);
+    public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_D = constant("drive-D", 0.0);
 
     /**
      * Reads the robot type from the filesystem
@@ -128,16 +123,17 @@ public class Config {
      * @return The integer ID of the robot defaulting to 0
      */
     private static int getRobotId() {
-        int id;
+        if (robotId < 0) {
+            try (BufferedReader reader = Files.newBufferedReader(ROBOT_ID_LOC)) {
+                robotId = Integer.parseInt(reader.readLine());
+            } catch (IOException | NumberFormatException e) {
+                robotId = 0;
+                DriverStation.reportError("Could not find robot configuration file.", false);
+            }
 
-        try (BufferedReader reader = Files.newBufferedReader(ROBOT_ID_LOC)) {
-            id = Integer.parseInt(reader.readLine());
-        } catch (IOException | NumberFormatException e) {
-            id = 0;
-            e.printStackTrace();
         }
 
-        return id;
+        return robotId;
     }
 
     /**
@@ -151,10 +147,10 @@ public class Config {
     @SafeVarargs
     private static <T> T robotSpecific(T first, T... more) {
         // Return the first value if the robot id doesn't fall between second and last index
-        if (ROBOT_ID < 1 || ROBOT_ID > more.length) {
+        if (getRobotId() < 1 || getRobotId() > more.length) {
             return first;
         } else {
-            return more[ROBOT_ID - 1];
+            return more[getRobotId() - 1];
         }
     }
 
@@ -198,7 +194,86 @@ public class Config {
         try (BufferedWriter writer = Files.newBufferedWriter(SAVE_FILE)) {
             writer.write(writable);
         } catch (IOException e) {
-            DriverStation.reportWarning("Unable to save fluid constants to file.", true);
+            DriverStation.reportWarning("Unable to save fluid constants to file.", false);
+        }
+    }
+
+    /**
+     * Xbox controller binding information.
+     * Contains the link between the Xbox's buttons' port and the NetworkTables key used to describe the action.
+     */
+    public enum XboxValue {
+        // Axis and triggers
+        // Left on the Left Stick
+        XBOX_LEFT_STICK_X(0, "L_STICK_X"),
+        XBOX_LEFT_STICK_Y(1, "L_STICK_Y"),
+        XBOX_BACK_LEFT_TRIGGER(2, "L_TRIG"),
+        XBOX_BACK_RIGHT_TRIGGER(3, "R_TRIG"),
+        XBOX_RIGHT_STICK_X(4, "R_STICK_X"),
+        XBOX_RIGHT_STICK_Y(5, "R_STICK_Y"),
+
+        // Buttons
+        XBOX_A_BUTTON(1, "A"),
+        XBOX_B_BUTTON(2, "B"),
+        XBOX_X_BUTTON(3, "X"),
+        XBOX_Y_BUTTON(4, "Y"),
+        XBOX_LB_BUTTON(5, "LB"),
+        XBOX_RB_BUTTON(6, "RB"),
+        XBOX_SELECT_BUTTON(7, "SELECT"),
+        XBOX_START_BUTTON(8, "START"),
+        XBOX_LEFT_AXIS_BUTTON(9, "L_AXIS_BUTTON"),
+        XBOX_RIGHT_AXIS_BUTTON(10, "R_AXIS_BUTTON"),
+
+        // POV (The D-PAD on the XBOX Controller)
+        XBOX_POV_UP(0, "UP"),
+        XBOX_POV_UP_RIGHT(45, "UP_RIGHT"),
+        XBOX_POV_RIGHT(90, "RIGHT"),
+        XBOX_POV_DOWN_RIGHT(135, "DOWN_RIGHT"),
+        XBOX_POV_DOWN(180, "DOWN"),
+        XBOX_POV_DOWN_LEFT(225, "DOWN_LEFT"),
+        XBOX_POV_LEFT(270, "LEFT"),
+        XBOX_POV_UP_LEFT(315, "UP_LEFT");
+
+        private String NTString;
+        private int port;
+
+        XboxValue(int port, String NTString) {
+            this.NTString = NTString;
+            this.port = port;
+        }
+
+        /**
+         * @return the nTString
+         */
+        public String getNTString() {
+            return NTString;
+        }
+
+        /**
+         * @return the port
+         */
+        public int getPort() {
+            return port;
+        }
+
+
+        // Create a hashmap of the networktables entry and the
+        private static final HashMap<String, XboxValue> nameMap = new HashMap<>();
+
+        static {
+            for (XboxValue value : XboxValue.values()) {
+                nameMap.put(value.getNTString(), value);
+            }
+        }
+
+        /**
+         * Gets the XboxValue constant with the given NetworkTables key.
+         *
+         * @param ntKey The NetworkTables key for the constant.
+         * @return The constant object.
+         */
+        public static XboxValue getXboxValueFromNTKey(final String ntKey) {
+            return nameMap.get(ntKey);
         }
     }
 }

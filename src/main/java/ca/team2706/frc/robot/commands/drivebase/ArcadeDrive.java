@@ -1,4 +1,4 @@
-package ca.team2706.frc.robot.commands;
+package ca.team2706.frc.robot.commands.drivebase;
 
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.command.Command;
@@ -38,7 +38,7 @@ public abstract class ArcadeDrive extends Command {
     @Override
     public void initialize() {
         // Prepare for driving by human
-        DriveBase.getInstance().setOpenLoopMode();
+        DriveBase.getInstance().setOpenLoopVoltageMode();
 
         DriveBase.getInstance().setBrakeMode(initBrake);
     }
@@ -54,6 +54,9 @@ public abstract class ArcadeDrive extends Command {
 
     @Override
     public void end() {
+        // Go back to disabled mode
+        DriveBase.getInstance().setDisabledMode();
+
         // Ensure brake mode is same as when starting command since it may have been changed
         DriveBase.getInstance().setBrakeMode(initBrake);
     }

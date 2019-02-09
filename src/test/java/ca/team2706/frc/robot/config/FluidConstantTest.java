@@ -1,6 +1,8 @@
 package ca.team2706.frc.robot.config;
 
 import ca.team2706.frc.robot.Robot;
+import ca.team2706.frc.robot.RobotState;
+import ca.team2706.frc.robot.util.Util;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
@@ -18,6 +20,11 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import mockit.*;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Consumer;
 
 public class FluidConstantTest {
     // We'll just use a string fluid constant to test.
@@ -73,6 +80,7 @@ public class FluidConstantTest {
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
         if (!isInitialized) {
             isInitialized = true;
+
             new Expectations() {{
                 ntInstance.getTable("Fluid Constants");
                 result = constantsTable;
@@ -86,6 +94,8 @@ public class FluidConstantTest {
                 result = sensorCollection;
                 minTimes = 0;
             }};
+
+            Util.resetConfigAndRobot();
 
             Robot robot = new Robot();
             robot.robotInit();

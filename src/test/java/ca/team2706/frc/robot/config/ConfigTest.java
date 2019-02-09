@@ -1,6 +1,18 @@
 package ca.team2706.frc.robot.config;
 
 import ca.team2706.frc.robot.Robot;
+import ca.team2706.frc.robot.RobotState;
+import ca.team2706.frc.robot.util.Util;
+import com.ctre.phoenix.CTREJNIWrapper;
+import com.ctre.phoenix.motorcontrol.SensorCollection;
+import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.sensors.PigeonIMU;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.PWM;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Mocked;
@@ -16,6 +28,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Consumer;
 
 import static org.junit.Assert.assertEquals;
 
@@ -28,8 +43,38 @@ public class ConfigTest {
     @Injectable
     private BufferedWriter writer;
 
-    @Mocked(stubOutClassInitialization = true)
+    @Mocked
     private Files files;
+
+    // LOOK AWAY! The mocks for Robot
+    @Mocked
+    private WPI_TalonSRX talon;
+
+    @Mocked
+    private PWM pwm;
+
+    @Mocked
+    private AnalogInput analogInput;
+
+    @Mocked(stubOutClassInitialization = true)
+    private PigeonIMU pigeon;
+
+    private DifferentialDrive differentialDrive;
+
+    @Mocked(stubOutClassInitialization = true)
+    private CTREJNIWrapper jni;
+
+    @Mocked(stubOutClassInitialization = true)
+    private MotControllerJNI motControllerJNI;
+
+    @Mocked
+    private CameraServer cameraServer;
+
+    @Mocked
+    private LiveWindow liveWindow;
+
+    @Injectable
+    private SensorCollection sensorCollection;
 
     private boolean initialized = false;
 
@@ -38,6 +83,7 @@ public class ConfigTest {
         // Only set up everything once, making this more of an integration test.
         if (!initialized) {
             initialized = true;
+
             Field robotIdLocField = Config.class.getDeclaredField("ROBOT_ID_LOC");
             robotIdLocField.setAccessible(true);
             final Path robotIdLoc = (Path) robotIdLocField.get(null);
@@ -50,9 +96,17 @@ public class ConfigTest {
                 reader.readLine();
                 result = "0";
                 minTimes = 0;
+
+                talon.getSensorCollection();
+                result = sensorCollection;
+                minTimes = 0;
             }};
 
+
+            // Reset the config and robot classes.
+            Util.resetConfigAndRobot();
             robot = new Robot();
+            robot.robotInit();
         }
     }
 

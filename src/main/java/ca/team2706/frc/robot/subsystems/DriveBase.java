@@ -204,6 +204,47 @@ public class DriveBase extends Subsystem {
         rightFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
     }
 
+    private void selectEncodersSumWithPigeon() {
+        leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_SHORT);
+        rightFrontMotor.configRemoteFeedbackFilter(leftFrontMotor.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, 0, Config.CAN_SHORT);
+        rightFrontMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.Pigeon_Yaw, 1, Config.CAN_SHORT);
+
+        rightFrontMotor.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Config.CAN_SHORT);
+        rightFrontMotor.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative, Config.CAN_SHORT);
+
+        rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, 0, Config.CAN_SHORT);
+        rightFrontMotor.configSelectedFeedbackCoefficient(0.5, 0, Config.CAN_SHORT);
+
+        rightFrontMotor.configSelectedFeedbackSensor(	FeedbackDevice.RemoteSensor1, 1, Config.CAN_SHORT);
+
+        rightFrontMotor.configSelectedFeedbackCoefficient(	1, 1, Config.CAN_SHORT);
+
+        leftFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_LEFT.value());
+        rightFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_RIGHT.value());
+
+        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Config.CAN_SHORT);
+        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Config.CAN_SHORT);
+        leftFrontMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Config.CAN_SHORT);
+        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Config.CAN_SHORT);
+
+        /* Configure neutral deadband */
+        rightFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value(), Config.CAN_SHORT);
+        leftFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value(), Config.CAN_SHORT);
+
+        rightFrontMotor.config_kP(0, Config.PIGEON_KP.value());
+        rightFrontMotor.config_kI(0, Config.PIGEON_KI.value());
+        rightFrontMotor.config_kD(0, Config.PIGEON_KD.value());
+        rightFrontMotor.config_kF(0, Config.PIGEON_KF.value());
+
+        rightFrontMotor.config_kP(1, Config.DRIVE_CLOSED_LOOP_P.value());
+        rightFrontMotor.config_kI(1, Config.DRIVE_CLOSED_LOOP_I.value());
+        rightFrontMotor.config_kD(1, Config.DRIVE_CLOSED_LOOP_D.value());
+
+        rightFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
+
+        rightFrontMotor.configAuxPIDPolarity(false, Config.CAN_SHORT);
+    }
+
     /**
      * Sets the talons to a disabled mode
      */
@@ -240,6 +281,16 @@ public class DriveBase extends Subsystem {
             reset();
 
             driveMode = DriveMode.PositionNoGyro;
+        }
+    }
+
+    public void setPositionGyroMode() {
+        if (driveMode != DriveMode.PositionGyro) {
+            stop();
+            selectEncodersSumWithPigeon();
+            reset();
+
+            driveMode = DriveMode.PositionGyro;
         }
     }
 
@@ -346,6 +397,27 @@ public class DriveBase extends Subsystem {
     }
 
     /**
+     * Goes to a position with the closed loop Talon PIDs using only encoder and gyro
+     *
+     * @param speed    The speed from 0 to 1
+     * @param setpoint The setpoint to go to in feet
+     */
+    public void setPositionGyro(double speed, double setpoint, double targetRotation) {
+        setPositionGyroMode();
+
+        leftFrontMotor.configClosedLoopPeakOutput(0, speed);
+        rightFrontMotor.configClosedLoopPeakOutput(0, speed);
+        leftFrontMotor.configClosedLoopPeakOutput(1, speed);
+        rightFrontMotor.configClosedLoopPeakOutput(1, speed);
+
+        rightFrontMotor.set(ControlMode.Position, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation);
+        leftFrontMotor.follow(rightFrontMotor);
+
+        follow();
+
+    }
+
+    /**
      * Get the distance travelled by the left encoder in feet
      *
      * @return The distance of the left encoder
@@ -448,6 +520,11 @@ public class DriveBase extends Subsystem {
         /**
          * Performs closed loop position control without heading support
          */
-        PositionNoGyro
+        PositionNoGyro,
+
+        /**
+         *  Closed loop control with Auxiliary Pigeon Support
+         */
+        PositionGyro
     }
 }

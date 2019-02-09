@@ -77,18 +77,7 @@ public class DriveBase extends Subsystem {
         rightFrontMotor = new WPI_TalonSRX(Config.RIGHT_FRONT_DRIVE_MOTOR_ID);
         rightBackMotor = new WPI_TalonSRX(Config.RIGHT_BACK_DRIVE_MOTOR_ID);
 
-        leftFrontMotor.configFactoryDefault(Config.CAN_LONG);
-        leftBackMotor.configFactoryDefault(Config.CAN_LONG);
-        rightFrontMotor.configFactoryDefault(Config.CAN_LONG);
-        rightBackMotor.configFactoryDefault(Config.CAN_LONG);
-
-        leftFrontMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
-        leftBackMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
-        rightFrontMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
-        rightBackMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
-
-        leftFrontMotor.setInverted(Config.INVERT_FRONT_LEFT_DRIVE);
-        rightFrontMotor.setInverted(Config.INVERT_FRONT_RIGHT_DRIVE);
+        resetTalonConfiguration();
 
         follow();
 
@@ -139,6 +128,24 @@ public class DriveBase extends Subsystem {
     }
 
     /**
+     * Resets the talon configuration back to the initial config.
+     */
+    private void resetTalonConfiguration() {
+        leftFrontMotor.configFactoryDefault(Config.CAN_LONG);
+        leftBackMotor.configFactoryDefault(Config.CAN_LONG);
+        rightFrontMotor.configFactoryDefault(Config.CAN_LONG);
+        rightBackMotor.configFactoryDefault(Config.CAN_LONG);
+
+        leftFrontMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
+        leftBackMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
+        rightFrontMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
+        rightBackMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
+
+        leftFrontMotor.setInverted(Config.INVERT_FRONT_LEFT_DRIVE);
+        rightFrontMotor.setInverted(Config.INVERT_FRONT_RIGHT_DRIVE);
+    }
+
+    /**
      * Gets the analog selector's index
      *
      * @return The index from 1-12 or 0 if unplugged
@@ -181,6 +188,7 @@ public class DriveBase extends Subsystem {
      * Selects local encoders and the current sensor
      */
     private void selectEncodersSum() {
+        resetTalonConfiguration();
         leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_SHORT);
         rightFrontMotor.configRemoteFeedbackFilter(leftFrontMotor.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, 0, Config.CAN_SHORT);
 
@@ -209,9 +217,45 @@ public class DriveBase extends Subsystem {
         rightFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
     }
 
-    public void selectGyroSensor()
-    {
+    public void selectGyroSensor() {
+        resetTalonConfiguration();
+        leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_SHORT);
+        rightFrontMotor.configRemoteFeedbackFilter(leftFrontMotor.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, 0, Config.CAN_SHORT);
 
+        rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, 0, Config.CAN_SHORT);
+
+        rightFrontMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.Pigeon_Yaw, 0,Config.CAN_SHORT);
+        rightFrontMotor.configSelectedFeedbackCoefficient(1.0, 0, Config.CAN_SHORT);
+
+        rightFrontMotor.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Config.CAN_SHORT);
+        rightFrontMotor.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative, Config.CAN_SHORT);
+
+        rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, 0, Config.CAN_SHORT);
+
+        leftFrontMotor.setInverted(false);
+        leftFrontMotor.setSensorPhase(true);
+        rightFrontMotor.setInverted(true);
+        rightFrontMotor.setSensorPhase(true);
+
+        rightFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
+        leftFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
+        leftBackMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
+        rightBackMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
+
+        leftFrontMotor.configPeakOutputForward(+1.0, Config.CAN_SHORT);
+        leftFrontMotor.configPeakOutputReverse(-1.0, Config.CAN_SHORT);
+        rightFrontMotor.configPeakOutputForward(+1.0, Config.CAN_SHORT);
+        rightFrontMotor.configPeakOutputReverse(-1.0, Config.CAN_SHORT);
+
+        rightFrontMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
+        rightFrontMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
+        rightFrontMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value());
+
+        rightFrontMotor.config_kP(1, Config.TURN_P.value());
+        rightFrontMotor.config_kI(1, Config.TURN_I.value());
+        rightFrontMotor.config_kD(1, Config.TURN_D.value());
+
+        rightFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
     }
 
 
@@ -254,15 +298,15 @@ public class DriveBase extends Subsystem {
         }
     }
 
-     public void setRotateMode()
-     {
-         if (driveMode != DriveMode.Rotate) {
-             stop();
+    public void setRotateMode() {
+        if (driveMode != DriveMode.Rotate) {
+            stop();
+            selectGyroSensor();
+            reset();
 
-             reset();
-
-             driveMode = DriveMode.Rotate;
-         }     }
+            driveMode = DriveMode.Rotate;
+        }
+    }
 
     /**
      * Changes whether current limiting should be used
@@ -385,7 +429,7 @@ public class DriveBase extends Subsystem {
         // TODO: Invert in opposite direction
         rightFrontMotor.set(ControlMode.Position, setpoint);
         leftFrontMotor.follow(rightFrontMotor);
-        
+
         follow();
     }
 

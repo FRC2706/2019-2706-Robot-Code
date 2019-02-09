@@ -79,6 +79,12 @@ public class Config {
 
     public static final int PURPLE_LIGHT = robotSpecific(3, 3, 3);
 
+    public static final int ARCADE_DRIVE_FORWARD = 5;
+    public static final int ARCADE_DRIVE_ROTATE = 4;
+
+    // #### Fluid constants ####
+    static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
+
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_DEADBAND = constant("drive-deadband", 0.001);
     public static final FluidConstant<Double> DRIVE_OPEN_LOOP_DEADBAND = constant("drive-deadband", 0.04);
 
@@ -89,11 +95,9 @@ public class Config {
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_I = constant("drive-I", 0.0);
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_D = constant("drive-D", 0.0);
 
-    public static final int ARCADE_DRIVE_FORWARD = 5;
-    public static final int ARCADE_DRIVE_ROTATE = 4;
-
-    // #### Fluid constants ####
-    static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
+    public static final FluidConstant<Double> TURN_P = constant("turn-P", 0.1);
+    public static final FluidConstant<Double> TURN_I = constant("turn-I", 0.0);
+    public static final FluidConstant<Double> TURN_D = constant("turn-D", 0.0);
 
     private static boolean initialized = false;
 

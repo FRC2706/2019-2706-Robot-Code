@@ -31,23 +31,29 @@ public class ConfigTest {
     @Mocked(stubOutClassInitialization = true)
     private Files files;
 
+    private boolean initialized = false;
+
     @Before
     public void setUp() throws Exception {
-        Field robotIdLocField = Config.class.getDeclaredField("ROBOT_ID_LOC");
-        robotIdLocField.setAccessible(true);
-        final Path robotIdLoc = (Path) robotIdLocField.get(null);
+        // Only set up everything once, making this more of an integration test.
+        if (!initialized) {
+            initialized = true;
+            Field robotIdLocField = Config.class.getDeclaredField("ROBOT_ID_LOC");
+            robotIdLocField.setAccessible(true);
+            final Path robotIdLoc = (Path) robotIdLocField.get(null);
 
-        new Expectations() {{
-            Files.newBufferedReader(robotIdLoc);
-            result = reader;
-            minTimes = 0;
+            new Expectations() {{
+                Files.newBufferedReader(robotIdLoc);
+                result = reader;
+                minTimes = 0;
 
-            reader.readLine();
-            result = "0";
-            minTimes = 0;
-        }};
+                reader.readLine();
+                result = "0";
+                minTimes = 0;
+            }};
 
-        robot = new Robot();
+            robot = new Robot();
+        }
     }
 
     /**

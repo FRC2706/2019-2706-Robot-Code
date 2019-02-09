@@ -41,7 +41,7 @@ public class FluidConstant<A> {
         this.value = initialValue;
         this.deployedValue = initialValue;
 
-        if (Robot.isInitialized()) {
+        if (Robot.isRobotInitialized()) {
             addNTEntry();
         } else {
             Robot.setOnStateChange(robotStateListener);

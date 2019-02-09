@@ -67,18 +67,8 @@ public class RobotTest {
     @Injectable
     private SensorCollection sensorCollection;
 
-    @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
-        Field listenersField = Robot.class.getDeclaredField("STATE_LISTENERS");
-        listenersField.setAccessible(true);
-        List<Consumer<RobotState>> listener = (List<Consumer<RobotState>>) listenersField.get(null);
-        listener.retainAll(Collections.<Consumer<RobotState>>emptySet());
-
-        Field initializedField = Robot.class.getDeclaredField("isInitialized");
-        initializedField.setAccessible(true);
-        initializedField.set(null, false);
-
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
@@ -101,14 +91,14 @@ public class RobotTest {
         assertNull(stateTest.robotState);
         assertFalse(stateTest.isInitialized);
 
-        assertFalse(Robot.isInitialized());
+        assertFalse(Robot.isRobotInitialized());
 
         robot.robotInit();
 
         assertEquals(RobotState.ROBOT_INIT, stateTest.robotState);
         assertFalse(stateTest.isInitialized);
 
-        assertTrue(Robot.isInitialized());
+        assertTrue(Robot.isRobotInitialized());
 
         robot.disabledInit();
 
@@ -157,7 +147,7 @@ public class RobotTest {
         @Override
         public void accept(RobotState robotState) {
             this.robotState = robotState;
-            this.isInitialized = Robot.isInitialized();
+            this.isInitialized = Robot.isRobotInitialized();
         }
     }
 

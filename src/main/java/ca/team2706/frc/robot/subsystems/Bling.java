@@ -2,6 +2,7 @@ package ca.team2706.frc.robot.subsystems;
 
 import ca.team2706.frc.robot.commands.bling.BlingController;
 import ca.team2706.frc.robot.commands.bling.patterns.BlingPattern;
+import ca.team2706.frc.robot.logging.Log;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -193,6 +194,7 @@ public class Bling extends Subsystem {
             waitMSNT.setDouble(waitMS);
             brightnessNT.setDouble(brightness);
             commandNT.setString(command);
+            Log.i(command);
         }
     }
 
@@ -203,5 +205,4 @@ public class Bling extends Subsystem {
         int[] colour = new int[]{0, 0, 0};
         sendPattern(0, 0, colour, CLEAR, 0);
     }
-
 }

@@ -2,15 +2,18 @@ package ca.team2706.frc.robot.subsystems;
 
 import ca.team2706.frc.robot.Sendables;
 import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.sensors.AnalogSelector;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Subsystem that controls the driving of the robot as well as certain sensors that are used for driving
@@ -450,4 +453,65 @@ public class DriveBase extends Subsystem {
          */
         PositionNoGyro
     }
+
+    @Override
+    public void periodic() {
+        if (DriverStation.getInstance().isEnabled())
+        {
+            Log.i(leftFrontMotor.getOutputCurrent());
+            Log.i(rightFrontMotor.getOutputCurrent());
+            Log.i(leftBackMotor.getOutputCurrent());
+            Log.i(rightBackMotor.getOutputCurrent());
+
+            Log.i(leftFrontMotor.getTemperature());
+            Log.i(rightFrontMotor.getTemperature());
+            Log.i(leftBackMotor.getTemperature());
+            Log.i(rightBackMotor.getTemperature());
+
+            Log.i(leftFrontMotor.getMotorOutputPercent());
+            Log.i(rightFrontMotor.getMotorOutputPercent());
+            Log.i(leftBackMotor.getMotorOutputPercent());
+            Log.i(rightBackMotor.getMotorOutputPercent());
+
+            Log.i(leftFrontMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP);
+            Log.i(rightFrontMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP);
+            Log.i(leftBackMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP);
+            Log.i(rightBackMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP);
+
+            Log.i(gyro.getFusedHeading());
+
+            Log.i(leftFrontMotor.getSensorCollection().getQuadratureVelocity() / Config.DRIVE_ENCODER_DPP * 10);
+            Log.i(rightFrontMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP * 10);
+            Log.i(leftBackMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP * 10);
+            Log.i(rightBackMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP * 10);
+        }
+        
+        SmartDashboard.putNumber("Gyro", gyro.getFusedHeading());
+
+        SmartDashboard.putNumber("Left front motor current", leftFrontMotor.getOutputCurrent());
+        SmartDashboard.putNumber("Right front motor current", rightFrontMotor.getOutputCurrent());
+        SmartDashboard.putNumber("Left back motor current", leftBackMotor.getOutputCurrent());
+        SmartDashboard.putNumber("Right back motor current", rightBackMotor.getOutputCurrent());
+
+        SmartDashboard.putNumber("Left front motor temp", leftFrontMotor.getTemperature());
+        SmartDashboard.putNumber("Right front motor temp", rightFrontMotor.getTemperature());
+        SmartDashboard.putNumber("Left back motor temp", leftBackMotor.getTemperature());
+        SmartDashboard.putNumber("Right back motor temp", rightBackMotor.getTemperature());
+
+        SmartDashboard.putNumber("Left front motor output", leftFrontMotor.getMotorOutputPercent());
+        SmartDashboard.putNumber("Right front motor output", rightFrontMotor.getMotorOutputPercent());
+        SmartDashboard.putNumber("Left back motor output", leftBackMotor.getMotorOutputPercent());
+        SmartDashboard.putNumber("Right back motor output", rightBackMotor.getMotorOutputPercent());
+
+        SmartDashboard.putNumber("Left front motor distance: ", leftFrontMotor.getSensorCollection().getQuadraturePosition()/Config.DRIVE_ENCODER_DPP);
+        SmartDashboard.putNumber("Right front motogr distance: ", rightFrontMotor.getSensorCollection().getQuadraturePosition()/Config.DRIVE_ENCODER_DPP);
+        SmartDashboard.putNumber("Left back motor distance: ", leftBackMotor.getSensorCollection().getQuadraturePosition()/Config.DRIVE_ENCODER_DPP);
+        SmartDashboard.putNumber("Right back motor distance: ", rightBackMotor.getSensorCollection().getQuadraturePosition()/Config.DRIVE_ENCODER_DPP);
+
+        SmartDashboard.putNumber("Left front motor speed", leftFrontMotor.getSensorCollection().getQuadratureVelocity()/Config.DRIVE_ENCODER_DPP*10);
+        SmartDashboard.putNumber("Right front motor speed", rightFrontMotor.getSensorCollection().getQuadraturePosition()/Config.DRIVE_ENCODER_DPP*10);
+        SmartDashboard.putNumber("Left back motor speed", leftBackMotor.getSensorCollection().getQuadraturePosition()/Config.DRIVE_ENCODER_DPP*10);
+        SmartDashboard.putNumber("Right back motor speed", rightBackMotor.getSensorCollection().getQuadraturePosition()/Config.DRIVE_ENCODER_DPP*10);
+    }
+
 }

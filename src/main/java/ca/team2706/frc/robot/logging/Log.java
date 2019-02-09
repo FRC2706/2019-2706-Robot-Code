@@ -20,7 +20,6 @@ public class Log {
      */
     public static void init() {
         Log.i("Starting to log");
-        Log.i("Robot Entering teleop mode");
 
         Log.i("Robot Free Memory: " + ((double)Runtime.getRuntime().freeMemory()) / (1024 * 1024) + "MB");
         Log.i("Allocated: " + ((double)Runtime.getRuntime().totalMemory()) / (1024 * 1024) + "MB");

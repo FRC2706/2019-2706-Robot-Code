@@ -42,7 +42,6 @@ public class ConfigTest {
         final Path saveFileLoc = (Path) configSaveLocField.get(null);
 
         new Expectations() {{
-
             Files.newBufferedReader(robotIdLoc);
             result = reader;
             minTimes = 0;
@@ -67,7 +66,7 @@ public class ConfigTest {
         robot.disabledInit();
 
         new Verifications() {{
-            writer.write(anyString);
+            writer.write(withSubstring("Deployed: "));
             times = 1;
         }};
     }

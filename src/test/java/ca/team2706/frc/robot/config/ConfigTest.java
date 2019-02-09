@@ -23,7 +23,7 @@ public class ConfigTest {
 
     // We want to use the temporary directory for storing test files. We could mock the BufferedReader but that's not as good as the actual thing.
     private static final Path SAVE_FILE = Paths.get(System.getProperty("java.io.tmpdir"), "FluidConstants.txt.tmp");
-    private static final Path ID_FILE = Paths.get(System.getProperty("java.io.tmpdir"), "RobotID.txt.conf");
+    private static final Path ID_FILE = Paths.get(System.getProperty("java.io.tmpdir"), "RobotID.conf.tmp");
 
     @Before
     public void setUp() throws Exception {
@@ -42,7 +42,6 @@ public class ConfigTest {
      */
     @Test
     public void testSaveConstants() {
-
         robot.disabledInit();
 
         assertTrue("Config file wasn't written.", new File(SAVE_FILE.toString()).exists());
@@ -58,11 +57,21 @@ public class ConfigTest {
         Method getIdMethod = Config.class.getDeclaredMethod("getRobotId");
         getIdMethod.setAccessible(true);
 
+        resetIdField();
         writeToRobotIdFile(1);
         assertEquals(1, (int) getIdMethod.invoke(null));
 
+        resetIdField();
         writeToRobotIdFile(2);
         assertEquals(2, (int) getIdMethod.invoke(null));
+
+        resetIdField();
+        writeToRobotIdFile(3);
+        assertEquals(3, (int) getIdMethod.invoke(null));
+
+        resetIdField();
+        writeToRobotIdFile(4);
+        assertEquals(4, (int) getIdMethod.invoke(null));
     }
 
     /**
@@ -76,18 +85,6 @@ public class ConfigTest {
         getIdMethod.setAccessible(true);
 
         assertEquals("Wrong robot ID found", 0, (int) getIdMethod.invoke(null));
-    }
-
-    /**
-     * Writes the given integer robot ID to the robot ID file.
-     *
-     * @param robotID The robot ID to be written.
-     */
-    private void writeToRobotIdFile(final int robotID) {
-        try (BufferedWriter writer = Files.newBufferedWriter(ID_FILE)) {
-            writer.write(String.valueOf(robotID));
-        } catch (IOException ignored) {
-        }
     }
 
     /**
@@ -105,5 +102,69 @@ public class ConfigTest {
         modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
 
         field.set(null, newValue);
+    }
+
+    /**
+     * Checks that the correct item is returned for a {@code robotSpecific()} invocation
+     *
+     * @throws NoSuchMethodException     In case robotSpecific() can't be found
+     * @throws InvocationTargetException In case robotSpecific() can't be invoked
+     * @throws IllegalAccessException    In case this test was to hacky for Java (it is pretty close)
+     * @throws NoSuchFieldException      In case the robotId field couldn't be modified
+     */
+    @Test
+    public void robotSpecificTests() throws Exception {
+        Method robotSpecificMethod = Config.class.getDeclaredMethod("robotSpecific", Object.class, Object[].class);
+        robotSpecificMethod.setAccessible(true);
+
+        final String a = "a", b = "b", c = "c", d = "d", e = "e";
+
+        resetIdField();
+        writeToRobotIdFile(0);
+        assertEquals(a, robotSpecificMethod.invoke(null, a, a(b, c)));
+        resetIdField();
+        writeToRobotIdFile(3);
+        assertEquals(a, robotSpecificMethod.invoke(null, a, a(b, c)));
+        resetIdField();
+        writeToRobotIdFile(2);
+        assertEquals(c, robotSpecificMethod.invoke(null, a, a(b, c)));
+        resetIdField();
+        writeToRobotIdFile(-1);
+        assertEquals(a, robotSpecificMethod.invoke(null, a, a(b, c)));
+        resetIdField();
+        writeToRobotIdFile(3);
+        assertEquals(d, robotSpecificMethod.invoke(null, a, a(b, c, d, e)));
+        resetIdField();
+        writeToRobotIdFile(4);
+        assertEquals(e, robotSpecificMethod.invoke(null, a, a(b, c, d, e)));
+        resetIdField();
+        writeToRobotIdFile(0);
+        assertEquals(a, robotSpecificMethod.invoke(null, a, a()));
+    }
+
+    private static Object[] a(Object... objects) {
+        return objects;
+    }
+
+    /**
+     * Writes the given integer robot ID to the robot ID file.
+     *
+     * @param robotID The robot ID to be written.
+     */
+    private void writeToRobotIdFile(final int robotID) {
+        try (BufferedWriter writer = Files.newBufferedWriter(ID_FILE)) {
+            writer.write(String.valueOf(robotID));
+        } catch (IOException ignored) {
+        }
+    }
+
+    /**
+     * Resets the robot id field back to something which will casue the robot to
+     * check the file again.
+     * @throws Exception When bad stuff happens.
+     */
+    private void resetIdField() throws Exception {
+        Field idField = Config.class.getDeclaredField("robotId");
+        setFinalStatic(idField, -1);
     }
 }

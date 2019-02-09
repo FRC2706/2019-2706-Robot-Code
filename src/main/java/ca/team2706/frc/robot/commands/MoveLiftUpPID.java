@@ -16,17 +16,17 @@ public class MoveLiftUpPID extends Command {
     }
 
     @Override
-    public void execute(){
+    public void execute() {
         ElevatorWithPID.getInstance().moveUp(speed);
     }
 
     @Override
-    public void end(){
+    public void end() {
         ElevatorWithPID.getInstance().stop();
     }
 
     @Override
-    protected boolean isFinished(){
+    protected boolean isFinished() {
         return ElevatorWithPID.getInstance().reachedLimits();
     }
 }

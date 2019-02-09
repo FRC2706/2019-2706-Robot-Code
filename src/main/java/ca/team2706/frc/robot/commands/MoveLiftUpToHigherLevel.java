@@ -4,8 +4,8 @@ import ca.team2706.frc.robot.subsystems.ElevatorWithPID;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class MoveLiftUpToHigherLevel extends Command {
-    
-    public MoveLiftUpToHigherLevel(){
+
+    public MoveLiftUpToHigherLevel() {
         requires(ElevatorWithPID.getInstance());
     }
 

@@ -1,4 +1,3 @@
-
 package ca.team2706.frc.robot.config;
 
 import ca.team2706.frc.robot.Robot;
@@ -101,7 +100,6 @@ public class Config {
     public static final double[] ENCODER_LIFT_PID_UP = {0.5, 0, 50}; //to be finalized later, these values have not yet been tested
 
     public static final double[] ENCODER_LIFT_PID_DOWN = {0.5, 0.5, 160}; //to be finalized later, these values have not yet been tested
-
 
 
     // #### Fluid constants ####

@@ -33,7 +33,7 @@ public class FluidConstantTest {
     @Mocked
     private NetworkTableInstance ntInstance;
 
-    @Mocked
+    @Mocked(stubOutClassInitialization = true)
     private DriverStation driverStation;
 
     // LOOK AWAY! The mocks for Robot

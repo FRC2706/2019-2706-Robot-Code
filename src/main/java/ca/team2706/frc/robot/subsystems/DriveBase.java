@@ -2,6 +2,7 @@ package ca.team2706.frc.robot.subsystems;
 
 import ca.team2706.frc.robot.Sendables;
 import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.sensors.AnalogSelector;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -9,8 +10,10 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.PrintCommand;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Subsystem that controls the driving of the robot as well as certain sensors that are used for driving
@@ -205,6 +208,7 @@ public class DriveBase extends Subsystem {
     }
 
     private void selectEncodersSumWithPigeon() {
+        System.out.println("HIIIIIIIII");
         leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_SHORT);
         rightFrontMotor.configRemoteFeedbackFilter(leftFrontMotor.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, 0, Config.CAN_SHORT);
         rightFrontMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.Pigeon_Yaw, 1, Config.CAN_SHORT);
@@ -231,17 +235,18 @@ public class DriveBase extends Subsystem {
         rightFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value(), Config.CAN_SHORT);
         leftFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value(), Config.CAN_SHORT);
 
-        rightFrontMotor.config_kP(0, Config.PIGEON_KP.value());
-        rightFrontMotor.config_kI(0, Config.PIGEON_KI.value());
-        rightFrontMotor.config_kD(0, Config.PIGEON_KD.value());
-        rightFrontMotor.config_kF(0, Config.PIGEON_KF.value());
+        rightFrontMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
+        rightFrontMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
+        rightFrontMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value());
 
-        rightFrontMotor.config_kP(1, Config.DRIVE_CLOSED_LOOP_P.value());
-        rightFrontMotor.config_kI(1, Config.DRIVE_CLOSED_LOOP_I.value());
-        rightFrontMotor.config_kD(1, Config.DRIVE_CLOSED_LOOP_D.value());
+        rightFrontMotor.config_kP(1, Config.PIGEON_KP.value());
+        rightFrontMotor.config_kI(1, Config.PIGEON_KI.value());
+        rightFrontMotor.config_kD(1, Config.PIGEON_KD.value());
+        rightFrontMotor.config_kF(1, Config.PIGEON_KF.value());
 
         rightFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
 
+        rightFrontMotor.configClosedLoopPeriod(1, Config.CAN_SHORT);
         rightFrontMotor.configAuxPIDPolarity(false, Config.CAN_SHORT);
     }
 
@@ -403,6 +408,7 @@ public class DriveBase extends Subsystem {
      * @param setpoint The setpoint to go to in feet
      */
     public void setPositionGyro(double speed, double setpoint, double targetRotation) {
+
         setPositionGyroMode();
 
         leftFrontMotor.configClosedLoopPeakOutput(0, speed);
@@ -410,11 +416,13 @@ public class DriveBase extends Subsystem {
         leftFrontMotor.configClosedLoopPeakOutput(1, speed);
         rightFrontMotor.configClosedLoopPeakOutput(1, speed);
 
-        rightFrontMotor.set(ControlMode.Position, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation);
-        leftFrontMotor.follow(rightFrontMotor);
+      //  rightFrontMotor.set(ControlMode.Position, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation);
+        leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
 
         follow();
 
+        SmartDashboard.putNumber("Primary Position", rightFrontMotor.getSelectedSensorPosition(0));
+        SmartDashboard.putNumber("Aux Position", rightFrontMotor.getSelectedSensorPosition(1));
     }
 
     /**

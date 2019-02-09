@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import java.util.function.Supplier;
 
+import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -58,9 +59,9 @@ public class StraightDriveGyro extends Command {
 
     @Override
     public void initialize() {
-        DriveBase.getInstance().setBrakeMode(true);
-        DriveBase.getInstance().setPositionGyroMode();
 
+        DriveBase.getInstance().setPositionGyroMode();
+        DriveBase.getInstance().setBrakeMode(true);
 
         doneCycles = 0;
     }

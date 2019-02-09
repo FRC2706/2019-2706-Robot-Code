@@ -187,6 +187,7 @@ public class Robot extends TimedRobot {
 
     /**
      * Adds a method to be called when the robot's state is changed.
+     *
      * @param listener The listener to be added.
      */
     public void addStateListener(Consumer<RobotState> listener) {
@@ -206,6 +207,7 @@ public class Robot extends TimedRobot {
 
     /**
      * Removes a state listener.
+     *
      * @param listener The listener to be removed.
      */
     public void removeListener(Consumer<RobotState> listener) {
@@ -234,6 +236,7 @@ public class Robot extends TimedRobot {
 
     /**
      * Determines if this robot has been initialized properly.
+     *
      * @return True if initialized, false otherwise.
      */
     public boolean isInitialized() {

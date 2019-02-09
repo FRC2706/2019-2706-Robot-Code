@@ -25,7 +25,7 @@ public class ConfigTest {
     @Injectable
     private BufferedReader reader;
 
-    @Mocked(stubOutClassInitialization = true)
+    @Injectable
     private BufferedWriter writer;
 
     @Mocked(stubOutClassInitialization = true)
@@ -36,10 +36,6 @@ public class ConfigTest {
         Field robotIdLocField = Config.class.getDeclaredField("ROBOT_ID_LOC");
         robotIdLocField.setAccessible(true);
         final Path robotIdLoc = (Path) robotIdLocField.get(null);
-
-        Field configSaveLocField = Config.class.getDeclaredField("SAVE_FILE");
-        configSaveLocField.setAccessible(true);
-        final Path saveFileLoc = (Path) configSaveLocField.get(null);
 
         new Expectations() {{
             Files.newBufferedReader(robotIdLoc);
@@ -58,7 +54,16 @@ public class ConfigTest {
      * Tests to ensure that fluid constants are saved to file when disabling the robot.
      */
     @Test
-    public void testSaveConstants() throws IOException {
+    public void testSaveConstants() throws IOException, NoSuchFieldException, IllegalAccessException {
+        Field configSaveLocField = Config.class.getDeclaredField("SAVE_FILE");
+        configSaveLocField.setAccessible(true);
+        final Path saveFileLoc = (Path) configSaveLocField.get(null);
+
+        new Expectations() {{
+            Files.newBufferedWriter(saveFileLoc);
+            result = writer;
+        }};
+
         robot.disabledInit();
 
         new Verifications() {{

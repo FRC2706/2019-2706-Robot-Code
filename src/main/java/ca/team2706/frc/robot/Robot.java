@@ -117,7 +117,7 @@ public class Robot extends TimedRobot {
      */
     private void selectorInit() {
         // The index based the voltage of the selector
-        int index = DriveBase.getInstance().getAnalogSelectorIndex();
+        final int index = DriveBase.getInstance().getAnalogSelectorIndex();
 
         // Check to see if the command exists in the desired index
         if (DriveBase.getInstance().getAnalogSelectorIndex() < commands.length && commands[index] != null) {

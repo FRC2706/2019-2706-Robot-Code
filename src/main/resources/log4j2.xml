@@ -14,9 +14,6 @@
                 <SizeBasedTriggeringPolicy size="8 MB"/>
             </Policies>
         </RollingFile>
-        <Console name="console" target="SYSTEM_OUT">
-            <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"/>
-        </Console>
     </Appenders>
     <Loggers>
         <AsyncLogger name="ca.team2706.frc.robot.Robot" level="trace" additivity="false">

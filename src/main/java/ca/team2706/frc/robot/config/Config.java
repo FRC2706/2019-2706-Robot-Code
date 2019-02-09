@@ -27,6 +27,7 @@ public class Config {
         new Config();
     }
 
+
     private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
 
     // #### Static constants ####
@@ -82,6 +83,13 @@ public class Config {
 
     public static final int PURPLE_LIGHT = robotSpecific(3, 3, 3);
 
+    public static final int ARCADE_DRIVE_FORWARD = 5;
+    public static final int ARCADE_DRIVE_ROTATE = 4;
+
+
+    // #### Fluid constants ####
+    static NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
+
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_DEADBAND = constant("drive-deadband", 0.001);
     public static final FluidConstant<Double> DRIVE_OPEN_LOOP_DEADBAND = constant("drive-deadband", 0.04);
 
@@ -91,9 +99,6 @@ public class Config {
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_P = constant("drive-P", 0.1);
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_I = constant("drive-I", 0.0);
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_D = constant("drive-D", 0.0);
-
-    public static final int ARCADE_DRIVE_FORWARD = 5;
-    public static final int ARCADE_DRIVE_ROTATE = 4;
 
     // #### Fluid constants ####
 
@@ -165,7 +170,7 @@ public class Config {
                 robotId = Integer.parseInt(reader.readLine());
             } catch (IOException | NumberFormatException e) {
                 robotId = 0;
-                e.printStackTrace();
+                DriverStation.reportError("Could not find robot configuration file.", false);
             }
 
         }

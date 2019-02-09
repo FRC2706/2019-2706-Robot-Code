@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Subsystem that controls the driving of the robot as well as certain sensors that are used for driving
@@ -219,12 +220,14 @@ public class DriveBase extends Subsystem {
 
         rightFrontMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.Pigeon_Yaw, 0,Config.CAN_SHORT);
 
-        rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, 0, Config.CAN_SHORT);
+        rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 0, Config.CAN_SHORT);
 
-        leftFrontMotor.setInverted(false);
-        leftFrontMotor.setSensorPhase(true);
-        rightFrontMotor.setInverted(true);
-        rightFrontMotor.setSensorPhase(true);
+        leftFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_LEFT.value());
+        rightFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_RIGHT.value());
+
+        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Config.CAN_SHORT);
+        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Config.CAN_SHORT);
+        leftFrontMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Config.CAN_SHORT);
 
         configDeadband(rightFrontMotor, leftFrontMotor);
 
@@ -284,12 +287,18 @@ public class DriveBase extends Subsystem {
 
     public void setRotateMode() {
         if (driveMode != DriveMode.Rotate) {
+            System.out.println("Reset"); // TODO Remove
+            Thread.dumpStack();
             stop();
             selectGyroSensor();
             reset();
 
             driveMode = DriveMode.Rotate;
         }
+
+        // TODO Remove
+        SmartDashboard.putNumber("Primary Position", rightFrontMotor.getSelectedSensorPosition(0));
+        SmartDashboard.putNumber("Gyro", gyro.getFusedHeading());
     }
 
     /**
@@ -412,7 +421,6 @@ public class DriveBase extends Subsystem {
 
         rightFrontMotor.set(ControlMode.Position, setpoint);
         leftFrontMotor.follow(rightFrontMotor);
-
         leftFrontMotor.setInverted(InvertType.OpposeMaster);
 
         follow();

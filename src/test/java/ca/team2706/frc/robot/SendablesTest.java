@@ -26,7 +26,7 @@ public class SendablesTest {
     NetworkTable table;
 
     @Injectable
-    NetworkTableEntry entry;
+    NetworkTableEntry ntEntry;
 
     /**
      * Checks the correct name was added to LiveWindow for the Pigeon sendable
@@ -80,7 +80,7 @@ public class SendablesTest {
             returns(-5, 0, 5);
 
             table.getEntry(Sendables.TALON_NAME);
-            result = entry;
+            result = ntEntry;
         }};
 
         sendableBase = Sendables.newTalonEncoderSendable(talon);
@@ -95,9 +95,9 @@ public class SendablesTest {
         }
 
         new Verifications() {{
-            entry.setDouble(-5);
-            entry.setDouble(0);
-            entry.setDouble(5);
+            ntEntry.setDouble(-5);
+            ntEntry.setDouble(0);
+            ntEntry.setDouble(5);
         }};
     }
 
@@ -106,6 +106,7 @@ public class SendablesTest {
      *
      * @param talon The talon to add to LiveWindow
      */
+    @SuppressWarnings({"unchecked", "ResultOfMethodCallIgnored"})
     @Test
     public void newTalonSendableCreateTest(@Injectable WPI_TalonSRX talon, @Injectable NetworkTableValue value) {
         new Expectations() {{
@@ -113,10 +114,20 @@ public class SendablesTest {
             result = sensorCollection;
 
             table.getEntry(Sendables.TALON_NAME);
-            result = entry;
+            result = ntEntry;
 
-            entry.isValid();
+            ntEntry.isValid();
             result = true;
+
+            ntEntry.addListener((Consumer<EntryNotification>) any, anyInt);
+            result = new Delegate() {
+                @SuppressWarnings("unused")
+                public int addListener(Consumer<EntryNotification> listener, int flags) {
+                    listener.accept(new EntryNotification(null, 0, 0, null, value, 0));
+
+                    return 0;
+                }
+            };
 
             value.getDouble();
             returns(-24.0, 2.0, 0.0);
@@ -124,15 +135,6 @@ public class SendablesTest {
             value.isDouble();
             result = true;
         }};
-
-        new MockUp<NetworkTableEntry>() {
-            @Mock
-            public int addListener(Consumer<EntryNotification> listener, int flags) {
-                listener.accept(new EntryNotification(null, 0, 0, null, value, 0));
-
-                return 0;
-            }
-        };
 
         sendableBase = Sendables.newTalonEncoderSendable(talon);
 
@@ -163,7 +165,7 @@ public class SendablesTest {
             returns(-5.0, 0.0, 5.0);
 
             table.getEntry(Sendables.PIGEON_NAME);
-            result = entry;
+            result = ntEntry;
         }};
 
         sendableBase = Sendables.newPigeonSendable(pigeon);
@@ -179,9 +181,9 @@ public class SendablesTest {
         }
 
         new Verifications() {{
-            entry.setDouble(-5.0);
-            entry.setDouble(0.0);
-            entry.setDouble(5.0);
+            ntEntry.setDouble(-5.0);
+            ntEntry.setDouble(0.0);
+            ntEntry.setDouble(5.0);
         }};
     }
 
@@ -190,15 +192,25 @@ public class SendablesTest {
      *
      * @param pigeon The pigeon to add to LiveWindow
      */
+    @SuppressWarnings({"ResultOfMethodCallIgnored", "unchecked"})
     @Test
     public void newPigeonSendableCreateTest(@Injectable PigeonIMU pigeon, @Injectable NetworkTableValue value) {
         new Expectations() {{
-            ;
             table.getEntry(Sendables.PIGEON_NAME);
-            result = entry;
+            result = ntEntry;
 
-            entry.isValid();
+            ntEntry.isValid();
             result = true;
+
+            ntEntry.addListener((Consumer<EntryNotification>) any, anyInt);
+            result = new Delegate() {
+                @SuppressWarnings("unused")
+                public int addListener(Consumer<EntryNotification> listener, int flags) {
+                    listener.accept(new EntryNotification(null, 0, 0, null, value, 0));
+
+                    return 0;
+                }
+            };
 
             value.getDouble();
             returns(-24.0, 2.0, 0.0);
@@ -206,15 +218,6 @@ public class SendablesTest {
             value.isDouble();
             result = true;
         }};
-
-        new MockUp<NetworkTableEntry>() {
-            @Mock
-            public int addListener(Consumer<EntryNotification> listener, int flags) {
-                listener.accept(new EntryNotification(null, 0, 0, null, value, 0));
-
-                return 0;
-            }
-        };
 
         sendableBase = Sendables.newPigeonSendable(pigeon);
 

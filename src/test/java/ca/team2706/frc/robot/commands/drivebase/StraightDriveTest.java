@@ -125,7 +125,7 @@ public class StraightDriveTest {
         assertFalse(straightDrive.isFinished());
         assertFalse(straightDrive.isFinished());
         assertFalse(straightDrive.isFinished());
-        assertFalse( straightDrive.isFinished());
+        assertFalse(straightDrive.isFinished());
         assertTrue(straightDrive.isFinished());
 
         straightDrive.end();

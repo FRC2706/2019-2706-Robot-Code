@@ -458,6 +458,8 @@ public class DriveBase extends Subsystem {
     public void periodic() {
         if (DriverStation.getInstance().isEnabled())
         {
+            Log.i(gyro.getFusedHeading());
+
             Log.i(leftFrontMotor.getOutputCurrent());
             Log.i(rightFrontMotor.getOutputCurrent());
             Log.i(leftBackMotor.getOutputCurrent());
@@ -478,14 +480,12 @@ public class DriveBase extends Subsystem {
             Log.i(leftBackMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP);
             Log.i(rightBackMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP);
 
-            Log.i(gyro.getFusedHeading());
-
             Log.i(leftFrontMotor.getSensorCollection().getQuadratureVelocity() / Config.DRIVE_ENCODER_DPP * 10);
             Log.i(rightFrontMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP * 10);
             Log.i(leftBackMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP * 10);
             Log.i(rightBackMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP * 10);
         }
-        
+
         SmartDashboard.putNumber("Gyro", gyro.getFusedHeading());
 
         SmartDashboard.putNumber("Left front motor current", leftFrontMotor.getOutputCurrent());
@@ -504,7 +504,7 @@ public class DriveBase extends Subsystem {
         SmartDashboard.putNumber("Right back motor output", rightBackMotor.getMotorOutputPercent());
 
         SmartDashboard.putNumber("Left front motor distance: ", leftFrontMotor.getSensorCollection().getQuadraturePosition()/Config.DRIVE_ENCODER_DPP);
-        SmartDashboard.putNumber("Right front motogr distance: ", rightFrontMotor.getSensorCollection().getQuadraturePosition()/Config.DRIVE_ENCODER_DPP);
+        SmartDashboard.putNumber("Right front motor distance: ", rightFrontMotor.getSensorCollection().getQuadraturePosition()/Config.DRIVE_ENCODER_DPP);
         SmartDashboard.putNumber("Left back motor distance: ", leftBackMotor.getSensorCollection().getQuadraturePosition()/Config.DRIVE_ENCODER_DPP);
         SmartDashboard.putNumber("Right back motor distance: ", rightBackMotor.getSensorCollection().getQuadraturePosition()/Config.DRIVE_ENCODER_DPP);
 
@@ -513,5 +513,4 @@ public class DriveBase extends Subsystem {
         SmartDashboard.putNumber("Left back motor speed", leftBackMotor.getSensorCollection().getQuadraturePosition()/Config.DRIVE_ENCODER_DPP*10);
         SmartDashboard.putNumber("Right back motor speed", rightBackMotor.getSensorCollection().getQuadraturePosition()/Config.DRIVE_ENCODER_DPP*10);
     }
-
 }

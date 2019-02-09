@@ -25,7 +25,7 @@ public class ConfigTest {
     @Injectable
     private BufferedReader reader;
 
-    @Injectable
+    @Mocked(stubOutClassInitialization = true)
     private BufferedWriter writer;
 
     @Mocked(stubOutClassInitialization = true)
@@ -44,10 +44,6 @@ public class ConfigTest {
         new Expectations() {{
             Files.newBufferedReader(robotIdLoc);
             result = reader;
-            minTimes = 0;
-
-            Files.newBufferedWriter(saveFileLoc);
-            result = writer;
             minTimes = 0;
 
             reader.readLine();

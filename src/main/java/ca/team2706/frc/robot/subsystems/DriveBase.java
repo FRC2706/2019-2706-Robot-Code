@@ -67,6 +67,11 @@ public class DriveBase extends Subsystem {
     private final PWM light;
 
     /**
+     * Indicates whether the robot is in brake mode
+     */
+    private boolean brakeMode;
+
+    /**
      * Creates a drive base, and initializes all required sensors and motors
      */
     private DriveBase() {
@@ -286,6 +291,17 @@ public class DriveBase extends Subsystem {
         leftBackMotor.setNeutralMode(mode);
         rightFrontMotor.setNeutralMode(mode);
         rightBackMotor.setNeutralMode(mode);
+
+        brakeMode = brake;
+    }
+
+    /**
+     * Checks whether the robot is in brake mode
+     *
+     * @return True when the Talons have the neutral mode set to {@code NeutralMode.Brake}
+     */
+    public boolean isBrakeMode() {
+        return brakeMode;
     }
 
     /**
@@ -456,8 +472,7 @@ public class DriveBase extends Subsystem {
 
     @Override
     public void periodic() {
-        if (DriverStation.getInstance().isEnabled())
-        {
+        if (DriverStation.getInstance().isEnabled()) {
             Log.i(gyro.getFusedHeading());
 
             Log.i(leftFrontMotor.getOutputCurrent());
@@ -503,14 +518,14 @@ public class DriveBase extends Subsystem {
         SmartDashboard.putNumber("Left back motor output", leftBackMotor.getMotorOutputPercent());
         SmartDashboard.putNumber("Right back motor output", rightBackMotor.getMotorOutputPercent());
 
-        SmartDashboard.putNumber("Left front motor distance: ", leftFrontMotor.getSensorCollection().getQuadraturePosition()/Config.DRIVE_ENCODER_DPP);
-        SmartDashboard.putNumber("Right front motor distance: ", rightFrontMotor.getSensorCollection().getQuadraturePosition()/Config.DRIVE_ENCODER_DPP);
-        SmartDashboard.putNumber("Left back motor distance: ", leftBackMotor.getSensorCollection().getQuadraturePosition()/Config.DRIVE_ENCODER_DPP);
-        SmartDashboard.putNumber("Right back motor distance: ", rightBackMotor.getSensorCollection().getQuadraturePosition()/Config.DRIVE_ENCODER_DPP);
+        SmartDashboard.putNumber("Left front motor distance: ", leftFrontMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP);
+        SmartDashboard.putNumber("Right front motor distance: ", rightFrontMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP);
+        SmartDashboard.putNumber("Left back motor distance: ", leftBackMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP);
+        SmartDashboard.putNumber("Right back motor distance: ", rightBackMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP);
 
-        SmartDashboard.putNumber("Left front motor speed", leftFrontMotor.getSensorCollection().getQuadratureVelocity()/Config.DRIVE_ENCODER_DPP*10);
-        SmartDashboard.putNumber("Right front motor speed", rightFrontMotor.getSensorCollection().getQuadraturePosition()/Config.DRIVE_ENCODER_DPP*10);
-        SmartDashboard.putNumber("Left back motor speed", leftBackMotor.getSensorCollection().getQuadraturePosition()/Config.DRIVE_ENCODER_DPP*10);
-        SmartDashboard.putNumber("Right back motor speed", rightBackMotor.getSensorCollection().getQuadraturePosition()/Config.DRIVE_ENCODER_DPP*10);
+        SmartDashboard.putNumber("Left front motor speed", leftFrontMotor.getSensorCollection().getQuadratureVelocity() / Config.DRIVE_ENCODER_DPP * 10);
+        SmartDashboard.putNumber("Right front motor speed", rightFrontMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP * 10);
+        SmartDashboard.putNumber("Left back motor speed", leftBackMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP * 10);
+        SmartDashboard.putNumber("Right back motor speed", rightBackMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP * 10);
     }
 }

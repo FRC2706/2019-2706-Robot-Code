@@ -1,8 +1,10 @@
 package ca.team2706.frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.PWM;
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import mockit.Expectations;
 import mockit.Mocked;
@@ -14,8 +16,6 @@ import org.junit.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -82,7 +82,8 @@ public class SensorExtrasTest {
     @Test
     public void allocationTest() {
         new Verifications() {{
-            pwm.setName("SensorExtras", "Unused PWM 1"); times = 1;
+            pwm.setName("SensorExtras", "Unused PWM 1");
+            times = 1;
         }};
     }
 }

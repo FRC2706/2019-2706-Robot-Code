@@ -97,7 +97,7 @@ public class Config {
 
 
     // #### Fluid constants ####
-    static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
+    static NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
 
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_DEADBAND = constant("drive-deadband", 0.001);
     public static final FluidConstant<Double> DRIVE_OPEN_LOOP_DEADBAND = constant("drive-deadband", 0.04);

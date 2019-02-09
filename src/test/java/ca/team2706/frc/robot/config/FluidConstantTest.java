@@ -1,7 +1,6 @@
 package ca.team2706.frc.robot.config;
 
 import ca.team2706.frc.robot.Robot;
-import ca.team2706.frc.robot.RobotState;
 import ca.team2706.frc.robot.util.Util;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
@@ -20,11 +19,6 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import mockit.*;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.lang.reflect.Field;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Consumer;
 
 public class FluidConstantTest {
     // We'll just use a string fluid constant to test.

@@ -69,15 +69,17 @@ public class StraightDriveGyro extends Command {
     @Override
     public void execute() {
         DriveBase.getInstance().setPositionGyro(speed.get(), position.get(), 0);
+
     }
 
     @Override
     public boolean isFinished() {
-        if (DriveBase.getInstance().getRightError() <= TARGET_RANGE) {
+        if (Math.abs(DriveBase.getInstance().getRightError()) <= TARGET_RANGE) {
             doneCycles++;
         } else {
             doneCycles = 0;
         }
+        Log.i(DriveBase.getInstance().getRightError());
 
         return doneCycles >= minDoneCycles.get();
     }

@@ -246,8 +246,11 @@ public class DriveBase extends Subsystem {
 
         rightFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
 
-        rightFrontMotor.configClosedLoopPeriod(1, Config.CAN_SHORT);
+        rightFrontMotor.configClosedLoopPeriod(1, 1, Config.CAN_SHORT);
         rightFrontMotor.configAuxPIDPolarity(false, Config.CAN_SHORT);
+
+        rightFrontMotor.selectProfileSlot(0, 0);
+        rightFrontMotor.selectProfileSlot(1, 1);
     }
 
     /**
@@ -268,6 +271,7 @@ public class DriveBase extends Subsystem {
      */
     public void setOpenLoopVoltageMode() {
         if (driveMode != DriveMode.OpenLoopVoltage) {
+            Log.i("OpenLoop");
             stop();
             selectEncodersStandard();
             reset();
@@ -416,13 +420,21 @@ public class DriveBase extends Subsystem {
         leftFrontMotor.configClosedLoopPeakOutput(1, speed);
         rightFrontMotor.configClosedLoopPeakOutput(1, speed);
 
-      //  rightFrontMotor.set(ControlMode.Position, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation);
+        rightFrontMotor.set(ControlMode.Position, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation);
         leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
 
         follow();
 
         SmartDashboard.putNumber("Primary Position", rightFrontMotor.getSelectedSensorPosition(0));
         SmartDashboard.putNumber("Aux Position", rightFrontMotor.getSelectedSensorPosition(1));
+        SmartDashboard.putNumber("Gyro", gyro.getFusedHeading());
+
+        double[] yawPitchRoll = new double[3];
+        gyro.getYawPitchRoll(yawPitchRoll);
+
+        SmartDashboard.putNumber("Yaw", yawPitchRoll[0]);
+
+        Log.i(rightFrontMotor.getClosedLoopTarget(0) + " " + rightFrontMotor.getSelectedSensorPosition(0));
     }
 
     /**
@@ -483,6 +495,7 @@ public class DriveBase extends Subsystem {
      */
     public void resetGyro() {
         gyro.setFusedHeading(0, Config.CAN_SHORT);
+        Log.i("OOF");
     }
 
     /**
@@ -508,7 +521,7 @@ public class DriveBase extends Subsystem {
      * @return The error in feet
      */
     public double getRightError() {
-        return rightFrontMotor.getClosedLoopError(0) * Config.DRIVE_ENCODER_DPP;
+        return (rightFrontMotor.getClosedLoopTarget(0) - rightFrontMotor.getSelectedSensorPosition(0)) * Config.DRIVE_ENCODER_DPP;
     }
 
     /**

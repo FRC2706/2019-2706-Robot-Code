@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
+import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.Joystick;
 import mockit.Expectations;
@@ -23,14 +24,14 @@ public class ArcadeDriveWithJoystickTest {
     @Test
     public void testNegate() {
         new Expectations() {{
-            joy1.getRawAxis(0);
+            joy1.getRawAxis(Config.ARCADE_DRIVE_FORWARD);
             returns(1.0D, -1.0D, 0.0D, 0.1D);
 
-            joy2.getRawAxis(0);
+            joy2.getRawAxis(Config.ARCADE_DRIVE_ROTATE);
             returns(1.0D, -1.0D, 0.0D, 0.1D);
         }};
 
-        ArcadeDriveWithJoystick arcadeDrive = new ArcadeDriveWithJoystick(joy1, 0, true, joy2, 0, false);
+        ArcadeDriveWithJoystick arcadeDrive = new ArcadeDriveWithJoystick(joy1, Config.ARCADE_DRIVE_FORWARD, true, joy2, Config.ARCADE_DRIVE_ROTATE, false);
 
         arcadeDrive.initialize();
 

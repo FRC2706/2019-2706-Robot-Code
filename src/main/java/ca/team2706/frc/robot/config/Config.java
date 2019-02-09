@@ -89,6 +89,8 @@ public class Config {
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_I = constant("drive-I", 0.0);
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_D = constant("drive-D", 0.0);
 
+    public static final int ARCADE_DRIVE_FORWARD = 5;
+    public static final int ARCADE_DRIVE_ROTATE = 4;
 
     // #### Fluid constants ####
     static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");

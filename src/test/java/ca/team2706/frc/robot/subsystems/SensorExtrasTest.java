@@ -3,6 +3,7 @@ package ca.team2706.frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import mockit.Expectations;
 import mockit.Mocked;
 import mockit.Tested;
@@ -13,6 +14,8 @@ import org.junit.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -37,7 +40,7 @@ public class SensorExtrasTest {
     private Relay relay;
 
     @Mocked
-    Subsystem subsystem;
+    LiveWindow liveWindow;
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
@@ -79,8 +82,7 @@ public class SensorExtrasTest {
     @Test
     public void allocationTest() {
         new Verifications() {{
-            subsystem.addChild("Unused PWM 1", (Sendable) any);
-            times = 1;
+            pwm.setName("SensorExtras", "Unused PWM 1"); times = 1;
         }};
     }
 }

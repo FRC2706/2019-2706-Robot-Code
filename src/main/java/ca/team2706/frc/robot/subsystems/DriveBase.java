@@ -211,7 +211,7 @@ public class DriveBase extends Subsystem {
         System.out.println("HIIIIIIIII");
         leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_SHORT);
         rightFrontMotor.configRemoteFeedbackFilter(leftFrontMotor.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, 0, Config.CAN_SHORT);
-        rightFrontMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.Pigeon_Yaw, 1, Config.CAN_SHORT);
+        rightFrontMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, 1, Config.CAN_SHORT);
 
         rightFrontMotor.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Config.CAN_SHORT);
         rightFrontMotor.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative, Config.CAN_SHORT);
@@ -427,7 +427,7 @@ public class DriveBase extends Subsystem {
 
         SmartDashboard.putNumber("Primary Position", rightFrontMotor.getSelectedSensorPosition(0));
         SmartDashboard.putNumber("Aux Position", rightFrontMotor.getSelectedSensorPosition(1));
-        SmartDashboard.putNumber("Gyro", gyro.getFusedHeading());
+        SmartDashboard.putNumber("Gyro", getHeading());
 
         double[] yawPitchRoll = new double[3];
         gyro.getYawPitchRoll(yawPitchRoll);
@@ -479,7 +479,9 @@ public class DriveBase extends Subsystem {
      * @return The rotation of the robot
      */
     public double getHeading() {
-        return gyro.getFusedHeading();
+        double[] yawPitchRoll = new double[3];
+        gyro.getYawPitchRoll(yawPitchRoll);
+        return yawPitchRoll[0];
     }
 
     /**
@@ -494,8 +496,7 @@ public class DriveBase extends Subsystem {
      * Resets the gyro to 0 degrees
      */
     public void resetGyro() {
-        gyro.setFusedHeading(0, Config.CAN_SHORT);
-        Log.i("OOF");
+        gyro.setYaw(0, Config.CAN_SHORT);
     }
 
     /**
@@ -521,7 +522,7 @@ public class DriveBase extends Subsystem {
      * @return The error in feet
      */
     public double getRightError() {
-        return (rightFrontMotor.getClosedLoopTarget(0) - rightFrontMotor.getSelectedSensorPosition(0)) * Config.DRIVE_ENCODER_DPP;
+        return rightFrontMotor.getClosedLoopError(0) * Config.DRIVE_ENCODER_DPP;
     }
 
     /**

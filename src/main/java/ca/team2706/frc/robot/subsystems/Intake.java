@@ -7,6 +7,9 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
+/**
+ * The subsystem which comtrols the intake for cargo and hatches
+ */
 
 public class Intake extends Subsystem {
 
@@ -31,6 +34,11 @@ public class Intake extends Subsystem {
         currentInstance = new Intake();
     }
 
+    /**
+     * Constructor used to move intake at speed specified by driver
+     * @param intakeSpeed the speed at which to spin the intake wheels
+     */
+
     public Intake(double intakeSpeed) {
         this();
         m_intakeSpeed = intakeSpeed;
@@ -45,13 +53,20 @@ public class Intake extends Subsystem {
         m_hatchEjector = new DoubleSolenoid(0, 1);
     }
 
-    public void initDefaultCommand() {
+    public void initDefaultCommand() {}
 
-    }
-
+    /**
+     * Getting the voltage from the IR sensor
+     * @return the voltage reading
+     */
     public double readIr() {
         return m_sensor.getVoltage();
     }
+
+    /**
+     * Spins the wheels to intake a cargo
+     * @param speed speed at which to change the wheels
+     */
 
     public void inhale(double speed) {
         if (!hatchMode) {
@@ -59,15 +74,29 @@ public class Intake extends Subsystem {
         }
     }
 
+    /**
+     * Spins the wheels to eject a cargo
+     * @param speed speed at which to spin the wheels
+     */
+
     public void exhale(double speed) {
         if (!hatchMode) {
             m_intake.set(speed * -m_intakeSpeed);
         }
     }
 
+    /**
+     * Stop motors
+     */
+
     public void stop() {
         m_intake.set(0);
     }
+
+    /**
+     * Check if the intake has a cargo within it
+     * @return whether the intake has cargo or not
+     */
 
     public boolean ballCaptured() {
         if (!hatchMode) {
@@ -77,6 +106,11 @@ public class Intake extends Subsystem {
         }
     }
 
+    /**
+     * Checks to see if there's no ball in the intake
+     * @return whether there is not ball in the intake or not
+     */
+
     public boolean noBall() {
         if (!hatchMode) {
             return m_sensor.getVoltage() <= 0;
@@ -85,15 +119,27 @@ public class Intake extends Subsystem {
         }
     }
 
+    /**
+     * Lowers the intake arms
+     */
+
     public void lowerIntake() {
         m_intakeLift.set(DoubleSolenoid.Value.kForward);
         hatchMode = false;
     }
 
+    /**
+     * Raises the intake arms
+     */
+
     public void raiseIntake() {
         m_intakeLift.set(DoubleSolenoid.Value.kReverse);
         hatchMode = true;
     }
+
+    /**
+     * Extends the hatch deployment cylinder
+     */
 
     public void ejectHatch() {
         if (hatchMode) {
@@ -101,9 +147,17 @@ public class Intake extends Subsystem {
         }
     }
 
+    /**
+     * Lowers the lift to deploy a hatch
+     */
+
     public void lowerLiftToDeploy() {
         ElevatorWithPID.getInstance().lowertoDeployHatch();
     }
+
+    /**
+     * Retracts the hatch deployment cylinder
+     */
 
     public void retractHatchMech() {
         m_hatchEjector.set(DoubleSolenoid.Value.kReverse);

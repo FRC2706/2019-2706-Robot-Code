@@ -5,6 +5,9 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
 
+/**
+ * Subsystem that controls the elevator on the robot
+ */
 
 public class ElevatorWithPID extends PIDSubsystem {
 
@@ -38,9 +41,14 @@ public class ElevatorWithPID extends PIDSubsystem {
 
     private double heightGoal = 1.0;
 
-    private boolean loweringForHatch = false;
+    private boolean loweringForHatch = false; //if the lift is lowering in order to deploy a hatch
 
     private static ElevatorWithPID currentInstance;
+
+    /**
+     * initialises a new Elevator object
+     * @return the new Elevator instance
+     */
 
     public static ElevatorWithPID getInstance() {
         if (currentInstance == null) {
@@ -63,6 +71,11 @@ public class ElevatorWithPID extends PIDSubsystem {
         return 0;
     }
 
+    /**
+     * Updates the setpoint for the PID controller
+     * @param setpoint the new setpoint
+     */
+
     public void setTheSetPoint(double setpoint) {
         getPIDController().setSetpoint(setpoint);
     }
@@ -72,10 +85,20 @@ public class ElevatorWithPID extends PIDSubsystem {
         m_liftMotor.set(output);
     }
 
+    /**
+     * Figures out whether the lift has reached the setpoint or not
+     * @return whther lift has reached setpoint
+     */
+
     public boolean reachedGoal() {
         final double tolerance = 5; //subject to change
-        return tolerance > Math.abs(tolerance - getPosition());
+        return tolerance < Math.abs(getSetpoint() - getPosition());
     }
+
+    /**
+     * Raises the lift up one preset
+     * Height depends on whether the lift has a hatch or cargo
+     */
 
     public void addToHeightGoal() {
         Intake intake = Intake.getInstance();
@@ -87,6 +110,11 @@ public class ElevatorWithPID extends PIDSubsystem {
             setTheSetPoint(PORT_HEIGHTS[(int) heightGoal]);
         }
     }
+
+    /**
+     * Lowers the lift down 1 preset
+     * Height depends on whether the lift has a hatch or cargo
+     */
 
     public void subtractFromHeightGoal() {
         Intake intake = Intake.getInstance();
@@ -107,6 +135,11 @@ public class ElevatorWithPID extends PIDSubsystem {
         getPIDController().disable();
     }
 
+    /**
+     * Checks if the lift has reached either the top or bottom
+     * @return whther the lift has reached a limit
+     */
+
     public boolean reachedLimits() {
         return getPosition() >= MAX_HEIGHT || m_limitSwitchDown.get();
     }
@@ -119,21 +152,34 @@ public class ElevatorWithPID extends PIDSubsystem {
         getPIDController().setInputRange(-1, 1);
     }
 
+    /**
+     * Lowering the lift to deploy a hatch
+     */
+
     public void lowertoDeployHatch() {
         loweringForHatch = true;
         setTheSetPoint(LOWER_HEIGHTS[(int) heightGoal]);
     }
+
+    /**
+     * Stopping the lift
+     */
 
     public void stop() {
         if (!loweringForHatch) {
             m_liftMotor.set(0);
         } else {
             setTheSetPoint(HATCH_HEIGHTS[(int) heightGoal]);
-            Intake.getInstance().retractHatchMech();
+            Intake.getInstance().retractHatchMech(); //moving the intake
             Intake.getInstance().raiseIntake();
             loweringForHatch = false;
         }
     }
+
+    /**
+     * Move the lift up manually
+     * @param speed the speed at which to move
+     */
 
     public void moveUp(double speed) {
         if (getPosition() < MAX_HEIGHT) {
@@ -142,11 +188,21 @@ public class ElevatorWithPID extends PIDSubsystem {
         }
     }
 
+    /**
+     * Move the lift down manually
+     * @param speed the speed at which to move
+     */
+
     public void moveDown(double speed) {
         if (!m_limitSwitchDown.get() && getPosition() > 0) {
             m_liftMotor.set(-speed);
         }
     }
+
+    /**
+     * Movement in either direction regardless of PID value
+     * @param speed speed at which to move
+     */
 
     public void moveOverride(double speed) {
         if (!m_limitSwitchDown.get()) {

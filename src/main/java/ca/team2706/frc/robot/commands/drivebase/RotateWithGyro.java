@@ -44,6 +44,7 @@ public class RotateWithGyro extends Command {
      *                                 the target position.
      */
     public RotateWithGyro(Supplier<Double> speed, Supplier<Double> angle, Supplier<Integer> minCyclesWithinThreshold) {
+        requires(DriveBase.getInstance());
         this.speedSupplier = speed;
         this.angleSupplier = angle;
         this.minCyclesWithinThreshold = minCyclesWithinThreshold;
@@ -64,13 +65,14 @@ public class RotateWithGyro extends Command {
 
     @Override
     protected boolean isFinished() {
-        if (Math.abs(DriveBase.getInstance().getRightError()) <= TARGET_ANGLE_RANGE) {
-            doneCycles++;
-        } else {
-            doneCycles = 0;
-        }
-
-        return doneCycles >= minCyclesWithinThreshold.get();
+//        if (Math.abs(DriveBase.getInstance().getRightError()) <= TARGET_ANGLE_RANGE) {
+//            doneCycles++;
+//        } else {
+//            doneCycles = 0;
+//        }
+//
+//        final boolean isFinished =  doneCycles >= minCyclesWithinThreshold.get();
+        return false;
     }
 
     @Override

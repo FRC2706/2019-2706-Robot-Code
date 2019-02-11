@@ -215,10 +215,13 @@ public class DriveBase extends Subsystem {
         rightFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
     }
 
-    public void selectGyroSensor() {
+    /**
+     * Sets up talons for using the gyro sensor as feedback.
+     */
+    private void selectGyroSensor() {
         resetTalonConfiguration();
 
-        rightFrontMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.Pigeon_Yaw, 0,Config.CAN_SHORT);
+        rightFrontMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, 0, Config.CAN_SHORT);
 
         rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 0, Config.CAN_SHORT);
 
@@ -255,7 +258,7 @@ public class DriveBase extends Subsystem {
 
             reset();
 
-            driveMode = DriveMode.Disabled;
+            setDriveMode(DriveMode.Disabled);
         }
     }
 
@@ -268,7 +271,7 @@ public class DriveBase extends Subsystem {
             selectEncodersStandard();
             reset();
 
-            driveMode = DriveMode.OpenLoopVoltage;
+            setDriveMode(DriveMode.OpenLoopVoltage);
         }
     }
 
@@ -281,24 +284,23 @@ public class DriveBase extends Subsystem {
             selectEncodersSum();
             reset();
 
-            driveMode = DriveMode.PositionNoGyro;
+            setDriveMode(DriveMode.PositionNoGyro);
         }
     }
 
     public void setRotateMode() {
         if (driveMode != DriveMode.Rotate) {
             System.out.println("Reset"); // TODO Remove
-            Thread.dumpStack();
             stop();
             selectGyroSensor();
             reset();
 
-            driveMode = DriveMode.Rotate;
+            setDriveMode(DriveMode.Rotate);
         }
 
         // TODO Remove
         SmartDashboard.putNumber("Primary Position", rightFrontMotor.getSelectedSensorPosition(0));
-        SmartDashboard.putNumber("Gyro", gyro.getFusedHeading());
+        SmartDashboard.putNumber("Gyro", getHeading());
     }
 
     /**
@@ -468,7 +470,9 @@ public class DriveBase extends Subsystem {
      * @return The rotation of the robot
      */
     public double getHeading() {
-        return gyro.getFusedHeading();
+        double[] stuff = new double[3];
+        gyro.getYawPitchRoll(stuff);
+        return stuff[0];
     }
 
     /**
@@ -483,7 +487,7 @@ public class DriveBase extends Subsystem {
      * Resets the gyro to 0 degrees
      */
     public void resetGyro() {
-        gyro.setFusedHeading(0, Config.CAN_SHORT);
+        gyro.setYaw(0, Config.CAN_SHORT);
     }
 
     /**
@@ -510,6 +514,18 @@ public class DriveBase extends Subsystem {
      */
     public double getRightError() {
         return rightFrontMotor.getClosedLoopError(0) * Config.DRIVE_ENCODER_DPP;
+    }
+
+    /**
+     * Sets the current drive mode.
+     *
+     * @param driveMode The new drive mode.
+     */
+    private void setDriveMode(DriveMode driveMode) {
+        this.driveMode = driveMode;
+
+        System.out.println("Set drive mode to: " + driveMode); // TODO remove
+        Thread.dumpStack(); // TODO Remove
     }
 
     /**

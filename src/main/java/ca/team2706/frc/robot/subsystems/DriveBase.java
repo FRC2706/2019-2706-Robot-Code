@@ -207,8 +207,10 @@ public class DriveBase extends Subsystem {
         rightFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
     }
 
+    /**
+     * Selects local encoders, the current sensor and the pigeon
+     */
     private void selectEncodersSumWithPigeon() {
-        System.out.println("HIIIIIIIII");
         leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_SHORT);
         rightFrontMotor.configRemoteFeedbackFilter(leftFrontMotor.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, 0, Config.CAN_SHORT);
         rightFrontMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, 1, Config.CAN_SHORT);
@@ -293,6 +295,9 @@ public class DriveBase extends Subsystem {
         }
     }
 
+    /**
+     * Gets the encoder sum using the pigeon
+     */
     public void setPositionGyroMode() {
         if (driveMode != DriveMode.PositionGyro) {
             stop();
@@ -410,6 +415,7 @@ public class DriveBase extends Subsystem {
      *
      * @param speed    The speed from 0 to 1
      * @param setpoint The setpoint to go to in feet
+     * @param targetRotation The desired rotation
      */
     public void setPositionGyro(double speed, double setpoint, double targetRotation) {
 
@@ -425,16 +431,9 @@ public class DriveBase extends Subsystem {
 
         follow();
 
-        SmartDashboard.putNumber("Primary Position", rightFrontMotor.getSelectedSensorPosition(0));
-        SmartDashboard.putNumber("Aux Position", rightFrontMotor.getSelectedSensorPosition(1));
-        SmartDashboard.putNumber("Gyro", getHeading());
-
         double[] yawPitchRoll = new double[3];
         gyro.getYawPitchRoll(yawPitchRoll);
 
-        SmartDashboard.putNumber("Yaw", yawPitchRoll[0]);
-
-        Log.i(rightFrontMotor.getClosedLoopTarget(0) + " " + rightFrontMotor.getSelectedSensorPosition(0));
     }
 
     /**

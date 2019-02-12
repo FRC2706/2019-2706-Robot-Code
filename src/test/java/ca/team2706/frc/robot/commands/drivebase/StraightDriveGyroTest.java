@@ -13,7 +13,6 @@ import org.junit.Test;
 
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.DriveBase;
-import ca.team2706.frc.robot.util.Util;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -66,8 +65,6 @@ public class StraightDriveGyroTest {
             talon.getSensorCollection();
             result = sensorCollection;
         }};
-
-        Util.resetConfigAndRobot();
     }
     /**
      * Tests that the command puts the drivetrain into the correct state

@@ -43,6 +43,7 @@ public class Robot extends TimedRobot {
         onStateChange(RobotState.ROBOT_INIT);
         isInitialized = true;
 
+        Config.init();
 
         // Initialize subsystems
         Bling.init();

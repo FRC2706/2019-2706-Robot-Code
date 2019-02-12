@@ -20,29 +20,20 @@ import java.util.Objects;
  * Config manager for the robot.
  */
 public class Config {
-    static {
-        init();
-    }
-
-    private static boolean initialized = false;
-
     /**
-     * Initializes the Config class.
+     * Initializes a new config instance.
      */
     public static void init() {
-        if (!initialized) {
-            Robot.setOnStateChange(Config::saveConstants);
-
-            initialized = true;
-        }
+        new Config();
     }
+
 
     private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
 
     // #### Static constants ####
 
     /**
-     * Path to the file which identifies which
+     * Path to the file which identifies which robot this is.
      */
     private static final Path ROBOT_ID_LOC = Paths.get(System.getProperty("user.home"), "robot.conf");
     private static final Path SAVE_FILE = Paths.get(System.getProperty("user.home"), "FluidConstants.txt");
@@ -113,6 +104,63 @@ public class Config {
     public static final FluidConstant<Double> PIGEON_KD = constant("pigeon-ki", 4.0);
     public static final FluidConstant<Double> PIGEON_KF = constant("pigeon-kf", 0.0);
 
+
+    // ### Methods, fields and Constructors ###
+    /**
+     * The network table for fluid constants.
+     */
+    private NetworkTable configTable;
+
+    Config() {
+        this(NetworkTableInstance.getDefault().getTable("Fluid Constants"));
+    }
+
+    /**
+     * Createds a new config manager for handling config tasks.
+     *
+     * @param ntTable The networktable instance to be used.
+     */
+    Config(NetworkTable ntTable) {
+        this.configTable = ntTable;
+
+        Robot.setOnStateChange(this::robotStateChange);
+    }
+
+    /**
+     * Called when the robot's state is updated.
+     *
+     * @param newState The new robot state.
+     */
+    private void robotStateChange(final RobotState newState) {
+        switch (newState) {
+            case ROBOT_INIT:
+                initializeFluidConstantNetworktables();
+                break;
+            case DISABLED:
+                saveConstants();
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Initializes the network tables elements for all the fluid constants.
+     */
+    private void initializeFluidConstantNetworktables() {
+        ArrayList<FluidConstant<?>> constants = new ArrayList<>(CONSTANTS);
+        constants.forEach(fluidConstant -> fluidConstant.addNTEntry(configTable));
+    }
+
+    /**
+     * Gets the network table for fluid constants.
+     *
+     * @return The Network Table used for fluid constants.
+     */
+    public NetworkTable getNetworkTable() {
+        return configTable;
+    }
+
     /**
      * Reads the robot type from the filesystem
      *
@@ -166,18 +214,16 @@ public class Config {
     /**
      * Saves all the value of the constants to a human-readable (but not machine readable) text file.
      */
-    private static void saveConstants(RobotState state) {
-        if (state == RobotState.DISABLED) {
-            StringBuilder totalString = new StringBuilder();
+    private static void saveConstants() {
+        StringBuilder totalString = new StringBuilder();
 
-            // Iterate through each constant and collect its file string value.
-            for (FluidConstant<?> constant : CONSTANTS) {
-                totalString.append(constant.toFileString()).append("\n");
-            }
-
-            // Now just need to create and write to the file.
-            writeFile(totalString.toString());
+        // Iterate through each constant and collect its file string value.
+        for (FluidConstant<?> constant : CONSTANTS) {
+            totalString.append(constant.toFileString()).append("\n");
         }
+
+        // Now just need to create and write to the file.
+        writeFile(totalString.toString());
     }
 
     /**

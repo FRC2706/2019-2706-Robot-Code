@@ -30,7 +30,7 @@ public class Robot extends TimedRobot {
 
     private List<Consumer<RobotState>> stateListeners = new ArrayList<>();
 
-    Robot() {
+    public Robot() {
         latestInstance = this;
     }
 

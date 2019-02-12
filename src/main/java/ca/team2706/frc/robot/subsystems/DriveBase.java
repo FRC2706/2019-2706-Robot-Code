@@ -11,7 +11,6 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.PrintCommand;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -231,9 +230,9 @@ public class DriveBase extends Subsystem {
         rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, 0, Config.CAN_SHORT);
         rightFrontMotor.configSelectedFeedbackCoefficient(0.5, 0, Config.CAN_SHORT);
 
-        rightFrontMotor.configSelectedFeedbackSensor(	FeedbackDevice.RemoteSensor1, 1, Config.CAN_SHORT);
+        rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, 1, Config.CAN_SHORT);
 
-        rightFrontMotor.configSelectedFeedbackCoefficient(	1, 1, Config.CAN_SHORT);
+        rightFrontMotor.configSelectedFeedbackCoefficient(1, 1, Config.CAN_SHORT);
 
         leftFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_LEFT.value());
         rightFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_RIGHT.value());
@@ -434,8 +433,8 @@ public class DriveBase extends Subsystem {
     /**
      * Goes to a position with the closed loop Talon PIDs using only encoder and gyro
      *
-     * @param speed    The speed from 0 to 1
-     * @param setpoint The setpoint to go to in feet
+     * @param speed          The speed from 0 to 1
+     * @param setpoint       The setpoint to go to in feet
      * @param targetRotation The desired rotation
      */
     public void setPositionGyro(double speed, double setpoint, double targetRotation) {
@@ -565,7 +564,7 @@ public class DriveBase extends Subsystem {
         PositionNoGyro,
 
         /**
-         *  Closed loop control with Auxiliary Pigeon Support
+         * Closed loop control with Auxiliary Pigeon Support
          */
         PositionGyro
     }

@@ -75,6 +75,7 @@ public class EButtonTest {
             result = false;
             genericHID.getRawAxis(anyInt);
             result = 0;
+            minTimes = 0;
         }};
 
         Command command = new Command() {

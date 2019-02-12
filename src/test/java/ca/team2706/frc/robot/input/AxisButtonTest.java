@@ -22,6 +22,12 @@ public class AxisButtonTest {
     private static final String Both = "2";
 
 
+    /**
+     * Tests the axis that triggers in positive
+     * @param axis The axis to check
+     * @param minTrigger The minimum trigger value
+     * @param triggerType The type of trigger
+     */
     @Test
     public void testPositive(@Injectable("0") int axis, @Injectable("0.8") double minTrigger, @Injectable(Positive) int triggerType) {
         new Expectations() {{
@@ -36,6 +42,12 @@ public class AxisButtonTest {
         assertTrue(axisButton.get());
     }
 
+    /**
+     * Tests the axis that triggers in negative
+     * @param axis The axis to check
+     * @param minTrigger The minimum trigger value
+     * @param triggerType The type of trigger
+     */
     @Test
     public void testNegative(@Injectable("0") int axis, @Injectable("0.8") double minTrigger, @Injectable(Negative) int triggerType) {
         new Expectations() {{
@@ -50,6 +62,12 @@ public class AxisButtonTest {
         assertFalse(axisButton.get());
     }
 
+    /**
+     * Tests the axis that triggers in either positive or negative
+     * @param axis The axis to check
+     * @param minTrigger The minimum trigger value
+     * @param triggerType The type of trigger
+     */
     @Test
     public void testBoth(@Injectable("0") int axis, @Injectable("0.8") double minTrigger, @Injectable(Both) int triggerType) {
         new Expectations() {{

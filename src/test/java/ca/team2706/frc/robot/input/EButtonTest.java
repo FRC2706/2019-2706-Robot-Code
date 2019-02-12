@@ -1,11 +1,19 @@
 package ca.team2706.frc.robot.input;
 
+import com.ctre.phoenix.CTREJNIWrapper;
+import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.sensors.PigeonIMU;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import mockit.*;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.sql.Driver;
@@ -21,9 +29,41 @@ public class EButtonTest {
     @Mocked
     private DriverStation driverStation;
 
+    @Mocked
+    private WPI_TalonSRX talon;
+
+    @Mocked
+    private PWM pwm;
+
+    @Mocked
+    private AnalogInput analogInput;
+
+    @Mocked(stubOutClassInitialization = true)
+    private PigeonIMU pigeon;
+
+    private DifferentialDrive differentialDrive;
+
+    @Mocked(stubOutClassInitialization = true)
+    private CTREJNIWrapper jni;
+
     @Mocked(stubOutClassInitialization = true)
     private MotControllerJNI motControllerJNI;
 
+    @Injectable
+    private SensorCollection sensorCollection;
+
+    @Before
+    public void setUp() {
+        new Expectations() {{
+            talon.getSensorCollection();
+            result = sensorCollection;
+            minTimes = 0;
+        }};
+    }
+
+    /**
+     * Tests that the command initializes when the button is first pressed, and releases ends when released
+     */
     @Test
     public void whenPressedTest() {
         new Expectations() {{
@@ -62,11 +102,18 @@ public class EButtonTest {
         Scheduler.getInstance().disable();
     }
 
+    /**
+     * Class to mock {@code get()} calls
+     */
     private static class IEButton extends EButton{
 
         private boolean[] results;
         private int i;
 
+        /**
+         * Results to expect
+         * @param results All the results to expect
+         */
         private void expect(boolean... results) {
             i = 0;
             this.results = results;

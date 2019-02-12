@@ -20,8 +20,11 @@ public class FluidButtonTest {
     @Injectable
     private FluidConstant<String> binding;
 
+    /**
+     * Tests that all types of controller input can be used as input
+     */
     @Tested
-    public void testRawAxis() {
+    public void testButtonGets() {
         new Expectations() {{
            genericHID.getRawButton(Config.XboxValue.XBOX_A_BUTTON.getPort()); returns(false, true, true);
            genericHID.getRawAxis(Config.XboxValue.XBOX_LEFT_AXIS_BUTTON.getPort()); returns(0.5, -0.8, 0.9, -0.9, 0.8, 0.5);

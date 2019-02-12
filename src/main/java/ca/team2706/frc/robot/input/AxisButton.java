@@ -31,10 +31,10 @@ public class AxisButton extends EButton {
     public boolean get() {
         double val = input.getRawAxis(axis);
 
-        if(triggerType == TriggerType.Positive || triggerType == TriggerType.Both && val >= minTrigger) {
+        if((triggerType == TriggerType.Positive || triggerType == TriggerType.Both) && val >= minTrigger) {
             return true;
         }
-        else return triggerType == TriggerType.Negative || triggerType == TriggerType.Both && val <= -minTrigger;
+        else return (triggerType == TriggerType.Negative || triggerType == TriggerType.Both) && val <= -minTrigger;
     }
 
     /**

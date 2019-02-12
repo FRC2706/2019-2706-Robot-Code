@@ -1,12 +1,14 @@
-package ca.team2706.frc.robot.commands;
+package ca.team2706.frc.robot.commands.drivebase;
 
-import java.util.function.Supplier;
-
-import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.command.Command;
 
-public class StraightDriveGyro extends Command {
+import java.util.function.Supplier;
+
+/**
+ * Drives in a straight line to a position
+ */
+public class StraightDrive extends Command {
 
     /**
      * The acceptable range in feet for the error between the target and actual position
@@ -36,7 +38,7 @@ public class StraightDriveGyro extends Command {
      * @param minDoneCycles The minimum number of cycles for the robot to be within
      *                      the target zone before the command ends
      */
-    public StraightDriveGyro(double speed, double position, int minDoneCycles) {
+    public StraightDrive(double speed, double position, int minDoneCycles) {
         this(() -> speed, () -> position, () -> minDoneCycles);
     }
 
@@ -48,7 +50,7 @@ public class StraightDriveGyro extends Command {
      * @param minDoneCycles The minimum number of cycles for the robot to be within
      *                      the target zone before the command ends
      */
-    public StraightDriveGyro(Supplier<Double> speed, Supplier<Double> position, Supplier<Integer> minDoneCycles) {
+    public StraightDrive(Supplier<Double> speed, Supplier<Double> position, Supplier<Integer> minDoneCycles) {
         requires(DriveBase.getInstance());
         this.speed = speed;
         this.position = position;
@@ -57,15 +59,15 @@ public class StraightDriveGyro extends Command {
 
     @Override
     public void initialize() {
-        DriveBase.getInstance().setPositionGyroMode();
         DriveBase.getInstance().setBrakeMode(true);
+        DriveBase.getInstance().setPositionNoGyroMode();
 
         doneCycles = 0;
     }
 
     @Override
     public void execute() {
-        DriveBase.getInstance().setPositionGyro(speed.get(), position.get(), 0);
+        DriveBase.getInstance().setPositionNoGyro(speed.get(), position.get());
     }
 
     @Override
@@ -75,7 +77,6 @@ public class StraightDriveGyro extends Command {
         } else {
             doneCycles = 0;
         }
-        Log.i(DriveBase.getInstance().getRightError());
 
         return doneCycles >= minDoneCycles.get();
     }

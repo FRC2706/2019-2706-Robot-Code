@@ -24,6 +24,19 @@ public class Config {
         init();
     }
 
+    private static boolean initialized = false;
+
+    /**
+     * Initializes the Config class.
+     */
+    public static void init() {
+        if (!initialized) {
+            Robot.setOnStateChange(Config::saveConstants);
+
+            initialized = true;
+        }
+    }
+
     private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
 
     // #### Static constants ####
@@ -37,7 +50,7 @@ public class Config {
     /**
      * ID of the robot that code is running on
      */
-    private static final int ROBOT_ID = getRobotId();
+    private static int robotId = -1;
 
 
     // Values for driving robot with joystick
@@ -79,6 +92,12 @@ public class Config {
 
     public static final int PURPLE_LIGHT = robotSpecific(3, 3, 3);
 
+    public static final int ARCADE_DRIVE_FORWARD = 5;
+    public static final int ARCADE_DRIVE_ROTATE = 4;
+
+    // #### Fluid constants ####
+    static NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
+
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_DEADBAND = constant("drive-deadband", 0.001);
     public static final FluidConstant<Double> DRIVE_OPEN_LOOP_DEADBAND = constant("drive-deadband", 0.04);
 
@@ -94,40 +113,23 @@ public class Config {
     public static final FluidConstant<Double> PIGEON_KD = constant("pigeon-ki", 4.0);
     public static final FluidConstant<Double> PIGEON_KF = constant("pigeon-kf", 0.0);
 
-
-
-    // #### Fluid constants ####
-    static final NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
-
-    private static boolean initialized = false;
-
-    /**
-     * Initializes the Config class.
-     */
-    public static void init() {
-        if (!initialized) {
-            Robot.setOnStateChange(Config::saveConstants);
-
-            initialized = true;
-        }
-    }
-
     /**
      * Reads the robot type from the filesystem
      *
      * @return The integer ID of the robot defaulting to 0
      */
     private static int getRobotId() {
-        int id;
+        if (robotId < 0) {
+            try (BufferedReader reader = Files.newBufferedReader(ROBOT_ID_LOC)) {
+                robotId = Integer.parseInt(reader.readLine());
+            } catch (IOException | NumberFormatException e) {
+                robotId = 0;
+                DriverStation.reportError("Could not find robot configuration file.", false);
+            }
 
-        try (BufferedReader reader = Files.newBufferedReader(ROBOT_ID_LOC)) {
-            id = Integer.parseInt(reader.readLine());
-        } catch (IOException | NumberFormatException e) {
-            id = 0;
-            e.printStackTrace();
         }
 
-        return id;
+        return robotId;
     }
 
     /**
@@ -141,10 +143,10 @@ public class Config {
     @SafeVarargs
     private static <T> T robotSpecific(T first, T... more) {
         // Return the first value if the robot id doesn't fall between second and last index
-        if (ROBOT_ID < 1 || ROBOT_ID > more.length) {
+        if (getRobotId() < 1 || getRobotId() > more.length) {
             return first;
         } else {
-            return more[ROBOT_ID - 1];
+            return more[getRobotId() - 1];
         }
     }
 

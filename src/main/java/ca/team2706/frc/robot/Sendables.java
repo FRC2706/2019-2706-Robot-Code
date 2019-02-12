@@ -11,6 +11,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
  */
 public class Sendables {
 
+    /**
+     * The name used for the rotation degrees property of the gyro sendable
+     */
+    public static final String PIGEON_NAME = "Rotation Degrees";
+
+    /**
+     * The name used for the encoder ticks property of the talon sendable
+     */
+    public static final String TALON_NAME = "Encoder Ticks";
+
     private Sendables() {
         throw new IllegalStateException("Utility method cannot be initialized");
     }
@@ -25,7 +35,7 @@ public class Sendables {
         return new SendableBase() {
             @Override
             public void initSendable(SendableBuilder builder) {
-                builder.addDoubleProperty("PigeonIMU", pigeonIMU::getFusedHeading, pigeonIMU::setFusedHeading);
+                builder.addDoubleProperty(PIGEON_NAME, pigeonIMU::getFusedHeading, pigeonIMU::setFusedHeading);
             }
         };
     }
@@ -40,7 +50,7 @@ public class Sendables {
         return new SendableBase() {
             @Override
             public void initSendable(SendableBuilder builder) {
-                builder.addDoubleProperty("TalonEncoder", talon.getSensorCollection()::getQuadraturePosition,
+                builder.addDoubleProperty(TALON_NAME, talon.getSensorCollection()::getQuadraturePosition,
                         (position) ->
                                 talon.getSensorCollection().setQuadraturePosition((int) position, Config.CAN_SHORT));
             }

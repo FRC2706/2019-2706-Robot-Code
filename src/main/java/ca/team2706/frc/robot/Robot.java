@@ -1,7 +1,7 @@
 package ca.team2706.frc.robot;
 
-import ca.team2706.frc.robot.commands.StraightDrive;
-import ca.team2706.frc.robot.commands.StraightDriveGyro;
+import ca.team2706.frc.robot.commands.drivebase.StraightDrive;
+import ca.team2706.frc.robot.commands.drivebase.StraightDriveGyro;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.Bling;
@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -34,7 +35,6 @@ public class Robot extends TimedRobot {
         onStateChange(RobotState.ROBOT_INIT);
         isInitialized = true;
 
-        Config.init();
 
         // Initialize subsystems
         Bling.init();
@@ -49,7 +49,11 @@ public class Robot extends TimedRobot {
         // The USB camera used on the Robot, not enabled during simulation mode
         if (Config.ENABLE_CAMERA) {
             UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-            camera.setConnectVerbose(0);
+
+            // Prevents crashing of simulation robot
+            if (isReal()) {
+                camera.setConnectVerbose(0);
+            }
         }
 
         commands = new Command[]{
@@ -106,7 +110,7 @@ public class Robot extends TimedRobot {
      */
     private void selectorInit() {
         // The index based the voltage of the selector
-        int index = DriveBase.getInstance().getAnalogSelectorIndex();
+        final int index = DriveBase.getInstance().getAnalogSelectorIndex();
 
         // Check to see if the command exists in the desired index
         if (DriveBase.getInstance().getAnalogSelectorIndex() < commands.length && commands[index] != null) {
@@ -164,7 +168,7 @@ public class Robot extends TimedRobot {
     /**
      * ArrayList of Robot State consumers to be invoked when the robot's state changes.
      */
-    private static final ArrayList<Consumer<RobotState>> STATE_LISTENERS = new ArrayList<>();
+    private static final List<Consumer<RobotState>> STATE_LISTENERS = new ArrayList<>();
 
     /**
      * Main method, called when the robot code is run like a desktop application.
@@ -212,7 +216,9 @@ public class Robot extends TimedRobot {
      * @param newState The robot's current (new) state.
      */
     private static void onStateChange(RobotState newState) {
-        STATE_LISTENERS.forEach(action -> action.accept(newState));
+        // We want to make a copy of this so that we don't have concurrency problems.
+        ArrayList<Consumer<RobotState>> stateListenerCopy = new ArrayList<>(STATE_LISTENERS);
+        stateListenerCopy.forEach(action -> action.accept(newState));
     }
 
     /**

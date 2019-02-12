@@ -109,7 +109,7 @@ public class Robot extends TimedRobot {
      */
     private void selectorInit() {
         // The index based the voltage of the selector
-        int index = DriveBase.getInstance().getAnalogSelectorIndex();
+        final int index = DriveBase.getInstance().getAnalogSelectorIndex();
 
         // Check to see if the command exists in the desired index
         if (DriveBase.getInstance().getAnalogSelectorIndex() < commands.length && commands[index] != null) {
@@ -215,7 +215,9 @@ public class Robot extends TimedRobot {
      * @param newState The robot's current (new) state.
      */
     private static void onStateChange(RobotState newState) {
-        STATE_LISTENERS.forEach(action -> action.accept(newState));
+        // We want to make a copy of this so that we don't have concurrency problems.
+        ArrayList<Consumer<RobotState>> stateListenerCopy = new ArrayList<>(STATE_LISTENERS);
+        stateListenerCopy.forEach(action -> action.accept(newState));
     }
 
     /**

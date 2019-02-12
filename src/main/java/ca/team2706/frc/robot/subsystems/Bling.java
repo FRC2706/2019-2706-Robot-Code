@@ -194,7 +194,7 @@ public class Bling extends Subsystem {
             waitMSNT.setDouble(waitMS);
             brightnessNT.setDouble(brightness);
             commandNT.setString(command);
-            Log.i(command);
+            Log.d("Bling command: " + command);
         }
     }
 

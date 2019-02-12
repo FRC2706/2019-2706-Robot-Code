@@ -7,7 +7,8 @@ import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Tested;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class FluidButtonTest {
 
@@ -26,11 +27,15 @@ public class FluidButtonTest {
     @Tested
     public void testButtonGets() {
         new Expectations() {{
-           genericHID.getRawButton(Config.XboxValue.XBOX_A_BUTTON.getPort()); returns(false, true, true);
-           genericHID.getRawAxis(Config.XboxValue.XBOX_LEFT_AXIS_BUTTON.getPort()); returns(0.5, -0.8, 0.9, -0.9, 0.8, 0.5);
-           genericHID.getPOV(FluidButton.POV_NUMBER); returns(Config.XboxValue.XBOX_POV_UP, 0, Config.XboxValue.XBOX_POV_RIGHT);
+            genericHID.getRawButton(Config.XboxValue.XBOX_A_BUTTON.getPort());
+            returns(false, true, true);
+            genericHID.getRawAxis(Config.XboxValue.XBOX_LEFT_AXIS_BUTTON.getPort());
+            returns(0.5, -0.8, 0.9, -0.9, 0.8, 0.5);
+            genericHID.getPOV(FluidButton.POV_NUMBER);
+            returns(Config.XboxValue.XBOX_POV_UP, 0, Config.XboxValue.XBOX_POV_RIGHT);
 
-           binding.value(); returns(
+            binding.value();
+            returns(
                     Config.XboxValue.XBOX_A_BUTTON.getNTString(),
                     Config.XboxValue.XBOX_A_BUTTON.getNTString(),
                     Config.XboxValue.XBOX_A_BUTTON.getNTString(),

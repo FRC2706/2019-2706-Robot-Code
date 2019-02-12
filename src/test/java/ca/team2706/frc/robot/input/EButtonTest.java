@@ -7,16 +7,17 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PWM;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import mockit.*;
+import mockit.Expectations;
+import mockit.Injectable;
+import mockit.Mocked;
+import mockit.Tested;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.sql.Driver;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;
@@ -25,6 +26,9 @@ public class EButtonTest {
 
     @Tested
     private IEButton button;
+
+    @Mocked
+    private GenericHID genericHID;
 
     @Mocked
     private DriverStation driverStation;
@@ -67,7 +71,10 @@ public class EButtonTest {
     @Test
     public void whenPressedTest() {
         new Expectations() {{
-           driverStation.isDisabled(); result = false;
+            driverStation.isDisabled();
+            result = false;
+            genericHID.getRawAxis(anyInt);
+            result = 0;
         }};
 
         Command command = new Command() {
@@ -105,13 +112,14 @@ public class EButtonTest {
     /**
      * Class to mock {@code get()} calls
      */
-    private static class IEButton extends EButton{
+    private static class IEButton extends EButton {
 
         private boolean[] results;
         private int i;
 
         /**
          * Results to expect
+         *
          * @param results All the results to expect
          */
         private void expect(boolean... results) {
@@ -121,7 +129,7 @@ public class EButtonTest {
 
         @Override
         public boolean get() {
-            if(i < results.length) {
+            if (i < results.length) {
                 return results[i++];
             }
 

@@ -3,7 +3,6 @@ package ca.team2706.frc.robot.input;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.config.FluidConstant;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 /**
  * JoystickButton set up for using a FluidConstant binding.

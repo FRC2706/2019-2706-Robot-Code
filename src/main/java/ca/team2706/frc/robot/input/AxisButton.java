@@ -17,9 +17,9 @@ public class AxisButton extends EButton {
     /**
      * Creates an axis button
      *
-     * @param input The input that the axis is on
-     * @param axis The axis channel
-     * @param minTrigger The minimum value of the raw axis
+     * @param input       The input that the axis is on
+     * @param axis        The axis channel
+     * @param minTrigger  The minimum value of the raw axis
      * @param triggerType Whether the trigger should activate for negative, positive or both ends of the axis
      */
     public AxisButton(GenericHID input, int axis, double minTrigger, TriggerType triggerType) {
@@ -32,9 +32,9 @@ public class AxisButton extends EButton {
     /**
      * Creates an axis button using an index for {@code triggerType}
      *
-     * @param input The input that the axis is on
-     * @param axis The axis channel
-     * @param minTrigger The minimum value of the raw axis
+     * @param input       The input that the axis is on
+     * @param axis        The axis channel
+     * @param minTrigger  The minimum value of the raw axis
      * @param triggerType Whether the trigger should activate for negative, positive or both ends of the axis (0, 1, 2)
      */
     public AxisButton(GenericHID input, int axis, double minTrigger, int triggerType) {
@@ -48,10 +48,9 @@ public class AxisButton extends EButton {
     public boolean get() {
         double val = input.getRawAxis(axis);
 
-        if((triggerType == TriggerType.Positive || triggerType == TriggerType.Both) && val >= minTrigger) {
+        if ((triggerType == TriggerType.Positive || triggerType == TriggerType.Both) && val >= minTrigger) {
             return true;
-        }
-        else return (triggerType == TriggerType.Negative || triggerType == TriggerType.Both) && val <= -minTrigger;
+        } else return (triggerType == TriggerType.Negative || triggerType == TriggerType.Both) && val <= -minTrigger;
     }
 
     /**
@@ -71,6 +70,6 @@ public class AxisButton extends EButton {
         /**
          * Activate when the trigger is positive or negative
          */
-        Both;
+        Both
     }
 }

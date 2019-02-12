@@ -24,15 +24,16 @@ public class AxisButtonTest {
 
     /**
      * Tests the axis that triggers in positive
-     * @param axis The axis to check
-     * @param minTrigger The minimum trigger value
+     *
+     * @param axis        The axis to check
+     * @param minTrigger  The minimum trigger value
      * @param triggerType The type of trigger
      */
     @Test
     public void testPositive(@Injectable("0") int axis, @Injectable("0.8") double minTrigger, @Injectable(Positive) int triggerType) {
         new Expectations() {{
-           genericHID.getRawAxis(0);
-           returns(0.3, 0.8, -0.8, -0.9, 1.0);
+            genericHID.getRawAxis(0);
+            returns(0.3, 0.8, -0.8, -0.9, 1.0);
         }};
 
         assertFalse(axisButton.get());
@@ -44,8 +45,9 @@ public class AxisButtonTest {
 
     /**
      * Tests the axis that triggers in negative
-     * @param axis The axis to check
-     * @param minTrigger The minimum trigger value
+     *
+     * @param axis        The axis to check
+     * @param minTrigger  The minimum trigger value
      * @param triggerType The type of trigger
      */
     @Test
@@ -64,8 +66,9 @@ public class AxisButtonTest {
 
     /**
      * Tests the axis that triggers in either positive or negative
-     * @param axis The axis to check
-     * @param minTrigger The minimum trigger value
+     *
+     * @param axis        The axis to check
+     * @param minTrigger  The minimum trigger value
      * @param triggerType The type of trigger
      */
     @Test

@@ -1,7 +1,6 @@
 package ca.team2706.frc.robot.config;
 
 import ca.team2706.frc.robot.Robot;
-import ca.team2706.frc.robot.util.Util;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
@@ -71,7 +70,7 @@ public class FluidConstantTest {
     private static boolean isInitialized = false;
 
     @Before
-    public void setUp() throws NoSuchFieldException, IllegalAccessException {
+    public void setUp() {
         if (!isInitialized) {
             isInitialized = true;
 
@@ -88,8 +87,6 @@ public class FluidConstantTest {
                 result = sensorCollection;
                 minTimes = 0;
             }};
-
-            Util.resetConfigAndRobot();
 
             Robot robot = new Robot();
             robot.robotInit();

@@ -571,7 +571,6 @@ public class DriveBase extends Subsystem {
 
 
     public void log() {
-
         while (!Thread.interrupted()) {
             if (DriverStation.getInstance().isEnabled()) {
                 Log.d("Gyro: " + gyro.getFusedHeading());

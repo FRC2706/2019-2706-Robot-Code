@@ -45,6 +45,7 @@ public class EButtonTest {
     @Mocked(stubOutClassInitialization = true)
     private PigeonIMU pigeon;
 
+    @Mocked
     private DifferentialDrive differentialDrive;
 
     @Mocked(stubOutClassInitialization = true)

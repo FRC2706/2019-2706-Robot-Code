@@ -29,7 +29,6 @@ public class Config {
 
 
     private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
-    static NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("Fluid Constants");
 
     // #### Static constants ####
 

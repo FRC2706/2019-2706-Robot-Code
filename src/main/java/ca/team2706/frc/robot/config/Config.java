@@ -75,6 +75,8 @@ public class Config {
     public static final double DRIVE_ENCODER_DPP
             = robotSpecific(Math.PI / 8192.0, Math.PI / 8192.0, Math.PI / 8192.0);
 
+    public static final double PIGEON_DPP = robotSpecific(360.0 / 8192.0, 360.0 / 8192.0, 360.0 / 8192.0);
+
     public static final boolean ENABLE_CAMERA = robotSpecific(true, true, false);
 
     public static final int PURPLE_LIGHT = robotSpecific(3, 3, 3);
@@ -95,7 +97,7 @@ public class Config {
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_I = constant("drive-I", 0.0);
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_D = constant("drive-D", 0.0);
 
-    public static final FluidConstant<Double> TURN_P = constant("turn-P", 0.1);
+    public static final FluidConstant<Double> TURN_P = constant("turn-P", 0.5);
     public static final FluidConstant<Double> TURN_I = constant("turn-I", 0.0);
     public static final FluidConstant<Double> TURN_D = constant("turn-D", 0.0);
 

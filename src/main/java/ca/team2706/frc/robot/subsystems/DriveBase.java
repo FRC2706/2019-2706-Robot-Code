@@ -231,9 +231,8 @@ public class DriveBase extends Subsystem {
         leftFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_LEFT.value());
         rightFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_RIGHT.value());
 
-        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Config.CAN_SHORT);
+        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20, Config.CAN_SHORT);
         rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Config.CAN_SHORT);
-        leftFrontMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Config.CAN_SHORT);
 
         configDeadband(rightFrontMotor, leftFrontMotor);
 
@@ -242,6 +241,13 @@ public class DriveBase extends Subsystem {
         rightFrontMotor.config_kD(0, Config.TURN_D.value());
 
         rightFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
+
+        if(Config.INVERT_FRONT_LEFT_DRIVE == Config.INVERT_FRONT_RIGHT_DRIVE) {
+            leftFrontMotor.setInverted(InvertType.OpposeMaster);
+        }
+        else {
+            leftFrontMotor.setInverted(InvertType.FollowMaster);
+        }
     }
 
     private void configDeadband(WPI_TalonSRX rightFrontMotor, WPI_TalonSRX leftFrontMotor) {
@@ -257,6 +263,7 @@ public class DriveBase extends Subsystem {
      */
     public void setDisabledMode() {
         if (driveMode != DriveMode.Disabled) {
+            resetTalonConfiguration();
             stop();
 
             reset();
@@ -293,12 +300,9 @@ public class DriveBase extends Subsystem {
 
     public void setRotateMode() {
         if (driveMode != DriveMode.Rotate) {
-            System.out.println("Reset"); // TODO Remove
             stop();
             selectGyroSensor();
             reset();
-
-            leftFrontMotor.setInverted(InvertType.FollowMaster);
 
             setDriveMode(DriveMode.Rotate);
         }
@@ -427,10 +431,10 @@ public class DriveBase extends Subsystem {
         leftFrontMotor.configClosedLoopPeakOutput(0, speed);
         rightFrontMotor.configClosedLoopPeakOutput(0, speed);
 
-        rightFrontMotor.set(ControlMode.Position, setpoint);
+        rightFrontMotor.set(ControlMode.Position, setpoint / Config.PIGEON_DPP);
         leftFrontMotor.follow(rightFrontMotor);
 
-        SmartDashboard.putNumber("Set point", rightFrontMotor.get);
+        SmartDashboard.putNumber("Set point", rightFrontMotor.getClosedLoopTarget());
 
         follow();
     }

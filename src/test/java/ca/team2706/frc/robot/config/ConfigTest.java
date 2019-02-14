@@ -1,7 +1,6 @@
 package ca.team2706.frc.robot.config;
 
 import ca.team2706.frc.robot.Robot;
-import ca.team2706.frc.robot.util.Util;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
@@ -100,7 +99,6 @@ public class ConfigTest {
 
 
             // Reset the config and robot classes.
-            Util.resetConfigAndRobot();
             robot = new Robot();
             robot.robotInit();
         }

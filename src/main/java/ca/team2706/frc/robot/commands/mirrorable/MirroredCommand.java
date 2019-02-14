@@ -10,34 +10,58 @@ public abstract class MirroredCommand extends Command implements IMirrorable<Com
 
     private boolean mirrored;
 
+    /**
+     * @see Command#Command()
+     */
     public MirroredCommand() {
         super();
     }
 
+    /**
+     * @see Command#Command(String)
+     */
     public MirroredCommand(String name) {
         super(name);
     }
 
+    /**
+     * @see Command#Command(double)
+     */
     public MirroredCommand(double timeout) {
         super(timeout);
     }
 
+    /**
+     * @see Command#Command(Subsystem)
+     */
     public MirroredCommand(Subsystem subsystem) {
         super(subsystem);
     }
 
+    /**
+     * @see Command#Command(String, Subsystem)
+     */
     public MirroredCommand(String name, Subsystem subsystem) {
         super(name, subsystem);
     }
 
+    /**
+     * @see Command#Command(double, Subsystem)
+     */
     public MirroredCommand(double timeout, Subsystem subsystem) {
         super(timeout, subsystem);
     }
 
+    /**
+     * @see Command#Command(String, double)
+     */
     public MirroredCommand(String name, double timeout) {
         super(name, timeout);
     }
 
+    /**
+     * @see Command#Command()
+     */
     public MirroredCommand(String name, double timeout, Subsystem subsystem) {
         super(name, timeout, subsystem);
     }

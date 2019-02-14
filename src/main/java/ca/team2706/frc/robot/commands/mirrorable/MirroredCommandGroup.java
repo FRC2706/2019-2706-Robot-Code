@@ -14,12 +14,15 @@ public class MirroredCommandGroup extends CommandGroup implements IMirrorable<Co
     private boolean mirrored;
 
     /**
-     * See 
+     * @see CommandGroup#CommandGroup()
      */
     public MirroredCommandGroup() {
         super();
     }
 
+    /**
+     * @see CommandGroup#CommandGroup(String)
+     */
     public MirroredCommandGroup(String name) {
         super(name);
     }
@@ -59,8 +62,7 @@ public class MirroredCommandGroup extends CommandGroup implements IMirrorable<Co
 
             if (command instanceof IMirrorable) {
                 ((IMirrorable) command).mirror();
-            }
-            else if(command instanceof CommandGroup) {
+            } else if (command instanceof CommandGroup) {
                 mirrorChild(command, m_commands_field, commandField);
             }
         }

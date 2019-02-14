@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import mockit.Injectable;
 import mockit.Mocked;
 import mockit.Tested;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
@@ -18,8 +19,47 @@ public class MirrorableTest {
     @Tested
     private MirroredCommandGroup f, g, h;
 
-    @Mocked
-    private Subsystem subsystem;
+    @Before
+    public void setUp() {
+        a = new MirroredCommand() {
+            @Override
+            protected boolean isFinished() {
+                return false;
+            }
+        };
+
+        b = new MirroredCommand() {
+            @Override
+            protected boolean isFinished() {
+                return false;
+            }
+        };
+
+        c = new MirroredCommand() {
+            @Override
+            protected boolean isFinished() {
+                return false;
+            }
+        };
+
+        d = new MirroredCommand() {
+            @Override
+            protected boolean isFinished() {
+                return false;
+            }
+        };
+
+        e = new MirroredCommand() {
+            @Override
+            protected boolean isFinished() {
+                return false;
+            }
+        };
+
+        f = new MirroredCommandGroup();
+        g = new MirroredCommandGroup();
+        h = new MirroredCommandGroup();
+    }
 
     /**
      * Test that commands are mirrored correctly
@@ -94,20 +134,20 @@ public class MirrorableTest {
 
         assertTrue(a.isMirrored());
         assertTrue(b.isMirrored());
-        assertTrue(c.isMirrored());
-        assertTrue(d.isMirrored());
-        assertTrue(e.isMirrored());
+        assertFalse(c.isMirrored());
+        assertFalse(d.isMirrored());
+        assertFalse(e.isMirrored());
         assertTrue(f.isMirrored());
-        assertTrue(h.isMirrored());
+        assertFalse(h.isMirrored());
 
         assertTrue(f.mirror().isMirrored());
 
         assertTrue(a.isMirrored());
         assertTrue(b.isMirrored());
-        assertTrue(c.isMirrored());
-        assertTrue(d.isMirrored());
-        assertTrue(e.isMirrored());
+        assertFalse(c.isMirrored());
+        assertFalse(d.isMirrored());
+        assertFalse(e.isMirrored());
         assertTrue(f.isMirrored());
-        assertTrue(h.isMirrored());
+        assertFalse(h.isMirrored());
     }
 }

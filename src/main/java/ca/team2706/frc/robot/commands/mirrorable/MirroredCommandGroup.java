@@ -40,11 +40,18 @@ public class MirroredCommandGroup extends CommandGroup implements IMirrorable<Co
         try {
             Field m_commands_field = CommandGroup.class.getDeclaredField("m_commands");
             m_commands_field.setAccessible(true);
+            Vector<?> m_commands = (Vector<?>) m_commands_field.get(this);
 
             Field commandField = Class.forName("edu.wpi.first.wpilibj.command.CommandGroup$Entry").getDeclaredField("m_command");
             commandField.setAccessible(true);
 
-            mirrorChild(this, m_commands_field, commandField);
+            for (Object entry : m_commands) {
+                Command command = (Command) commandField.get(entry);
+
+                if (command instanceof IMirrorable) {
+                    ((IMirrorable) command).mirror();
+                }
+            }
 
             commandField.setAccessible(false);
             m_commands_field.setAccessible(false);
@@ -53,19 +60,6 @@ public class MirroredCommandGroup extends CommandGroup implements IMirrorable<Co
         }
 
         return this;
-    }
-
-    private static void mirrorChild(Command c, Field m_commands_field, Field commandField) throws IllegalAccessException {
-        Vector<?> m_commands = (Vector<?>) m_commands_field.get(c);
-        for (Object entry : m_commands) {
-            Command command = (Command) commandField.get(entry);
-
-            if (command instanceof IMirrorable) {
-                ((IMirrorable) command).mirror();
-            } else if (command instanceof CommandGroup) {
-                mirrorChild(command, m_commands_field, commandField);
-            }
-        }
     }
 
     /**

@@ -282,7 +282,6 @@ public class DriveBase extends Subsystem {
      */
     public void setOpenLoopVoltageMode() {
         if (driveMode != DriveMode.OpenLoopVoltage) {
-            Log.i("OpenLoop");
             stop();
             selectEncodersStandard();
             reset();
@@ -450,10 +449,6 @@ public class DriveBase extends Subsystem {
         leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
 
         follow();
-
-        double[] yawPitchRoll = new double[3];
-        gyro.getYawPitchRoll(yawPitchRoll);
-
     }
 
     /**

@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -82,18 +83,6 @@ public class DriveBase extends Subsystem {
 
         follow();
 
-        if (Config.INVERT_FRONT_LEFT_DRIVE == Config.INVERT_BACK_LEFT_DRIVE) {
-            leftBackMotor.setInverted(InvertType.FollowMaster);
-        } else {
-            leftBackMotor.setInverted(InvertType.OpposeMaster);
-        }
-
-        if (Config.INVERT_FRONT_RIGHT_DRIVE == Config.INVERT_BACK_RIGHT_DRIVE) {
-            rightBackMotor.setInverted(InvertType.FollowMaster);
-        } else {
-            rightBackMotor.setInverted(InvertType.OpposeMaster);
-        }
-
         enableCurrentLimit(Config.DRIVEBASE_CURRENT_LIMIT);
 
         robotDriveBase = new DifferentialDrive(leftFrontMotor, rightFrontMotor);
@@ -144,6 +133,18 @@ public class DriveBase extends Subsystem {
 
         leftFrontMotor.setInverted(Config.INVERT_FRONT_LEFT_DRIVE);
         rightFrontMotor.setInverted(Config.INVERT_FRONT_RIGHT_DRIVE);
+
+        if (Config.INVERT_FRONT_LEFT_DRIVE == Config.INVERT_BACK_LEFT_DRIVE) {
+            leftBackMotor.setInverted(InvertType.FollowMaster);
+        } else {
+            leftBackMotor.setInverted(InvertType.OpposeMaster);
+        }
+
+        if (Config.INVERT_FRONT_RIGHT_DRIVE == Config.INVERT_BACK_RIGHT_DRIVE) {
+            rightBackMotor.setInverted(InvertType.FollowMaster);
+        } else {
+            rightBackMotor.setInverted(InvertType.OpposeMaster);
+        }
     }
 
     /**
@@ -225,6 +226,8 @@ public class DriveBase extends Subsystem {
 
         rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 0, Config.CAN_SHORT);
 
+        rightFrontMotor.configSelectedFeedbackCoefficient(1.0, 0, Config.CAN_SHORT);
+
         leftFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_LEFT.value());
         rightFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_RIGHT.value());
 
@@ -295,12 +298,15 @@ public class DriveBase extends Subsystem {
             selectGyroSensor();
             reset();
 
+            leftFrontMotor.setInverted(InvertType.FollowMaster);
+
             setDriveMode(DriveMode.Rotate);
         }
 
         // TODO Remove
         SmartDashboard.putNumber("Primary Position", rightFrontMotor.getSelectedSensorPosition(0));
         SmartDashboard.putNumber("Gyro", getHeading());
+        SmartDashboard.putNumber("Error", getRightError());
     }
 
     /**
@@ -423,7 +429,8 @@ public class DriveBase extends Subsystem {
 
         rightFrontMotor.set(ControlMode.Position, setpoint);
         leftFrontMotor.follow(rightFrontMotor);
-        leftFrontMotor.setInverted(InvertType.OpposeMaster);
+
+        SmartDashboard.putNumber("Set point", rightFrontMotor.get);
 
         follow();
     }
@@ -470,9 +477,9 @@ public class DriveBase extends Subsystem {
      * @return The rotation of the robot
      */
     public double getHeading() {
-        double[] stuff = new double[3];
-        gyro.getYawPitchRoll(stuff);
-        return stuff[0];
+        double[] yawPitchRoll = new double[3];
+        gyro.getYawPitchRoll(yawPitchRoll);
+        return yawPitchRoll[0];
     }
 
     /**

@@ -78,5 +78,6 @@ public class RotateWithGyro extends Command {
     @Override
     public void end() {
         DriveBase.getInstance().setDisabledMode();
+        System.out.println("Ending.."); // TODO remove
     }
 }

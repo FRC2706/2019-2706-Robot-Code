@@ -14,7 +14,7 @@ public class DriveForwardWithTime extends TimedCommand {
      * Creates a drive forward with time command
      *
      * @param timeout Makes it stop the command after a time in seconds
-     * @param speed The speed for the robot to drive
+     * @param speed   The speed for the robot to drive
      */
     public DriveForwardWithTime(double timeout, double speed) {
         super(timeout, DriveBase.getInstance());

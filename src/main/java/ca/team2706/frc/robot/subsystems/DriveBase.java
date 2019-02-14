@@ -1,13 +1,22 @@
 package ca.team2706.frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.FollowerType;
+import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
+import com.ctre.phoenix.motorcontrol.SensorTerm;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.sensors.PigeonIMU;
+
 import ca.team2706.frc.robot.Sendables;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.sensors.AnalogSelector;
-import com.ctre.phoenix.motorcontrol.*;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.command.Command;
@@ -21,55 +30,35 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class DriveBase extends Subsystem {
 
     private static DriveBase currentInstance;
-
-    public static DriveBase getInstance() {
-        init();
-        return currentInstance;
-    }
-
-    /**
-     * Initializes a new drive base object.
-     */
-    public static void init() {
-        if (currentInstance == null) {
-            currentInstance = new DriveBase();
-        }
-    }
-
-    /**
-     * The mode that the robot is driving with
-     */
-    private DriveMode driveMode;
-
     /**
      * Four drive Talons
      */
     private final WPI_TalonSRX leftFrontMotor, leftBackMotor, rightFrontMotor, rightBackMotor;
-
     /**
      * Logic for controlling robot motion in teleop
      */
     private final DifferentialDrive robotDriveBase;
-
     /**
      * Gyro to record robot heading
      */
     private final PigeonIMU gyro;
-
     /**
      * Analog Selector
      */
     private final AnalogSelector selector;
-
     /*
      * Purple light that goes on the robot
      */
     private final PWM light;
-
+    /**
+     * The mode that the robot is driving with
+     */
+    private DriveMode driveMode;
     /**
      * Indicates whether the robot is in brake mode
      */
     private boolean brakeMode;
+    private Command defaultCommand;
 
     /**
      * Creates a drive base, and initializes all required sensors and motors
@@ -143,6 +132,20 @@ public class DriveBase extends Subsystem {
         Thread loggingThread = new Thread(this::log);
         loggingThread.setDaemon(true);
         loggingThread.start();
+    }
+
+    public static DriveBase getInstance() {
+        init();
+        return currentInstance;
+    }
+
+    /**
+     * Initializes a new drive base object.
+     */
+    public static void init() {
+        if (currentInstance == null) {
+            currentInstance = new DriveBase();
+        }
     }
 
     /**
@@ -316,7 +319,6 @@ public class DriveBase extends Subsystem {
         }
     }
 
-
     /**
      * Changes whether current limiting should be used
      *
@@ -330,8 +332,6 @@ public class DriveBase extends Subsystem {
 
     }
 
-    private Command defaultCommand;
-
     @Override
     protected void initDefaultCommand() {
     }
@@ -342,6 +342,15 @@ public class DriveBase extends Subsystem {
     private void follow() {
         leftBackMotor.follow(leftFrontMotor);
         rightBackMotor.follow(rightFrontMotor);
+    }
+
+    /**
+     * Checks whether the robot is in brake mode
+     *
+     * @return True when the Talons have the neutral mode set to {@code NeutralMode.Brake}
+     */
+    public boolean isBrakeMode() {
+        return brakeMode;
     }
 
     /**
@@ -358,15 +367,6 @@ public class DriveBase extends Subsystem {
         rightBackMotor.setNeutralMode(mode);
 
         brakeMode = brake;
-    }
-
-    /**
-     * Checks whether the robot is in brake mode
-     *
-     * @return True when the Talons have the neutral mode set to {@code NeutralMode.Brake}
-     */
-    public boolean isBrakeMode() {
-        return brakeMode;
     }
 
     /**
@@ -539,32 +539,6 @@ public class DriveBase extends Subsystem {
         return rightFrontMotor.getClosedLoopError(0) * Config.DRIVE_ENCODER_DPP;
     }
 
-    /**
-     * The drive mode of the robot
-     */
-    public enum DriveMode {
-        /**
-         * There is no control mode active
-         */
-        Disabled,
-
-        /**
-         * Standard open loop voltage control
-         */
-        OpenLoopVoltage,
-
-        /**
-         * Performs closed loop position control without heading support
-         */
-        PositionNoGyro,
-
-        /**
-         * Closed loop control with Auxiliary Pigeon Support
-         */
-        PositionGyro
-    }
-
-
     public void log() {
         while (!Thread.interrupted()) {
             if (DriverStation.getInstance().isEnabled()) {
@@ -629,5 +603,31 @@ public class DriveBase extends Subsystem {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+
+    /**
+     * The drive mode of the robot
+     */
+    public enum DriveMode {
+        /**
+         * There is no control mode active
+         */
+        Disabled,
+
+        /**
+         * Standard open loop voltage control
+         */
+        OpenLoopVoltage,
+
+        /**
+         * Performs closed loop position control without heading support
+         */
+        PositionNoGyro,
+
+        /**
+         * Closed loop control with Auxiliary Pigeon Support
+         */
+        PositionGyro
     }
 }

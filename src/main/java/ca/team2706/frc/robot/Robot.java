@@ -69,7 +69,7 @@ public class Robot extends TimedRobot {
                 OI.getInstance().driveCommand,                                // 0
                 OI.getInstance().driveCommand,                                // 1
                 new StraightDrive(0.2, 2.0, 100), // 2
-                new RotateWithGyro(0.5, 90, 100)    // 3
+                new RotateWithGyro(0.3, 90, 100)    // 3
         };
     }
 

@@ -27,8 +27,9 @@ public class RotateWithGyro extends Command {
 
     /**
      * Constructs a new rotate with gyro command for rotating the robot a set number of degrees.
-     * @param speed The speed of the rotation.
-     * @param angle The new heading to rotate to.
+     *
+     * @param speed         The speed of the rotation.
+     * @param angle         The new heading to rotate to.
      * @param minDoneCycles The minimum number of cycles that the robot should be in the position it wants to be before
      *                      ending the cmmand.
      */
@@ -38,8 +39,9 @@ public class RotateWithGyro extends Command {
 
     /**
      * Constructs a new rotate with gyro command for rotating the robot a set number of degrees.
-     * @param speed The speed supplier for the rotation.
-     * @param angle The angle supplier for the amount of rotation.
+     *
+     * @param speed                    The speed supplier for the rotation.
+     * @param angle                    The angle supplier for the amount of rotation.
      * @param minCyclesWithinThreshold The supplier for the number of cycles in which the robot should be in
      *                                 the target position.
      */
@@ -65,19 +67,17 @@ public class RotateWithGyro extends Command {
 
     @Override
     protected boolean isFinished() {
-//        if (Math.abs(DriveBase.getInstance().getRightError()) <= TARGET_ANGLE_RANGE) {
-//            doneCycles++;
-//        } else {
-//            doneCycles = 0;
-//        }
-//
-//        final boolean isFinished =  doneCycles >= minCyclesWithinThreshold.get();
-        return false;
+        if (Math.abs(DriveBase.getInstance().getRightError()) <= TARGET_ANGLE_RANGE) {
+            doneCycles++;
+        } else {
+            doneCycles = 0;
+        }
+
+        return doneCycles >= minCyclesWithinThreshold.get();
     }
 
     @Override
     public void end() {
         DriveBase.getInstance().setDisabledMode();
-        System.out.println("Ending.."); // TODO remove
     }
 }

@@ -247,10 +247,9 @@ public class DriveBase extends Subsystem {
 
         rightFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
 
-        if(Config.INVERT_FRONT_LEFT_DRIVE == Config.INVERT_FRONT_RIGHT_DRIVE) {
+        if (Config.INVERT_FRONT_LEFT_DRIVE == Config.INVERT_FRONT_RIGHT_DRIVE) {
             leftFrontMotor.setInverted(InvertType.OpposeMaster);
-        }
-        else {
+        } else {
             leftFrontMotor.setInverted(InvertType.FollowMaster);
         }
     }
@@ -311,11 +310,6 @@ public class DriveBase extends Subsystem {
 
             setDriveMode(DriveMode.Rotate);
         }
-
-        // TODO Remove
-        SmartDashboard.putNumber("Primary Position", rightFrontMotor.getSelectedSensorPosition(0));
-        SmartDashboard.putNumber("Gyro", getHeading());
-        SmartDashboard.putNumber("Error", getRightError());
     }
 
     /**
@@ -439,8 +433,6 @@ public class DriveBase extends Subsystem {
         rightFrontMotor.set(ControlMode.Position, setpoint / Config.PIGEON_DPP);
         leftFrontMotor.follow(rightFrontMotor);
 
-        SmartDashboard.putNumber("Set point", rightFrontMotor.getClosedLoopTarget());
-
         follow();
     }
 
@@ -539,9 +531,6 @@ public class DriveBase extends Subsystem {
      */
     private void setDriveMode(DriveMode driveMode) {
         this.driveMode = driveMode;
-
-        System.out.println("Set drive mode to: " + driveMode); // TODO remove
-        Thread.dumpStack(); // TODO Remove
     }
 
     /**

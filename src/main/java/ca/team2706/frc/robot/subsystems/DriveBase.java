@@ -72,6 +72,11 @@ public class DriveBase extends Subsystem {
     private boolean brakeMode;
 
     /**
+     * Saves the absolute heading when the gyro is reset so that it can be calculated from the relative angle
+     */
+    private double savedAngle;
+
+    /**
      * Creates a drive base, and initializes all required sensors and motors
      */
     private DriveBase() {
@@ -407,10 +412,19 @@ public class DriveBase extends Subsystem {
     /**
      * Gets the angle that the robot is facing in degrees
      *
-     * @return The rotation of the robot
+     * @return The rotation of the robot in degrees
      */
     public double getHeading() {
         return gyro.getFusedHeading();
+    }
+
+    /**
+     * Gets the angle that the robot is facing relative to when it was first powered on
+     *
+     * @return The absolute rotation of the robot in degrees
+     */
+    public double getAbsoluteHeading() {
+        return savedAngle + getHeading();
     }
 
     /**
@@ -425,6 +439,7 @@ public class DriveBase extends Subsystem {
      * Resets the gyro to 0 degrees
      */
     public void resetGyro() {
+        savedAngle = getAbsoluteHeading();
         gyro.setFusedHeading(0, Config.CAN_SHORT);
     }
 
@@ -479,7 +494,8 @@ public class DriveBase extends Subsystem {
 
         while (!Thread.interrupted()) {
             if (DriverStation.getInstance().isEnabled()) {
-                Log.d("Gyro: " + gyro.getFusedHeading());
+                Log.d("Gyro Relative: " + getHeading());
+                Log.d("Gyro Absolute: " + getAbsoluteHeading());
 
                 Log.d("Left front motor current: " + leftFrontMotor.getOutputCurrent());
                 Log.d("Right front motor current: " + rightFrontMotor.getOutputCurrent());
@@ -507,7 +523,8 @@ public class DriveBase extends Subsystem {
                 Log.d("Right back motor speed: " + rightBackMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP * 10);
             }
 
-            SmartDashboard.putNumber("Gyro", gyro.getFusedHeading());
+            SmartDashboard.putNumber("Gyro Relative", getHeading());
+            SmartDashboard.putNumber("Gyro Absolute", getAbsoluteHeading());
 
             SmartDashboard.putNumber("Left front motor current", leftFrontMotor.getOutputCurrent());
             SmartDashboard.putNumber("Right front motor current", rightFrontMotor.getOutputCurrent());

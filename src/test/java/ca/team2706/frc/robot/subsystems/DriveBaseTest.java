@@ -49,6 +49,11 @@ public class DriveBaseTest {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
+
+
+            talon.getOutputCurrent();
+            result = 0;
+            minTimes = 0;
         }};
     }
 

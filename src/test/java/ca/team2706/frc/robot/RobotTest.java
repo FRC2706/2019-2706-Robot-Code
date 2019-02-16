@@ -9,12 +9,12 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogInput;
-<<<<<<< HEAD
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-=======
+
 import edu.wpi.first.wpilibj.Notifier;
->>>>>>> master
+
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -73,7 +73,7 @@ public class RobotTest {
     @Injectable
     private SensorCollection sensorCollection;
 
-<<<<<<< HEAD
+
     @Mocked
     private DoubleSolenoid solenoid;
 
@@ -81,8 +81,7 @@ public class RobotTest {
     private DigitalInput input;
 
     @SuppressWarnings("unchecked")
-=======
->>>>>>> master
+
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
         new Expectations() {{

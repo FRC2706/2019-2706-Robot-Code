@@ -148,7 +148,7 @@ public class ElevatorWithPID extends PIDSubsystem {
     public ElevatorWithPID() {
         super("lift", Config.ENCODER_LIFT_PID_UP[0], Config.ENCODER_LIFT_PID_UP[1], Config.ENCODER_LIFT_PID_UP[2]);
         setAbsoluteTolerance(0.05);
-        m_liftMotor = new WPI_TalonSRX(1);
+        m_liftMotor = new WPI_TalonSRX(5);
         m_limitSwitchDown = new DigitalInput(1);
         getPIDController().setInputRange(-1, 1);
         m_liftMotor.setNeutralMode(NeutralMode.Brake);

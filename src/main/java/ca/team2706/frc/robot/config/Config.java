@@ -113,6 +113,8 @@ public class Config {
     public static final FluidConstant<Double> PIGEON_KF = constant("pigeon-kf", 0.0);
 
 
+    public static final FluidConstant<String> MOVE_LIFT_UP = constant("move-lift-up", XboxValue.XBOX_A_BUTTON.NTString);
+    
     // ### Methods, fields and Constructors ###
     /**
      * The network table for fluid constants.

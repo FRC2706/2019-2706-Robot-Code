@@ -7,15 +7,16 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class InhaleCargo extends Command {
 
-    private double speed;
+    private Joystick joystick;
 
-    public InhaleCargo(Joystick joystick) {
+    public InhaleCargo(Joystick j) {
         requires(Intake.getInstance());
-        speed = joystick.getRawAxis(1);
+        joystick = j;
     }
 
     @Override
     public void execute() {
+        double speed = joystick.getRawAxis(1);
         Intake.getInstance().inhale(speed);
     }
 
@@ -26,7 +27,8 @@ public class InhaleCargo extends Command {
 
     @Override
     protected boolean isFinished() {
-        return Intake.getInstance().ballCaptured();
+        return false;
+        //return Intake.getInstance().ballCaptured();
     }
 
 }

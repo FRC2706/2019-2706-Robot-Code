@@ -19,7 +19,7 @@ public class Intake extends Subsystem {
     private double m_intakeSpeed;
     private DoubleSolenoid m_intakeLift;
     private DoubleSolenoid m_hatchEjector;
-    public boolean hatchMode = true;
+    public boolean hatchMode = false;
     private static Intake currentInstance;
 
     public static Intake getInstance() {
@@ -35,11 +35,11 @@ public class Intake extends Subsystem {
     }
 
     public Intake() {
-        m_intake = new WPI_TalonSRX(1);
+        m_intake = new WPI_TalonSRX(6);
         m_sensor = new AnalogInput(3);
         m_intake.setNeutralMode(NeutralMode.Brake);
         m_intakeSpeed = Config.INTAKE_MAX_SPEED;
-        m_intakeLift = new DoubleSolenoid(0, 1);
+        m_intakeLift = new DoubleSolenoid(2, 3);
         m_hatchEjector = new DoubleSolenoid(0, 1);
     }
 

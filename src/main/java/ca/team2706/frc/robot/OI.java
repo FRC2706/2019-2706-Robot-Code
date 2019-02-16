@@ -1,10 +1,14 @@
 package ca.team2706.frc.robot;
 
+import ca.team2706.frc.robot.commands.MoveLiftUpToHigherLevel;
 import ca.team2706.frc.robot.commands.drivebase.ArcadeDriveWithJoystick;
 import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.input.FluidButton;
 import ca.team2706.frc.robot.subsystems.DriveBase;
+import ca.team2706.frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
+import ca.team2706.frc.robot.commands.*;
 
 /**
  * This class is the glue that binds the controls on the physical operator interface to the commands
@@ -23,6 +27,8 @@ public class OI {
     private static OI currentInstance;
 
     public final Command driveCommand;
+
+    public final Command inhaleCommand;
 
     /**
      * Gets the current instance of the OI class.
@@ -62,9 +68,17 @@ public class OI {
 
         driveCommand = new ArcadeDriveWithJoystick(driverStick, Config.ARCADE_DRIVE_FORWARD, true,
                 Config.ARCADE_DRIVE_ROTATE, false);
+        
+        inhaleCommand = new InhaleCargo(driverStick);
+
+        Intake.getInstance().setDefaultCommand(inhaleCommand);
 
         // Set subsystem default commands
         DriveBase.getInstance().setDefaultCommand(driveCommand);
+
+        new FluidButton(driverStick, Config.MOVE_LIFT_UP).whenPressed(new MoveLiftUpToHigherLevel());
+        //new FluidButton(driverStick, Config.INHALE).whenPressed(new InhaleCargo(driverStick));
+
     }
 
     /**

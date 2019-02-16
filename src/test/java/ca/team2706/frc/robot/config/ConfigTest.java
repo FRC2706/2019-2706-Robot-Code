@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -61,6 +62,9 @@ public class ConfigTest {
 
     @Mocked(stubOutClassInitialization = true)
     private MotControllerJNI motControllerJNI;
+
+    @Mocked
+    private Notifier notifier;
 
     @Mocked
     private CameraServer cameraServer;

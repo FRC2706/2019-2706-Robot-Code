@@ -1,16 +1,11 @@
 package ca.team2706.frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.command.Subsystem;
 
 import java.util.Map;
 import java.util.function.Function;
-
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.PWM;
-import edu.wpi.first.wpilibj.Relay;
-import edu.wpi.first.wpilibj.Sendable;
-import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
  * Extra sensors used on Plyboy for testing
@@ -36,20 +31,6 @@ public class SensorExtras extends Subsystem {
     private static SensorExtras currentInstance;
 
     /**
-     * Creates sensor extras
-     */
-    private SensorExtras() {
-        // Iterate through each type of sensor
-        for (Map.Entry<SensorType, int[]> entry : allocationTable.entrySet()) {
-            // Iterate through each port that should be allocated for that sensor
-            for (int port : entry.getValue()) {
-                // Allocate the sensor, and add it to the subsystem in LiveWindow
-                entry.getKey().allocate(this, port);
-            }
-        }
-    }
-
-    /**
      * Gets the reference to the subsystem
      *
      * @return The subsystem singleton
@@ -65,6 +46,20 @@ public class SensorExtras extends Subsystem {
     public static void init() {
         if (currentInstance == null) {
             currentInstance = new SensorExtras();
+        }
+    }
+
+    /**
+     * Creates sensor extras
+     */
+    private SensorExtras() {
+        // Iterate through each type of sensor
+        for (Map.Entry<SensorType, int[]> entry : allocationTable.entrySet()) {
+            // Iterate through each port that should be allocated for that sensor
+            for (int port : entry.getValue()) {
+                // Allocate the sensor, and add it to the subsystem in LiveWindow
+                entry.getKey().allocate(this, port);
+            }
         }
     }
 

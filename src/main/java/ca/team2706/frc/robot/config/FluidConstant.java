@@ -1,22 +1,23 @@
 package ca.team2706.frc.robot.config;
 
-import java.util.ArrayList;
-
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.DriverStation;
 
+import java.util.ArrayList;
+
 /**
  * Class to represent all type of fluid constants.
  */
 public class FluidConstant<A> {
 
-    private final A deployedValue; // Keep track of the original value, the one which was deployed to the robot.
-    private final String name;
     // Fields
     private A value;
+    private final A deployedValue; // Keep track of the original value, the one which was deployed to the robot.
+    private final String name;
+
     /**
      * The NetworkTables entry for this fluid constant.
      */
@@ -33,15 +34,6 @@ public class FluidConstant<A> {
         this.name = name;
         this.value = initialValue;
         this.deployedValue = initialValue;
-    }
-
-    /**
-     * Determines if fluid constants should be allowed to be set.
-     *
-     * @return True if fluid constants should be allowed to be set, false otherwise.
-     */
-    private static boolean canSet() {
-        return DriverStation.getInstance().isDisabled();
     }
 
     /**
@@ -114,6 +106,15 @@ public class FluidConstant<A> {
         if (ntEntry != null) {
             ntEntry.setValue(value());
         }
+    }
+
+    /**
+     * Determines if fluid constants should be allowed to be set.
+     *
+     * @return True if fluid constants should be allowed to be set, false otherwise.
+     */
+    private static boolean canSet() {
+        return DriverStation.getInstance().isDisabled();
     }
 
     /**

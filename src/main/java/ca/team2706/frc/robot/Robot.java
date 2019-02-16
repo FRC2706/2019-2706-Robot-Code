@@ -1,9 +1,5 @@
 package ca.team2706.frc.robot;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-
 import ca.team2706.frc.robot.commands.drivebase.StraightDrive;
 import ca.team2706.frc.robot.commands.drivebase.StraightDriveGyro;
 import ca.team2706.frc.robot.config.Config;
@@ -19,69 +15,24 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
 /**
  * Main Robot class
  */
 public class Robot extends TimedRobot {
-    private static Robot latestInstance;
-    private final List<Consumer<RobotState>> stateListeners = new ArrayList<>();
     private boolean isInitialized;
+
     private Command[] commands;
+
+    private static Robot latestInstance;
+
+    private List<Consumer<RobotState>> stateListeners = new ArrayList<>();
 
     public Robot() {
         latestInstance = this;
-    }
-
-    /**
-     * Main method, called when the robot code is run like a desktop application.
-     *
-     * @param args Arguments passed on startup
-     */
-    public static void main(String[] args) {
-        Log.init();
-
-        Runtime.getRuntime().addShutdownHook(new Thread(Robot::shutdown));
-
-        RobotBase.startRobot(Robot::new);
-    }
-
-    /**
-     * Sets the given listener to be called when the robot is disabled.
-     *
-     * @param listener The listener to be invoked when the robot is disabled.
-     */
-    public static void setOnStateChange(Consumer<RobotState> listener) {
-        if (latestInstance != null) {
-            latestInstance.addStateListener(listener);
-        }
-    }
-
-    /**
-     * Removes a state listener so that it is no longer subscribed to robot state change events.
-     *
-     * @param listener The listener to be removed.
-     */
-    public static void removeStateListener(Consumer<RobotState> listener) {
-        if (latestInstance != null) {
-            latestInstance.removeListener(listener);
-        }
-    }
-
-    /**
-     * Determines if the current instance of the robot has been initialized.
-     *
-     * @return True if the robot has been initialized, false otherwise.
-     */
-    public static boolean isRobotInitialized() {
-        return latestInstance != null && latestInstance.isInitialized();
-    }
-
-    /**
-     * Called when the robot is shutting down.
-     */
-    private static void shutdown() {
-        // Iterate through each of the state-change listeners and call them.
-        latestInstance.onStateChange(RobotState.SHUTDOWN);
     }
 
     /**
@@ -224,6 +175,19 @@ public class Robot extends TimedRobot {
     }
 
     /**
+     * Main method, called when the robot code is run like a desktop application.
+     *
+     * @param args Arguments passed on startup
+     */
+    public static void main(String[] args) {
+        Log.init();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(Robot::shutdown));
+
+        RobotBase.startRobot(Robot::new);
+    }
+
+    /**
      * Adds a method to be called when the robot's state is changed.
      *
      * @param listener The listener to be added.
@@ -233,12 +197,43 @@ public class Robot extends TimedRobot {
     }
 
     /**
+     * Sets the given listener to be called when the robot is disabled.
+     *
+     * @param listener The listener to be invoked when the robot is disabled.
+     */
+    public static void setOnStateChange(Consumer<RobotState> listener) {
+        if (latestInstance != null) {
+            latestInstance.addStateListener(listener);
+        }
+    }
+
+    /**
      * Removes a state listener.
      *
      * @param listener The listener to be removed.
      */
     public void removeListener(Consumer<RobotState> listener) {
         stateListeners.remove(listener);
+    }
+
+    /**
+     * Removes a state listener so that it is no longer subscribed to robot state change events.
+     *
+     * @param listener The listener to be removed.
+     */
+    public static void removeStateListener(Consumer<RobotState> listener) {
+        if (latestInstance != null) {
+            latestInstance.removeListener(listener);
+        }
+    }
+
+    /**
+     * Determines if the current instance of the robot has been initialized.
+     *
+     * @return True if the robot has been initialized, false otherwise.
+     */
+    public static boolean isRobotInitialized() {
+        return latestInstance != null && latestInstance.isInitialized();
     }
 
     /**
@@ -259,5 +254,13 @@ public class Robot extends TimedRobot {
         // Make shallow copy of this.
         ArrayList<Consumer<RobotState>> listeners = new ArrayList<>(stateListeners);
         listeners.forEach(action -> action.accept(newState));
+    }
+
+    /**
+     * Called when the robot is shutting down.
+     */
+    private static void shutdown() {
+        // Iterate through each of the state-change listeners and call them.
+        latestInstance.onStateChange(RobotState.SHUTDOWN);
     }
 }

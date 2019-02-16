@@ -1,5 +1,7 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
+import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.subsystems.DriveBase;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
@@ -7,26 +9,16 @@ import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import mockit.Expectations;
-import mockit.Injectable;
-import mockit.Mocked;
-import mockit.Tested;
-import mockit.Verifications;
+import mockit.*;
+import org.junit.Before;
+import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class StraightDriveGyroTest {
 
@@ -58,26 +50,6 @@ public class StraightDriveGyroTest {
 
     @Injectable
     private SensorCollection sensorCollection;
-
-    /**
-     * Converts feet to encoder ticks
-     *
-     * @param feet The distance in feet
-     * @return The amount of ticks
-     */
-    private static double feetToTicks(double feet) {
-        return feet / Config.DRIVE_ENCODER_DPP;
-    }
-
-    /**
-     * Converts feet to integer encoder ticks
-     *
-     * @param feet The distance in feet
-     * @return The amount of ticks as integer
-     */
-    private static int intFeetToTicks(double feet) {
-        return (int) (feetToTicks(feet));
-    }
 
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
@@ -116,7 +88,7 @@ public class StraightDriveGyroTest {
     public void testSetting(@Injectable("0.0") double speed, @Injectable("0.5") double position, @Injectable("1") int minDoneCycles) {
         straightDriveGyro.initialize();
 
-        for (int i = 0; i < 3; i++) {
+        for(int i = 0; i<3; i++) {
             straightDriveGyro.execute();
         }
 
@@ -168,6 +140,26 @@ public class StraightDriveGyroTest {
         assertFalse(straightDriveGyro.isFinished());
 
         straightDriveGyro.end();
+    }
+
+    /**
+     * Converts feet to encoder ticks
+     *
+     * @param feet The distance in feet
+     * @return The amount of ticks
+     */
+    private static double feetToTicks(double feet) {
+        return feet / Config.DRIVE_ENCODER_DPP;
+    }
+
+    /**
+     * Converts feet to integer encoder ticks
+     *
+     * @param feet The distance in feet
+     * @return The amount of ticks as integer
+     */
+    private static int intFeetToTicks(double feet) {
+        return (int) (feetToTicks(feet));
     }
 
 

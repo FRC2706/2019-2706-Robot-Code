@@ -1,18 +1,21 @@
 package ca.team2706.frc.robot.operatorfeedback.rumbler;
 
-import java.time.Clock;
-
 import ca.team2706.frc.robot.OI;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
+
+import java.time.Clock;
 
 /**
  * Class for running rumble patterns on the robot.
  */
 public class Rumbler extends Command {
 
-    private final RumblePattern currentPattern;
+    public enum JoystickSelection {
+        DRIVER_JOYSTICK, OPERATOR_JOYSTICK, BOTH_JOYSTICKS
+    }
+
     private boolean isFinished;
 
     // The last time in seconds of an event.
@@ -22,6 +25,9 @@ public class Rumbler extends Command {
      * True if currently rumbling, false otherwise.
      */
     private boolean isRumbling;
+
+    private RumblePattern currentPattern;
+
 
     /**
      * Class to rumble the controllers of the robot with the purpose of giving haptic feedback to
@@ -42,7 +48,6 @@ public class Rumbler extends Command {
         // Add this command to the scheduler.
         start();
     }
-
 
     /**
      * Constructs a new rumbler with the give patterns.
@@ -132,10 +137,6 @@ public class Rumbler extends Command {
      */
     private long getCurrentTime() {
         return Clock.systemDefaultZone().millis();
-    }
-
-    public enum JoystickSelection {
-        DRIVER_JOYSTICK, OPERATOR_JOYSTICK, BOTH_JOYSTICKS
     }
 
 }

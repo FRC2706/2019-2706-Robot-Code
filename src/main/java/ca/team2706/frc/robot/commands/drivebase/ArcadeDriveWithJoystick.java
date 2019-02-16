@@ -37,6 +37,12 @@ public class ArcadeDriveWithJoystick extends ArcadeDrive {
         this(joy, axis1, invert1, joy, axis2, invert2);
     }
 
+    @Override
+    public boolean isFinished() {
+        // The command should only finish when cancelled from somewhere else
+        return false;
+    }
+
     /**
      * Conditionally negates a number with a boolean
      *
@@ -50,11 +56,5 @@ public class ArcadeDriveWithJoystick extends ArcadeDrive {
         } else {
             return number;
         }
-    }
-
-    @Override
-    public boolean isFinished() {
-        // The command should only finish when cancelled from somewhere else
-        return false;
     }
 }

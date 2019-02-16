@@ -1,24 +1,26 @@
 package ca.team2706.frc.robot.input;
 
-import org.junit.Test;
-
 import edu.wpi.first.wpilibj.GenericHID;
 import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Tested;
+import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class AxisButtonTest {
 
+    @Tested
+    private AxisButton axisButton;
+
+    @Injectable
+    private GenericHID genericHID;
+
     private static final String Positive = "0";
     private static final String Negative = "1";
     private static final String Both = "2";
-    @Tested
-    private AxisButton axisButton;
-    @Injectable
-    private GenericHID genericHID;
+
 
     /**
      * Tests the axis that triggers in positive

@@ -6,9 +6,6 @@ package ca.team2706.frc.robot.operatorfeedback.rumbler;
  * @author Kyle Anderson
  */
 public abstract class RumblePattern {
-    protected double intensity;
-    protected Rumbler.JoystickSelection joystick;
-
     /**
      * Gets the rumble intensity for this rumble pattern.
      *
@@ -18,6 +15,8 @@ public abstract class RumblePattern {
         return intensity;
     }
 
+    protected double intensity;
+
     /**
      * Gets the joystick selection for which joystick should be rumbling.
      *
@@ -26,6 +25,8 @@ public abstract class RumblePattern {
     public Rumbler.JoystickSelection getJoystick() {
         return joystick;
     }
+
+    protected Rumbler.JoystickSelection joystick;
 
     /**
      * Determines if this pattern should be rumbling given the amount of time that the pattern has been on.

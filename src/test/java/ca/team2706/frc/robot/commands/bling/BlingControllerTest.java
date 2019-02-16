@@ -1,5 +1,13 @@
 package ca.team2706.frc.robot.commands.bling;
 
+import ca.team2706.frc.robot.commands.bling.patterns.BlingPattern;
+import ca.team2706.frc.robot.subsystems.Bling;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
+import mockit.Expectations;
+import mockit.Mocked;
+import mockit.Tested;
+import mockit.Verifications;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -9,15 +17,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import ca.team2706.frc.robot.commands.bling.patterns.BlingPattern;
-import ca.team2706.frc.robot.subsystems.Bling;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
-import mockit.Expectations;
-import mockit.Mocked;
-import mockit.Tested;
-import mockit.Verifications;
 
 import static org.junit.Assert.assertEquals;
 

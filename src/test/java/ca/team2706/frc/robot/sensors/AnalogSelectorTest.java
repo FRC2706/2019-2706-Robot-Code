@@ -1,14 +1,13 @@
 package ca.team2706.frc.robot.sensors;
 
-import org.junit.Test;
-
-import java.lang.reflect.Field;
-
 import edu.wpi.first.wpilibj.AnalogInput;
 import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Mocked;
 import mockit.Tested;
+import org.junit.Test;
+
+import java.lang.reflect.Field;
 
 import static org.junit.Assert.assertEquals;
 

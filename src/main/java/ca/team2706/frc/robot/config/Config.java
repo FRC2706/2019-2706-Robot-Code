@@ -1,5 +1,11 @@
 package ca.team2706.frc.robot.config;
 
+import ca.team2706.frc.robot.Robot;
+import ca.team2706.frc.robot.RobotState;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -10,79 +16,98 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
-import ca.team2706.frc.robot.Robot;
-import ca.team2706.frc.robot.RobotState;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DriverStation;
-
 /**
  * Config manager for the robot.
  */
 public class Config {
-    // Values for driving robot with joystick
-    public static final boolean
-            TELEOP_SQUARE_JOYSTICK_INPUTS = true,
-            TELEOP_BRAKE = false;
-    // Timeouts for sending CAN bus commands
-    public static final int
-            CAN_SHORT = 10,
-            CAN_LONG = 100;
+    /**
+     * Initializes a new config instance.
+     */
+    public static void init() {
+        new Config();
+    }
+
+    private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
 
     // #### Static constants ####
-    public static final int ARCADE_DRIVE_FORWARD = 5;
-    public static final int ARCADE_DRIVE_ROTATE = 4;
-    private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
-    // #### Fluid constants ####
-    public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_DEADBAND = constant("drive-deadband", 0.001);
-    public static final FluidConstant<Double> DRIVE_OPEN_LOOP_DEADBAND = constant("drive-deadband", 0.04);
-    public static final FluidConstant<Boolean> DRIVE_SUM_PHASE_LEFT = constant("drive-sum-phase-left", true);
-    public static final FluidConstant<Boolean> DRIVE_SUM_PHASE_RIGHT = constant("drive-sum-phase-right", true);
-    public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_P = constant("drive-P", 0.1);
-    public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_I = constant("drive-I", 0.0);
-    public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_D = constant("drive-D", 0.0);
-    public static final FluidConstant<Double> PIGEON_KP = constant("pigeon-kp", 2.0);
-    public static final FluidConstant<Double> PIGEON_KI = constant("pigeon-ki", 0.0);
-    public static final FluidConstant<Double> PIGEON_KD = constant("pigeon-ki", 4.0);
-    public static final FluidConstant<Double> PIGEON_KF = constant("pigeon-kf", 0.0);
+
     /**
      * Path to the file which identifies which robot this is.
      */
     private static final Path ROBOT_ID_LOC = Paths.get(System.getProperty("user.home"), "robot.conf");
     private static final Path SAVE_FILE = Paths.get(System.getProperty("user.home"), "FluidConstants.txt");
+
     /**
      * ID of the robot that code is running on
      */
     private static int robotId = -1;
+
+
+    // Values for driving robot with joystick
+    public static final boolean
+            TELEOP_SQUARE_JOYSTICK_INPUTS = true,
+            TELEOP_BRAKE = false;
+
+    // Timeouts for sending CAN bus commands
+    public static final int
+            CAN_SHORT = 10,
+            CAN_LONG = 100;
+
     // DriveBase motor CAN IDs
     public static final int
             LEFT_FRONT_DRIVE_MOTOR_ID = robotSpecific(1, 1, 1),
             LEFT_BACK_DRIVE_MOTOR_ID = robotSpecific(3, 3, 3),
             RIGHT_FRONT_DRIVE_MOTOR_ID = robotSpecific(2, 2, 2),
             RIGHT_BACK_DRIVE_MOTOR_ID = robotSpecific(4, 4, 4);
+
     public static final boolean
             INVERT_FRONT_LEFT_DRIVE = robotSpecific(false, false, false),
             INVERT_BACK_LEFT_DRIVE = robotSpecific(false, false, false),
             INVERT_FRONT_RIGHT_DRIVE = robotSpecific(true, true, true),
             INVERT_BACK_RIGHT_DRIVE = robotSpecific(true, true, true);
+
     public static final boolean DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);
+
     // Talon ID for the Pigeon
     public static final int GYRO_TALON_ID = robotSpecific(5, 5, 5);
+
     // Selector Channel
     public static final int SELECTOR_ID = robotSpecific(0, 0, 0);
+
     // The amount of encoder ticks that the robot must drive to go one foot
     public static final double DRIVE_ENCODER_DPP
             = robotSpecific(Math.PI / 8192.0, Math.PI / 8192.0, Math.PI / 8192.0);
+
     public static final boolean ENABLE_CAMERA = robotSpecific(true, true, false);
+
     public static final int PURPLE_LIGHT = robotSpecific(3, 3, 3);
-    public static final double LOG_PERIOD = robotSpecific(0.02, 0.02, 0.02, Double.POSITIVE_INFINITY);
+
+    public static final int ARCADE_DRIVE_FORWARD = 5;
+    public static final int ARCADE_DRIVE_ROTATE = 4;
+
+    // #### Fluid constants ####
+    public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_DEADBAND = constant("drive-deadband", 0.001);
+    public static final FluidConstant<Double> DRIVE_OPEN_LOOP_DEADBAND = constant("drive-deadband", 0.04);
+
+    public static final FluidConstant<Boolean> DRIVE_SUM_PHASE_LEFT = constant("drive-sum-phase-left", true);
+    public static final FluidConstant<Boolean> DRIVE_SUM_PHASE_RIGHT = constant("drive-sum-phase-right", true);
+
+    public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_P = constant("drive-P", 0.1);
+    public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_I = constant("drive-I", 0.0);
+    public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_D = constant("drive-D", 0.0);
+
+    public static final FluidConstant<Double> PIGEON_KP = constant("pigeon-kp", 2.0);
+    public static final FluidConstant<Double> PIGEON_KI = constant("pigeon-ki", 0.0);
+    public static final FluidConstant<Double> PIGEON_KD = constant("pigeon-ki", 4.0);
+    public static final FluidConstant<Double> PIGEON_KF = constant("pigeon-kf", 0.0);
+
+
+    // ### Methods, fields and Constructors ###
     /**
      * The network table for fluid constants.
      */
     private NetworkTable configTable;
 
-
-    // ### Methods, fields and Constructors ###
     Config() {
         this(NetworkTableInstance.getDefault().getTable("Fluid Constants"));
     }
@@ -99,10 +124,38 @@ public class Config {
     }
 
     /**
-     * Initializes a new config instance.
+     * Called when the robot's state is updated.
+     *
+     * @param newState The new robot state.
      */
-    public static void init() {
-        new Config();
+    private void robotStateChange(final RobotState newState) {
+        switch (newState) {
+            case ROBOT_INIT:
+                initializeFluidConstantNetworktables();
+                break;
+            case DISABLED:
+                saveConstants();
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Initializes the network tables elements for all the fluid constants.
+     */
+    private void initializeFluidConstantNetworktables() {
+        ArrayList<FluidConstant<?>> constants = new ArrayList<>(CONSTANTS);
+        constants.forEach(fluidConstant -> fluidConstant.addNTEntry(configTable));
+    }
+
+    /**
+     * Gets the network table for fluid constants.
+     *
+     * @return The Network Table used for fluid constants.
+     */
+    public NetworkTable getNetworkTable() {
+        return configTable;
     }
 
     /**
@@ -185,41 +238,6 @@ public class Config {
     }
 
     /**
-     * Called when the robot's state is updated.
-     *
-     * @param newState The new robot state.
-     */
-    private void robotStateChange(final RobotState newState) {
-        switch (newState) {
-            case ROBOT_INIT:
-                initializeFluidConstantNetworktables();
-                break;
-            case DISABLED:
-                saveConstants();
-                break;
-            default:
-                break;
-        }
-    }
-
-    /**
-     * Initializes the network tables elements for all the fluid constants.
-     */
-    private void initializeFluidConstantNetworktables() {
-        ArrayList<FluidConstant<?>> constants = new ArrayList<>(CONSTANTS);
-        constants.forEach(fluidConstant -> fluidConstant.addNTEntry(configTable));
-    }
-
-    /**
-     * Gets the network table for fluid constants.
-     *
-     * @return The Network Table used for fluid constants.
-     */
-    public NetworkTable getNetworkTable() {
-        return configTable;
-    }
-
-    /**
      * Xbox controller binding information.
      * Contains the link between the Xbox's buttons' port and the NetworkTables key used to describe the action.
      */
@@ -255,15 +273,6 @@ public class Config {
         XBOX_POV_LEFT(270, "LEFT", XboxInputType.POV),
         XBOX_POV_UP_LEFT(315, "UP_LEFT", XboxInputType.POV);
 
-        // Create a hashmap of the networktables entry and the
-        private static final HashMap<String, XboxValue> nameMap = new HashMap<>();
-
-        static {
-            for (XboxValue value : XboxValue.values()) {
-                nameMap.put(value.getNTString(), value);
-            }
-        }
-
         private final String NTString;
         private final int port;
         private final XboxInputType inputType;
@@ -272,16 +281,6 @@ public class Config {
             this.NTString = NTString;
             this.port = port;
             this.inputType = inputType;
-        }
-
-        /**
-         * Gets the XboxValue constant with the given NetworkTables key.
-         *
-         * @param ntKey The NetworkTables key for the constant.
-         * @return The constant object.
-         */
-        public static XboxValue getXboxValueFromNTKey(final String ntKey) {
-            return nameMap.get(ntKey);
         }
 
         /**
@@ -305,6 +304,26 @@ public class Config {
          */
         public XboxInputType getInputType() {
             return inputType;
+        }
+
+
+        // Create a hashmap of the networktables entry and the
+        private static final HashMap<String, XboxValue> nameMap = new HashMap<>();
+
+        static {
+            for (XboxValue value : XboxValue.values()) {
+                nameMap.put(value.getNTString(), value);
+            }
+        }
+
+        /**
+         * Gets the XboxValue constant with the given NetworkTables key.
+         *
+         * @param ntKey The NetworkTables key for the constant.
+         * @return The constant object.
+         */
+        public static XboxValue getXboxValueFromNTKey(final String ntKey) {
+            return nameMap.get(ntKey);
         }
     }
 

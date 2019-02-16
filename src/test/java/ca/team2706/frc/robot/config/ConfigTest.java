@@ -1,11 +1,20 @@
 package ca.team2706.frc.robot.config;
 
+import ca.team2706.frc.robot.Robot;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
-
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.PWM;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import mockit.Expectations;
+import mockit.Injectable;
+import mockit.Mocked;
+import mockit.Verifications;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,18 +26,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import ca.team2706.frc.robot.Robot;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.PWM;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import mockit.Expectations;
-import mockit.Injectable;
-import mockit.Mocked;
-import mockit.Verifications;
 
 import static org.junit.Assert.assertEquals;
 
@@ -66,9 +63,6 @@ public class ConfigTest {
     private MotControllerJNI motControllerJNI;
 
     @Mocked
-    private Notifier notifier;
-
-    @Mocked
     private CameraServer cameraServer;
 
     @Mocked
@@ -78,16 +72,6 @@ public class ConfigTest {
     private SensorCollection sensorCollection;
 
     private boolean initialized = false;
-
-    /**
-     * Makes an array out of the given objects.
-     *
-     * @param objects The objects.
-     * @return An array of the given objects.
-     */
-    private static Object[] makeArray(Object... objects) {
-        return objects;
-    }
 
     @Before
     public void setUp() throws Exception {
@@ -215,6 +199,16 @@ public class ConfigTest {
         assertEquals(e, robotSpecificMethod.invoke(null, a, makeArray(b, c, d, e)));
         resetIdField();
         assertEquals(a, robotSpecificMethod.invoke(null, a, makeArray()));
+    }
+
+    /**
+     * Makes an array out of the given objects.
+     *
+     * @param objects The objects.
+     * @return An array of the given objects.
+     */
+    private static Object[] makeArray(Object... objects) {
+        return objects;
     }
 
     /**

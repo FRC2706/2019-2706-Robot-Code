@@ -1,7 +1,5 @@
 package ca.team2706.frc.robot.subsystems;
 
-import java.util.Arrays;
-
 import ca.team2706.frc.robot.commands.bling.BlingController;
 import ca.team2706.frc.robot.commands.bling.patterns.BlingPattern;
 import ca.team2706.frc.robot.logging.Log;
@@ -10,60 +8,14 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
+import java.util.Arrays;
+
 /**
  * Subsystem for controlling bling operations.
  */
 public class Bling extends Subsystem {
 
-    // All of the pattern numbers
-    public static final String COLOUR_WIPE = "colorWipe", THEATRE_CHASE = "theaterChase", SOLID = "solid", BLINK = "blink",
-            RAINBOW = "rainbow", THEATRE_CHASE_RAINBOW = "theaterChaseRainbow", RAINBOW_CYCLE = "rainbowCycle",
-            CLEAR = "clear";
-    /**
-     * A nice purple merge RGB colour.
-     */
-    public static final int[] MERGERGB = {102, 51, 153}, WHITE = {255, 255, 255}, BLACK = {0, 0, 0},
-            ORANGE = {255, 165, 0}, SKYBLUE = {125, 206, 235}, TURQUOISE = {64, 224, 208},
-            GREEN = {0, 255, 0}, BLUE = {0, 0, 255}, RED = {255, 0, 0}, PURPLE = {128, 0, 128},
-            YELLOW = {255, 255, 0};
-    public static final int GOOD_BRIGHTNESS = 128, MAX_BRIGHTNESS = 255;
-    /**
-     * The networktables key for the bling table.
-     */
-    private static final String NTKEY = "blingTable";
-
-    // COLOUR PRESETS BELOW
     private static Bling currentInstance;
-    // Networktables entries for bling
-    private final NetworkTableEntry waitMSNT;
-    private final NetworkTableEntry redNT;
-    private final NetworkTableEntry greenNT;
-    private final NetworkTableEntry blueNT;
-    private final NetworkTableEntry repeatNT;
-    private final NetworkTableEntry brightnessNT;
-    private final NetworkTableEntry commandNT;
-    private BlingController blingController;
-    // Used to make sure we don't run the same command twice in a row.
-    private int[] lastRGBArray = new int[3];
-    private int lastRepeat = -1;
-    private int lastWaitMs = -1;
-    private int lastLEDBrightness = -1;
-    private String lastCommand = "";
-    /**
-     * Class used as the basic part of handling bling commands.
-     */
-    private Bling() {
-        final NetworkTable blingTable = NetworkTableInstance.getDefault().getTable(NTKEY);
-
-        // Declare all the necessary variables to work with for networktables setting
-        waitMSNT = blingTable.getEntry("wait_ms");
-        redNT = blingTable.getEntry("red");
-        greenNT = blingTable.getEntry("green");
-        blueNT = blingTable.getEntry("blue");
-        repeatNT = blingTable.getEntry("repeat");
-        brightnessNT = blingTable.getEntry("LED_BRIGHTNESS");
-        commandNT = blingTable.getEntry("command");
-    }
 
     /**
      * Gets the current Bling subsystem object instance.
@@ -82,6 +34,63 @@ public class Bling extends Subsystem {
         if (currentInstance == null) {
             currentInstance = new Bling();
         }
+    }
+
+    // All of the pattern numbers
+    public static final String COLOUR_WIPE = "colorWipe", THEATRE_CHASE = "theaterChase", SOLID = "solid", BLINK = "blink",
+            RAINBOW = "rainbow", THEATRE_CHASE_RAINBOW = "theaterChaseRainbow", RAINBOW_CYCLE = "rainbowCycle",
+            CLEAR = "clear";
+
+    // COLOUR PRESETS BELOW
+    /**
+     * A nice purple merge RGB colour.
+     */
+    public static final int[] MERGERGB = {102, 51, 153}, WHITE = {255, 255, 255}, BLACK = {0, 0, 0},
+            ORANGE = {255, 165, 0}, SKYBLUE = {125, 206, 235}, TURQUOISE = {64, 224, 208},
+            GREEN = {0, 255, 0}, BLUE = {0, 0, 255}, RED = {255, 0, 0}, PURPLE = {128, 0, 128},
+            YELLOW = {255, 255, 0};
+
+    public static final int GOOD_BRIGHTNESS = 128, MAX_BRIGHTNESS = 255;
+
+    /**
+     * The networktables key for the bling table.
+     */
+    private static final String NTKEY = "blingTable";
+
+
+    // Networktables entries for bling
+    private final NetworkTableEntry waitMSNT;
+    private final NetworkTableEntry redNT;
+    private final NetworkTableEntry greenNT;
+    private final NetworkTableEntry blueNT;
+    private final NetworkTableEntry repeatNT;
+    private final NetworkTableEntry brightnessNT;
+    private final NetworkTableEntry commandNT;
+
+
+    private BlingController blingController;
+
+    // Used to make sure we don't run the same command twice in a row.
+    private int[] lastRGBArray = new int[3];
+    private int lastRepeat = -1;
+    private int lastWaitMs = -1;
+    private int lastLEDBrightness = -1;
+    private String lastCommand = "";
+
+    /**
+     * Class used as the basic part of handling bling commands.
+     */
+    private Bling() {
+        final NetworkTable blingTable = NetworkTableInstance.getDefault().getTable(NTKEY);
+
+        // Declare all the necessary variables to work with for networktables setting
+        waitMSNT = blingTable.getEntry("wait_ms");
+        redNT = blingTable.getEntry("red");
+        greenNT = blingTable.getEntry("green");
+        blueNT = blingTable.getEntry("blue");
+        repeatNT = blingTable.getEntry("repeat");
+        brightnessNT = blingTable.getEntry("LED_BRIGHTNESS");
+        commandNT = blingTable.getEntry("command");
     }
 
     @Override

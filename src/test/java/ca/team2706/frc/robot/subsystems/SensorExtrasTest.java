@@ -1,14 +1,6 @@
 package ca.team2706.frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.lang.reflect.Field;
-
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PWM;
@@ -18,29 +10,42 @@ import mockit.Expectations;
 import mockit.Mocked;
 import mockit.Tested;
 import mockit.Verifications;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.lang.reflect.Field;
 
 import static org.junit.Assert.assertEquals;
 
 public class SensorExtrasTest {
 
+    @Tested
+    private SensorExtras sensorExtras;
+
+    @Mocked
+    private WPI_TalonSRX talon;
+
+    @Mocked
+    private PWM pwm;
+
+    @Mocked
+    private AnalogInput analogInput;
+
+    @Mocked
+    private DigitalInput dio;
+
+    @Mocked
+    private Relay relay;
+
+    @Mocked
+    private LiveWindow liveWindow;
+
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
     private final PrintStream originalErr = System.err;
-    @Tested
-    private SensorExtras sensorExtras;
-    @Mocked
-    private WPI_TalonSRX talon;
-    @Mocked
-    private PWM pwm;
-    @Mocked
-    private AnalogInput analogInput;
-    @Mocked
-    private DigitalInput dio;
-    @Mocked
-    private Relay relay;
-    @Mocked
-    private LiveWindow liveWindow;
 
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {

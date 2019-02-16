@@ -1,11 +1,5 @@
 package ca.team2706.frc.robot.operatorfeedback.rumbler;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import java.lang.reflect.Field;
-import java.time.Clock;
-
 import ca.team2706.frc.robot.OI;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -14,6 +8,11 @@ import mockit.Expectations;
 import mockit.Mocked;
 import mockit.Verifications;
 import mockit.VerificationsInOrder;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.lang.reflect.Field;
+import java.time.Clock;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -27,20 +26,6 @@ public class RumblerTest {
 
     @Mocked
     private DriveBase driveBase;
-
-    /**
-     * Runs the {@link Rumbler#execute()} and {@link Rumbler#isFinished()} methods <code>numTimes</code> number of times,
-     * simulating actual usage.
-     *
-     * @param rumbler  The rumbler class to be run.
-     * @param numTimes The number of times to call the execute method.
-     */
-    private static void runRumbler(Rumbler rumbler, final int numTimes) {
-        for (int i = 0; i < numTimes; i++) {
-            rumbler.execute();
-            rumbler.isFinished();
-        }
-    }
 
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
@@ -357,5 +342,20 @@ public class RumblerTest {
             operatorStick.setRumble(GenericHID.RumbleType.kRightRumble, 0D);
             times = 3;
         }};
+    }
+
+
+    /**
+     * Runs the {@link Rumbler#execute()} and {@link Rumbler#isFinished()} methods <code>numTimes</code> number of times,
+     * simulating actual usage.
+     *
+     * @param rumbler  The rumbler class to be run.
+     * @param numTimes The number of times to call the execute method.
+     */
+    private static void runRumbler(Rumbler rumbler, final int numTimes) {
+        for (int i = 0; i < numTimes; i++) {
+            rumbler.execute();
+            rumbler.isFinished();
+        }
     }
 }

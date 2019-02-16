@@ -30,21 +30,21 @@ public class BlingController extends Command {
     /**
      * How long (in seconds) that teleop lasts (including climb time)
      */
-    private static double TELEOP_TIME = 135;
+    private static final double TELEOP_TIME = 135;
     /**
      * How long (in seconds) the autonomous/sandstorm period lasts.
      */
-    private static double AUTONOMOUS_TIME = 15;
+    private static final double AUTONOMOUS_TIME = 15;
 
     /**
      * How long the climb period at the end of the match is (in seconds)
      */
-    private static double CLIMB_TIME = 30;
+    private static final double CLIMB_TIME = 30;
 
     /**
      * How long the entire match is (in seconds).
      */
-    private static double TOTAL_TIME = 150;
+    private static final double TOTAL_TIME = 150;
 
     private boolean useMatchTime;
 

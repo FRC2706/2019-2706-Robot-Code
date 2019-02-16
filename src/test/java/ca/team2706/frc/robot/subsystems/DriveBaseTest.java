@@ -80,4 +80,30 @@ public class DriveBaseTest {
             talon.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, 0, anyInt);
         }};
     }
+
+    /**
+     * Tests that the absolute gyro heading gets saved
+     */
+    @Test
+    public void testAbsoluteGyro() {
+        new Expectations() {{
+            // TODO: Change when gyro method changes
+            pigeon.getFusedHeading();
+            returns(0.0, 19.0, -12.0, -12.0, 0.0, 90.0, 34.0, 34.0, 0.0);
+        }};
+
+        assertEquals(0.0, driveBase.getAbsoluteHeading(), 0.0);
+        assertEquals(19.0, driveBase.getAbsoluteHeading(), 0.0);
+        assertEquals(-12.0, driveBase.getAbsoluteHeading(), 0.0);
+
+        driveBase.reset();
+
+        assertEquals(-12.0, driveBase.getAbsoluteHeading(), 0.0);
+        assertEquals(78.0, driveBase.getAbsoluteHeading(), 0.0);
+        assertEquals(22.0, driveBase.getAbsoluteHeading(), 0.0);
+
+        driveBase.reset();
+
+        assertEquals(22.0, driveBase.getAbsoluteHeading(), 0.0);
+    }
 }

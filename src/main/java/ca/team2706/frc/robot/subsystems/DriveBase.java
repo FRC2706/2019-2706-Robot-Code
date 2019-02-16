@@ -73,6 +73,11 @@ public class DriveBase extends Subsystem {
     private boolean brakeMode;
 
     /**
+     * Saves the absolute heading when the gyro is reset so that it can be calculated from the relative angle
+     */
+    private double savedAngle;
+
+    /*
      * Logs data to SmartDashboard and files periodically
      */
     private Notifier loggingNotifier;
@@ -411,10 +416,19 @@ public class DriveBase extends Subsystem {
     /**
      * Gets the angle that the robot is facing in degrees
      *
-     * @return The rotation of the robot
+     * @return The rotation of the robot in degrees
      */
     public double getHeading() {
         return gyro.getFusedHeading();
+    }
+
+    /**
+     * Gets the angle that the robot is facing relative to when it was first powered on
+     *
+     * @return The absolute rotation of the robot in degrees
+     */
+    public double getAbsoluteHeading() {
+        return savedAngle + getHeading();
     }
 
     /**
@@ -429,6 +443,7 @@ public class DriveBase extends Subsystem {
      * Resets the gyro to 0 degrees
      */
     public void resetGyro() {
+        savedAngle = getAbsoluteHeading();
         gyro.setFusedHeading(0, Config.CAN_SHORT);
     }
 

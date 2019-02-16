@@ -1,8 +1,8 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
-import java.util.function.Supplier;
-
 import ca.team2706.frc.robot.subsystems.DriveBase;
+
+import java.util.function.Supplier;
 
 public class StraightDriveGyro extends DriveBaseCloseLoop {
 

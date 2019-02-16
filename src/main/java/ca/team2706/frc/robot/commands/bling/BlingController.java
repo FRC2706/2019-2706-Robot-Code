@@ -1,15 +1,15 @@
 package ca.team2706.frc.robot.commands.bling;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Optional;
-
 import ca.team2706.frc.robot.commands.bling.patterns.Blank;
 import ca.team2706.frc.robot.commands.bling.patterns.BlingPattern;
 import ca.team2706.frc.robot.subsystems.Bling;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Optional;
 
 /**
  * Command to control the bling on the robot.

@@ -4,13 +4,12 @@ import ca.team2706.frc.robot.Sendables;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.sensors.AnalogSelector;
-
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
-
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -23,37 +22,65 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class DriveBase extends Subsystem {
 
     private static DriveBase currentInstance;
+
+    public static DriveBase getInstance() {
+        init();
+        return currentInstance;
+    }
+
     /**
-     * Four drive Talons
+     * Initializes a new drive base object.
      */
-    private final WPI_TalonSRX leftFrontMotor, leftBackMotor, rightFrontMotor, rightBackMotor;
-    /**
-     * Logic for controlling robot motion in teleop
-     */
-    private final DifferentialDrive robotDriveBase;
-    /**
-     * Gyro to record robot heading
-     */
-    private final PigeonIMU gyro;
-    /**
-     * Analog Selector
-     */
-    private final AnalogSelector selector;
-    /*
-     * Purple light that goes on the robot
-     */
-    private final PWM light;
+    public static void init() {
+        if (currentInstance == null) {
+            currentInstance = new DriveBase();
+        }
+    }
+
     /**
      * The mode that the robot is driving with
      */
     private DriveMode driveMode;
+
+    /**
+     * Four drive Talons
+     */
+    private final WPI_TalonSRX leftFrontMotor, leftBackMotor, rightFrontMotor, rightBackMotor;
+
+    /**
+     * Logic for controlling robot motion in teleop
+     */
+    private final DifferentialDrive robotDriveBase;
+
+    /**
+     * Gyro to record robot heading
+     */
+    private final PigeonIMU gyro;
+
+    /**
+     * Analog Selector
+     */
+    private final AnalogSelector selector;
+
+    /*
+     * Purple light that goes on the robot
+     */
+    private final PWM light;
+
     /**
      * Indicates whether the robot is in brake mode
      */
     private boolean brakeMode;
-    private Command defaultCommand;
 
+    /**
+     * Saves the absolute heading when the gyro is reset so that it can be calculated from the relative angle
+     */
     private double savedAngle;
+
+    /*
+     * Logs data to SmartDashboard and files periodically
+     */
+    private Notifier loggingNotifier;
 
     /**
      * Creates a drive base, and initializes all required sensors and motors
@@ -123,23 +150,8 @@ public class DriveBase extends Subsystem {
         setDisabledMode();
         setBrakeMode(false);
 
-        Thread loggingThread = new Thread(this::log);
-        loggingThread.setDaemon(true);
-        loggingThread.start();
-    }
-
-    public static DriveBase getInstance() {
-        init();
-        return currentInstance;
-    }
-
-    /**
-     * Initializes a new drive base object.
-     */
-    public static void init() {
-        if (currentInstance == null) {
-            currentInstance = new DriveBase();
-        }
+        loggingNotifier = new Notifier(this::log);
+        loggingNotifier.startPeriodic(Config.LOG_PERIOD);
     }
 
     /**

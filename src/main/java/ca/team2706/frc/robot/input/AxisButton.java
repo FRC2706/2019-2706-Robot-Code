@@ -1,8 +1,8 @@
 package ca.team2706.frc.robot.input;
 
-import java.util.Objects;
-
 import edu.wpi.first.wpilibj.GenericHID;
+
+import java.util.Objects;
 
 /**
  * Activates a button from a joystick axis trigger

@@ -1,7 +1,5 @@
 package ca.team2706.frc.robot.subsystems;
 
-import java.util.Arrays;
-
 import ca.team2706.frc.robot.commands.bling.BlingController;
 import ca.team2706.frc.robot.commands.bling.patterns.BlingPattern;
 import ca.team2706.frc.robot.logging.Log;
@@ -9,6 +7,8 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.command.Subsystem;
+
+import java.util.Arrays;
 
 /**
  * Subsystem for controlling bling operations.

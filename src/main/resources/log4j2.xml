@@ -2,26 +2,26 @@
 <Configuration status="WARN">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="--- %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+            <PatternLayout pattern="--- %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
         <RollingFile name="fileLogger" fileName="/U/logs/log-info-${date:yyyy-MM-dd'_'HH-mm-ss}.log"
-            filePattern="/U/logs/log-info-%d{yyyy-MM-dd}.log">
+                     filePattern="/U/logs/log-info-%d{yyyy-MM-dd}.log">
             <PatternLayout>
                 <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</pattern>
             </PatternLayout>
             <Policies>
-                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
-                <SizeBasedTriggeringPolicy size="8 MB" />
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="8 MB"/>
             </Policies>
         </RollingFile>
     </Appenders>
     <Loggers>
         <AsyncLogger name="ca.team2706.frc.robot.Robot" level="trace" additivity="false">
-            <AppenderRef ref="Console" level="info" />
-            <AppenderRef ref="fileLogger" level="trace" />
+            <AppenderRef ref="Console" level="info"/>
+            <AppenderRef ref="fileLogger" level="trace"/>
         </AsyncLogger>
         <AsyncRoot level="debug">
-            <AppenderRef ref="Console" />
+            <AppenderRef ref="Console"/>
         </AsyncRoot>
     </Loggers>
 </Configuration>

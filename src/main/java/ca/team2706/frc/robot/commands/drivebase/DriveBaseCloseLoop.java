@@ -26,8 +26,8 @@ public abstract class DriveBaseCloseLoop extends Command {
      */
     private int doneCycles = 0;
 
-    protected DriveBaseCloseLoop(Subsystem subsystem, Supplier<Integer> minDoneCycles, double targetRange) {
-        requires(subsystem);
+    protected DriveBaseCloseLoop(Supplier<Integer> minDoneCycles, double targetRange) {
+        requires(DriveBase.getInstance());
         this.minDoneCycles = minDoneCycles;
         this.targetRange = targetRange;
     }

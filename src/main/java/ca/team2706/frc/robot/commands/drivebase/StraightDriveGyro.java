@@ -42,7 +42,7 @@ public class StraightDriveGyro extends DriveBaseCloseLoop {
      *                      the target zone before the command ends
      */
     public StraightDriveGyro(Supplier<Double> speed, Supplier<Double> position, Supplier<Integer> minDoneCycles) {
-        super(DriveBase.getInstance(), minDoneCycles, TARGET_RANGE);
+        super(minDoneCycles, TARGET_RANGE);
         this.speed = speed;
         this.position = position;
         this.minDoneCycles = minDoneCycles;

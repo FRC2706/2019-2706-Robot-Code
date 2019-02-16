@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 /**
  * Drives in a straight line to a position
  */
-public class MotionMagic extends Command {
+public class MotionMagic extends DriveBaseCloseLoop {
 
     /**
      * The acceptable range in feet for the error between the target and actual position
@@ -19,16 +19,6 @@ public class MotionMagic extends Command {
      * References to the speed and position that the robot should be travelling at
      */
     private final Supplier<Double> speed, position;
-
-    /**
-     * The minimum number of cycles for the robot to be within the target zone before the command ends
-     */
-    private final Supplier<Integer> minDoneCycles;
-
-    /**
-     * The number of cycles that the robot is in the target range for
-     */
-    private int doneCycles = 0;
 
     /**
      * Creates a straight drive command with constant values
@@ -51,34 +41,20 @@ public class MotionMagic extends Command {
      *                      the target zone before the command ends
      */
     public MotionMagic(Supplier<Double> speed, Supplier<Double> position, Supplier<Integer> minDoneCycles) {
-        requires(DriveBase.getInstance());
+        super(minDoneCycles, TARGET_RANGE);
         this.speed = speed;
         this.position = position;
-        this.minDoneCycles = minDoneCycles;
     }
 
     @Override
     public void initialize() {
-        DriveBase.getInstance().setBrakeMode(true);
+        super.initialize();
         DriveBase.getInstance().setMotionMagicWithGyroMode();
-
-        doneCycles = 0;
     }
 
     @Override
     public void execute() {
-        DriveBase.getInstance().setMotionMagicPositionGyro(speed.get(), position.get());
-    }
-
-    @Override
-    public boolean isFinished() {
-        if (Math.abs(DriveBase.getInstance().getRightError()) <= TARGET_RANGE) {
-            doneCycles++;
-        } else {
-            doneCycles = 0;
-        }
-
-        return doneCycles >= minDoneCycles.get();
+        DriveBase.getInstance().setMotionMagicPositionGyro(speed.get(), position.get(), 0);
     }
 
     @Override

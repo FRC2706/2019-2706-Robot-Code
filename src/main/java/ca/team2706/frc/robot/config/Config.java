@@ -27,7 +27,6 @@ public class Config {
         new Config();
     }
 
-
     private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
 
     // #### Static constants ####
@@ -88,6 +87,8 @@ public class Config {
     public static final int ARCADE_DRIVE_FORWARD = 5;
     public static final int ARCADE_DRIVE_ROTATE = 4;
 
+    public static final double LOG_PERIOD = robotSpecific(0.02, 0.02, 0.02, Double.POSITIVE_INFINITY);
+
     // #### Fluid constants ####
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_DEADBAND = constant("drive-deadband", 0.001);
     public static final FluidConstant<Double> DRIVE_OPEN_LOOP_DEADBAND = constant("drive-deadband", 0.04);
@@ -102,6 +103,11 @@ public class Config {
     public static final FluidConstant<Double> TURN_P = constant("turn-P", 0.5);
     public static final FluidConstant<Double> TURN_I = constant("turn-I", 0.0);
     public static final FluidConstant<Double> TURN_D = constant("turn-D", 0.0);
+
+    public static final FluidConstant<Double> PIGEON_KP = constant("pigeon-kp", 2.0);
+    public static final FluidConstant<Double> PIGEON_KI = constant("pigeon-ki", 0.0);
+    public static final FluidConstant<Double> PIGEON_KD = constant("pigeon-ki", 4.0);
+    public static final FluidConstant<Double> PIGEON_KF = constant("pigeon-kf", 0.0);
 
     // ### Methods, fields and Constructors ###
     /**

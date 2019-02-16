@@ -255,6 +255,27 @@ public class DriveBase extends Subsystem {
         }
     }
 
+    /**
+     * Sets motion magic
+     */
+    public void setMotionMagicWithGyroMode() {
+        if (driveMode != DriveMode.MotionMagicWithGyro) {
+            stop();
+            selectEncodersSum();
+            configMotionMagic();
+            reset();
+
+            driveMode = DriveMode.MotionMagicWithGyro;
+        }
+    }
+
+    /**
+     * Configures motion magic
+     */
+    private void configMotionMagic() {
+        rightFrontMotor.configMotionCruiseVelocity((int)(Config.MOTION_MAGIC_CRUISE_VELOCITY.value()/Config.DRIVE_ENCODER_DPP/10), Config.CAN_SHORT);
+        rightFrontMotor.configMotionAcceleration((int)(Config.MOTION_MAGIC_ACCELERATION.value()/Config.DRIVE_ENCODER_DPP/10), Config.CAN_SHORT);
+    }
 
     /**
      * Changes whether current limiting should be used
@@ -369,6 +390,24 @@ public class DriveBase extends Subsystem {
     }
 
     /**
+     * Goes to a position with the closed loop Talon PIDs using only encoder information and motion magic
+     *
+     * @param speed    The speed from 0 to 1
+     * @param setpoint The setpoint to go to in feet
+     */
+    public void setMotionMagicPositionGyro(double speed, double setpoint) {
+        setMotionMagicWithGyroMode();
+
+        leftFrontMotor.configClosedLoopPeakOutput(0, speed);
+        rightFrontMotor.configClosedLoopPeakOutput(0, speed);
+
+        rightFrontMotor.set(ControlMode.MotionMagic, setpoint / Config.DRIVE_ENCODER_DPP);
+        leftFrontMotor.follow(rightFrontMotor);
+
+        follow();
+    }
+
+    /**
      * Get the distance travelled by the left encoder in feet
      *
      * @return The distance of the left encoder
@@ -471,7 +510,12 @@ public class DriveBase extends Subsystem {
         /**
          * Performs closed loop position control without heading support
          */
-        PositionNoGyro
+        PositionNoGyro,
+
+        /**
+         * Motion magic with gyro
+         */
+        MotionMagicWithGyro
     }
 
 

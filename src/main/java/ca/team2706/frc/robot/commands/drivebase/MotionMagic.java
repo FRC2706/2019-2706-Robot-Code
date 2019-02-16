@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 /**
  * Drives in a straight line to a position
  */
-public class MotionMagic extends Command {
+public class MotionMagic extends Drive {
 
     /**
      * The acceptable range in feet for the error between the target and actual position
@@ -60,7 +60,7 @@ public class MotionMagic extends Command {
     @Override
     public void initialize() {
         DriveBase.getInstance().setBrakeMode(true);
-        DriveBase.getInstance().setPositionNoGyroMode();
+        DriveBase.getInstance().setMotionMagicWithGyroMode();
 
         doneCycles = 0;
     }

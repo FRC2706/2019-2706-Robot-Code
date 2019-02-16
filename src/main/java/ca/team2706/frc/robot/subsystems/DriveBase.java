@@ -11,7 +11,6 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -330,8 +329,8 @@ public class DriveBase extends Subsystem {
      * Configures motion magic
      */
     private void configMotionMagic() {
-        rightFrontMotor.configMotionCruiseVelocity((int)(Config.MOTION_MAGIC_CRUISE_VELOCITY.value()/Config.DRIVE_ENCODER_DPP/10), Config.CAN_SHORT);
-        rightFrontMotor.configMotionAcceleration((int)(Config.MOTION_MAGIC_ACCELERATION.value()/Config.DRIVE_ENCODER_DPP/10), Config.CAN_SHORT);
+        rightFrontMotor.configMotionCruiseVelocity((int) (Config.MOTION_MAGIC_CRUISE_VELOCITY.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
+        rightFrontMotor.configMotionAcceleration((int) (Config.MOTION_MAGIC_ACCELERATION.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
     }
 
     /**
@@ -457,10 +456,11 @@ public class DriveBase extends Subsystem {
         follow();
     }
 
-    /** Goes to a position with the closed loop Talon PIDs using only encoder information and motion magic
+    /**
+     * Goes to a position with the closed loop Talon PIDs using only encoder information and motion magic
      *
-     * @param speed    The speed from 0 to 1
-     * @param setpoint The setpoint to go to in feet
+     * @param speed          The speed from 0 to 1
+     * @param setpoint       The setpoint to go to in feet
      * @param targetRotation The desired rotation
      */
     public void setMotionMagicPositionGyro(double speed, double setpoint, double targetRotation) {

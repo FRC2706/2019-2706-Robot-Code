@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Intake extends Subsystem {
 
-    private WPI_TalonSRX m_intake;
+    public WPI_TalonSRX m_intake;
     private AnalogInput m_sensor;
     private static final double BALL_CAPTURED = 1;
     private double m_intakeSpeed;
@@ -34,16 +34,6 @@ public class Intake extends Subsystem {
         currentInstance = new Intake();
     }
 
-    /**
-     * Constructor used to move intake at speed specified by driver
-     * @param intakeSpeed the speed at which to spin the intake wheels
-     */
-
-    public Intake(double intakeSpeed) {
-        this();
-        m_intakeSpeed = intakeSpeed;
-    }
-
     public Intake() {
         m_intake = new WPI_TalonSRX(1);
         m_sensor = new AnalogInput(3);
@@ -59,8 +49,13 @@ public class Intake extends Subsystem {
      * Getting the voltage from the IR sensor
      * @return the voltage reading
      */
+
     public double readIr() {
-        return m_sensor.getVoltage();
+        if (!hatchMode){
+            return m_sensor.getVoltage();
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -70,7 +65,7 @@ public class Intake extends Subsystem {
 
     public void inhale(double speed) {
         if (!hatchMode) {
-            m_intake.set(speed * -m_intakeSpeed);
+            m_intake.set(speed * m_intakeSpeed);
         }
     }
 
@@ -81,7 +76,7 @@ public class Intake extends Subsystem {
 
     public void exhale(double speed) {
         if (!hatchMode) {
-            m_intake.set(speed * -m_intakeSpeed);
+            m_intake.set(speed * m_intakeSpeed);
         }
     }
 

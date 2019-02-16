@@ -1,7 +1,8 @@
 package ca.team2706.frc.robot.subsystems;
 
 import ca.team2706.frc.robot.config.Config;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.*;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
 
@@ -11,7 +12,7 @@ import edu.wpi.first.wpilibj.command.PIDSubsystem;
 
 public class ElevatorWithPID extends PIDSubsystem {
 
-    private WPI_TalonSRX m_liftMotor;
+    public WPI_TalonSRX m_liftMotor;
     //private TalonSRX m_liftMotor;
     public DigitalInput m_limitSwitchDown;
 
@@ -150,6 +151,7 @@ public class ElevatorWithPID extends PIDSubsystem {
         m_liftMotor = new WPI_TalonSRX(1);
         m_limitSwitchDown = new DigitalInput(1);
         getPIDController().setInputRange(-1, 1);
+        m_liftMotor.setNeutralMode(NeutralMode.Brake);
     }
 
     /**

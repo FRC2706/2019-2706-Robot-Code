@@ -26,7 +26,7 @@ public class Rumbler extends Command {
      */
     private boolean isRumbling;
 
-    private final RumblePattern currentPattern;
+    private RumblePattern currentPattern;
 
 
     /**

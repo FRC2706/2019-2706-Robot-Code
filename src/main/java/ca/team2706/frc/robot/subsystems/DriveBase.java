@@ -4,12 +4,13 @@ import ca.team2706.frc.robot.Sendables;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.sensors.AnalogSelector;
+
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
+
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -52,15 +53,7 @@ public class DriveBase extends Subsystem {
     private boolean brakeMode;
     private Command defaultCommand;
 
-    /**
-     * Saves the absolute heading when the gyro is reset so that it can be calculated from the relative angle
-     */
     private double savedAngle;
-
-    /*
-     * Logs data to SmartDashboard and files periodically
-     */
-    private Notifier loggingNotifier;
 
     /**
      * Creates a drive base, and initializes all required sensors and motors
@@ -130,8 +123,9 @@ public class DriveBase extends Subsystem {
         setDisabledMode();
         setBrakeMode(false);
 
-        loggingNotifier = new Notifier(this::log);
-        loggingNotifier.startPeriodic(Config.LOG_PERIOD);
+        Thread loggingThread = new Thread(this::log);
+        loggingThread.setDaemon(true);
+        loggingThread.start();
     }
 
     public static DriveBase getInstance() {
@@ -490,7 +484,7 @@ public class DriveBase extends Subsystem {
     /**
      * Gets the angle that the robot is facing in degrees
      *
-     * @return The rotation of the robot in degrees
+     * @return The rotation of the robot
      */
     public double getHeading() {
         return Sendables.getPigeonYaw(gyro);

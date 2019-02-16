@@ -1,5 +1,9 @@
 package ca.team2706.frc.robot;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
 import ca.team2706.frc.robot.commands.drivebase.StraightDrive;
 import ca.team2706.frc.robot.commands.drivebase.StraightDriveGyro;
 import ca.team2706.frc.robot.config.Config;
@@ -15,10 +19,6 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-
 /**
  * Main Robot class
  */
@@ -29,7 +29,7 @@ public class Robot extends TimedRobot {
 
     private static Robot latestInstance;
 
-    private final List<Consumer<RobotState>> stateListeners = new ArrayList<>();
+    private List<Consumer<RobotState>> stateListeners = new ArrayList<>();
 
     public Robot() {
         latestInstance = this;

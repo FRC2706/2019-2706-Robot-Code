@@ -9,7 +9,6 @@ import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import mockit.*;
@@ -42,9 +41,6 @@ public class DriveBaseTest {
 
     @Mocked(stubOutClassInitialization = true)
     private MotControllerJNI motControllerJNI;
-
-    @Mocked
-    private Notifier notifier;
 
     @Injectable
     private SensorCollection sensorCollection;

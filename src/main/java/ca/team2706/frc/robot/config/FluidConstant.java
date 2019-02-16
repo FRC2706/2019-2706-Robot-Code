@@ -1,12 +1,12 @@
 package ca.team2706.frc.robot.config;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.DriverStation;
-
-import java.util.ArrayList;
 
 /**
  * Class to represent all type of fluid constants.

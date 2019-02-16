@@ -35,9 +35,21 @@ public class Sendables {
         return new SendableBase() {
             @Override
             public void initSendable(SendableBuilder builder) {
-                builder.addDoubleProperty(PIGEON_NAME, pigeonIMU::getFusedHeading, pigeonIMU::setFusedHeading);
+                builder.addDoubleProperty(PIGEON_NAME, () -> getPigeonYaw(pigeonIMU), pigeonIMU::setYaw);
             }
         };
+    }
+
+    /**
+     * Gets the Yaw of the PigeonIMU
+     *
+     * @param pigeonIMU The PigeonIMU or gyro to get the yaw from
+     * @return The current yaw
+     */
+    public static double getPigeonYaw(PigeonIMU pigeonIMU) {
+        double[] yawPitchRoll = new double[3];
+        pigeonIMU.getYawPitchRoll(yawPitchRoll);
+        return yawPitchRoll[0];
     }
 
     /**

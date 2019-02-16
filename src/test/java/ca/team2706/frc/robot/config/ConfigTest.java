@@ -1,7 +1,6 @@
 package ca.team2706.frc.robot.config;
 
 import ca.team2706.frc.robot.Robot;
-import ca.team2706.frc.robot.util.Util;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
@@ -9,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -64,6 +64,9 @@ public class ConfigTest {
     private MotControllerJNI motControllerJNI;
 
     @Mocked
+    private Notifier notifier;
+
+    @Mocked
     private CameraServer cameraServer;
 
     @Mocked
@@ -99,8 +102,7 @@ public class ConfigTest {
             }};
 
 
-            // Reset the config and robot classes.
-            Util.resetConfigAndRobot();
+            // New robot to be worked with.
             robot = new Robot();
             robot.robotInit();
         }

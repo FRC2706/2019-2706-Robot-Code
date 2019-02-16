@@ -4,6 +4,7 @@ import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -13,16 +14,17 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import mockit.*;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class StraightDriveTest {
+public class StraightDriveGyroTest {
 
     @Tested
-    private StraightDrive straightDrive;
+    private StraightDriveGyro straightDriveGyro;
 
     @Mocked
     private WPI_TalonSRX talon;
@@ -38,6 +40,9 @@ public class StraightDriveTest {
 
     private DifferentialDrive differentialDrive;
 
+    @Mocked
+    private SmartDashboard smartDashboard;
+
     @Mocked(stubOutClassInitialization = true)
     private CTREJNIWrapper jni;
 
@@ -51,7 +56,7 @@ public class StraightDriveTest {
     private SensorCollection sensorCollection;
 
     @Before
-    public void setUp() {
+    public void setUp() throws NoSuchFieldException, IllegalAccessException {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
@@ -68,11 +73,11 @@ public class StraightDriveTest {
     @Test
     public void testCorrectState(@Injectable("0.0") double speed, @Injectable("0.0") double position, @Injectable("1") int minDoneCycles) {
         assertEquals(DriveBase.DriveMode.Disabled, DriveBase.getInstance().getDriveMode());
-        straightDrive.initialize();
-        assertEquals(DriveBase.DriveMode.PositionNoGyro, DriveBase.getInstance().getDriveMode());
+        straightDriveGyro.initialize();
+        assertEquals(DriveBase.DriveMode.PositionGyro, DriveBase.getInstance().getDriveMode());
         assertTrue(DriveBase.getInstance().isBrakeMode());
 
-        straightDrive.end();
+        straightDriveGyro.end();
         assertEquals(DriveBase.DriveMode.Disabled, DriveBase.getInstance().getDriveMode());
     }
 
@@ -85,16 +90,16 @@ public class StraightDriveTest {
      */
     @Test
     public void testSetting(@Injectable("0.0") double speed, @Injectable("0.5") double position, @Injectable("1") int minDoneCycles) {
-        straightDrive.initialize();
+        straightDriveGyro.initialize();
 
-        straightDrive.execute();
-        straightDrive.execute();
-        straightDrive.execute();
+        for (int i = 0; i < 3; i++) {
+            straightDriveGyro.execute();
+        }
 
-        straightDrive.end();
+        straightDriveGyro.end();
 
         new Verifications() {{
-            talon.set(ControlMode.Position, position / Config.DRIVE_ENCODER_DPP);
+            talon.set(ControlMode.Position, position / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, 0);
             times = 3;
             talon.configClosedLoopPeakOutput(0, speed);
             times = 6;
@@ -119,26 +124,26 @@ public class StraightDriveTest {
 
         Scheduler.getInstance().disable();
 
-        straightDrive.initialize();
+        straightDriveGyro.initialize();
 
-        assertFalse(straightDrive.isFinished());
-        assertFalse(straightDrive.isFinished());
-        assertFalse(straightDrive.isFinished());
-        assertFalse(straightDrive.isFinished());
-        assertFalse(straightDrive.isFinished());
-        assertFalse(straightDrive.isFinished());
-        assertFalse(straightDrive.isFinished());
-        assertFalse(straightDrive.isFinished());
-        assertFalse(straightDrive.isFinished());
-        assertTrue(straightDrive.isFinished());
+        assertFalse(straightDriveGyro.isFinished());
+        assertFalse(straightDriveGyro.isFinished());
+        assertFalse(straightDriveGyro.isFinished());
+        assertFalse(straightDriveGyro.isFinished());
+        assertFalse(straightDriveGyro.isFinished());
+        assertFalse(straightDriveGyro.isFinished());
+        assertFalse(straightDriveGyro.isFinished());
+        assertFalse(straightDriveGyro.isFinished());
+        assertFalse(straightDriveGyro.isFinished());
+        assertTrue(straightDriveGyro.isFinished());
 
-        straightDrive.end();
+        straightDriveGyro.end();
 
-        straightDrive.initialize();
+        straightDriveGyro.initialize();
 
-        assertFalse(straightDrive.isFinished());
+        assertFalse(straightDriveGyro.isFinished());
 
-        straightDrive.end();
+        straightDriveGyro.end();
     }
 
     /**
@@ -160,4 +165,6 @@ public class StraightDriveTest {
     private static int intFeetToTicks(double feet) {
         return (int) (feetToTicks(feet));
     }
+
+
 }

@@ -1,7 +1,6 @@
 package ca.team2706.frc.robot.config;
 
 import ca.team2706.frc.robot.Robot;
-import ca.team2706.frc.robot.util.Util;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
@@ -13,6 +12,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -59,6 +59,9 @@ public class FluidConstantTest {
     private MotControllerJNI motControllerJNI;
 
     @Mocked
+    private Notifier notifier;
+
+    @Mocked
     private CameraServer cameraServer;
 
     @Mocked
@@ -71,7 +74,7 @@ public class FluidConstantTest {
     private static boolean isInitialized = false;
 
     @Before
-    public void setUp() throws NoSuchFieldException, IllegalAccessException {
+    public void setUp() {
         if (!isInitialized) {
             isInitialized = true;
 
@@ -88,8 +91,6 @@ public class FluidConstantTest {
                 result = sensorCollection;
                 minTimes = 0;
             }};
-
-            Util.resetConfigAndRobot();
 
             Robot robot = new Robot();
             robot.robotInit();

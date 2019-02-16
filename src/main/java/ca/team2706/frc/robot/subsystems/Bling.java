@@ -59,7 +59,13 @@ public class Bling extends Subsystem {
 
 
     // Networktables entries for bling
-    private NetworkTableEntry waitMSNT, redNT, greenNT, blueNT, repeatNT, brightnessNT, commandNT;
+    private final NetworkTableEntry waitMSNT;
+    private final NetworkTableEntry redNT;
+    private final NetworkTableEntry greenNT;
+    private final NetworkTableEntry blueNT;
+    private final NetworkTableEntry repeatNT;
+    private final NetworkTableEntry brightnessNT;
+    private final NetworkTableEntry commandNT;
 
 
     private BlingController blingController;
@@ -174,7 +180,7 @@ public class Bling extends Subsystem {
     }
 
     /**
-     * Sends the given pattern to the coprocessor to dislay the pattern.
+     * Sends the given pattern to the coprocessor to display the pattern.
      * <b>No verification or checking is done.</b>
      *
      * @param brightness  The brightness, an integer between 0 and 255, 255 being full brightness

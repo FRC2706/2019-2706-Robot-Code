@@ -17,16 +17,16 @@ import java.util.function.Consumer;
 public class SendablesTest {
 
     @Tested
-    SendableBase sendableBase;
+    private SendableBase sendableBase;
 
     @Mocked
-    SensorCollection sensorCollection;
+    private SensorCollection sensorCollection;
 
     @Injectable
-    NetworkTable table;
+    private NetworkTable table;
 
     @Injectable
-    NetworkTableEntry ntEntry;
+    private NetworkTableEntry ntEntry;
 
     /**
      * Checks the correct name was added to LiveWindow for the Pigeon sendable
@@ -161,8 +161,9 @@ public class SendablesTest {
     @Test
     public void newPigeonSendableUpdateTest(@Injectable PigeonIMU pigeon) {
         new Expectations() {{
-            pigeon.getFusedHeading();
-            returns(-5.0, 0.0, 5.0);
+            pigeon.getYawPitchRoll((double[]) any);
+
+            returns(makePigeonExpectation(-5.0), makePigeonExpectation(0.0), makePigeonExpectation(5.0));
 
             table.getEntry(Sendables.PIGEON_NAME);
             result = ntEntry;
@@ -185,6 +186,17 @@ public class SendablesTest {
             ntEntry.setDouble(0.0);
             ntEntry.setDouble(5.0);
         }};
+    }
+
+    public static Delegate makePigeonExpectation(double expectedValue) {
+        return new Delegate() {
+            @SuppressWarnings("unused")
+            public void getYawPitchRoll(double[] array) {
+                array[0] = expectedValue;
+                array[1] = 0;
+                array[2] = 0;
+            }
+        };
     }
 
     /**
@@ -230,9 +242,9 @@ public class SendablesTest {
         builder.startListeners();
 
         new Verifications() {{
-            pigeon.setFusedHeading(-24.0);
-            pigeon.setFusedHeading(2.0);
-            pigeon.setFusedHeading(0.0);
+            pigeon.setYaw(-24.0);
+            pigeon.setYaw(2.0);
+            pigeon.setYaw(0.0);
         }};
     }
 }

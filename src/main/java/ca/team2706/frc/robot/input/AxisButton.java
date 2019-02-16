@@ -1,8 +1,8 @@
 package ca.team2706.frc.robot.input;
 
-import edu.wpi.first.wpilibj.GenericHID;
-
 import java.util.Objects;
+
+import edu.wpi.first.wpilibj.GenericHID;
 
 /**
  * Activates a button from a joystick axis trigger
@@ -50,7 +50,8 @@ public class AxisButton extends EButton {
 
         if ((triggerType == TriggerType.Positive || triggerType == TriggerType.Both) && val >= minTrigger) {
             return true;
-        } else return (triggerType == TriggerType.Negative || triggerType == TriggerType.Both) && val <= -minTrigger;
+        } else
+            return (triggerType == TriggerType.Negative || triggerType == TriggerType.Both) && val <= -minTrigger;
     }
 
     /**

@@ -1,11 +1,5 @@
 package ca.team2706.frc.robot.config;
 
-import ca.team2706.frc.robot.Robot;
-import ca.team2706.frc.robot.RobotState;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DriverStation;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -15,6 +9,12 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
+
+import ca.team2706.frc.robot.Robot;
+import ca.team2706.frc.robot.RobotState;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 
 /**
  * Config manager for the robot.

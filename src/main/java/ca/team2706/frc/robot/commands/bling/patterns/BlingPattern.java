@@ -1,11 +1,11 @@
 package ca.team2706.frc.robot.commands.bling.patterns;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ca.team2706.frc.robot.commands.bling.BlingController;
 import ca.team2706.frc.robot.subsystems.Bling;
 import edu.wpi.first.wpilibj.Timer;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The template for Bling Patterns. Shouldn't be instantiated.

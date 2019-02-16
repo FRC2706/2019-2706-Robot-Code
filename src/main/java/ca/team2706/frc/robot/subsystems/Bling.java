@@ -2,6 +2,7 @@ package ca.team2706.frc.robot.subsystems;
 
 import ca.team2706.frc.robot.commands.bling.BlingController;
 import ca.team2706.frc.robot.commands.bling.patterns.BlingPattern;
+import ca.team2706.frc.robot.logging.Log;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -58,7 +59,13 @@ public class Bling extends Subsystem {
 
 
     // Networktables entries for bling
-    private NetworkTableEntry waitMSNT, redNT, greenNT, blueNT, repeatNT, brightnessNT, commandNT;
+    private final NetworkTableEntry waitMSNT;
+    private final NetworkTableEntry redNT;
+    private final NetworkTableEntry greenNT;
+    private final NetworkTableEntry blueNT;
+    private final NetworkTableEntry repeatNT;
+    private final NetworkTableEntry brightnessNT;
+    private final NetworkTableEntry commandNT;
 
 
     private BlingController blingController;
@@ -173,7 +180,7 @@ public class Bling extends Subsystem {
     }
 
     /**
-     * Sends the given pattern to the coprocessor to dislay the pattern.
+     * Sends the given pattern to the coprocessor to display the pattern.
      * <b>No verification or checking is done.</b>
      *
      * @param brightness  The brightness, an integer between 0 and 255, 255 being full brightness
@@ -193,6 +200,7 @@ public class Bling extends Subsystem {
             waitMSNT.setDouble(waitMS);
             brightnessNT.setDouble(brightness);
             commandNT.setString(command);
+            Log.d("Bling command: " + command);
         }
     }
 
@@ -203,5 +211,4 @@ public class Bling extends Subsystem {
         int[] colour = new int[]{0, 0, 0};
         sendPattern(0, 0, colour, CLEAR, 0);
     }
-
 }

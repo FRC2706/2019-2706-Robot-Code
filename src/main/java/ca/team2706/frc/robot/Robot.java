@@ -1,6 +1,7 @@
 package ca.team2706.frc.robot;
 
 import ca.team2706.frc.robot.commands.drivebase.StraightDrive;
+import ca.team2706.frc.robot.commands.drivebase.StraightDriveGyro;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.*;
@@ -20,9 +21,17 @@ import java.util.function.Consumer;
  * Main Robot class
  */
 public class Robot extends TimedRobot {
-    private static boolean isInitialized;
+    private boolean isInitialized;
 
     private Command[] commands;
+
+    private static Robot latestInstance;
+
+    private final List<Consumer<RobotState>> stateListeners = new ArrayList<>();
+
+    public Robot() {
+        latestInstance = this;
+    }
 
     /**
      * Method run on robot initialization.
@@ -61,7 +70,8 @@ public class Robot extends TimedRobot {
         commands = new Command[]{
                 OI.getInstance().driveCommand,                               // 0
                 OI.getInstance().driveCommand,                               // 1
-                new StraightDrive(0.2, 2.0, 100)  // 2
+                new StraightDrive(0.2, 2.0, 100),  // 2
+                new StraightDriveGyro(0.2, 2.0, 100)  // 3
         };
 
     }
@@ -168,11 +178,6 @@ public class Robot extends TimedRobot {
     }
 
     /**
-     * ArrayList of Robot State consumers to be invoked when the robot's state changes.
-     */
-    private static final List<Consumer<RobotState>> STATE_LISTENERS = new ArrayList<>();
-
-    /**
      * Main method, called when the robot code is run like a desktop application.
      *
      * @param args Arguments passed on startup
@@ -186,12 +191,32 @@ public class Robot extends TimedRobot {
     }
 
     /**
+     * Adds a method to be called when the robot's state is changed.
+     *
+     * @param listener The listener to be added.
+     */
+    public void addStateListener(Consumer<RobotState> listener) {
+        stateListeners.add(listener);
+    }
+
+    /**
      * Sets the given listener to be called when the robot is disabled.
      *
      * @param listener The listener to be invoked when the robot is disabled.
      */
     public static void setOnStateChange(Consumer<RobotState> listener) {
-        STATE_LISTENERS.add(listener);
+        if (latestInstance != null) {
+            latestInstance.addStateListener(listener);
+        }
+    }
+
+    /**
+     * Removes a state listener.
+     *
+     * @param listener The listener to be removed.
+     */
+    public void removeListener(Consumer<RobotState> listener) {
+        stateListeners.remove(listener);
     }
 
     /**
@@ -200,7 +225,9 @@ public class Robot extends TimedRobot {
      * @param listener The listener to be removed.
      */
     public static void removeStateListener(Consumer<RobotState> listener) {
-        STATE_LISTENERS.remove(listener);
+        if (latestInstance != null) {
+            latestInstance.removeListener(listener);
+        }
     }
 
     /**
@@ -208,7 +235,16 @@ public class Robot extends TimedRobot {
      *
      * @return True if the robot has been initialized, false otherwise.
      */
-    public static boolean isInitialized() {
+    public static boolean isRobotInitialized() {
+        return latestInstance != null && latestInstance.isInitialized();
+    }
+
+    /**
+     * Determines if this robot has been initialized properly.
+     *
+     * @return True if initialized, false otherwise.
+     */
+    public boolean isInitialized() {
         return isInitialized;
     }
 
@@ -217,10 +253,10 @@ public class Robot extends TimedRobot {
      *
      * @param newState The robot's current (new) state.
      */
-    private static void onStateChange(RobotState newState) {
-        // We want to make a copy of this so that we don't have concurrency problems.
-        ArrayList<Consumer<RobotState>> stateListenerCopy = new ArrayList<>(STATE_LISTENERS);
-        stateListenerCopy.forEach(action -> action.accept(newState));
+    private void onStateChange(RobotState newState) {
+        // Make shallow copy of this.
+        ArrayList<Consumer<RobotState>> listeners = new ArrayList<>(stateListeners);
+        listeners.forEach(action -> action.accept(newState));
     }
 
     /**
@@ -228,6 +264,6 @@ public class Robot extends TimedRobot {
      */
     private static void shutdown() {
         // Iterate through each of the state-change listeners and call them.
-        Robot.onStateChange(RobotState.SHUTDOWN);
+        latestInstance.onStateChange(RobotState.SHUTDOWN);
     }
 }

@@ -19,8 +19,6 @@ import mockit.Tested;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.function.Supplier;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -63,9 +61,9 @@ public class DriveBaseClosedLoopTest {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
+            minTimes = 0;
         }};
     }
-
 
     @Test
     public void testFinishing(@Injectable("3") int minDoneCycles, @Injectable("0.3") double targetRange) {

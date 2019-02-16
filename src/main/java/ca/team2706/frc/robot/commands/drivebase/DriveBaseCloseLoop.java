@@ -29,7 +29,7 @@ public abstract class DriveBaseCloseLoop extends Command {
      * Requires the drivebase and holds the minDoneCycles
      *
      * @param minDoneCycles The minimum cycles at the desired position before the robot ends
-     * @param targetRange The range before starting to count done cycles
+     * @param targetRange   The range before starting to count done cycles
      */
     protected DriveBaseCloseLoop(int minDoneCycles, double targetRange) {
         this(() -> minDoneCycles, targetRange);
@@ -39,7 +39,7 @@ public abstract class DriveBaseCloseLoop extends Command {
      * Requires the drivebase and holds the minDoneCycles
      *
      * @param minDoneCycles The minimum cycles at the desired position before the robot ends
-     * @param targetRange The range before starting to count done cycles
+     * @param targetRange   The range before starting to count done cycles
      */
     protected DriveBaseCloseLoop(Supplier<Integer> minDoneCycles, double targetRange) {
         requires(DriveBase.getInstance());

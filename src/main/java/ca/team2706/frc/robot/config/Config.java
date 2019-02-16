@@ -85,11 +85,8 @@ public class Config {
     public static final int ARCADE_DRIVE_FORWARD = 5;
     public static final int ARCADE_DRIVE_ROTATE = 4;
 
-<<<<<<< HEAD
-=======
     public static final double LOG_PERIOD = robotSpecific(0.02, 0.02, 0.02, Double.POSITIVE_INFINITY);
 
->>>>>>> 5e5c48c2fed1c38ce639ec47b11d309106fe4e64
     // #### Fluid constants ####
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_DEADBAND = constant("drive-deadband", 0.001);
     public static final FluidConstant<Double> DRIVE_OPEN_LOOP_DEADBAND = constant("drive-deadband", 0.04);

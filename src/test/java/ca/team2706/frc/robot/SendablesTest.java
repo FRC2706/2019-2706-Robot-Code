@@ -188,7 +188,7 @@ public class SendablesTest {
         }};
     }
 
-    private static Delegate makePigeonExpectation(double expectedValue) {
+    public static Delegate makePigeonExpectation(double expectedValue) {
         return new Delegate() {
             @SuppressWarnings("unused")
             public void getYawPitchRoll(double[] array) {

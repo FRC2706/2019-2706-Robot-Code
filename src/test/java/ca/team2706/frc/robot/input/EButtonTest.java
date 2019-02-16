@@ -5,9 +5,14 @@ import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -16,8 +21,6 @@ import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Mocked;
 import mockit.Tested;
-import org.junit.Before;
-import org.junit.Test;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;
@@ -53,6 +56,9 @@ public class EButtonTest {
 
     @Mocked(stubOutClassInitialization = true)
     private MotControllerJNI motControllerJNI;
+
+    @Mocked
+    private Notifier notifier;
 
     @Injectable
     private SensorCollection sensorCollection;

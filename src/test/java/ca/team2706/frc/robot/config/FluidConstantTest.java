@@ -1,73 +1,67 @@
 package ca.team2706.frc.robot.config;
 
-import ca.team2706.frc.robot.Robot;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import ca.team2706.frc.robot.Robot;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import mockit.*;
-import org.junit.Before;
-import org.junit.Test;
+import mockit.Expectations;
+import mockit.Injectable;
+import mockit.Mocked;
+import mockit.Tested;
+import mockit.Verifications;
 
 public class FluidConstantTest {
+    // Whether or not tests have been initialized.
+    private static boolean isInitialized = false;
     // We'll just use a string fluid constant to test.
     @Tested
     private FluidConstant<String> constantToTest = new FluidConstant<>("Test Constant", "");
-
     @Injectable
     private NetworkTableEntry ntEntry;
-
     @Injectable
     private NetworkTable constantsTable;
-
     @Mocked
     private NetworkTableInstance ntInstance;
-
     @Mocked(stubOutClassInitialization = true)
     private DriverStation driverStation;
-
     // LOOK AWAY! The mocks for Robot
     @Mocked
     private WPI_TalonSRX talon;
-
     @Mocked
     private PWM pwm;
-
     @Mocked
     private AnalogInput analogInput;
-
     @Mocked(stubOutClassInitialization = true)
     private PigeonIMU pigeon;
-
     private DifferentialDrive differentialDrive;
-
     @Mocked(stubOutClassInitialization = true)
     private CTREJNIWrapper jni;
-
     @Mocked(stubOutClassInitialization = true)
     private MotControllerJNI motControllerJNI;
-
+    @Mocked
+    private Notifier notifier;
     @Mocked
     private CameraServer cameraServer;
-
     @Mocked
     private LiveWindow liveWindow;
-
     @Injectable
     private SensorCollection sensorCollection;
-
-    // Whether or not tests have been initialized.
-    private static boolean isInitialized = false;
 
     @Before
     public void setUp() {

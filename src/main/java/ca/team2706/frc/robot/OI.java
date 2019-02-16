@@ -11,34 +11,15 @@ import edu.wpi.first.wpilibj.command.Command;
  * and command groups that allow control of the robot.
  */
 public class OI {
-    // Joystick for driving the robot around
-    private final Joystick driverStick;
-
-    // Joystick for controlling the mechanisms of the robot
-    private final Joystick controlStick;
-
     /**
      * Current instance of the OI class.
      */
     private static OI currentInstance;
-
     public final Command driveCommand;
-
-    /**
-     * Gets the current instance of the OI class.
-     *
-     * @return The current instance of OI.
-     */
-    public static OI getInstance() {
-        init();
-        return currentInstance;
-    }
-
-    public static void init() {
-        if (currentInstance == null) {
-            currentInstance = new OI();
-        }
-    }
+    // Joystick for driving the robot around
+    private final Joystick driverStick;
+    // Joystick for controlling the mechanisms of the robot
+    private final Joystick controlStick;
 
     /**
      * Initializes Oi using the two default real joysticks
@@ -65,6 +46,22 @@ public class OI {
 
         // Set subsystem default commands
         DriveBase.getInstance().setDefaultCommand(driveCommand);
+    }
+
+    /**
+     * Gets the current instance of the OI class.
+     *
+     * @return The current instance of OI.
+     */
+    public static OI getInstance() {
+        init();
+        return currentInstance;
+    }
+
+    public static void init() {
+        if (currentInstance == null) {
+            currentInstance = new OI();
+        }
     }
 
     /**

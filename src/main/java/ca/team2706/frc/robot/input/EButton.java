@@ -1,16 +1,18 @@
 package ca.team2706.frc.robot.input;
 
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
+
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
-
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
 
 /**
  * Button with additional feature to run and cancel when released
  */
 public abstract class EButton extends Button {
+
+    private final VarHandle m_sendablePressed = getVarHandle();
 
     /**
      * Starts the given command whenever the button is newly pressed and cancels it when it is released.
@@ -35,8 +37,6 @@ public abstract class EButton extends Button {
             }
         }.start();
     }
-
-    private final VarHandle m_sendablePressed = getVarHandle();
 
     private VarHandle getVarHandle() {
         try {

@@ -1,5 +1,9 @@
 package ca.team2706.frc.robot.commands.bling;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Optional;
+
 import ca.team2706.frc.robot.commands.bling.patterns.Blank;
 import ca.team2706.frc.robot.commands.bling.patterns.BlingPattern;
 import ca.team2706.frc.robot.subsystems.Bling;
@@ -7,25 +11,11 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Optional;
-
 /**
  * Command to control the bling on the robot.
  */
 public class BlingController extends Command {
 
-
-    private BlingPattern currentPattern = null;
-    private double startTime = 0;
-
-    /**
-     * Possible periods of the robot.
-     */
-    public enum Period {
-        AUTONOMOUS, TELEOP_WITHOUT_CLIMB, CLIMB
-    }
 
     /**
      * How long (in seconds) that teleop lasts (including climb time)
@@ -35,20 +25,18 @@ public class BlingController extends Command {
      * How long (in seconds) the autonomous/sandstorm period lasts.
      */
     private static final double AUTONOMOUS_TIME = 15;
-
     /**
      * How long the climb period at the end of the match is (in seconds)
      */
     private static final double CLIMB_TIME = 30;
-
     /**
      * How long the entire match is (in seconds).
      */
     private static final double TOTAL_TIME = 150;
-
-    private boolean useMatchTime;
-
     private final HashMap<Period, ArrayList<BlingPattern>> commands = new HashMap<>();
+    private BlingPattern currentPattern = null;
+    private double startTime = 0;
+    private boolean useMatchTime;
 
     public BlingController() {
         requires(Bling.getInstance());
@@ -183,5 +171,12 @@ public class BlingController extends Command {
      */
     private void runCurrentPattern() {
         if (currentPattern != null) Bling.getInstance().display(currentPattern);
+    }
+
+    /**
+     * Possible periods of the robot.
+     */
+    public enum Period {
+        AUTONOMOUS, TELEOP_WITHOUT_CLIMB, CLIMB
     }
 }

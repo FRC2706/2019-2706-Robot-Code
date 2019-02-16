@@ -12,15 +12,13 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public abstract class DriveBaseCloseLoop extends Command {
 
     /**
-     * The acceptable range in feet for the error between the target and actual position
-     */
-    private double targetRange;
-
-    /**
      * The minimum number of cycles for the robot to be within the target zone before the command ends
      */
     private final Supplier<Integer> minDoneCycles;
-
+    /**
+     * The acceptable range in feet for the error between the target and actual position
+     */
+    private double targetRange;
     /**
      * The number of cycles that the robot is in the target range for
      */

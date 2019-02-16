@@ -3,16 +3,23 @@ package ca.team2706.frc.robot;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
+
+import org.junit.Test;
+
+import java.util.function.Consumer;
+
 import edu.wpi.first.networktables.EntryNotification;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.SendableBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilderImpl;
-import mockit.*;
-import org.junit.Test;
-
-import java.util.function.Consumer;
+import mockit.Delegate;
+import mockit.Expectations;
+import mockit.Injectable;
+import mockit.Mocked;
+import mockit.Tested;
+import mockit.Verifications;
 
 public class SendablesTest {
 
@@ -27,6 +34,17 @@ public class SendablesTest {
 
     @Injectable
     private NetworkTableEntry ntEntry;
+
+    private static Delegate makePigeonExpectation(double expectedValue) {
+        return new Delegate() {
+            @SuppressWarnings("unused")
+            public void getYawPitchRoll(double[] array) {
+                array[0] = expectedValue;
+                array[1] = 0;
+                array[2] = 0;
+            }
+        };
+    }
 
     /**
      * Checks the correct name was added to LiveWindow for the Pigeon sendable
@@ -186,17 +204,6 @@ public class SendablesTest {
             ntEntry.setDouble(0.0);
             ntEntry.setDouble(5.0);
         }};
-    }
-
-    private static Delegate makePigeonExpectation(double expectedValue) {
-        return new Delegate() {
-            @SuppressWarnings("unused")
-            public void getYawPitchRoll(double[] array) {
-                array[0] = expectedValue;
-                array[1] = 0;
-                array[2] = 0;
-            }
-        };
     }
 
     /**

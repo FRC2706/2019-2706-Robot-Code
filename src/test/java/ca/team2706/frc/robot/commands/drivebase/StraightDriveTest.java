@@ -1,22 +1,31 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
-import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.subsystems.DriveBase;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.PWM;
-import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import mockit.*;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.subsystems.DriveBase;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.PWM;
+import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import mockit.Expectations;
+import mockit.Injectable;
+import mockit.Mocked;
+import mockit.Tested;
+import mockit.Verifications;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class StraightDriveTest {
 
@@ -43,8 +52,31 @@ public class StraightDriveTest {
     @Mocked(stubOutClassInitialization = true)
     private MotControllerJNI motControllerJNI;
 
+    @Mocked
+    private Notifier notifier;
+
     @Injectable
     private SensorCollection sensorCollection;
+
+    /**
+     * Converts feet to encoder ticks
+     *
+     * @param feet The distance in feet
+     * @return The amount of ticks
+     */
+    private static double feetToTicks(double feet) {
+        return feet / Config.DRIVE_ENCODER_DPP;
+    }
+
+    /**
+     * Converts feet to integer encoder ticks
+     *
+     * @param feet The distance in feet
+     * @return The amount of ticks as integer
+     */
+    private static int intFeetToTicks(double feet) {
+        return (int) (feetToTicks(feet));
+    }
 
     @Before
     public void setUp() {
@@ -135,25 +167,5 @@ public class StraightDriveTest {
         assertFalse(straightDrive.isFinished());
 
         straightDrive.end();
-    }
-
-    /**
-     * Converts feet to encoder ticks
-     *
-     * @param feet The distance in feet
-     * @return The amount of ticks
-     */
-    private static double feetToTicks(double feet) {
-        return feet / Config.DRIVE_ENCODER_DPP;
-    }
-
-    /**
-     * Converts feet to integer encoder ticks
-     *
-     * @param feet The distance in feet
-     * @return The amount of ticks as integer
-     */
-    private static int intFeetToTicks(double feet) {
-        return (int) (feetToTicks(feet));
     }
 }

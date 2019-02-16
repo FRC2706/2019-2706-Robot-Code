@@ -1,12 +1,17 @@
 package ca.team2706.frc.robot.subsystems;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import ca.team2706.frc.robot.commands.bling.patterns.BlingPattern;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import mockit.*;
-import org.junit.Before;
-import org.junit.Test;
+import mockit.Expectations;
+import mockit.Injectable;
+import mockit.Mocked;
+import mockit.Tested;
+import mockit.Verifications;
 
 public class BlingTest {
 

@@ -1,25 +1,23 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
-import ca.team2706.frc.robot.subsystems.DriveBase;
-
 import java.util.function.Supplier;
 
+import ca.team2706.frc.robot.subsystems.DriveBase;
+
 public class StraightDriveGyro extends DriveBaseCloseLoop {
-
-    /**
-     * References to the speed and position that the robot should be travelling at
-     */
-    private final Supplier<Double> speed, position;
-
-    /**
-     * The minimum number of cycles for the robot to be within the target zone before the command ends
-     */
-    private final Supplier<Integer> minDoneCycles;
 
     /**
      * The acceptable range in feet for the error between the target and actual position
      */
     private static final double TARGET_RANGE = 0.3;
+    /**
+     * References to the speed and position that the robot should be travelling at
+     */
+    private final Supplier<Double> speed, position;
+    /**
+     * The minimum number of cycles for the robot to be within the target zone before the command ends
+     */
+    private final Supplier<Integer> minDoneCycles;
 
     /**
      * Creates a straight drive command with constant values
@@ -42,11 +40,11 @@ public class StraightDriveGyro extends DriveBaseCloseLoop {
      *                      the target zone before the command ends
      */
     public StraightDriveGyro(Supplier<Double> speed, Supplier<Double> position, Supplier<Integer> minDoneCycles) {
-          super(DriveBase.getInstance(), minDoneCycles, TARGET_RANGE);
-          this.speed = speed;
-          this.position = position;
-          this.minDoneCycles = minDoneCycles;
-          requires(DriveBase.getInstance());
+        super(DriveBase.getInstance(), minDoneCycles, TARGET_RANGE);
+        this.speed = speed;
+        this.position = position;
+        this.minDoneCycles = minDoneCycles;
+        requires(DriveBase.getInstance());
     }
 
     @Override

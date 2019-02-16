@@ -1,11 +1,11 @@
 package ca.team2706.frc.robot.commands.bling.patterns;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ca.team2706.frc.robot.commands.bling.BlingController;
 import ca.team2706.frc.robot.subsystems.Bling;
 import edu.wpi.first.wpilibj.Timer;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The template for Bling Patterns. Shouldn't be instantiated.
@@ -13,23 +13,25 @@ import java.util.List;
  * @author Kyle Anderson
  */
 public abstract class BlingPattern {
-    // The start time of the pattern.
-    private double startTime;
-
     protected int[] rgbColourCode = new int[3];
     protected int repeatCount = 1000000;
     protected int waitMs = 50;
     protected int ledBrightness = Bling.GOOD_BRIGHTNESS;
     protected String command = Bling.COLOUR_WIPE;
-
     protected List<BlingController.Period> operationPeriod = new ArrayList<>();
-
     /**
      * True if the pattern has already been run at least once
      * and it was the last pattern to run.
      */
     protected boolean hasRun = false;
+    // The start time of the pattern.
+    private double startTime;
 
+
+    public BlingPattern() {
+        // Initialize with a red colour initially. (values 1 and 2 are already initialized).
+        rgbColourCode[0] = 255;
+    }
 
     /**
      * Gets the time passed since this pattern began to run.
@@ -38,11 +40,6 @@ public abstract class BlingPattern {
      */
     public double getTimeSinceStart() {
         return Timer.getFPGATimestamp() - startTime;
-    }
-
-    public BlingPattern() {
-        // Initialize with a red colour initially. (values 1 and 2 are already initialized).
-        rgbColourCode[0] = 255;
     }
 
     /**
@@ -73,6 +70,10 @@ public abstract class BlingPattern {
         return repeatCount;
     }
 
+    protected void setRepeatCount(int repeatCount) {
+        this.repeatCount = repeatCount;
+    }
+
     /**
      * @return The brightness (from 0 to 255) of the LED strip when displaying this pattern
      */
@@ -87,6 +88,10 @@ public abstract class BlingPattern {
      */
     public String getCommand() {
         return command;
+    }
+
+    protected void setCommand(String command) {
+        this.command = command;
     }
 
     /**
@@ -144,19 +149,11 @@ public abstract class BlingPattern {
         rgbColourCode[2] = blue;
     }
 
-    protected void setRepeatCount(int repeatCount) {
-        this.repeatCount = repeatCount;
-    }
-
     protected void setWaitMs(int waitMs) {
         this.waitMs = waitMs;
     }
 
     protected void setLedBrightness(int ledBrightness) {
         this.ledBrightness = ledBrightness;
-    }
-
-    protected void setCommand(String command) {
-        this.command = command;
     }
 }

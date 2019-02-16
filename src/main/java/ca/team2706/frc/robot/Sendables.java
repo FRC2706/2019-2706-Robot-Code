@@ -1,8 +1,9 @@
 package ca.team2706.frc.robot;
 
-import ca.team2706.frc.robot.config.Config;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
+
+import ca.team2706.frc.robot.config.Config;
 import edu.wpi.first.wpilibj.SendableBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 

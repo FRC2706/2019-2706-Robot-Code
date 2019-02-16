@@ -1,12 +1,25 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
-import ca.team2706.frc.robot.subsystems.DriveBase;
-import mockit.Expectations;
-import mockit.Mocked;
-import mockit.Verifications;
+import com.ctre.phoenix.CTREJNIWrapper;
+import com.ctre.phoenix.motorcontrol.SensorCollection;
+import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.sensors.PigeonIMU;
+
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.function.Supplier;
+
+import ca.team2706.frc.robot.subsystems.DriveBase;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.PWM;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import mockit.Expectations;
+import mockit.Injectable;
+import mockit.Mocked;
+import mockit.Verifications;
 
 public class ArcadeDriveTest {
 
@@ -17,7 +30,31 @@ public class ArcadeDriveTest {
     private Supplier<Double> rotateVal;
 
     @Mocked
-    private DriveBase driveBase;
+    private WPI_TalonSRX talon;
+
+    @Mocked
+    private PWM pwm;
+
+    @Mocked
+    private AnalogInput analogInput;
+
+    @Mocked(stubOutClassInitialization = true)
+    private PigeonIMU pigeon;
+
+    @Mocked
+    private DifferentialDrive differentialDrive;
+
+    @Mocked(stubOutClassInitialization = true)
+    private CTREJNIWrapper jni;
+
+    @Mocked(stubOutClassInitialization = true)
+    private MotControllerJNI motControllerJNI;
+
+    @Mocked
+    private Notifier notifier;
+
+    @Injectable
+    private SensorCollection sensorCollection;
 
     @Test
     public void testBrakeModeOn() {
@@ -27,6 +64,14 @@ public class ArcadeDriveTest {
     @Test
     public void testBrakeModeOff() {
         testBrakeMode(false);
+    }
+
+    @Before
+    public void setUp() {
+        new Expectations() {{
+            talon.getSensorCollection();
+            result = sensorCollection;
+        }};
     }
 
     /**

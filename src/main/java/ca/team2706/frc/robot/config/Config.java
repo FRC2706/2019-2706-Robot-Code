@@ -27,7 +27,6 @@ public class Config {
         new Config();
     }
 
-
     private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
 
     // #### Static constants ####
@@ -99,7 +98,10 @@ public class Config {
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_I = constant("drive-I", 0.0);
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_D = constant("drive-D", 0.0);
 
-    // #### Fluid constants ####
+    public static final FluidConstant<Double> PIGEON_KP = constant("pigeon-kp", 2.0);
+    public static final FluidConstant<Double> PIGEON_KI = constant("pigeon-ki", 0.0);
+    public static final FluidConstant<Double> PIGEON_KD = constant("pigeon-ki", 4.0);
+    public static final FluidConstant<Double> PIGEON_KF = constant("pigeon-kf", 0.0);
 
 
     // ### Methods, fields and Constructors ###

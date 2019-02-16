@@ -161,8 +161,21 @@ public class SendablesTest {
     @Test
     public void newPigeonSendableUpdateTest(@Injectable PigeonIMU pigeon) {
         new Expectations() {{
-            pigeon.getFusedHeading();
-            returns(-5.0, 0.0, 5.0);
+            pigeon.getYawPitchRoll((double[]) any);
+            //returns  (new double[] {-5.0, 0.0, 0.0}, new double[] {0.0, 0.0, 0.0}, (Object) new double[] {5.0, 0.0, 0.0});
+            result = new Delegate() {
+                int i = 0;
+                void getYawPitchRoll(double[] d){
+                    double[][] yaws = {new double[] {0.0, 0.0, 0.0},new double[] {-5.0, 0.0, 0.0}, new double[] {0.0, 0.0, 0.0}, new double[] {5.0, 0.0, 0.0}};
+                    for(int j = 0; j<3; j++) {
+                        if(i >= yaws.length - 1) {
+                            d[j] = yaws[0][j];
+                        } else {
+                            d[j] = yaws[i++][j];
+                        }
+                    }
+                }
+            };
 
             table.getEntry(Sendables.PIGEON_NAME);
             result = ntEntry;

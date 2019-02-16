@@ -50,7 +50,8 @@ public class AxisButton extends EButton {
 
         if ((triggerType == TriggerType.Positive || triggerType == TriggerType.Both) && val >= minTrigger) {
             return true;
-        } else return (triggerType == TriggerType.Negative || triggerType == TriggerType.Both) && val <= -minTrigger;
+        } else
+            return (triggerType == TriggerType.Negative || triggerType == TriggerType.Both) && val <= -minTrigger;
     }
 
     /**

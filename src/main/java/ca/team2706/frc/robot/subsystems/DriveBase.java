@@ -226,6 +226,54 @@ public class DriveBase extends Subsystem {
     }
 
     /**
+     * Selects local encoders, the current sensor and the pigeon
+     */
+    private void selectEncodersSumWithPigeon() {
+        leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_SHORT);
+        rightFrontMotor.configRemoteFeedbackFilter(leftFrontMotor.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, 0, Config.CAN_SHORT);
+        rightFrontMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, 1, Config.CAN_SHORT);
+
+        rightFrontMotor.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Config.CAN_SHORT);
+        rightFrontMotor.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative, Config.CAN_SHORT);
+
+        rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, 0, Config.CAN_SHORT);
+        rightFrontMotor.configSelectedFeedbackCoefficient(0.5, 0, Config.CAN_SHORT);
+
+        rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, 1, Config.CAN_SHORT);
+
+        rightFrontMotor.configSelectedFeedbackCoefficient(1, 1, Config.CAN_SHORT);
+
+        leftFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_LEFT.value());
+        rightFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_RIGHT.value());
+
+        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Config.CAN_SHORT);
+        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Config.CAN_SHORT);
+        leftFrontMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Config.CAN_SHORT);
+        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Config.CAN_SHORT);
+
+        /* Configure neutral deadband */
+        rightFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value(), Config.CAN_SHORT);
+        leftFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value(), Config.CAN_SHORT);
+
+        rightFrontMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
+        rightFrontMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
+        rightFrontMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value());
+
+        rightFrontMotor.config_kP(1, Config.PIGEON_KP.value());
+        rightFrontMotor.config_kI(1, Config.PIGEON_KI.value());
+        rightFrontMotor.config_kD(1, Config.PIGEON_KD.value());
+        rightFrontMotor.config_kF(1, Config.PIGEON_KF.value());
+
+        rightFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
+
+        rightFrontMotor.configClosedLoopPeriod(1, 1, Config.CAN_SHORT);
+        rightFrontMotor.configAuxPIDPolarity(false, Config.CAN_SHORT);
+
+        rightFrontMotor.selectProfileSlot(0, 0);
+        rightFrontMotor.selectProfileSlot(1, 1);
+    }
+
+    /**
      * Sets the talons to a disabled mode
      */
     public void setDisabledMode() {
@@ -264,6 +312,18 @@ public class DriveBase extends Subsystem {
         }
     }
 
+    /**
+     * Gets the encoder sum using the pigeon
+     */
+    public void setPositionGyroMode() {
+        if (driveMode != DriveMode.PositionGyro) {
+            stop();
+            selectEncodersSumWithPigeon();
+            reset();
+
+            driveMode = DriveMode.PositionGyro;
+        }
+    }
 
     /**
      * Changes whether current limiting should be used
@@ -278,8 +338,6 @@ public class DriveBase extends Subsystem {
 
     }
 
-    private Command defaultCommand;
-
     @Override
     protected void initDefaultCommand() {
     }
@@ -290,6 +348,15 @@ public class DriveBase extends Subsystem {
     private void follow() {
         leftBackMotor.follow(leftFrontMotor);
         rightBackMotor.follow(rightFrontMotor);
+    }
+
+    /**
+     * Checks whether the robot is in brake mode
+     *
+     * @return True when the Talons have the neutral mode set to {@code NeutralMode.Brake}
+     */
+    public boolean isBrakeMode() {
+        return brakeMode;
     }
 
     /**
@@ -306,15 +373,6 @@ public class DriveBase extends Subsystem {
         rightBackMotor.setNeutralMode(mode);
 
         brakeMode = brake;
-    }
-
-    /**
-     * Checks whether the robot is in brake mode
-     *
-     * @return True when the Talons have the neutral mode set to {@code NeutralMode.Brake}
-     */
-    public boolean isBrakeMode() {
-        return brakeMode;
     }
 
     /**
@@ -378,6 +436,28 @@ public class DriveBase extends Subsystem {
     }
 
     /**
+     * Goes to a position with the closed loop Talon PIDs using only encoder and gyro
+     *
+     * @param speed          The speed from 0 to 1
+     * @param setpoint       The setpoint to go to in feet
+     * @param targetRotation The desired rotation
+     */
+    public void setPositionGyro(double speed, double setpoint, double targetRotation) {
+
+        setPositionGyroMode();
+
+        leftFrontMotor.configClosedLoopPeakOutput(0, speed);
+        rightFrontMotor.configClosedLoopPeakOutput(0, speed);
+        leftFrontMotor.configClosedLoopPeakOutput(1, speed);
+        rightFrontMotor.configClosedLoopPeakOutput(1, speed);
+
+        rightFrontMotor.set(ControlMode.Position, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation);
+        leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
+
+        follow();
+    }
+
+    /**
      * Get the distance travelled by the left encoder in feet
      *
      * @return The distance of the left encoder
@@ -416,10 +496,10 @@ public class DriveBase extends Subsystem {
     /**
      * Gets the angle that the robot is facing in degrees
      *
-     * @return The rotation of the robot in degrees
+     * @return The rotation of the robot
      */
     public double getHeading() {
-        return gyro.getFusedHeading();
+        return Sendables.getPigeonYaw(gyro);
     }
 
     /**
@@ -444,7 +524,7 @@ public class DriveBase extends Subsystem {
      */
     public void resetGyro() {
         savedAngle = getAbsoluteHeading();
-        gyro.setFusedHeading(0, Config.CAN_SHORT);
+        gyro.setYaw(0, Config.CAN_SHORT);
     }
 
     /**
@@ -473,30 +553,10 @@ public class DriveBase extends Subsystem {
         return rightFrontMotor.getClosedLoopError(0) * Config.DRIVE_ENCODER_DPP;
     }
 
-    /**
-     * The drive mode of the robot
-     */
-    public enum DriveMode {
-        /**
-         * There is no control mode active
-         */
-        Disabled,
-
-        /**
-         * Standard open loop voltage control
-         */
-        OpenLoopVoltage,
-
-        /**
-         * Performs closed loop position control without heading support
-         */
-        PositionNoGyro
-    }
-
-
     public void log() {
         if (DriverStation.getInstance().isEnabled()) {
-            Log.d("Gyro: " + gyro.getFusedHeading());
+            Log.d("Relative Gyro: " + getHeading());
+            Log.d("Absolute Gyro: " + getAbsoluteHeading());
 
             Log.d("Left front motor current: " + leftFrontMotor.getOutputCurrent());
             Log.d("Right front motor current: " + rightFrontMotor.getOutputCurrent());
@@ -524,7 +584,8 @@ public class DriveBase extends Subsystem {
             Log.d("Right back motor speed: " + rightBackMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP * 10);
         }
 
-        SmartDashboard.putNumber("Gyro", gyro.getFusedHeading());
+        SmartDashboard.putNumber("Relative Gyro", getHeading());
+        SmartDashboard.putNumber("Absolute Gyro", getAbsoluteHeading());
 
         SmartDashboard.putNumber("Left front motor current", leftFrontMotor.getOutputCurrent());
         SmartDashboard.putNumber("Right front motor current", rightFrontMotor.getOutputCurrent());
@@ -550,5 +611,31 @@ public class DriveBase extends Subsystem {
         SmartDashboard.putNumber("Right front motor speed", rightFrontMotor.getSensorCollection().getQuadratureVelocity() * Config.DRIVE_ENCODER_DPP * 10);
         SmartDashboard.putNumber("Left back motor speed", leftBackMotor.getSensorCollection().getQuadratureVelocity() * Config.DRIVE_ENCODER_DPP * 10);
         SmartDashboard.putNumber("Right back motor speed", rightBackMotor.getSensorCollection().getQuadratureVelocity() * Config.DRIVE_ENCODER_DPP * 10);
+    }
+
+
+    /**
+     * The drive mode of the robot
+     */
+    public enum DriveMode {
+        /**
+         * There is no control mode active
+         */
+        Disabled,
+
+        /**
+         * Standard open loop voltage control
+         */
+        OpenLoopVoltage,
+
+        /**
+         * Performs closed loop position control without heading support
+         */
+        PositionNoGyro,
+
+        /**
+         * Closed loop control with Auxiliary Pigeon Support
+         */
+        PositionGyro
     }
 }

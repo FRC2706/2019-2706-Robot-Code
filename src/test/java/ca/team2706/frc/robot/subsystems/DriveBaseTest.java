@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot.subsystems;
 
+import ca.team2706.frc.robot.SendablesTest;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.IMotorController;
@@ -87,9 +88,16 @@ public class DriveBaseTest {
     @Test
     public void testAbsoluteGyro() {
         new Expectations() {{
-            // TODO: Change when gyro method changes
-            pigeon.getFusedHeading();
-            returns(0.0, 19.0, -12.0, -12.0, 0.0, 90.0, 34.0, 34.0, 0.0);
+            pigeon.getYawPitchRoll((double[]) any);
+            returns(SendablesTest.makePigeonExpectation(0.0),
+                    SendablesTest.makePigeonExpectation(19.0),
+                    SendablesTest.makePigeonExpectation(-12.0),
+                    SendablesTest.makePigeonExpectation(-12.0),
+                    SendablesTest.makePigeonExpectation(0.0),
+                    SendablesTest.makePigeonExpectation(90.0),
+                    SendablesTest.makePigeonExpectation(34.0),
+                    SendablesTest.makePigeonExpectation(34.0),
+                    SendablesTest.makePigeonExpectation(0.0));
         }};
 
         assertEquals(0.0, driveBase.getAbsoluteHeading(), 0.0);

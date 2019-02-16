@@ -102,7 +102,7 @@ public class ConfigTest {
             }};
 
 
-            // Reset the config and robot classes.
+            // New robot to be worked with.
             robot = new Robot();
             robot.robotInit();
         }

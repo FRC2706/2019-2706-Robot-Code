@@ -88,9 +88,9 @@ public class StraightDriveGyroTest {
     public void testSetting(@Injectable("0.0") double speed, @Injectable("0.5") double position, @Injectable("1") int minDoneCycles) {
         straightDriveGyro.initialize();
 
-        straightDriveGyro.execute();
-        straightDriveGyro.execute();
-        straightDriveGyro.execute();
+        for(int i = 0; i<3; i++) {
+            straightDriveGyro.execute();
+        }
 
         straightDriveGyro.end();
 

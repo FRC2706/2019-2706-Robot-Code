@@ -27,7 +27,6 @@ public class Config {
         new Config();
     }
 
-
     private static final ArrayList<FluidConstant<?>> CONSTANTS = new ArrayList<>();
 
     // #### Static constants ####

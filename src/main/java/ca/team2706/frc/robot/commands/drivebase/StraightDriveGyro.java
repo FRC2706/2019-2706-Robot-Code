@@ -1,16 +1,10 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
+import ca.team2706.frc.robot.subsystems.DriveBase;
+
 import java.util.function.Supplier;
 
-import ca.team2706.frc.robot.subsystems.DriveBase;
-import edu.wpi.first.wpilibj.command.Command;
-
-public class StraightDriveGyro extends Command {
-
-    /**
-     * The acceptable range in feet for the error between the target and actual position
-     */
-    public static final double TARGET_RANGE = 0.3;
+public class StraightDriveGyro extends DriveBaseCloseLoop {
 
     /**
      * References to the speed and position that the robot should be travelling at
@@ -23,9 +17,9 @@ public class StraightDriveGyro extends Command {
     private final Supplier<Integer> minDoneCycles;
 
     /**
-     * The number of cycles that the robot is in the target range for
+     * The acceptable range in feet for the error between the target and actual position
      */
-    private int doneCycles = 0;
+    private static final double TARGET_RANGE = 0.3;
 
     /**
      * Creates a straight drive command with constant values
@@ -48,34 +42,22 @@ public class StraightDriveGyro extends Command {
      *                      the target zone before the command ends
      */
     public StraightDriveGyro(Supplier<Double> speed, Supplier<Double> position, Supplier<Integer> minDoneCycles) {
-        requires(DriveBase.getInstance());
-        this.speed = speed;
-        this.position = position;
-        this.minDoneCycles = minDoneCycles;
+          super(DriveBase.getInstance(), minDoneCycles, TARGET_RANGE);
+          this.speed = speed;
+          this.position = position;
+          this.minDoneCycles = minDoneCycles;
+          requires(DriveBase.getInstance());
     }
 
     @Override
     public void initialize() {
+        super.initialize();
         DriveBase.getInstance().setPositionGyroMode();
-        DriveBase.getInstance().setBrakeMode(true);
-
-        doneCycles = 0;
     }
 
     @Override
     public void execute() {
         DriveBase.getInstance().setPositionGyro(speed.get(), position.get(), 0);
-    }
-
-    @Override
-    public boolean isFinished() {
-        if (Math.abs(DriveBase.getInstance().getRightError()) <= TARGET_RANGE) {
-            doneCycles++;
-        } else {
-            doneCycles = 0;
-        }
-
-        return doneCycles >= minDoneCycles.get();
     }
 
     @Override

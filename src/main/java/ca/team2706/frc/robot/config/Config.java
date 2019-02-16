@@ -85,16 +85,16 @@ public class Config {
     public static final int ARCADE_DRIVE_FORWARD = 5;
     public static final int ARCADE_DRIVE_ROTATE = 4;
 
-<<<<<<< HEAD
+
     public static final double INTAKE_MAX_SPEED = 0.5; //to be finalized later, this has yet to be tested
 
     public static final double[] ENCODER_LIFT_PID_UP = {0.5, 0, 50}; //to be finalized later, these values have not yet been tested
 
     public static final double[] ENCODER_LIFT_PID_DOWN = {0.5, 0.5, 160}; //to be finalized later, these values have not yet been tested
 
-=======
+
     public static final double LOG_PERIOD = robotSpecific(0.02, 0.02, 0.02, Double.POSITIVE_INFINITY);
->>>>>>> master
+
 
     // #### Fluid constants ####
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_DEADBAND = constant("drive-deadband", 0.001);

@@ -318,7 +318,7 @@ public class DriveBase extends Subsystem {
     public void setMotionMagicWithGyroMode() {
         if (driveMode != DriveMode.MotionMagicWithGyro) {
             stop();
-            selectEncodersSum();
+            selectEncodersSumWithPigeon();
             configMotionMagic();
             reset();
 
@@ -461,15 +461,20 @@ public class DriveBase extends Subsystem {
      *
      * @param speed    The speed from 0 to 1
      * @param setpoint The setpoint to go to in feet
+     * @param targetRotation The desired rotation
      */
-    public void setMotionMagicPositionGyro(double speed, double setpoint) {
+    public void setMotionMagicPositionGyro(double speed, double setpoint, double targetRotation) {
         setMotionMagicWithGyroMode();
 
         leftFrontMotor.configClosedLoopPeakOutput(0, speed);
         rightFrontMotor.configClosedLoopPeakOutput(0, speed);
+        leftFrontMotor.configClosedLoopPeakOutput(1, speed);
+        rightFrontMotor.configClosedLoopPeakOutput(1, speed);
 
-        rightFrontMotor.set(ControlMode.MotionMagic, setpoint / Config.DRIVE_ENCODER_DPP);
-        leftFrontMotor.follow(rightFrontMotor);
+        rightFrontMotor.set(ControlMode.Position, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation);
+        leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
+
+        follow();
     }
 
     /**

@@ -279,6 +279,12 @@ public class DriveBase extends Subsystem {
         rightFrontMotor.selectProfileSlot(1, 1);
     }
 
+    /**
+     * Configures the deadband for the two given motors.
+     *
+     * @param rightFrontMotor The talon object representing the right front motor.
+     * @param leftFrontMotor  The talon object representing the left front motor.
+     */
     private void configDeadband(WPI_TalonSRX rightFrontMotor, WPI_TalonSRX leftFrontMotor) {
         rightFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
         leftFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
@@ -359,6 +365,9 @@ public class DriveBase extends Subsystem {
         }
     }
 
+    /**
+     * Sets the robot up for rotation.
+     */
     public void setRotateMode() {
         if (driveMode != DriveMode.Rotate) {
             stop();
@@ -492,6 +501,12 @@ public class DriveBase extends Subsystem {
         follow();
     }
 
+    /**
+     * Sets the amount that the robot has to rotate.
+     *
+     * @param speed    The speed of the rotation.
+     * @param setpoint The setpoint (angle) to which the robot should rotate, in degrees.
+     */
     public void setRotation(double speed, double setpoint) {
         setRotateMode();
 

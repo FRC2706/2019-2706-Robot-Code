@@ -11,4 +11,11 @@ public interface IMirrorable<T> {
      * @return The mirrored object
      */
     T mirror();
+
+    /**
+     * Gets the command
+     *
+     * @return The command
+     */
+    T get();
 }

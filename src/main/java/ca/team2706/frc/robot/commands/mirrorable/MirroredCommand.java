@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
- * A command that can be mirrored in a certain way
+ * A command that can be mirrored in a certain way. Useful for automodes that do the same thing but mirrored
  */
 public abstract class MirroredCommand extends Command implements IMirrorable<Command> {
 
@@ -71,6 +71,11 @@ public abstract class MirroredCommand extends Command implements IMirrorable<Com
      */
     public MirroredCommand mirror() {
         this.mirrored = true;
+        return get();
+    }
+
+    @Override
+    public MirroredCommand get() {
         return this;
     }
 

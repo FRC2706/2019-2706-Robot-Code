@@ -1,9 +1,6 @@
 package ca.team2706.frc.robot.commands.mirrorable;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.command.Subsystem;
-import mockit.Injectable;
-import mockit.Mocked;
 import mockit.Tested;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,44 +18,24 @@ public class MirrorableTest {
 
     @Before
     public void setUp() {
-        a = new MirroredCommand() {
-            @Override
-            protected boolean isFinished() {
-                return false;
-            }
-        };
-
-        b = new MirroredCommand() {
-            @Override
-            protected boolean isFinished() {
-                return false;
-            }
-        };
-
-        c = new MirroredCommand() {
-            @Override
-            protected boolean isFinished() {
-                return false;
-            }
-        };
-
-        d = new MirroredCommand() {
-            @Override
-            protected boolean isFinished() {
-                return false;
-            }
-        };
-
-        e = new MirroredCommand() {
-            @Override
-            protected boolean isFinished() {
-                return false;
-            }
-        };
+        a = newMirroredCommand();
+        b = newMirroredCommand();
+        c = newMirroredCommand();
+        d = newMirroredCommand();
+        e = newMirroredCommand();
 
         f = new MirroredCommandGroup();
         g = new MirroredCommandGroup();
         h = new MirroredCommandGroup();
+    }
+
+    private MirroredCommand newMirroredCommand() {
+        return new MirroredCommand() {
+            @Override
+            protected boolean isFinished() {
+                return false;
+            }
+        };
     }
 
     /**
@@ -76,19 +53,19 @@ public class MirrorableTest {
         assertFalse(h.isMirrored());
 
         h.addSequential(d);
-        h.addParallel(e);
-        g.addSequential(c);
-        g.addParallel(h);
-        f.addParallel(a);
-        f.addSequential(b);
-        f.addSequential(g);
+        h.addMirroredParallel(e);
+        g.addMirroredSequential(c);
+        g.addMirroredParallel(h);
+        f.addMirroredParallel(a);
+        f.addMirroredSequential(b);
+        f.addMirroredSequential(g);
 
         assertTrue(f.mirror().isMirrored());
 
         assertTrue(a.isMirrored());
         assertTrue(b.isMirrored());
         assertTrue(c.isMirrored());
-        assertTrue(d.isMirrored());
+        assertFalse(d.isMirrored());
         assertTrue(e.isMirrored());
         assertTrue(f.isMirrored());
         assertTrue(g.isMirrored());
@@ -99,7 +76,7 @@ public class MirrorableTest {
         assertTrue(a.isMirrored());
         assertTrue(b.isMirrored());
         assertTrue(c.isMirrored());
-        assertTrue(d.isMirrored());
+        assertFalse(d.isMirrored());
         assertTrue(e.isMirrored());
         assertTrue(f.isMirrored());
         assertTrue(g.isMirrored());
@@ -122,13 +99,13 @@ public class MirrorableTest {
         assertFalse(f.isMirrored());
         assertFalse(h.isMirrored());
 
-        h.addSequential(d);
-        h.addParallel(e);
+        h.addMirroredSequential(d);
+        h.addMirroredParallel(e);
         testCommandGroup.addSequential(c);
         testCommandGroup.addParallel(h);
-        f.addParallel(a);
-        f.addSequential(b);
-        f.addSequential(g);
+        f.addMirroredParallel(a);
+        f.addMirroredSequential(b);
+        f.addMirroredSequential(g);
 
         assertTrue(f.mirror().isMirrored());
 

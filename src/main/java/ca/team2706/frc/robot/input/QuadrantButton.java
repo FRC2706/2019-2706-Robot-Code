@@ -2,6 +2,9 @@ package ca.team2706.frc.robot.input;
 
 import edu.wpi.first.wpilibj.GenericHID;
 
+/**
+ * Button that activates when the (x,y) value of an analog stick is in a certain quadrant
+ */
 public class QuadrantButton extends EButton {
 
     /**

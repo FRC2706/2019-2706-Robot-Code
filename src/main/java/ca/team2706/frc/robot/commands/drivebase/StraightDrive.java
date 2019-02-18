@@ -55,9 +55,4 @@ public class StraightDrive extends DriveBaseCloseLoop {
     public void execute() {
         DriveBase.getInstance().setPositionNoGyro(speed.get(), position.get());
     }
-
-    @Override
-    public void end() {
-        DriveBase.getInstance().setDisabledMode();
-    }
 }

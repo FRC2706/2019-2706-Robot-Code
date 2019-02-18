@@ -12,11 +12,6 @@ public class StraightDriveGyro extends DriveBaseCloseLoop {
     private final Supplier<Double> speed, position;
 
     /**
-     * The minimum number of cycles for the robot to be within the target zone before the command ends
-     */
-    private final Supplier<Integer> minDoneCycles;
-
-    /**
      * The acceptable range in feet for the error between the target and actual position
      */
     private static final double TARGET_RANGE = 0.3;
@@ -45,7 +40,6 @@ public class StraightDriveGyro extends DriveBaseCloseLoop {
         super(minDoneCycles, TARGET_RANGE);
         this.speed = speed;
         this.position = position;
-        this.minDoneCycles = minDoneCycles;
         requires(DriveBase.getInstance());
     }
 
@@ -58,10 +52,5 @@ public class StraightDriveGyro extends DriveBaseCloseLoop {
     @Override
     public void execute() {
         DriveBase.getInstance().setPositionGyro(speed.get(), position.get(), 0);
-    }
-
-    @Override
-    public void end() {
-        DriveBase.getInstance().setDisabledMode();
     }
 }

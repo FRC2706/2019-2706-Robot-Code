@@ -1,5 +1,9 @@
 package ca.team2706.frc.robot.input;
 
+import ca.team2706.frc.robot.OI;
+import ca.team2706.frc.robot.subsystems.Bling;
+import ca.team2706.frc.robot.subsystems.DriveBase;
+import ca.team2706.frc.robot.subsystems.SensorExtras;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
@@ -59,11 +63,23 @@ public class EButtonTest {
 
     @Before
     public void setUp() {
+        initSubsystems();
+
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
             minTimes = 0;
         }};
+    }
+
+    /**
+     * Initializes all subsystems
+     */
+    private void initSubsystems() {
+        Bling.init();
+        DriveBase.init();
+        SensorExtras.init();
+        OI.init();
     }
 
     /**

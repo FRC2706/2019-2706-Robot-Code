@@ -1,7 +1,6 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
 import ca.team2706.frc.robot.subsystems.DriveBase;
-import edu.wpi.first.wpilibj.command.Command;
 
 import java.util.function.Supplier;
 
@@ -35,7 +34,7 @@ public class RotateWithGyro extends DriveBaseCloseLoop {
      *                                 the target position.
      */
     public RotateWithGyro(Supplier<Double> speed, Supplier<Double> angle, Supplier<Integer> minCyclesWithinThreshold) {
-        super(DriveBase.getInstance(), minCyclesWithinThreshold, TARGET_ANGLE_RANGE);
+        super(minCyclesWithinThreshold, TARGET_ANGLE_RANGE);
         this.speedSupplier = speed;
         this.angleSupplier = angle;
     }

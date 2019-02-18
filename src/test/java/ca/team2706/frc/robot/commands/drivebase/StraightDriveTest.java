@@ -56,6 +56,8 @@ public class StraightDriveTest {
             talon.getSensorCollection();
             result = sensorCollection;
         }};
+
+        DriveBase.init();
     }
 
     /**

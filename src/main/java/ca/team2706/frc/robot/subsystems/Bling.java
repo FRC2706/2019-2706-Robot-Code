@@ -23,7 +23,6 @@ public class Bling extends Subsystem {
      * @return The current Bling instance.
      */
     public static Bling getInstance() {
-        init();
         return currentInstance;
     }
 
@@ -31,9 +30,7 @@ public class Bling extends Subsystem {
      * Initializes a new bling object.
      */
     public static void init() {
-        if (currentInstance == null) {
-            currentInstance = new Bling();
-        }
+        currentInstance = new Bling();
     }
 
     // All of the pattern numbers

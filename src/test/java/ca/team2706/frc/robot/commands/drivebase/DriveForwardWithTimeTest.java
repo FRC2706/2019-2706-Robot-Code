@@ -55,6 +55,8 @@ public class DriveForwardWithTimeTest {
             talon.getSensorCollection();
             result = sensorCollection;
         }};
+
+        DriveBase.init();
     }
 
     /**

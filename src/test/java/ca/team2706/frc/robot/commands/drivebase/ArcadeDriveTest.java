@@ -54,6 +54,16 @@ public class ArcadeDriveTest {
     @Injectable
     private SensorCollection sensorCollection;
 
+    @Before
+    public void setUp() {
+        new Expectations() {{
+            talon.getSensorCollection();
+            result = sensorCollection;
+        }};
+
+        DriveBase.init();
+    }
+
     @Test
     public void testBrakeModeOn() {
         testBrakeMode(true);
@@ -62,14 +72,6 @@ public class ArcadeDriveTest {
     @Test
     public void testBrakeModeOff() {
         testBrakeMode(false);
-    }
-
-    @Before
-    public void setUp() {
-        new Expectations() {{
-            talon.getSensorCollection();
-            result = sensorCollection;
-        }};
     }
 
     /**

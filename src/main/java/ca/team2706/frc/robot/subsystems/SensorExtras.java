@@ -36,7 +36,6 @@ public class SensorExtras extends Subsystem {
      * @return The subsystem singleton
      */
     public static SensorExtras getInstance() {
-        init();
         return currentInstance;
     }
 
@@ -44,9 +43,7 @@ public class SensorExtras extends Subsystem {
      * Initializes the subsystem
      */
     public static void init() {
-        if (currentInstance == null) {
-            currentInstance = new SensorExtras();
-        }
+        currentInstance = new SensorExtras();
     }
 
     /**

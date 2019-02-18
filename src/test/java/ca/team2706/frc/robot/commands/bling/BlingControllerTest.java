@@ -32,6 +32,7 @@ public class BlingControllerTest {
 
     @Before
     public void setUp() {
+        Bling.init();
         blingController = new BlingController();
     }
 

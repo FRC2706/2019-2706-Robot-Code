@@ -23,7 +23,6 @@ public class DriveBase extends Subsystem {
     private static DriveBase currentInstance;
 
     public static DriveBase getInstance() {
-        init();
         return currentInstance;
     }
 
@@ -31,9 +30,7 @@ public class DriveBase extends Subsystem {
      * Initializes a new drive base object.
      */
     public static void init() {
-        if (currentInstance == null) {
-            currentInstance = new DriveBase();
-        }
+        currentInstance = new DriveBase();
     }
 
     /**

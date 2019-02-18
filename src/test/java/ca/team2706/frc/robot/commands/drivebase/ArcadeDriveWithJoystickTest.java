@@ -59,6 +59,8 @@ public class ArcadeDriveWithJoystickTest {
             talon.getSensorCollection();
             result = sensorCollection;
         }};
+
+        DriveBase.init();
     }
 
     /**

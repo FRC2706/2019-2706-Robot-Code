@@ -8,21 +8,15 @@ import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import mockit.Expectations;
 import mockit.Mocked;
-import mockit.Tested;
 import mockit.Verifications;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.lang.reflect.Field;
 
 import static org.junit.Assert.assertEquals;
 
 public class SensorExtrasTest {
-
-    @Tested
-    private SensorExtras sensorExtras;
 
     @Mocked
     private WPI_TalonSRX talon;
@@ -47,13 +41,6 @@ public class SensorExtrasTest {
     private final PrintStream originalOut = System.out;
     private final PrintStream originalErr = System.err;
 
-    @Before
-    public void setUp() throws NoSuchFieldException, IllegalAccessException {
-        Field field1 = SensorExtras.class.getDeclaredField("currentInstance");
-        field1.setAccessible(true);
-        field1.set(null, null);
-    }
-
     /**
      * Ensures that the exception for allocating the same object twice is handled
      */
@@ -67,7 +54,7 @@ public class SensorExtrasTest {
             result = new RuntimeException("Already Allocated");
         }};
 
-        sensorExtras = SensorExtras.getInstance();
+        SensorExtras.init();
 
         assertEquals("Sensor Extras Warning for PWM 1 (Check Allocation Table):\n\tAlready Allocated",
                 outContent.toString().trim());
@@ -81,6 +68,8 @@ public class SensorExtrasTest {
      */
     @Test
     public void allocationTest() {
+        SensorExtras.init();
+
         new Verifications() {{
             pwm.setName("SensorExtras", "Unused PWM 1");
             times = 1;

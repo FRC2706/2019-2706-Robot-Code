@@ -11,7 +11,6 @@ import mockit.VerificationsInOrder;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.lang.reflect.Field;
 import java.time.Clock;
 
 import static org.junit.Assert.assertFalse;
@@ -29,11 +28,6 @@ public class RumblerTest {
 
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
-        // I should re-initialize OI for each time.
-        Field currentInstanceField = OI.class.getDeclaredField("currentInstance");
-        currentInstanceField.setAccessible(true);
-        currentInstanceField.set(null, null);
-
         new Expectations() {{
             new Joystick(0);
             result = driverStick;
@@ -41,6 +35,8 @@ public class RumblerTest {
             new Joystick(1);
             result = operatorStick;
         }};
+
+        OI.init();
     }
 
     /**

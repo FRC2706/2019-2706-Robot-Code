@@ -30,14 +30,11 @@ public class OI {
      * @return The current instance of OI.
      */
     public static OI getInstance() {
-        init();
         return currentInstance;
     }
 
     public static void init() {
-        if (currentInstance == null) {
-            currentInstance = new OI();
-        }
+        currentInstance = new OI();
     }
 
     /**

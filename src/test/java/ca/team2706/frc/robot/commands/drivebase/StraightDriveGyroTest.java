@@ -165,6 +165,4 @@ public class StraightDriveGyroTest {
     private static int intFeetToTicks(double feet) {
         return (int) (feetToTicks(feet));
     }
-
-
 }

@@ -12,10 +12,10 @@ import mockit.Tested;
 import mockit.Verifications;
 import org.junit.Before;
 import org.junit.Test;
+import util.Util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.lang.reflect.Field;
 
 import static org.junit.Assert.assertEquals;
 
@@ -49,9 +49,7 @@ public class SensorExtrasTest {
 
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
-        Field field1 = SensorExtras.class.getDeclaredField("currentInstance");
-        field1.setAccessible(true);
-        field1.set(null, null);
+        Util.resetSubsystems();
     }
 
     /**

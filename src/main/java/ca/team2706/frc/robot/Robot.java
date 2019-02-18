@@ -2,7 +2,6 @@ package ca.team2706.frc.robot;
 
 import ca.team2706.frc.robot.commands.drivebase.RotateWithGyro;
 import ca.team2706.frc.robot.commands.drivebase.StraightDrive;
-import ca.team2706.frc.robot.commands.drivebase.StraightDriveGyro;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.Bling;

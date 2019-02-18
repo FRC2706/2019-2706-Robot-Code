@@ -147,17 +147,8 @@ public class DriveBase extends Subsystem {
         leftFrontMotor.setInverted(Config.INVERT_FRONT_LEFT_DRIVE);
         rightFrontMotor.setInverted(Config.INVERT_FRONT_RIGHT_DRIVE);
 
-        if (Config.INVERT_FRONT_LEFT_DRIVE == Config.INVERT_BACK_LEFT_DRIVE) {
-            leftBackMotor.setInverted(InvertType.FollowMaster);
-        } else {
-            leftBackMotor.setInverted(InvertType.OpposeMaster);
-        }
-
-        if (Config.INVERT_FRONT_RIGHT_DRIVE == Config.INVERT_BACK_RIGHT_DRIVE) {
-            rightBackMotor.setInverted(InvertType.FollowMaster);
-        } else {
-            rightBackMotor.setInverted(InvertType.OpposeMaster);
-        }
+        setTalonInversion(InvertType.FollowMaster, leftBackMotor, Config.INVERT_FRONT_LEFT_DRIVE, Config.INVERT_BACK_LEFT_DRIVE);
+        setTalonInversion(InvertType.FollowMaster, rightBackMotor, Config.INVERT_FRONT_RIGHT_DRIVE, Config.INVERT_BACK_RIGHT_DRIVE);
     }
 
     /**
@@ -279,6 +270,12 @@ public class DriveBase extends Subsystem {
         rightFrontMotor.selectProfileSlot(1, 1);
     }
 
+    /**
+     * Configures the deadband for the two given motors.
+     *
+     * @param rightFrontMotor The talon object representing the right front motor.
+     * @param leftFrontMotor  The talon object representing the left front motor.
+     */
     private void configDeadband(WPI_TalonSRX rightFrontMotor, WPI_TalonSRX leftFrontMotor) {
         rightFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
         leftFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
@@ -312,11 +309,7 @@ public class DriveBase extends Subsystem {
 
         rightFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
 
-        if (Config.INVERT_FRONT_LEFT_DRIVE == Config.INVERT_FRONT_RIGHT_DRIVE) {
-            leftFrontMotor.setInverted(InvertType.OpposeMaster);
-        } else {
-            leftFrontMotor.setInverted(InvertType.FollowMaster);
-        }
+        setTalonInversion(InvertType.OpposeMaster, leftFrontMotor, Config.INVERT_FRONT_RIGHT_DRIVE, Config.INVERT_FRONT_LEFT_DRIVE);
     }
 
     /**
@@ -359,6 +352,9 @@ public class DriveBase extends Subsystem {
         }
     }
 
+    /**
+     * Sets the robot up for rotation.
+     */
     public void setRotateMode() {
         if (driveMode != DriveMode.Rotate) {
             stop();
@@ -492,6 +488,12 @@ public class DriveBase extends Subsystem {
         follow();
     }
 
+    /**
+     * Sets the amount that the robot has to rotate.
+     *
+     * @param speed    The speed of the rotation.
+     * @param setpoint The setpoint (angle) to which the robot should rotate, in degrees.
+     */
     public void setRotation(double speed, double setpoint) {
         setRotateMode();
 
@@ -690,6 +692,34 @@ public class DriveBase extends Subsystem {
      */
     private void setDriveMode(DriveMode driveMode) {
         this.driveMode = driveMode;
+    }
+
+
+    /**
+     * Sets the inversion of the slave talon based on the constant for whether or not those motors are inverted
+     * by default.
+     *
+     * @param inversion        The type of desired inversion. Should be either {@link InvertType#FollowMaster} or {@link InvertType#OpposeMaster}
+     * @param talon            The slave talon to be configured.
+     * @param isMasterInverted True if the master talon motor is inverted by default.
+     * @param isSlaveInverted  True if the slave talon motor is inverted by default.
+     */
+    private static void setTalonInversion(final InvertType inversion, WPI_TalonSRX talon, final boolean isMasterInverted, final boolean isSlaveInverted) {
+        if (isMasterInverted == isSlaveInverted) {
+            /*
+            If both talons are of the same constant inversion and we want them to follow, then they can just follow each other.
+            If both talons are of the same constant inversion and we want them to oppose, then they can just oppose each other.
+            */
+            talon.setInverted(inversion);
+        } else {
+            if (inversion == InvertType.FollowMaster) {
+                // If the talons are of opposite constant inversion and we want them to follow, the slave should oppose the master.
+                talon.setInverted(InvertType.OpposeMaster);
+            } else {
+                // If the talons are of opposite constant inversion and we want them to oppose, the slave should follow the master.
+                talon.setInverted(InvertType.FollowMaster);
+            }
+        }
     }
 
     /**

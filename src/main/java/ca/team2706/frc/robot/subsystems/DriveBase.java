@@ -684,7 +684,6 @@ public class DriveBase extends Subsystem {
         SmartDashboard.putNumber("Right back motor speed", rightBackMotor.getSensorCollection().getQuadratureVelocity() * Config.DRIVE_ENCODER_DPP * 10);
     }
 
-
     /**
      * Sets the current drive mode.
      *
@@ -693,7 +692,6 @@ public class DriveBase extends Subsystem {
     private void setDriveMode(DriveMode driveMode) {
         this.driveMode = driveMode;
     }
-
 
     /**
      * Sets the inversion of the slave talon based on the constant for whether or not those motors are inverted

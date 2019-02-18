@@ -528,6 +528,7 @@ public class DriveBase extends Subsystem {
         rightFrontMotor.set(ControlMode.Position, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation);
         leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
     }
+
     /*
      * Sets the amount that the robot has to rotate.
      *

@@ -40,7 +40,6 @@ public class StraightDriveGyro extends DriveBaseCloseLoop {
         super(minDoneCycles, TARGET_RANGE);
         this.speed = speed;
         this.position = position;
-        requires(DriveBase.getInstance());
     }
 
     @Override

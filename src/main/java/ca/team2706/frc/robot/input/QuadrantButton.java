@@ -27,7 +27,7 @@ public class QuadrantButton extends EButton {
      * @param axis2    The second axis of the analog stick
      * @param quadrant The quadrant to activate in
      * @param deadzone The deadzone before activating
-     * @param invertY Whether to negate the y-axis
+     * @param invertY  Whether to negate the y-axis
      */
     public QuadrantButton(GenericHID joystick, int axis1, int axis2, int quadrant,
                           double deadzone, boolean invertY) {

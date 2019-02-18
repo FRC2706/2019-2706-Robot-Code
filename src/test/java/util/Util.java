@@ -19,7 +19,6 @@ public class Util {
         setCurrentInstanceFieldNull(OI.class);
         setCurrentInstanceFieldNull(SensorExtras.class);
         setCurrentInstanceFieldNull(DriveBase.class);
-        System.out.println("Reset"); // TODO remove
     }
 
     /**

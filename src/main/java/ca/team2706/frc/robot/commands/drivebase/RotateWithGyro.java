@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.command.Command;
 
 import java.util.function.Supplier;
 
-public class RotateWithGyro extends Command {
+public class RotateWithGyro extends DriveBaseCloseLoop {
 
     /**
      * How close to the target angle we should be, in degrees.
@@ -13,17 +13,6 @@ public class RotateWithGyro extends Command {
     public static final double TARGET_ANGLE_RANGE = 5D;
 
     private final Supplier<Double> speedSupplier, angleSupplier;
-
-    /**
-     * The minimum number of cycles that the robot has to be in range of the target position
-     * before the command ends.
-     */
-    private final Supplier<Integer> minCyclesWithinThreshold;
-
-    /**
-     * Number of cycles in which the robot has been at its target angle.
-     */
-    private int doneCycles;
 
     /**
      * Constructs a new rotate with gyro command for rotating the robot a set number of degrees.
@@ -46,38 +35,19 @@ public class RotateWithGyro extends Command {
      *                                 the target position.
      */
     public RotateWithGyro(Supplier<Double> speed, Supplier<Double> angle, Supplier<Integer> minCyclesWithinThreshold) {
-        requires(DriveBase.getInstance());
+        super(DriveBase.getInstance(), minCyclesWithinThreshold, TARGET_ANGLE_RANGE);
         this.speedSupplier = speed;
         this.angleSupplier = angle;
-        this.minCyclesWithinThreshold = minCyclesWithinThreshold;
     }
 
     @Override
     public void initialize() {
-        DriveBase.getInstance().setBrakeMode(true);
+        super.initialize();
         DriveBase.getInstance().setRotateMode();
-
-        doneCycles = 0;
     }
 
     @Override
     public void execute() {
         DriveBase.getInstance().setRotation(speedSupplier.get(), angleSupplier.get());
-    }
-
-    @Override
-    protected boolean isFinished() {
-        if (Math.abs(DriveBase.getInstance().getRightError()) <= TARGET_ANGLE_RANGE) {
-            doneCycles++;
-        } else {
-            doneCycles = 0;
-        }
-
-        return doneCycles >= minCyclesWithinThreshold.get();
-    }
-
-    @Override
-    public void end() {
-        DriveBase.getInstance().setDisabledMode();
     }
 }

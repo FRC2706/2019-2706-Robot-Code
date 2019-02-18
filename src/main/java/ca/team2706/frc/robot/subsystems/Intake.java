@@ -10,17 +10,19 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 /**
  * The subsystem which comtrols the intake for cargo and hatches
  */
-
 public class Intake extends Subsystem {
+    private static Intake currentInstance;
 
     public WPI_TalonSRX m_intake;
     private AnalogInput m_sensor;
-    private static final double BALL_CAPTURED = 1;
-    private double m_intakeSpeed;
+
     private DoubleSolenoid m_intakeLift;
     private DoubleSolenoid m_hatchEjector;
-    public boolean hatchMode = false;
-    private static Intake currentInstance;
+
+    /**
+     * The state of the intake subsystem.
+     */
+    private IntakeMode currentMode;
 
     public static Intake getInstance() {
         if (currentInstance == null) {
@@ -38,122 +40,108 @@ public class Intake extends Subsystem {
         m_intake = new WPI_TalonSRX(6);
         m_sensor = new AnalogInput(3);
         m_intake.setNeutralMode(NeutralMode.Brake);
-        m_intakeSpeed = Config.INTAKE_MAX_SPEED;
         m_intakeLift = new DoubleSolenoid(2, 3);
         m_hatchEjector = new DoubleSolenoid(0, 1);
     }
 
-    public void initDefaultCommand() {}
+    /**
+     * Different states that the intake subsystem can be in, either
+     * inhaling hatches or inhaling cargo.
+     */
+    private enum IntakeMode {
+        CARGO, HATCH
+    }
+
+    @Override
+    public void initDefaultCommand() {
+    }
 
     /**
      * Getting the voltage from the IR sensor
+     *
      * @return the voltage reading
      */
-
     public double readIr() {
-        if (!hatchMode){
-            return m_sensor.getVoltage();
-        } else {
-            return 0;
+        final double irValue;
+
+        // We only want to be reading the real ir sensor if we're supposed to be dealing with cargo.
+        if (currentMode == IntakeMode.CARGO) {
+            irValue = m_sensor.getVoltage();
+        }
+        // Otherwise we say 0 since we're dealing with hatches.
+        else {
+            irValue = 0;
+        }
+
+        return irValue;
+    }
+
+    /**
+     * Spins the wheels to intake cargo.
+     *
+     * @param speed speed at which to change the wheels, in percentage.
+     */
+    public void inhaleCargo(double speed) {
+        if (currentMode == IntakeMode.CARGO) {
+            m_intake.set(speed * Config.INTAKE_MAX_SPEED);
         }
     }
 
     /**
-     * Spins the wheels to intake a cargo
-     * @param speed speed at which to change the wheels
+     * Spins the wheels to eject cargo.
+     *
+     * @param speed Speed at which to spin the wheels, in percentage.
      */
-
-    public void inhale(double speed) {
-        if (!hatchMode) {
-            m_intake.set(speed * m_intakeSpeed);
-        }
-    }
-
-    /**
-     * Spins the wheels to eject a cargo
-     * @param speed speed at which to spin the wheels
-     */
-
-    public void exhale(double speed) {
-        if (!hatchMode) {
-            m_intake.set(speed * m_intakeSpeed);
+    public void exhaleCargo(double speed) {
+        if (currentMode == IntakeMode.CARGO) {
+            m_intake.set(-(speed * Config.INTAKE_MAX_SPEED));
         }
     }
 
     /**
      * Stop motors
      */
-
     public void stop() {
         m_intake.set(0);
     }
 
     /**
      * Check if the intake has a cargo within it
+     *
      * @return whether the intake has cargo or not
      */
-
-    public boolean ballCaptured() {
-        if (!hatchMode) {
-            return m_sensor.getVoltage() > BALL_CAPTURED;
-        } else {
-            return false;
-        }
+    public boolean isCargoInMechanism() {
+        return currentMode == IntakeMode.CARGO && m_sensor.getVoltage() > Config.CARGO_CAPTURED_IR_DIST;
     }
 
     /**
-     * Checks to see if there's no ball in the intake
-     * @return whether there is not ball in the intake or not
+     * Lowers the intake arms, in preparation for inhaling cargo.
      */
-
-    public boolean noBall() {
-        if (!hatchMode) {
-            return m_sensor.getVoltage() <= 0;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Lowers the intake arms
-     */
-
     public void lowerIntake() {
         m_intakeLift.set(DoubleSolenoid.Value.kForward);
-        hatchMode = false;
+        currentMode = IntakeMode.CARGO;
     }
 
     /**
-     * Raises the intake arms
+     * Raises the intake arms in preparation for inhaling a hatch.
      */
-
     public void raiseIntake() {
         m_intakeLift.set(DoubleSolenoid.Value.kReverse);
-        hatchMode = true;
+        currentMode = IntakeMode.HATCH;
     }
 
     /**
      * Extends the hatch deployment cylinder
      */
-
     public void ejectHatch() {
-        if (hatchMode) {
+        if (currentMode == IntakeMode.HATCH) {
             m_hatchEjector.set(DoubleSolenoid.Value.kForward);
         }
     }
 
     /**
-     * Lowers the lift to deploy a hatch
-     */
-
-    public void lowerLiftToDeploy() {
-        ElevatorWithPID.getInstance().lowertoDeployHatch();
-    }
-
-    /**
      * Retracts the hatch deployment cylinder
      */
-
     public void retractHatchMech() {
         m_hatchEjector.set(DoubleSolenoid.Value.kReverse);
     }

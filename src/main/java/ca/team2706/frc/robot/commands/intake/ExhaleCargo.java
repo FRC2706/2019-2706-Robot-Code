@@ -1,33 +1,38 @@
-package ca.team2706.frc.robot.commands;
+package ca.team2706.frc.robot.commands.intake;
 
 
 import ca.team2706.frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
 
+/**
+ * Command for exhaling cargo on the robot.
+ */
 public class ExhaleCargo extends Command {
+    private final int port;
 
-    private double speed;
+    private final Joystick joystick;
 
-    public ExhaleCargo(Joystick joystick) {
+    public ExhaleCargo(Joystick joystick, final int port) {
         requires(Intake.getInstance());
-        speed = joystick.getRawAxis(1);
+        this.port = port;
+        this.joystick = joystick;
     }
 
     @Override
     public void execute() {
-        Intake.getInstance().exhale(speed);
+        double speed = joystick.getRawAxis(port);
+        Intake.getInstance().exhaleCargo(speed);
     }
 
     @Override
     public void end() {
         Intake.getInstance().stop();
-        Intake.getInstance().raiseIntake();
     }
 
     @Override
     protected boolean isFinished() {
-        return Intake.getInstance().noBall();
+        return false;
     }
 
 }

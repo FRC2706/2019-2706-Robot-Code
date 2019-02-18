@@ -1,7 +1,6 @@
 package ca.team2706.frc.robot.subsystems;
 
 import mockit.*;
-import org.junit.Before;
 import org.junit.Test;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -30,7 +29,7 @@ public class IntakeTest {
     public void testControlMode() {
         
         intake.lowerIntake();
-        intake.inhale(0.5);
+        intake.inhaleCargo(0.5);
 
         new Verifications() {{
             intake.m_intake.set(anyDouble);
@@ -39,7 +38,7 @@ public class IntakeTest {
 
         intake.stop();
         intake.raiseIntake();
-        intake.inhale(0.5);
+        intake.inhaleCargo(0.5);
 
     }
 }

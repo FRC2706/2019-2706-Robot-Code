@@ -95,6 +95,11 @@ public class Config {
 
     public static final double LOG_PERIOD = robotSpecific(0.02, 0.02, 0.02, Double.POSITIVE_INFINITY);
 
+    /**
+     * The minimum reading on the cargo IR sensor to assert that we have cargo in the mechanism.
+     */
+    public static final double CARGO_CAPTURED_IR_DIST = 1.0;
+
 
     // #### Fluid constants ####
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_DEADBAND = constant("drive-deadband", 0.001);
@@ -113,8 +118,10 @@ public class Config {
     public static final FluidConstant<Double> PIGEON_KF = constant("pigeon-kf", 0.0);
 
 
-    public static final FluidConstant<String> MOVE_LIFT_UP = constant("move-lift-up", XboxValue.XBOX_A_BUTTON.NTString);
-    
+    public static final FluidConstant<String> MOVE_LIFT_UP_BINDING = constant("move-lift-up", XboxValue.XBOX_A_BUTTON.getNTString());
+    public static final FluidConstant<String> INTAKE_BINDING = constant("intake-trigger", XboxValue.XBOX_BACK_LEFT_TRIGGER.getNTString());
+    public static final FluidConstant<String> EXHALE_BINDING = constant("exhale-trigger", XboxValue.XBOX_BACK_RIGHT_TRIGGER.getNTString());
+
     // ### Methods, fields and Constructors ###
     /**
      * The network table for fluid constants.
@@ -134,6 +141,10 @@ public class Config {
         this.configTable = ntTable;
 
         Robot.setOnStateChange(this::robotStateChange);
+
+        if (Robot.isRobotInitialized()) {
+            initializeFluidConstantNetworktables();
+        }
     }
 
     /**
@@ -159,7 +170,7 @@ public class Config {
      */
     private void initializeFluidConstantNetworktables() {
         ArrayList<FluidConstant<?>> constants = new ArrayList<>(CONSTANTS);
-        constants.forEach(fluidConstant -> fluidConstant.addNTEntry(configTable));
+        constants.forEach(fluidConstant -> fluidConstant.addNTEntry(getNetworkTable()));
     }
 
     /**

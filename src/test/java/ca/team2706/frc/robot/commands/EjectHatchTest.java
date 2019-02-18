@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot.commands;
 
+import ca.team2706.frc.robot.commands.intake.EjectHatch;
 import mockit.*;
 import org.junit.Test;
 import com.ctre.phoenix.motorcontrol.can.*;
@@ -22,9 +23,6 @@ public class EjectHatchTest {
 
     @Test
     public void testControlMode() {
-        
         eject.execute();
-        eject.end();
-
     }
 }

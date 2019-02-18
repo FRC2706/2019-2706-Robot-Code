@@ -48,7 +48,6 @@ public class Robot extends TimedRobot {
         DriveBase.init();
 
         Intake.init();
-        ElevatorWithPID.init();
 
 
         // Make sure that this is last initialized subsystem

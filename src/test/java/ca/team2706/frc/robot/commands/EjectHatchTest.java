@@ -1,11 +1,12 @@
 package ca.team2706.frc.robot.commands;
 
 import ca.team2706.frc.robot.commands.intake.EjectHatch;
-import mockit.*;
-import org.junit.Test;
-import com.ctre.phoenix.motorcontrol.can.*;
+import ca.team2706.frc.robot.subsystems.Intake;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import ca.team2706.frc.robot.subsystems.*;
+import mockit.Mocked;
+import mockit.Tested;
+import org.junit.Test;
 
 public class EjectHatchTest {
 
@@ -15,7 +16,7 @@ public class EjectHatchTest {
     @Mocked
     private WPI_TalonSRX talon;
 
-    @Mocked 
+    @Mocked
     private Intake in;
 
     @Mocked

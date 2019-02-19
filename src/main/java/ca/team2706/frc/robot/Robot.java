@@ -1,10 +1,14 @@
 package ca.team2706.frc.robot;
 
+import ca.team2706.frc.robot.commands.drivebase.MotionMagic;
 import ca.team2706.frc.robot.commands.drivebase.StraightDrive;
 import ca.team2706.frc.robot.commands.drivebase.StraightDriveGyro;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
-import ca.team2706.frc.robot.subsystems.*;
+import ca.team2706.frc.robot.subsystems.Bling;
+import ca.team2706.frc.robot.subsystems.DriveBase;
+import ca.team2706.frc.robot.subsystems.Intake;
+import ca.team2706.frc.robot.subsystems.SensorExtras;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -58,11 +62,13 @@ public class Robot extends TimedRobot {
 
         // The USB camera used on the Robot, not enabled during simulation mode
         if (Config.ENABLE_CAMERA) {
-            UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+            UsbCamera camera0 = CameraServer.getInstance().startAutomaticCapture();
+            UsbCamera camera1 = CameraServer.getInstance().startAutomaticCapture();
 
             // Prevents crashing of simulation robot
             if (isReal()) {
-                camera.setConnectVerbose(0);
+                camera0.setConnectVerbose(0);
+                camera1.setConnectVerbose(0);
             }
         }
 
@@ -70,7 +76,8 @@ public class Robot extends TimedRobot {
                 OI.getInstance().driveCommand,                               // 0
                 OI.getInstance().driveCommand,                               // 1
                 new StraightDrive(0.2, 2.0, 100),  // 2
-                new StraightDriveGyro(0.2, 2.0, 100)  // 3
+                new MotionMagic(0.2, 15.54, 100),  //3
+                new StraightDriveGyro(0.2, 2.0, 100)  // 4
         };
 
     }

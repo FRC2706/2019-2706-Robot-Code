@@ -21,10 +21,10 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class StraightDriveGyroTest {
+public class MotionMagicTest {
 
     @Tested
-    private StraightDriveGyro straightDriveGyro;
+    private MotionMagic motionMagic;
 
     @Mocked
     private WPI_TalonSRX talon;
@@ -73,11 +73,11 @@ public class StraightDriveGyroTest {
     @Test
     public void testCorrectState(@Injectable("0.0") double speed, @Injectable("0.0") double position, @Injectable("1") int minDoneCycles) {
         assertEquals(DriveBase.DriveMode.Disabled, DriveBase.getInstance().getDriveMode());
-        straightDriveGyro.initialize();
-        assertEquals(DriveBase.DriveMode.PositionGyro, DriveBase.getInstance().getDriveMode());
+        motionMagic.initialize();
+        assertEquals(DriveBase.DriveMode.MotionMagicWithGyro, DriveBase.getInstance().getDriveMode());
         assertTrue(DriveBase.getInstance().isBrakeMode());
 
-        straightDriveGyro.end();
+        motionMagic.end();
         assertEquals(DriveBase.DriveMode.Disabled, DriveBase.getInstance().getDriveMode());
     }
 
@@ -90,13 +90,13 @@ public class StraightDriveGyroTest {
      */
     @Test
     public void testSetting(@Injectable("0.0") double speed, @Injectable("0.5") double position, @Injectable("1") int minDoneCycles) {
-        straightDriveGyro.initialize();
+        motionMagic.initialize();
 
         for (int i = 0; i < 3; i++) {
-            straightDriveGyro.execute();
+            motionMagic.execute();
         }
 
-        straightDriveGyro.end();
+        motionMagic.end();
 
         new Verifications() {{
             talon.set(ControlMode.Position, position / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, 0);
@@ -124,26 +124,26 @@ public class StraightDriveGyroTest {
 
         Scheduler.getInstance().disable();
 
-        straightDriveGyro.initialize();
+        motionMagic.initialize();
 
-        assertFalse(straightDriveGyro.isFinished());
-        assertFalse(straightDriveGyro.isFinished());
-        assertFalse(straightDriveGyro.isFinished());
-        assertFalse(straightDriveGyro.isFinished());
-        assertFalse(straightDriveGyro.isFinished());
-        assertFalse(straightDriveGyro.isFinished());
-        assertFalse(straightDriveGyro.isFinished());
-        assertFalse(straightDriveGyro.isFinished());
-        assertFalse(straightDriveGyro.isFinished());
-        assertTrue(straightDriveGyro.isFinished());
+        assertFalse(motionMagic.isFinished());
+        assertFalse(motionMagic.isFinished());
+        assertFalse(motionMagic.isFinished());
+        assertFalse(motionMagic.isFinished());
+        assertFalse(motionMagic.isFinished());
+        assertFalse(motionMagic.isFinished());
+        assertFalse(motionMagic.isFinished());
+        assertFalse(motionMagic.isFinished());
+        assertFalse(motionMagic.isFinished());
+        assertTrue(motionMagic.isFinished());
 
-        straightDriveGyro.end();
+        motionMagic.end();
 
-        straightDriveGyro.initialize();
+        motionMagic.initialize();
 
-        assertFalse(straightDriveGyro.isFinished());
+        assertFalse(motionMagic.isFinished());
 
-        straightDriveGyro.end();
+        motionMagic.end();
     }
 
     /**
@@ -165,4 +165,6 @@ public class StraightDriveGyroTest {
     private static int intFeetToTicks(double feet) {
         return (int) (feetToTicks(feet));
     }
+
+
 }

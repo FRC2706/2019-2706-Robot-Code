@@ -1,15 +1,12 @@
 package ca.team2706.frc.robot.subsystems;
 
-import mockit.*;
-import org.junit.Test;
-
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.AnalogInput;
-
-import static org.junit.Assert.assertEquals;
-
-import com.ctre.phoenix.motorcontrol.can.*;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import mockit.Mocked;
+import mockit.Tested;
+import mockit.Verifications;
+import org.junit.Test;
 
 public class IntakeTest {
 
@@ -27,7 +24,7 @@ public class IntakeTest {
 
     @Test
     public void testControlMode() {
-        
+
         intake.lowerIntake();
         intake.inhaleCargo(0.5);
 

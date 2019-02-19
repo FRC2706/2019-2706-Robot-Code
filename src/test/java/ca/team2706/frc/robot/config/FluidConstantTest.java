@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import mockit.*;
 import org.junit.Before;
 import org.junit.Test;
+import util.Util;
 
 public class FluidConstantTest {
     // We'll just use a string fluid constant to test.
@@ -77,7 +78,7 @@ public class FluidConstantTest {
     private static boolean isInitialized = false;
 
     @Before
-    public void setUp() {
+    public void setUp() throws NoSuchFieldException, IllegalAccessException {
         if (!isInitialized) {
             isInitialized = true;
 
@@ -95,6 +96,7 @@ public class FluidConstantTest {
                 minTimes = 0;
             }};
 
+            Util.resetSubsystems();
             Robot robot = new Robot();
             robot.robotInit();
         }

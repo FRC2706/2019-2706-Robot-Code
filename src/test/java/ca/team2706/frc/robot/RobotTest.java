@@ -17,6 +17,7 @@ import mockit.Mocked;
 import mockit.Verifications;
 import org.junit.Before;
 import org.junit.Test;
+import util.Util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -25,6 +26,14 @@ import java.util.function.Consumer;
 import static org.junit.Assert.*;
 
 public class RobotTest {
+
+    static {
+        try {
+            Util.resetSubsystems();
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
 
     private final Robot robot = new Robot();
 

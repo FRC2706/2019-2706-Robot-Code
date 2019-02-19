@@ -19,6 +19,7 @@ import mockit.Mocked;
 import mockit.Verifications;
 import org.junit.Before;
 import org.junit.Test;
+import util.Util;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -106,6 +107,7 @@ public class ConfigTest {
             }};
 
 
+            Util.resetSubsystems();
             // New robot to be worked with.
             robot = new Robot();
             robot.robotInit();

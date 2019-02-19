@@ -4,6 +4,10 @@ import ca.team2706.frc.robot.Sendables;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.sensors.AnalogSelector;
+import com.ctre.phoenix.motion.BufferedTrajectoryPointStream;
+import com.ctre.phoenix.motion.MotionProfileStatus;
+import com.ctre.phoenix.motion.SetValueMotionProfile;
+import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -76,10 +80,20 @@ public class DriveBase extends Subsystem {
      */
     private double savedAngle;
 
-    /*
+    /**
      * Logs data to SmartDashboard and files periodically
      */
     private Notifier loggingNotifier;
+
+    /**
+     * Pushes trajectories from top level buffer to the RAM
+     */
+    private Notifier motionProfileNotifier;
+
+    /**
+     *
+     */
+    private MotionProfileStatus motionProfileStatus;
 
     /**
      * Creates a drive base, and initializes all required sensors and motors
@@ -128,6 +142,10 @@ public class DriveBase extends Subsystem {
 
         loggingNotifier = new Notifier(this::log);
         loggingNotifier.startPeriodic(Config.LOG_PERIOD);
+
+        motionProfileNotifier = new Notifier(rightFrontMotor::processMotionProfileBuffer);
+        motionProfileNotifier.startPeriodic(Config.TRAJECTORY_PUSH_PERIOD);
+        motionProfileStatus = new MotionProfileStatus();
     }
 
     /**
@@ -379,6 +397,17 @@ public class DriveBase extends Subsystem {
         }
     }
 
+    public void setMotionProfile()
+    {
+        if (driveMode != DriveMode.MotionProfile) {
+            stop();
+            selectEncodersSumWithPigeon();
+            configMotionProfile();
+            reset();
+
+            driveMode = DriveMode.MotionProfile;
+        }
+    }
     /**
      * Configures motion magic
      */
@@ -386,6 +415,13 @@ public class DriveBase extends Subsystem {
         rightFrontMotor.configMotionCruiseVelocity((int) (Config.MOTION_MAGIC_CRUISE_VELOCITY.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
         rightFrontMotor.configMotionAcceleration((int) (Config.MOTION_MAGIC_ACCELERATION.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
     }
+
+    private void configMotionProfile()
+    {
+        rightFrontMotor.configMotionCruiseVelocity((int) (Config.MOTION_MAGIC_CRUISE_VELOCITY.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
+        rightFrontMotor.configMotionAcceleration((int) (Config.MOTION_MAGIC_ACCELERATION.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
+    }
+
 
     /**
      * Gets the encoder sum using the pigeon
@@ -529,6 +565,60 @@ public class DriveBase extends Subsystem {
         leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
     }
 
+    public void runMotionProfile(double speed) {
+        setMotionProfile();
+        rightFrontMotor.getMotionProfileStatus(motionProfileStatus);
+
+        System.out.println(motionProfileStatus.btmBufferCnt);
+
+        leftFrontMotor.configClosedLoopPeakOutput(0, speed);
+        rightFrontMotor.configClosedLoopPeakOutput(0, speed);
+        leftFrontMotor.configClosedLoopPeakOutput(1, speed);
+        rightFrontMotor.configClosedLoopPeakOutput(1, speed);
+
+        rightFrontMotor.set(ControlMode.MotionProfileArc, motionProfileStatus.btmBufferCnt > 20? SetValueMotionProfile.Enable.value : SetValueMotionProfile.Disable.value);
+        leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
+    }
+
+    public void pushMotionProfile(double[] pos, double[] vel, double[] heading, int[] time, int size) {
+        /* create an empty point */
+        TrajectoryPoint point = new TrajectoryPoint();
+
+        /*
+         * just in case we are interrupting another MP and there is still buffer
+         * points in memory, clear it.
+         */
+        rightFrontMotor.clearMotionProfileTrajectories();
+
+        /* set the base trajectory period to zero, use the individual trajectory period below */
+        rightFrontMotor.configMotionProfileTrajectoryPeriod(0, Config.CAN_SHORT);
+
+        /* This is fast since it's just into our TOP buffer */
+        for (int i = 0; i < size; ++i) {
+
+            System.out.println(pos[i] + ", " + vel[i] + ", " + heading[i] + ", " + time[i]);
+            /* for each point, fill our structure and pass it to API */
+            point.position = pos[i]/Config.DRIVE_ENCODER_DPP;
+            point.velocity = vel[i]/Config.DRIVE_ENCODER_DPP/10;
+            point.auxiliaryPos = heading[i]/Config.PIGEON_DPP; /* scaled such that 3600 => 360 deg */
+            point.headingDeg = heading[i];
+            point.profileSlotSelect0 = 0;
+            point.profileSlotSelect1 = 1;
+            point.timeDur = time[i];
+            point.zeroPos = false;
+            if (i == 0)
+                point.zeroPos = true; /* set this to true on the first point */
+            point.useAuxPID = true;
+
+            point.isLastPoint = false;
+            if ((i + 1) == size)
+                point.isLastPoint = true; /* set this to true on the last point  */
+
+            rightFrontMotor.pushMotionProfileTrajectory(point);
+        }
+    }
+
+
     /*
      * Sets the amount that the robot has to rotate.
      *
@@ -665,6 +755,11 @@ public class DriveBase extends Subsystem {
         return rightFrontMotor.getClosedLoopError(0) * Config.DRIVE_ENCODER_DPP;
     }
 
+    public boolean isFinishedMotionProfile(){
+
+        return rightFrontMotor.isMotionProfileFinished();
+    }
+
     public void log() {
         if (DriverStation.getInstance().isEnabled()) {
             Log.d("Relative Gyro: " + getHeading());
@@ -787,6 +882,11 @@ public class DriveBase extends Subsystem {
         MotionMagicWithGyro,
 
         /**
+         * Motion profile
+         */
+        MotionProfile,
+
+        /**
          * Closed loop control with Auxiliary Pigeon Support
          */
         PositionGyro,
@@ -797,3 +897,4 @@ public class DriveBase extends Subsystem {
         Rotate
     }
 }
+

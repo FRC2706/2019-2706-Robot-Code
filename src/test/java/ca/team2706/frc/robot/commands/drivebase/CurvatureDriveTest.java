@@ -1,14 +1,18 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
-import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.subsystems.DriveBase;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.function.Supplier;
+
+import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -16,10 +20,17 @@ import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Mocked;
 import mockit.Verifications;
-import org.junit.Before;
-import org.junit.Test;
 
-public class ArcadeDriveWithJoystickTest {
+public class CurvatureDriveTest {
+    @Mocked
+    private Supplier<Double> forwardVal;
+
+    @Mocked
+    private Supplier<Double> curveSpeed;
+
+    @Mocked
+    private Supplier<Boolean> buttonPress;
+
     @Mocked
     private WPI_TalonSRX talon;
 
@@ -47,11 +58,15 @@ public class ArcadeDriveWithJoystickTest {
     @Injectable
     private SensorCollection sensorCollection;
 
-    @Mocked
-    private Joystick joy1;
+    @Test
+    public void testBrakeModeOn() {
+        testBrakeMode(true);
+    }
 
-    @Mocked
-    private Joystick joy2;
+    @Test
+    public void testBrakeModeOff() {
+        testBrakeMode(false);
+    }
 
     @Before
     public void setUp() {
@@ -62,34 +77,39 @@ public class ArcadeDriveWithJoystickTest {
     }
 
     /**
-     * Makes sure that values are negated correctly
+     * Makes sure that the brake mode gets set to the correct value at the end of the match
      */
-    @Test
-    public void testNegate() {
+    private void testBrakeMode(boolean brake) {
         new Expectations() {{
-            joy1.getRawAxis(Config.ARCADE_DRIVE_FORWARD);
-            returns(1.0D, -1.0D, 0.0D, 0.1D);
+            forwardVal.get();
+            result = 0.0;
 
-            joy2.getRawAxis(Config.ARCADE_DRIVE_ROTATE);
-            returns(1.0D, -1.0D, 0.0D, 0.1D);
+            curveSpeed.get();
+            result = 0.0;
+
+            buttonPress.get();
+            result = false;
         }};
 
+        CurvatureDrive curvatureDrive = new CurvatureDrive(forwardVal, curveSpeed, brake, buttonPress) {
+            @Override
+            public boolean isFinished() {
+                return false;
+            }
+        };
 
-        ArcadeDriveWithJoystick arcadeDrive = new ArcadeDriveWithJoystick(joy1, Config.ARCADE_DRIVE_FORWARD, true, joy2, Config.ARCADE_DRIVE_ROTATE, false);
-
-        arcadeDrive.initialize();
-
-        for (int i = 0; i < 4; i++) {
-            arcadeDrive.execute();
-        }
-
-        arcadeDrive.end();
+        curvatureDrive.initialize();
 
         new Verifications() {{
-            DriveBase.getInstance().arcadeDrive(-1, 1, Config.TELEOP_SQUARE_JOYSTICK_INPUTS);
-            DriveBase.getInstance().arcadeDrive(1, -1, Config.TELEOP_SQUARE_JOYSTICK_INPUTS);
-            DriveBase.getInstance().arcadeDrive(-0.0, 0, Config.TELEOP_SQUARE_JOYSTICK_INPUTS);
-            DriveBase.getInstance().arcadeDrive(-0.1, 0.1, Config.TELEOP_SQUARE_JOYSTICK_INPUTS);
+            DriveBase.getInstance().setBrakeMode(brake);
+        }};
+
+        curvatureDrive.execute();
+
+        curvatureDrive.end();
+
+        new Verifications() {{
+            DriveBase.getInstance().setBrakeMode(brake);
         }};
     }
 }

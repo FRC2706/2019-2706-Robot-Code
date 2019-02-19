@@ -84,8 +84,12 @@ public class Config {
 
     public static final int PURPLE_LIGHT = robotSpecific(3, 3, 3);
 
-    public static final int ARCADE_DRIVE_FORWARD = 5;
-    public static final int ARCADE_DRIVE_ROTATE = 4;
+    public static final int ARCADE_DRIVE_FORWARD = XboxValue.XBOX_RIGHT_STICK_Y.getPort();
+    public static final int ARCADE_DRIVE_ROTATE = XboxValue.XBOX_RIGHT_STICK_X.getPort();
+
+    public static final int CURVATURE_DRIVE_FORWARD = XboxValue.XBOX_LEFT_STICK_Y.getPort();
+    public static final int CURVATURE_CURVE_SPEED = XboxValue.XBOX_RIGHT_STICK_X.getPort();
+    public static final int SLOW_MODE = XboxValue.XBOX_LB_BUTTON.getPort();
 
     public static final double LOG_PERIOD = robotSpecific(0.02, 0.02, 0.02, Double.POSITIVE_INFINITY);
 

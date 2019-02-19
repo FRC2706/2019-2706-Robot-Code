@@ -1,12 +1,16 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
-import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.subsystems.DriveBase;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Notifier;
@@ -16,10 +20,9 @@ import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Mocked;
 import mockit.Verifications;
-import org.junit.Before;
-import org.junit.Test;
 
-public class ArcadeDriveWithJoystickTest {
+public class CurvatureDriveWithJoystickTest {
+
     @Mocked
     private WPI_TalonSRX talon;
 
@@ -47,11 +50,14 @@ public class ArcadeDriveWithJoystickTest {
     @Injectable
     private SensorCollection sensorCollection;
 
-    @Mocked
+    @Injectable
     private Joystick joy1;
 
-    @Mocked
+    @Injectable
     private Joystick joy2;
+
+    @Injectable
+    private Joystick joy3;
 
     @Before
     public void setUp() {
@@ -67,29 +73,30 @@ public class ArcadeDriveWithJoystickTest {
     @Test
     public void testNegate() {
         new Expectations() {{
-            joy1.getRawAxis(Config.ARCADE_DRIVE_FORWARD);
-            returns(1.0D, -1.0D, 0.0D, 0.1D);
+            joy1.getRawAxis(Config.CURVATURE_DRIVE_FORWARD);
+            returns(1D, -1D);
 
-            joy2.getRawAxis(Config.ARCADE_DRIVE_ROTATE);
-            returns(1.0D, -1.0D, 0.0D, 0.1D);
+            // 0.0D, 0.1D
+            joy2.getRawAxis(Config.CURVATURE_CURVE_SPEED);
+            returns(1D, -1D );
+
+            joy3.getRawButton(Config.SLOW_MODE);
+            returns(true, false);
+
         }};
 
+        CurvatureDriveWithJoystick curveDrive = new CurvatureDriveWithJoystick(joy1, Config.CURVATURE_DRIVE_FORWARD, true, joy2, Config.CURVATURE_CURVE_SPEED, false, joy3, Config.SLOW_MODE);
 
-        ArcadeDriveWithJoystick arcadeDrive = new ArcadeDriveWithJoystick(joy1, Config.ARCADE_DRIVE_FORWARD, true, joy2, Config.ARCADE_DRIVE_ROTATE, false);
+        curveDrive.initialize();
 
-        arcadeDrive.initialize();
+        curveDrive.execute();
+        curveDrive.execute();
 
-        for (int i = 0; i < 4; i++) {
-            arcadeDrive.execute();
-        }
-
-        arcadeDrive.end();
+        curveDrive.end();
 
         new Verifications() {{
-            DriveBase.getInstance().arcadeDrive(-1, 1, Config.TELEOP_SQUARE_JOYSTICK_INPUTS);
-            DriveBase.getInstance().arcadeDrive(1, -1, Config.TELEOP_SQUARE_JOYSTICK_INPUTS);
-            DriveBase.getInstance().arcadeDrive(-0.0, 0, Config.TELEOP_SQUARE_JOYSTICK_INPUTS);
-            DriveBase.getInstance().arcadeDrive(-0.1, 0.1, Config.TELEOP_SQUARE_JOYSTICK_INPUTS);
+            DriveBase.getInstance().curvatureDrive(0.25, 0, false);
+            DriveBase.getInstance().curvatureDrive(0.25, 0, false);
         }};
     }
 }

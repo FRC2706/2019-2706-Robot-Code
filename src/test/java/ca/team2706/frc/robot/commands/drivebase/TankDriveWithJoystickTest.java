@@ -20,6 +20,7 @@ import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Mocked;
 import mockit.Verifications;
+import util.Util;
 
 public class TankDriveWithJoystickTest {
     @Mocked
@@ -56,7 +57,8 @@ public class TankDriveWithJoystickTest {
     private Joystick joy2;
 
     @Before
-    public void setUp() {
+    public void setUp() throws NoSuchFieldException, IllegalAccessException {
+        Util.resetSubsystems();
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;

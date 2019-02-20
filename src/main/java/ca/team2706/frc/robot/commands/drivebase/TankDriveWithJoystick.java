@@ -3,6 +3,9 @@ package ca.team2706.frc.robot.commands.drivebase;
 import ca.team2706.frc.robot.config.Config;
 import edu.wpi.first.wpilibj.Joystick;
 
+/**
+ * Allows the robot to drive using tank controls
+ */
 public class TankDriveWithJoystick extends TankDrive {
 
     public TankDriveWithJoystick(Joystick joy1, int axis1, boolean invert1,

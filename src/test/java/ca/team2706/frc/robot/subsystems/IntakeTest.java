@@ -153,11 +153,11 @@ public class IntakeTest {
     @Test
     public void testRetractHatchDeploymentCylinder() {
         intake.raiseIntake(); // Go into hatch mode
-        intake.retractHatchMech();
+        intake.retractPlunger();
 
         // Should still work with cargo manipulation.
         intake.lowerIntake();
-        intake.retractHatchMech();
+        intake.retractPlunger();
 
         new Verifications() {{
             hatchEjectorSolenoid.set(DoubleSolenoid.Value.kReverse);

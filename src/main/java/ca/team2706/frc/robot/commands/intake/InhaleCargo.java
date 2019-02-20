@@ -21,6 +21,7 @@ public class InhaleCargo extends Command {
 
     @Override
     public void initialize() {
+        Intake.getInstance().retractPlunger();
         Intake.getInstance().lowerIntake();
     }
 

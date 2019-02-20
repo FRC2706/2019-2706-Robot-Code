@@ -137,8 +137,11 @@ public class Intake extends Subsystem {
      * Lowers the intake arms, in preparation for inhaling cargo.
      */
     public void lowerIntake() {
-        intakeLiftSolenoid.set(DoubleSolenoid.Value.kForward);
-        currentMode = IntakeMode.CARGO;
+        // We don't want to lower the intake onto the plunger.
+        if (isPlungerStowed()) {
+            intakeLiftSolenoid.set(DoubleSolenoid.Value.kForward);
+            currentMode = IntakeMode.CARGO;
+        }
     }
 
     /**
@@ -161,8 +164,17 @@ public class Intake extends Subsystem {
     /**
      * Retracts the hatch deployment cylinder
      */
-    public void retractHatchMech() {
+    public void retractPlunger() {
         hatchEjectorSolenoid.set(DoubleSolenoid.Value.kReverse);
+    }
+
+    /**
+     * Determines if the hatch ejector (plunger) is in the inward position (stowed) or in the outward position (not stowed).
+     *
+     * @return True if the plunger is stowed, false otherwise.
+     */
+    public boolean isPlungerStowed() {
+        return hatchEjectorSolenoid.get() == DoubleSolenoid.Value.kForward;
     }
 
 }

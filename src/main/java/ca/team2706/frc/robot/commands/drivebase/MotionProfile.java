@@ -20,7 +20,6 @@ public class MotionProfile extends Command {
     private final double[] heading;
     private final int[] time;
     private final int size;
-    private boolean isReady;
 
     /**
      * Creates a straight drive command with constant values
@@ -51,17 +50,11 @@ public class MotionProfile extends Command {
         DriveBase.getInstance().setBrakeMode(true);
         DriveBase.getInstance().pushMotionProfile1Wheel(pos, vel, heading, time, size);
         DriveBase.getInstance().setMotionProfile();
-
-        isReady = false;
     }
 
     @Override
     public void execute() {
-
-        if (isReady || DriveBase.getInstance().motionProfileIsReadyRight()) {
-            isReady = true;
             DriveBase.getInstance().runMotionProfile(speed.get());
-        }
     }
 
     @Override

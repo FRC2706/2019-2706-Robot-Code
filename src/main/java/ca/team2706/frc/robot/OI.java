@@ -62,9 +62,6 @@ public class OI {
         // The Joystick for controlling the mechanisms of the robot
         this.controlStick = controlStick;
 
-       // driveCommand = new ArcadeDriveWithJoystick(driverStick, Config.ARCADE_DRIVE_FORWARD, true,
-         //       Config.ARCADE_DRIVE_ROTATE, false);
-
         driveCommand = new TankDriveWithJoystick(driverStick, Config.TANK_DRIVE_LEFT, true, Config.TANK_DRIVE_RIGHT, true);
 
         // Set subsystem default commands

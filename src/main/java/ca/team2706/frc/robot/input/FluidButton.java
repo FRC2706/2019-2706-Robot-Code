@@ -39,13 +39,13 @@ public class FluidButton extends EButton {
      * @param fluidConstant The fluid constant action of which to find the port value.
      * @return The port value for the binding.
      */
-    public static Config.XboxValue getPort(FluidConstant<String> fluidConstant) {
+    private static Config.XboxValue getPort(FluidConstant<String> fluidConstant) {
         return Config.XboxValue.getXboxValueFromNTKey(fluidConstant.value());
     }
 
     @Override
     public boolean get() {
-        Config.XboxValue port = getPort(joystickPort);
+        Config.XboxValue port = Config.XboxValue.getXboxValueFromNTKey(joystickPort.value());
 
         boolean value = false;
 

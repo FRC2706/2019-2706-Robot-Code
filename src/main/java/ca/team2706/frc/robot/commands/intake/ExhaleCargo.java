@@ -11,6 +11,9 @@ import edu.wpi.first.wpilibj.command.Command;
 public class ExhaleCargo extends Command {
     private final int port;
 
+    /**
+     * The joystick used to determine the cargo speed.
+     */
     private final Joystick joystick;
 
     public ExhaleCargo(Joystick joystick, final int port) {

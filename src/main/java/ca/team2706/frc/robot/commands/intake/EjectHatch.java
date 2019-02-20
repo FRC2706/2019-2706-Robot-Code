@@ -10,8 +10,7 @@ public class EjectHatch extends InstantCommand {
     }
 
     @Override
-    public void execute() {
+    protected void execute() {
         Intake.getInstance().ejectHatch();
     }
-
 }

@@ -3,6 +3,7 @@ package util;
 import ca.team2706.frc.robot.OI;
 import ca.team2706.frc.robot.subsystems.Bling;
 import ca.team2706.frc.robot.subsystems.DriveBase;
+import ca.team2706.frc.robot.subsystems.Intake;
 import ca.team2706.frc.robot.subsystems.SensorExtras;
 
 import java.lang.reflect.Field;
@@ -19,6 +20,7 @@ public class Util {
         setCurrentInstanceFieldNull(OI.class);
         setCurrentInstanceFieldNull(SensorExtras.class);
         setCurrentInstanceFieldNull(DriveBase.class);
+        setCurrentInstanceFieldNull(Intake.class);
     }
 
     /**

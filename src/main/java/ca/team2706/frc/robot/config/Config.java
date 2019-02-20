@@ -66,6 +66,14 @@ public class Config {
             INVERT_FRONT_RIGHT_DRIVE = robotSpecific(true, true, true),
             INVERT_BACK_RIGHT_DRIVE = robotSpecific(true, true, true);
 
+    public static final int INTAKE_MOTOR_ID = robotSpecific(6, 6, 6),
+            CARGO_IR_SENSOR_ID = robotSpecific(3, 3, 3),
+            INTAKE_LIFT_SOLENOID_FORWARD_ID = robotSpecific(2, 2, 2),
+            INTAKE_LIFT_SOLENOID_BACKWARD_ID = robotSpecific(3, 3, 3),
+            HATCH_EJECTOR_SOLENOID_FORWARD_ID = robotSpecific(0, 0, 0),
+            HATCH_EJECTOR_SOLENOID_BACKWARD_ID = robotSpecific(1, 1, 1);
+
+
     public static final boolean DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);
 
     // Talon ID for the Pigeon
@@ -88,7 +96,7 @@ public class Config {
     public static final int ARCADE_DRIVE_ROTATE = 4;
 
 
-    public static final double INTAKE_MAX_SPEED = 0.5; //to be finalized later, this has yet to be tested
+    public static final double MAX_INTAKE_SPEED = 0.5; //to be finalized later, this has yet to be tested
 
     public static final double[] ENCODER_LIFT_PID_UP = {0.5, 0, 50}; //to be finalized later, these values have not yet been tested
 
@@ -96,11 +104,6 @@ public class Config {
 
 
     public static final double LOG_PERIOD = robotSpecific(0.02, 0.02, 0.02, Double.POSITIVE_INFINITY);
-
-    /**
-     * The minimum reading on the cargo IR sensor to assert that we have cargo in the mechanism.
-     */
-    public static final double CARGO_CAPTURED_IR_DIST = 1.0;
 
 
     // #### Fluid constants ####
@@ -129,6 +132,10 @@ public class Config {
     public static final FluidConstant<String> MOVE_LIFT_UP_BINDING = constant("move-lift-up", XboxValue.XBOX_A_BUTTON.getNTString());
     public static final FluidConstant<String> INTAKE_BINDING = constant("intake-trigger", XboxValue.XBOX_BACK_LEFT_TRIGGER.getNTString());
     public static final FluidConstant<String> EXHALE_BINDING = constant("exhale-trigger", XboxValue.XBOX_BACK_RIGHT_TRIGGER.getNTString());
+    /**
+     * The minimum reading on the cargo IR sensor to assert that we have cargo in the mechanism.
+     */
+    public static final FluidConstant<Double> CARGO_CAPTURED_IR_VOLTAGE = constant("cargo-ir-distance", 1.0);
 
     // ### Methods, fields and Constructors ###
     /**

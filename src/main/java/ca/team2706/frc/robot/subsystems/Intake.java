@@ -13,35 +13,53 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Intake extends Subsystem {
     private static Intake currentInstance;
 
-    public WPI_TalonSRX m_intake;
-    private AnalogInput m_sensor;
+    public WPI_TalonSRX intakeMotor;
+    private AnalogInput irSensor;
 
-    private DoubleSolenoid m_intakeLift;
-    private DoubleSolenoid m_hatchEjector;
+    private DoubleSolenoid intakeLiftSolenoid;
+    private DoubleSolenoid hatchEjectorSolenoid;
 
     /**
      * The state of the intake subsystem.
      */
     private IntakeMode currentMode;
 
+    /**
+     * Gets the current instance of this subsystem, creating it if it doesn't exist.
+     *
+     * @return The subsystem's instance.
+     */
     public static Intake getInstance() {
-        if (currentInstance == null) {
-            init();
-        }
-
+        init();
         return currentInstance;
     }
 
+    /**
+     * Initializes a new instance of this subsystem, if it hasn't been initialized.
+     */
     public static void init() {
-        currentInstance = new Intake();
+        if (currentInstance == null) {
+            currentInstance = new Intake();
+        }
     }
 
+    public Intake(WPI_TalonSRX intakeTalon, AnalogInput irSensor, DoubleSolenoid intakeLiftSolenoid, DoubleSolenoid hatchEjectorSolenoid) {
+        this.intakeMotor = intakeTalon;
+        this.irSensor = irSensor;
+        this.intakeLiftSolenoid = intakeLiftSolenoid;
+        this.hatchEjectorSolenoid = hatchEjectorSolenoid;
+
+        this.intakeMotor.setNeutralMode(NeutralMode.Brake);
+    }
+
+    /**
+     * Constructs a new Intake.
+     */
     public Intake() {
-        m_intake = new WPI_TalonSRX(6);
-        m_sensor = new AnalogInput(3);
-        m_intake.setNeutralMode(NeutralMode.Brake);
-        m_intakeLift = new DoubleSolenoid(2, 3);
-        m_hatchEjector = new DoubleSolenoid(0, 1);
+        this(new WPI_TalonSRX(Config.INTAKE_MOTOR_ID),
+                new AnalogInput(Config.CARGO_IR_SENSOR_ID),
+                new DoubleSolenoid(Config.INTAKE_LIFT_SOLENOID_FORWARD_ID, Config.INTAKE_LIFT_SOLENOID_BACKWARD_ID),
+                new DoubleSolenoid(Config.HATCH_EJECTOR_SOLENOID_FORWARD_ID, Config.HATCH_EJECTOR_SOLENOID_BACKWARD_ID));
     }
 
     /**
@@ -57,7 +75,7 @@ public class Intake extends Subsystem {
     }
 
     /**
-     * Getting the voltage from the IR sensor
+     * Getting the voltage from the IR sensor, returning 0 if not configured to deal with cargo.
      *
      * @return the voltage reading
      */
@@ -66,7 +84,7 @@ public class Intake extends Subsystem {
 
         // We only want to be reading the real ir sensor if we're supposed to be dealing with cargo.
         if (currentMode == IntakeMode.CARGO) {
-            irValue = m_sensor.getVoltage();
+            irValue = irSensor.getVoltage();
         }
         // Otherwise we say 0 since we're dealing with hatches.
         else {
@@ -83,7 +101,7 @@ public class Intake extends Subsystem {
      */
     public void inhaleCargo(double speed) {
         if (currentMode == IntakeMode.CARGO) {
-            m_intake.set(speed * Config.INTAKE_MAX_SPEED);
+            intakeMotor.set(speed * Config.MAX_INTAKE_SPEED);
         }
     }
 
@@ -94,7 +112,8 @@ public class Intake extends Subsystem {
      */
     public void exhaleCargo(double speed) {
         if (currentMode == IntakeMode.CARGO) {
-            m_intake.set(-(speed * Config.INTAKE_MAX_SPEED));
+            speed = -(speed * Config.MAX_INTAKE_SPEED);
+            intakeMotor.set(speed);
         }
     }
 
@@ -102,7 +121,7 @@ public class Intake extends Subsystem {
      * Stop motors
      */
     public void stop() {
-        m_intake.set(0);
+        intakeMotor.set(0);
     }
 
     /**
@@ -111,22 +130,22 @@ public class Intake extends Subsystem {
      * @return whether the intake has cargo or not
      */
     public boolean isCargoInMechanism() {
-        return currentMode == IntakeMode.CARGO && m_sensor.getVoltage() > Config.CARGO_CAPTURED_IR_DIST;
+        return readIr() > Config.CARGO_CAPTURED_IR_VOLTAGE.value();
     }
 
     /**
      * Lowers the intake arms, in preparation for inhaling cargo.
      */
     public void lowerIntake() {
-        m_intakeLift.set(DoubleSolenoid.Value.kForward);
+        intakeLiftSolenoid.set(DoubleSolenoid.Value.kForward);
         currentMode = IntakeMode.CARGO;
     }
 
     /**
-     * Raises the intake arms in preparation for inhaling a hatch.
+     * Raises the intake arms in preparation for manipulating hatches.
      */
     public void raiseIntake() {
-        m_intakeLift.set(DoubleSolenoid.Value.kReverse);
+        intakeLiftSolenoid.set(DoubleSolenoid.Value.kReverse);
         currentMode = IntakeMode.HATCH;
     }
 
@@ -135,7 +154,7 @@ public class Intake extends Subsystem {
      */
     public void ejectHatch() {
         if (currentMode == IntakeMode.HATCH) {
-            m_hatchEjector.set(DoubleSolenoid.Value.kForward);
+            hatchEjectorSolenoid.set(DoubleSolenoid.Value.kForward);
         }
     }
 
@@ -143,7 +162,7 @@ public class Intake extends Subsystem {
      * Retracts the hatch deployment cylinder
      */
     public void retractHatchMech() {
-        m_hatchEjector.set(DoubleSolenoid.Value.kReverse);
+        hatchEjectorSolenoid.set(DoubleSolenoid.Value.kReverse);
     }
 
 }

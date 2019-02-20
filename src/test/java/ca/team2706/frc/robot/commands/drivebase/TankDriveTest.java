@@ -20,6 +20,7 @@ import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Mocked;
 import mockit.Verifications;
+import util.Util;
 
 public class TankDriveTest {
     @Mocked
@@ -76,7 +77,8 @@ public class TankDriveTest {
     /**
      * Makes sure that the brake mode gets set to the correct value at the end of the match
      */
-    private void testBrakeMode(boolean brake) {
+    private void testBrakeMode(boolean brake) throws NoSuchFieldException, IllegalAccessException {
+        Util.resetSubsystems();
         new Expectations() {{
             leftSpeed.get();
             result = 0.0;

@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
@@ -119,8 +120,10 @@ public class Intake extends Subsystem {
      */
 
     public void lowerIntake() {
-        m_intakeLift.set(DoubleSolenoid.Value.kForward);
-        hatchMode = false;
+        if (!(m_hatchEjector.get() == Value.kForward)){
+            m_intakeLift.set(DoubleSolenoid.Value.kForward);
+            hatchMode = false;
+        }
     }
 
     /**

@@ -76,6 +76,8 @@ public class OI {
         // Set subsystem default commands
         DriveBase.getInstance().setDefaultCommand(driveCommand);
 
+        new FluidButton(driverStick, Config.LOWER_INTAKE).whenPressed(new LowerIntake());
+
         new FluidButton(driverStick, Config.MOVE_LIFT_UP).whenPressed(new MoveLiftUpToHigherLevel());
         //new FluidButton(driverStick, Config.INHALE).whenPressed(new InhaleCargo(driverStick));
 

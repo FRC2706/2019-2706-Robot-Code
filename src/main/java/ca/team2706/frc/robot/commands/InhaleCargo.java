@@ -1,6 +1,5 @@
 package ca.team2706.frc.robot.commands;
 
-
 import ca.team2706.frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;

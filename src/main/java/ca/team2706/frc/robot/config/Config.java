@@ -112,6 +112,7 @@ public class Config {
     public static final FluidConstant<Double> PIGEON_KD = constant("pigeon-ki", 4.0);
     public static final FluidConstant<Double> PIGEON_KF = constant("pigeon-kf", 0.0);
 
+    public static final FluidConstant<String> LOWER_INTAKE = constant("lower-intake", XboxValue.XBOX_B_BUTTON.NTString);
 
     public static final FluidConstant<String> MOVE_LIFT_UP = constant("move-lift-up", XboxValue.XBOX_A_BUTTON.NTString);
     

@@ -6,10 +6,10 @@ import com.ctre.phoenix.motorcontrol.can.*;
 import edu.wpi.first.wpilibj.*;
 import ca.team2706.frc.robot.subsystems.*;
 
-public class RaiseLiftTest {
+public class LowerLiftTest {
 
     @Tested
-    private MoveLiftUpPID raise;
+    private MoveLiftDownPID lower;
 
     @Mocked
     private WPI_TalonSRX talon;
@@ -26,9 +26,9 @@ public class RaiseLiftTest {
     @Test
     public void testControlMode() {
         
-        raise = new MoveLiftUpPID(j);
-        raise.execute();
-        raise.end();
+        lower = new MoveLiftDownPID(j);
+        lower.execute();
+        lower.end();
 
     }
 }

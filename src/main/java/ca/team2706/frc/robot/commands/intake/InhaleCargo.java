@@ -13,7 +13,7 @@ public class InhaleCargo extends Command {
     private Joystick joystick;
     private final int triggerAxis;
 
-    public InhaleCargo(Joystick joystick, final int axis) {
+    public InhaleCargo(final Joystick joystick, final int axis) {
         requires(Intake.getInstance());
         this.joystick = joystick;
         this.triggerAxis = axis;

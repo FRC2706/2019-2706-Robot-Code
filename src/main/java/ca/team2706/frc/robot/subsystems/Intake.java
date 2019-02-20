@@ -174,7 +174,7 @@ public class Intake extends Subsystem {
      * @return True if the plunger is stowed, false otherwise.
      */
     public boolean isPlungerStowed() {
-        return hatchEjectorSolenoid.get() == DoubleSolenoid.Value.kForward;
+        return hatchEjectorSolenoid.get() == DoubleSolenoid.Value.kReverse;
     }
 
 }

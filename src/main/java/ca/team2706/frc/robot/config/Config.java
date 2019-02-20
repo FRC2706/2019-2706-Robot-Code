@@ -87,6 +87,9 @@ public class Config {
     public static final int ARCADE_DRIVE_FORWARD = 5;
     public static final int ARCADE_DRIVE_ROTATE = 4;
 
+    public static final int TANK_DRIVE_RIGHT = XboxValue.XBOX_RIGHT_STICK_Y.getPort();
+    public static final int TANK_DRIVE_LEFT = XboxValue.XBOX_LEFT_STICK_Y.getPort();
+
     public static final double LOG_PERIOD = robotSpecific(0.02, 0.02, 0.02, Double.POSITIVE_INFINITY);
 
     // #### Fluid constants ####

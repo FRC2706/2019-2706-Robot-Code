@@ -1,6 +1,8 @@
 package ca.team2706.frc.robot;
 
 import ca.team2706.frc.robot.commands.drivebase.ArcadeDriveWithJoystick;
+import ca.team2706.frc.robot.commands.drivebase.TankDrive;
+import ca.team2706.frc.robot.commands.drivebase.TankDriveWithJoystick;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.Joystick;
@@ -60,8 +62,10 @@ public class OI {
         // The Joystick for controlling the mechanisms of the robot
         this.controlStick = controlStick;
 
-        driveCommand = new ArcadeDriveWithJoystick(driverStick, Config.ARCADE_DRIVE_FORWARD, true,
-                Config.ARCADE_DRIVE_ROTATE, false);
+       // driveCommand = new ArcadeDriveWithJoystick(driverStick, Config.ARCADE_DRIVE_FORWARD, true,
+         //       Config.ARCADE_DRIVE_ROTATE, false);
+
+        driveCommand = new TankDriveWithJoystick(driverStick, Config.TANK_DRIVE_LEFT, true, Config.TANK_DRIVE_RIGHT, true);
 
         // Set subsystem default commands
         DriveBase.getInstance().setDefaultCommand(driveCommand);

@@ -103,6 +103,22 @@ public class Config {
     public static final FluidConstant<Double> PIGEON_KD = constant("pigeon-ki", 4.0);
     public static final FluidConstant<Double> PIGEON_KF = constant("pigeon-kf", 0.0);
 
+    public static final FluidConstant<String> DRIVER_ASSIST_VISION_CARGO_AND_LOADING = 
+        constant("driver-assist-vision-cargo-loading", XboxValue.XBOX_X_BUTTON.NTString);
+    
+    public static final FluidConstant<String> DRIVER_ASSIST_VISION_ROCKET = 
+        constant("driver-assist-vision-rocket", XboxValue.XBOX_B_BUTTON.NTString);
+
+    public static final FluidConstant<String> DRIVER_ASSIST_LASER = 
+        constant("driver-assist-laser", XboxValue.XBOX_A_BUTTON.NTString);
+
+    public static final FluidConstant<Double> TRAJ_DELTA_TIME = constant("traj-delta-time", 0.05);
+    public static final FluidConstant<Double> ROBOT_MAX_VEL = constant("robot-max-vel", 1.7);
+    public static final FluidConstant<Double> ROBOT_MAX_ACC = constant("robot-max-acc", 2.0);
+    public static final FluidConstant<Double> ROBOT_MAX_JERK = constant("robot-max-jerk", 60.0);
+
+    public static final FluidConstant<Double> ROBOT_TO_CAMERA_X_ROBOT = constant("robot-to-camera-x-robot", 0.3);
+    public static final FluidConstant<Double> ROBOT_TO_CAMERA_Y_ROBOT = constant("robot-to-camera-y-robot", 0.5);
 
     // ### Methods, fields and Constructors ###
     /**
@@ -347,5 +363,23 @@ public class Config {
          * A POV or D-pad on the robot
          */
         POV
+    }
+
+    /**
+     * Gets the value of ROBOT_TO_CAMERA_X_ROBOT.
+     *
+     * @return The value of ROBOT_TO_CAMERA_X_ROBOT.
+     */
+    public static double get_ROBOT_TO_CAMERA_X_ROBOT() {
+        return ROBOT_TO_CAMERA_X_ROBOT.value();
+    }
+
+    /**
+     * Gets the value of ROBOT_TO_CAMERA_Y_ROBOT.
+     *
+     * @return The value of ROBOT_TO_CAMERA_Y_ROBOT.
+     */
+    public static double get_ROBOT_TO_CAMERA_Y_ROBOT() {
+        return ROBOT_TO_CAMERA_Y_ROBOT.value();
     }
 }

@@ -3,6 +3,8 @@ package ca.team2706.frc.robot;
 import ca.team2706.frc.robot.commands.drivebase.ArcadeDriveWithJoystick;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.DriveBase;
+import ca.team2706.frc.robot.input.FluidButton;
+//import ca.team2706.frc.robot.config.Config;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -23,6 +25,10 @@ public class OI {
     private static OI currentInstance;
 
     public final Command driveCommand;
+
+    public final FluidButton buttonDriverAssistVisionCargoAndLoading;
+    public final FluidButton buttonDriverAssistVisionRocket;
+    public final FluidButton buttonDriverAssistLaser;
 
     /**
      * Gets the current instance of the OI class.
@@ -53,7 +59,7 @@ public class OI {
      * @param driverStick  The driver joystick to use
      * @param controlStick The operator joystick to use
      */
-    private OI(Joystick driverStick, Joystick controlStick) {
+     public OI(Joystick driverStick, Joystick controlStick) {
         // Joystick for driving the robot around
         this.driverStick = driverStick;
 
@@ -62,6 +68,10 @@ public class OI {
 
         driveCommand = new ArcadeDriveWithJoystick(driverStick, Config.ARCADE_DRIVE_FORWARD, true,
                 Config.ARCADE_DRIVE_ROTATE, false);
+
+        buttonDriverAssistVisionCargoAndLoading = new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_CARGO_AND_LOADING);
+        buttonDriverAssistVisionRocket = new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_ROCKET);
+        buttonDriverAssistLaser = new FluidButton(driverStick, Config.DRIVER_ASSIST_LASER);
 
         // Set subsystem default commands
         DriveBase.getInstance().setDefaultCommand(driveCommand);
@@ -83,5 +93,32 @@ public class OI {
      */
     public Joystick getControlStick() {
         return controlStick;
+    }
+
+    /**
+     * Gets a boolean indicating if the DriverAssistVisionCargoAndLoading button is pressed.
+     *
+     * @return True if the DriverAssistVisionCargoAndLoading button is pressed, false otherwise.
+     */
+    public boolean getButtonDriverAssistVisionCargoAndLoading() {
+        return buttonDriverAssistVisionCargoAndLoading.get();
+    }
+
+    /**
+     * Gets a boolean indicating if the DriverAssistLaser button is pressed.
+     *
+     * @return True if the DriverAssistVisionRocket button is pressed, false otherwise.
+     */
+    public boolean getButtonDriverAssistLaser() {
+        return buttonDriverAssistLaser.get();
+    }
+
+    /**
+     * Gets a boolean indicating if the DriverAssistVisionRocket button is pressed.
+     *
+     * @return True if the DriverAssistVisionRocket button is pressed, false otherwise.
+     */
+    public boolean getButtonDriverAssistVisionRocket() {
+        return buttonDriverAssistVisionRocket.get();
     }
 }

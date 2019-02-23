@@ -4,7 +4,6 @@ import ca.team2706.frc.robot.commands.drivebase.StraightDrive;
 import ca.team2706.frc.robot.commands.drivebase.StraightDriveGyro;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
-import ca.team2706.frc.robot.sensors.DriverAssistToTargetWithVision;
 import ca.team2706.frc.robot.subsystems.Bling;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import ca.team2706.frc.robot.subsystems.SensorExtras;
@@ -31,8 +30,6 @@ public class Robot extends TimedRobot {
     private static Robot latestInstance;
 
     private final List<Consumer<RobotState>> stateListeners = new ArrayList<>();
-
-    private static DriverAssistToTargetWithVision driverAssistToTargetWithVision;
 
     public Robot() {
         latestInstance = this;
@@ -76,9 +73,6 @@ public class Robot extends TimedRobot {
                 new StraightDriveGyro(0.2, 2.0, 100)  // 3
         };
 
-        // Driver assists
-        driverAssistToTargetWithVision = new DriverAssistToTargetWithVision();
-        driverAssistToTargetWithVision.startMonitoringNetworkTableVisionEntry();
     }
 
     /**

@@ -120,6 +120,8 @@ public class Config {
     public static final FluidConstant<Double> ROBOT_TO_CAMERA_X_ROBOT = constant("robot-to-camera-x-robot", 0.3);
     public static final FluidConstant<Double> ROBOT_TO_CAMERA_Y_ROBOT = constant("robot-to-camera-y-robot", 0.5);
 
+    public static final FluidConstant<Double> ROBOT_START_ANGLE_DEG = constant("robot-start-angle-deg", 45.0);
+
     // ### Methods, fields and Constructors ###
     /**
      * The network table for fluid constants.

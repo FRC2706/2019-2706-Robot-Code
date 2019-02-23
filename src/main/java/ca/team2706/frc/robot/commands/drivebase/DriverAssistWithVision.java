@@ -1,52 +1,124 @@
-package ca.team2706.frc.robot.sensors;
+package ca.team2706.frc.robot.commands.drivebase;
+
+import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.logging.Log;
+import ca.team2706.frc.robot.subsystems.DriveBase;
+
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.Waypoint;
 
-import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.logging.Log;
-import ca.team2706.frc.robot.OI;
-import ca.team2706.frc.robot.subsystems.DriveBase;
+/**
+ * Drives the robot using values for driving forward and rotation
+ */
+public class DriverAssistWithVision extends Command {
 
-import edu.wpi.first.networktables.EntryListenerFlags;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
+    public DriverAssistWithVision() {
+        initNetworkTables();
+    }
 
-public class DriverAssistToTargetWithVision {
-    
-    public DriverAssistToTargetWithVision() {}
-    
-    public void startMonitoringNetworkTableVisionEntry() {
-        NetworkTableInstance inst = NetworkTableInstance.getDefault();
-        NetworkTable table = inst.getTable("PathFinder");
-        String serverName = new String("10.27.6.100");
+    /**
+     * Creates the driver assist with vision command
+     */
+
+    public DriverAssistWithVision(boolean driverAssistCargoAndLoading, boolean driverAssistRocket) {
+        this.driverAssistCargoAndLoading = driverAssistCargoAndLoading;
+        this.driverAssistRocket = driverAssistRocket;
+        initNetworkTables();
+    }
+
+    public void initTargetFlags(boolean driverAssistCargoAndLoading, boolean driverAssistRocket) {
+        this.driverAssistCargoAndLoading = driverAssistCargoAndLoading;
+        this.driverAssistRocket = driverAssistRocket;
+    }
+
+    private void initNetworkTables() {
+        // Ensure that this command is the only one to run on the drive base
+        requires(DriveBase.getInstance());
+
+        // Set up network table
+        inst = NetworkTableInstance.getDefault();
+        table = inst.getTable("PathFinder");
+        String serverName = new String("roboRIO-2706-FRC.local");
         int port = 1735;
         inst.startClient(serverName, port);
 
-        table.addEntryListener("vectorCameraToTarget", (table1, key, entry, value, flags) -> {
-            
-            double[] vectorCameraToTarget_Camera = value.getDoubleArray();
-            double yawAngleCameraToTarget_Camera = vectorCameraToTarget_Camera[0];
-            double distanceCameraToTarget_Camera = vectorCameraToTarget_Camera[1];
-            Log.d("DAV: vectorToTarget changed value");
-            Log.d("  yawAngleCameraToTarget (deg): " + yawAngleCameraToTarget_Camera);
-            Log.d("  distanceCameraToTarget (ft): " + distanceCameraToTarget_Camera);
-            
-            generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, yawAngleCameraToTarget_Camera);
-        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+        trajGenerated = true;
     }
-    
-    public void generateTrajectoryRobotToTarget(double distanceCameraToTarget_Camera, double yawAngleCameraToTarget_Camera) {
 
-        // Get button inputs to determine if driver assist has been requested
-        // Change hard code below to get input from buttons
-        // boolean driverAssistCargoAndLoading = false;
-        // boolean driverAssistRocket = true;
-        boolean driverAssistCargoAndLoading = OI.getInstance().getButtonDriverAssistVisionCargoAndLoading();
-        boolean driverAssistRocket = OI.getInstance().getButtonDriverAssistVisionRocket();
-        System.out.println("driverAssistCargoAndLoading: " + driverAssistCargoAndLoading);
-        System.out.println("driverAssistRocket: " + driverAssistRocket);
+    @Override
+    public void initialize() {
+        DriveBase.getInstance().setBrakeMode(true);
+        DriveBase.getInstance().setPositionNoGyroMode();
+    }
+
+    @Override
+    public void execute() {
+
+        trajGenerated = false;
+
+        // Get angle and position of vision target computed by vision subsystem through network table
+        NetworkTableEntry vectorCameraToTarget = table.getEntry("vectorCameraToTarget");
+
+        double[] vectorCameraToTarget_Camera = vectorCameraToTarget.getDoubleArray(new double[] {0,0});
+        double yawAngleCameraToTarget_Camera = vectorCameraToTarget_Camera[0];
+        double distanceCameraToTarget_Camera = vectorCameraToTarget_Camera[1];
+        Log.d("DAV: yawAngleCameraToTarget_Camera (deg): " + yawAngleCameraToTarget_Camera);
+        Log.d("DAV: distanceCameraToTarget_Camera (ft): " + distanceCameraToTarget_Camera);
+            
+        if(distanceCameraToTarget_Camera <= 0.1) {
+            Log.d("DAV: Vision data not available. Driver assist command rejected");
+            trajGenerated = true;
+            return;
+        }
+        generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, yawAngleCameraToTarget_Camera,
+                driverAssistCargoAndLoading, driverAssistRocket);
+
+        trajGenerated = true;
+    }
+
+    @Override
+    public boolean isFinished() {
+        return trajGenerated;
+    };
+
+    @Override
+    public void end() {
+        // Go back to disabled mode
+        DriveBase.getInstance().setDisabledMode();
+    }
+
+    private boolean driverAssistCargoAndLoading;
+    private boolean driverAssistRocket;
+    private NetworkTableInstance inst;
+    private NetworkTable table;
+
+    /**
+     * Gets the network table instance
+     * 
+     * @return The network table instance
+     */
+    public NetworkTableInstance getNetworkTableInstance() {
+        return inst;
+    }
+
+    /**
+     * Gets the network table
+     */
+    public NetworkTable getNetworkTable() {
+        return table;
+    }
+
+    public void generateTrajectoryRobotToTarget(double distanceCameraToTarget_Camera, double yawAngleCameraToTarget_Camera,
+        boolean driverAssistCargoAndLoading, boolean driverAssistRocket) {
+
+        Log.d("driverAssistCargoAndLoading: " + driverAssistCargoAndLoading);
+        Log.d("driverAssistRocket: " + driverAssistRocket);
 
         // Don't do anything if driver assist is not requested
         if ((driverAssistCargoAndLoading == false) && (driverAssistRocket == false)) {
@@ -57,7 +129,7 @@ public class DriverAssistToTargetWithVision {
         // VECTOR 1: Vector from robot to camera in robot frame
         double vecRobotToCameraX_Robot = Config.get_ROBOT_TO_CAMERA_X_ROBOT();
         double vecRobotToCameraY_Robot = Config.get_ROBOT_TO_CAMERA_Y_ROBOT();
-        System.out.println("DAV: vecRobotToCameraX_Robot: " + vecRobotToCameraX_Robot + ", vecRobotToCameraY_Robot: " + vecRobotToCameraY_Robot);
+        Log.d("DAV: vecRobotToCameraX_Robot: " + vecRobotToCameraX_Robot + ", vecRobotToCameraY_Robot: " + vecRobotToCameraY_Robot);
 
         // VECTOR 2: Vector from camera to target in robot frame
         double yawAngleCameraToTargetRad_Camera = Pathfinder.d2r(yawAngleCameraToTarget_Camera);
@@ -67,7 +139,7 @@ public class DriverAssistToTargetWithVision {
 
         // Get current heading of robot relative to field horizontal from IMU
         double currentRobotAngle_Field = DriveBase.getInstance().getAbsoluteHeading();
-        System.out.println("DAV: currentRobotAngle_Field: " + currentRobotAngle_Field);
+        Log.d("DAV: currentRobotAngle_Field: " + currentRobotAngle_Field);
         
         // Compute final robot angle relative to field based on current angle of robot relative to field.
         // Robot must be in an angular range such that it is approximately facing the desired target. 
@@ -135,7 +207,7 @@ public class DriverAssistToTargetWithVision {
         Log.d("DAV: finalRobotAngle_Robot: " + finalRobotAngle_Robot);
 
         // Generate trajectory using PathFinder library
-        System.out.println("DAV: Generating trajectory");
+        Log.d("DAV: Generating trajectory");
         Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 
             Config.TRAJ_DELTA_TIME.value(), Config.ROBOT_MAX_VEL.value(), Config.ROBOT_MAX_ACC.value(), Config.ROBOT_MAX_JERK.value());
         Waypoint[] points = new Waypoint[] {
@@ -168,5 +240,7 @@ public class DriverAssistToTargetWithVision {
     }
 
     private Trajectory traj;
-    
+
+    private boolean trajGenerated = false;
+
 }

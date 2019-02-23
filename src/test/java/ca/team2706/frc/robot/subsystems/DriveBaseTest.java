@@ -1,6 +1,8 @@
 package ca.team2706.frc.robot.subsystems;
 
 import ca.team2706.frc.robot.SendablesTest;
+import ca.team2706.frc.robot.config.Config;
+
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.IMotorController;
@@ -99,6 +101,8 @@ public class DriveBaseTest {
                     SendablesTest.makePigeonExpectation(34.0),
                     SendablesTest.makePigeonExpectation(0.0));
         }};
+
+        //System.out.println("heading: " + driveBase.getAbsoluteHeading());
 
         assertEquals(0.0, driveBase.getAbsoluteHeading(), 0.0);
         assertEquals(19.0, driveBase.getAbsoluteHeading(), 0.0);

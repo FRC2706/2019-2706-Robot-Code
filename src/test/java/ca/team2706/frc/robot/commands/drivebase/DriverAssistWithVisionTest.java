@@ -1,4 +1,4 @@
-package ca.team2706.frc.robot.sensors;
+package ca.team2706.frc.robot.commands.drivebase;
 
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.OI;
@@ -15,15 +15,12 @@ import java.lang.reflect.InvocationTargetException;
 
 import static org.junit.Assert.*;
 
-public class DriverAssistToTargetWithVisionTest {
+public class DriverAssistWithVisionTest {
 
-    private final DriverAssistToTargetWithVision driverAssistToTargetWithVision = new DriverAssistToTargetWithVision();
+    private final DriverAssistWithVision driverAssistWithVision = new DriverAssistWithVision();
 
-
-    /* Since OI is accessed statically (it's a singleton), we have to mock all instances of
-    it and stub out the static initializer */
-    @Mocked(stubOutClassInitialization = true)
-    private OI oi;
+    // Since these two classes are accessed statically (they are singletons), we have to mock 
+    // all instances and stub out the static initializer
 
     @Mocked(stubOutClassInitialization = true)
     private DriveBase driveBase;
@@ -40,13 +37,8 @@ public class DriverAssistToTargetWithVisionTest {
      */
     @Test
     public void generateTrajectory() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
         new Expectations() {{
-            oi.getButtonDriverAssistVisionCargoAndLoading();
-            result = false;
-
-            oi.getButtonDriverAssistVisionRocket();
-            result = true;
-
             driveBase.getAbsoluteHeading();
             result = 40.0;
 
@@ -58,12 +50,16 @@ public class DriverAssistToTargetWithVisionTest {
         }};
 
         double distanceCameraToTarget_Camera = 6.0;
-        double yawAngleCameraToTarget_Camera = 27.0;   
-        driverAssistToTargetWithVision.generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, yawAngleCameraToTarget_Camera);
+        double yawAngleCameraToTarget_Camera = 27.0;
+        boolean driverAssistCargoAndLoading = false;
+        boolean driverAssistRocket = true;
 
-        Trajectory traj = driverAssistToTargetWithVision.getTraj();
+        driverAssistWithVision.generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, yawAngleCameraToTarget_Camera,
+            driverAssistCargoAndLoading, driverAssistRocket);
 
-        assert(traj.length() > 0);
+        Trajectory traj = driverAssistWithVision.getTraj();
+
+        assert(traj.length() > 1);
         assertEquals(traj.segments[0].x, 0.0, 2);
         assertEquals(traj.segments[0].y, 0.0, 2);
         assertEquals(traj.segments[0].heading, Pathfinder.d2r(90.0), 2);

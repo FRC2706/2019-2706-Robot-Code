@@ -14,6 +14,7 @@ public class MotionProfile extends Command {
      * References to the speed and position that the robot should be travelling at
      */
     private final Supplier<Double> speed;
+    private final Supplier<Integer> minDoneCycles;
 
     private final double[] pos;
     private final double[] vel;
@@ -21,13 +22,15 @@ public class MotionProfile extends Command {
     private final int[] time;
     private final int size;
 
+    private int doneCycles;
+
     /**
      * Creates a straight drive command with constant values
      *
      * @param speed         The maximum speed of the robot
      */
-    public MotionProfile(double speed, double[] pos, double[] vel, double[] heading, int[] time, int size) {
-        this(() -> speed, pos, vel, heading, time, size);
+    public MotionProfile(double speed, int minDoneCycles, double[] pos, double[] vel, double[] heading, int[] time, int size) {
+        this(() -> speed, () -> minDoneCycles, pos, vel, heading, time, size);
     }
 
     /**
@@ -35,7 +38,7 @@ public class MotionProfile extends Command {
      *
      * @param speed         The maximum speed of the robot
      */
-    public MotionProfile(Supplier<Double> speed, double[] pos, double[] vel, double[] heading, int[] time, int size) {
+    public MotionProfile(Supplier<Double> speed, Supplier<Integer> minDoneCycles, double[] pos, double[] vel, double[] heading, int[] time, int size) {
         requires(DriveBase.getInstance());
         this.speed = speed;
         this.pos = pos;
@@ -43,6 +46,8 @@ public class MotionProfile extends Command {
         this.heading = heading;
         this.time = time;
         this.size = size;
+
+        this.minDoneCycles = minDoneCycles;
     }
 
     @Override
@@ -50,6 +55,8 @@ public class MotionProfile extends Command {
         DriveBase.getInstance().setBrakeMode(true);
         DriveBase.getInstance().pushMotionProfile1Wheel(pos, vel, heading, time, size);
         DriveBase.getInstance().setMotionProfile();
+
+        doneCycles = 0;
     }
 
     @Override
@@ -59,7 +66,11 @@ public class MotionProfile extends Command {
 
     @Override
     protected boolean isFinished() {
-       return DriveBase.getInstance().isFinishedMotionProfile();
+       if(DriveBase.getInstance().isFinishedMotionProfile()) {
+           doneCycles++;
+       }
+
+       return doneCycles >= minDoneCycles.get();
     }
 
     @Override

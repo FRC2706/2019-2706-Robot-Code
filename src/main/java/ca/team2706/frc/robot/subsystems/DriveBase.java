@@ -15,6 +15,7 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -96,6 +97,9 @@ public class DriveBase extends Subsystem {
     private BufferedTrajectoryPointStream motionProfilePointStreamRight;
 
     private BufferedTrajectoryPointStream motionProfilePointStreamLeft;
+
+    private final PowerDistributionPanel powerDistributionPanel;
+
     /**
      * Creates a drive base, and initializes all required sensors and motors
      */
@@ -123,6 +127,8 @@ public class DriveBase extends Subsystem {
 
         light.setRaw(4095);
 
+        powerDistributionPanel = new PowerDistributionPanel();
+
         addChild("Left Front Motor", leftFrontMotor);
         addChild("Left Back Motor", leftBackMotor);
         addChild("Right Front Motor", rightFrontMotor);
@@ -137,6 +143,8 @@ public class DriveBase extends Subsystem {
         addChild("Right Encoder", Sendables.newTalonEncoderSendable(rightFrontMotor));
 
         addChild("Merge Light", light);
+
+        addChild("PDP", powerDistributionPanel);
 
         setDisabledMode();
         setBrakeMode(false);
@@ -731,8 +739,6 @@ public class DriveBase extends Subsystem {
             points[i].isLastPoint = false;
             if ((i + 1) == size)
                 points[i].isLastPoint = true; /* set this to true on the last point  */
-
-            talon.pushMotionProfileTrajectory(points[i]);
         }
 
         pointStream.Write(points);

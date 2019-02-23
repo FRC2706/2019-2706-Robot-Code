@@ -9,12 +9,12 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 
 public class CurveDrive2 extends FollowTrajectory{
-    public CurveDrive2(double speed, Waypoint[] waypoints) {
-        this(()->speed, waypoints);
+    public CurveDrive2(double speed, int minDoneCycles, Waypoint[] waypoints) {
+        this(()->speed, ()->minDoneCycles, waypoints);
     }
 
-    public CurveDrive2(Supplier<Double> speed, Waypoint[] waypoints) {
-        super(speed, generateTrajectory(waypoints));
+    public CurveDrive2(Supplier<Double> speed, Supplier<Integer> minDoneCycles, Waypoint[] waypoints) {
+        super(speed, minDoneCycles, generateTrajectory(waypoints));
     }
 
     private static Trajectory generateTrajectory(Waypoint[] waypoints) {

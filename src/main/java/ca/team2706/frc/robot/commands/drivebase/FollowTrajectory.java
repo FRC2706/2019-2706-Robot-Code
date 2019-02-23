@@ -10,12 +10,12 @@ import java.util.function.Supplier;
 
 public class FollowTrajectory extends MotionProfile2Wheel{
 
-    public FollowTrajectory(double speed, Trajectory trajectory) {
-        this(()->speed, trajectory);
+    public FollowTrajectory(double speed, int minDoneCycles, Trajectory trajectory) {
+        this(()->speed, ()->minDoneCycles, trajectory);
     }
 
-    public FollowTrajectory(Supplier<Double> speed, Trajectory trajectory) {
-        super(speed, generateDualTrajectory(trajectory));
+    public FollowTrajectory(Supplier<Double> speed, Supplier<Integer> minDoneCycles, Trajectory trajectory) {
+        super(speed, minDoneCycles, generateDualTrajectory(trajectory));
     }
 
     private static DualTalonTrajectory generateDualTrajectory(Trajectory trajectory) {

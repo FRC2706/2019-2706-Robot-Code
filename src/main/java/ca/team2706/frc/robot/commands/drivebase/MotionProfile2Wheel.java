@@ -17,6 +17,7 @@ public class MotionProfile2Wheel extends Command {
      * References to the speed and position that the robot should be travelling at
      */
     private final Supplier<Double> speed;
+    private final Supplier<Integer> minDoneCycles;
 
     private final double[] posLeft;
     private final double[] velLeft;
@@ -26,13 +27,15 @@ public class MotionProfile2Wheel extends Command {
     private final int[] time;
     private final int size;
 
+    private int doneCycles;
+
     /**
      * Creates a straight drive command with constant values
      *
      * @param speed         The maximum speed of the robot
      */
-    public MotionProfile2Wheel(double speed, double[] posLeft, double[] velLeft, double[] posRight, double[] velRight, double[] heading, int[] time, int size) {
-            this(() -> speed, posLeft, velLeft, posRight, velRight, heading, time, size);
+    public MotionProfile2Wheel(double speed, int minDoneCycles, double[] posLeft, double[] velLeft, double[] posRight, double[] velRight, double[] heading, int[] time, int size) {
+            this(() -> speed, () -> minDoneCycles, posLeft, velLeft, posRight, velRight, heading, time, size);
     }
 
     /**
@@ -40,7 +43,7 @@ public class MotionProfile2Wheel extends Command {
      *
      * @param speed         The maximum speed of the robot
      */
-    public MotionProfile2Wheel(Supplier<Double> speed,  double[] posLeft, double[] velLeft, double[] posRight, double[] velRight, double[] heading, int[] time, int size) {
+    public MotionProfile2Wheel(Supplier<Double> speed, Supplier<Integer> minDoneCycles, double[] posLeft, double[] velLeft, double[] posRight, double[] velRight, double[] heading, int[] time, int size) {
         requires(DriveBase.getInstance());
         this.speed = speed;
         this.posLeft = posLeft;
@@ -50,10 +53,11 @@ public class MotionProfile2Wheel extends Command {
         this.heading = heading;
         this.time = time;
         this.size = size;
+        this.minDoneCycles = minDoneCycles;
     }
 
-    MotionProfile2Wheel(Supplier<Double> speed, DualTalonTrajectory dualTalonTrajectory) {
-        this(speed, dualTalonTrajectory.posLeft, dualTalonTrajectory.velLeft, dualTalonTrajectory.posRight, dualTalonTrajectory.velRight,  dualTalonTrajectory.heading, dualTalonTrajectory.time, dualTalonTrajectory.size);
+    MotionProfile2Wheel(Supplier<Double> speed, Supplier<Integer> minDoneCycles, DualTalonTrajectory dualTalonTrajectory) {
+        this(speed, minDoneCycles, dualTalonTrajectory.posLeft, dualTalonTrajectory.velLeft, dualTalonTrajectory.posRight, dualTalonTrajectory.velRight,  dualTalonTrajectory.heading, dualTalonTrajectory.time, dualTalonTrajectory.size);
     }
 
     @Override
@@ -61,6 +65,8 @@ public class MotionProfile2Wheel extends Command {
         DriveBase.getInstance().setBrakeMode(true);
         DriveBase.getInstance().pushMotionProfile2Wheel(posLeft, velLeft, heading, time, size, posRight, velRight);
         DriveBase.getInstance().setMotionProfile2Wheel();
+
+        doneCycles = 0;
     }
 
     @Override
@@ -70,7 +76,11 @@ public class MotionProfile2Wheel extends Command {
 
     @Override
     protected boolean isFinished() {
-       return DriveBase.getInstance().isFinishedMotionProfile2Wheel();
+        if(DriveBase.getInstance().isFinishedMotionProfile2Wheel()) {
+            doneCycles++;
+        }
+
+        return doneCycles >= minDoneCycles.get();
     }
 
     @Override

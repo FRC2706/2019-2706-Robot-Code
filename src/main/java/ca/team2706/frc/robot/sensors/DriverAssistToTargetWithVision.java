@@ -144,7 +144,8 @@ public class DriverAssistToTargetWithVision {
                 // Final position/heading in front of target
                 new Waypoint(vecRobotToFinalX_Robot, vecRobotToFinalY_Robot, Pathfinder.d2r(finalRobotAngle_Robot)),
         };
-        Trajectory traj = Pathfinder.generate(points, config);
+
+        traj = Pathfinder.generate(points, config);
 
         // Send trajectory to motion control system
         // (Wait until integration with robot code)
@@ -161,5 +162,11 @@ public class DriverAssistToTargetWithVision {
         }
 
     }
+
+    public Trajectory getTraj() {
+        return traj;
+    }
+
+    private Trajectory traj;
     
 }

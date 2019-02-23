@@ -24,7 +24,7 @@ public class ExhaleCargo extends Command {
 
     @Override
     public void execute() {
-        double speed = joystick.getRawAxis(port);
+        final double speed = joystick.getRawAxis(port);
         Intake.getInstance().exhaleCargo(speed);
     }
 

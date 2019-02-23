@@ -10,12 +10,24 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class InhaleCargo extends Command {
 
-    private Joystick joystick;
+    /**
+     * Joystick which is going to be used to determine speed.
+     */
+    private Joystick controller;
+    /**
+     * Trigger axis id to be looked at.
+     */
     private final int triggerAxis;
 
-    public InhaleCargo(final Joystick joystick, final int axis) {
+    /**
+     * Constructs a new InhaleCargo command on the given controller and with the given axis.
+     *
+     * @param controller The controller to be monitored.
+     * @param axis       The axis of the analog stick to be monitored.
+     */
+    public InhaleCargo(final Joystick controller, final int axis) {
         requires(Intake.getInstance());
-        this.joystick = joystick;
+        this.controller = controller;
         this.triggerAxis = axis;
     }
 
@@ -27,7 +39,7 @@ public class InhaleCargo extends Command {
 
     @Override
     public void execute() {
-        double speed = joystick.getRawAxis(triggerAxis);
+        double speed = controller.getRawAxis(triggerAxis);
         Intake.getInstance().inhaleCargo(speed);
     }
 

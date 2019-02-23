@@ -20,6 +20,7 @@ import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Mocked;
 import mockit.Verifications;
+import util.Util;
 
 public class CurvatureDriveTest {
     @Mocked
@@ -69,8 +70,8 @@ public class CurvatureDriveTest {
     }
 
     @Before
-    public void setUp() {
-
+    public void setUp() throws NoSuchFieldException, IllegalAccessException {
+        Util.resetSubsystems();
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;

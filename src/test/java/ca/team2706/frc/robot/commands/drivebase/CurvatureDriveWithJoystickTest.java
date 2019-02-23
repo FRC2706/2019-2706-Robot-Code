@@ -61,8 +61,8 @@ public class CurvatureDriveWithJoystickTest {
     private Joystick joy3;
 
     @Before
-    public void setUp() {
-        
+    public void setUp() throws NoSuchFieldException, IllegalAccessException {
+        Util.resetSubsystems();
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;

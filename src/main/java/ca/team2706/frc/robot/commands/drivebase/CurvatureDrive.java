@@ -41,7 +41,6 @@ public abstract class CurvatureDrive extends Command {
     public void initialize() {
         // Prepare for driving by human
         DriveBase.getInstance().setOpenLoopVoltageMode();
-
         DriveBase.getInstance().setBrakeMode(initBrake);
     }
 

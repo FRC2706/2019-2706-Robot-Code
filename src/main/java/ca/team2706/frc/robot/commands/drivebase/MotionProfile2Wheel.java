@@ -65,15 +65,30 @@ public class MotionProfile2Wheel extends MirroredCommand {
     @Override
     public void initialize() {
         DriveBase.getInstance().setBrakeMode(true);
-        DriveBase.getInstance().pushMotionProfile2Wheel(speed.get() >= 0, posLeft, velLeft, heading, time, size, posRight, velRight);
+        if(isMirrored()) {
+            DriveBase.getInstance().pushMotionProfile2Wheel(speed.get() >= 0, posRight, velRight, negateDoubleArray(heading), time, size, posLeft, velLeft);
+        }
+        else {
+            DriveBase.getInstance().pushMotionProfile2Wheel(speed.get() >= 0, posLeft, velLeft, heading, time, size, posRight, velRight);
+        }
         DriveBase.getInstance().setMotionProfile2Wheel();
 
         doneCycles = 0;
     }
 
+    private static double[] negateDoubleArray(double[] array) {
+        double[] newArray = new double[array.length];
+
+        for(int i = 0; i < array.length; i++) {
+            newArray[i] = -array[i];
+        }
+
+        return newArray;
+    }
+
     @Override
     public void execute() {
-            DriveBase.getInstance().runMotionProfile2Wheel(Math.abs(speed.get()));
+        DriveBase.getInstance().runMotionProfile2Wheel(Math.abs(speed.get()));
     }
 
     @Override

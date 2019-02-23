@@ -90,6 +90,8 @@ public class Config {
     public static final double LOG_PERIOD = robotSpecific(0.02, 0.02, 0.02, Double.POSITIVE_INFINITY);
     public static final double TRAJECTORY_PUSH_PERIOD = 0.005;
 
+    public static final double WHEELBASE_WIDTH = robotSpecific(2.0, 2.0, 2.0);
+
     // #### Fluid constants ####
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_DEADBAND = constant("drive-deadband", 0.001);
     public static final FluidConstant<Double> DRIVE_OPEN_LOOP_DEADBAND = constant("drive-deadband", 0.04);
@@ -102,7 +104,9 @@ public class Config {
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_D = constant("drive-D", 0.0);
 
     public static final FluidConstant<Double> MOTION_MAGIC_CRUISE_VELOCITY = constant("mm-cruise-velocity", 7.77);
-    public static final FluidConstant<Double> MOTION_MAGIC_ACCELERATION = constant("mm-acceleration", 7.77);
+    public static final FluidConstant<Double> MOTION_MAGIC_ACCELERATION = constant("mm-acceleration", 6.56);
+    public static final FluidConstant<Integer> MOTION_MAGIC_SMOOTHING = constant("mm-smoothing", 0);
+    public static final FluidConstant<Double> PATHFINDING_JERK = constant("pf-jerk", 197.0);
 
     public static final FluidConstant<Double> TURN_P = constant("turn-P", 0.5);
     public static final FluidConstant<Double> TURN_I = constant("turn-I", 0.0);

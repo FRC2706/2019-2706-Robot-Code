@@ -18,10 +18,10 @@ public class MotionProfile2Wheel extends Command {
      */
     private final Supplier<Double> speed;
 
-    private final double[] pos;
-    private final double[] vel;
-    private final double[] pos2;
-    private final double[] vel2;
+    private final double[] posLeft;
+    private final double[] velLeft;
+    private final double[] posRight;
+    private final double[] velRight;
     private final double[] heading;
     private final int[] time;
     private final int size;
@@ -31,8 +31,8 @@ public class MotionProfile2Wheel extends Command {
      *
      * @param speed         The maximum speed of the robot
      */
-    public MotionProfile2Wheel(double speed, double[] pos, double[] vel, double[] pos2, double[] vel2, double[] heading, int[] time, int size) {
-            this(() -> speed, pos, vel, pos2, vel2, heading, time, size);
+    public MotionProfile2Wheel(double speed, double[] posLeft, double[] velLeft, double[] posRight, double[] velRight, double[] heading, int[] time, int size) {
+            this(() -> speed, posLeft, velLeft, posRight, velRight, heading, time, size);
     }
 
     /**
@@ -40,33 +40,26 @@ public class MotionProfile2Wheel extends Command {
      *
      * @param speed         The maximum speed of the robot
      */
-    public MotionProfile2Wheel(Supplier<Double> speed, double[] pos, double[] vel, double[] pos2, double[] vel2, double[] heading, int[] time, int size) {
+    public MotionProfile2Wheel(Supplier<Double> speed,  double[] posLeft, double[] velLeft, double[] posRight, double[] velRight, double[] heading, int[] time, int size) {
         requires(DriveBase.getInstance());
         this.speed = speed;
-        this.pos = pos;
-        this.vel = vel;
-        this.pos2 = pos2;
-        this.vel2 = vel2;
+        this.posLeft = posLeft;
+        this.velLeft = velLeft;
+        this.posRight = posRight;
+        this.velRight = velRight;
         this.heading = heading;
         this.time = time;
         this.size = size;
     }
 
     MotionProfile2Wheel(Supplier<Double> speed, DualTalonTrajectory dualTalonTrajectory) {
-        this(speed, dualTalonTrajectory.pos, dualTalonTrajectory.vel, dualTalonTrajectory.pos2, dualTalonTrajectory.vel2,  dualTalonTrajectory.heading, dualTalonTrajectory.time, dualTalonTrajectory.size);
+        this(speed, dualTalonTrajectory.posLeft, dualTalonTrajectory.velLeft, dualTalonTrajectory.posRight, dualTalonTrajectory.velRight,  dualTalonTrajectory.heading, dualTalonTrajectory.time, dualTalonTrajectory.size);
     }
 
     @Override
     public void initialize() {
-        System.out.println("Right pos: " + Arrays.toString(pos));
-        System.out.println("Right vel: " + Arrays.toString(vel));
-        System.out.println("Heading: " + Arrays.toString(heading));
-        System.out.println("Time: " + Arrays.toString(time));
-        System.out.println("Left pos: " + Arrays.toString(pos2));
-        System.out.println("Left vel: " + Arrays.toString(vel2));
-
         DriveBase.getInstance().setBrakeMode(true);
-        DriveBase.getInstance().pushMotionProfile2Wheel(pos, vel, heading, time, size, pos2, vel2);
+        DriveBase.getInstance().pushMotionProfile2Wheel(posLeft, velLeft, heading, time, size, posRight, velRight);
         DriveBase.getInstance().setMotionProfile2Wheel();
     }
 
@@ -87,19 +80,19 @@ public class MotionProfile2Wheel extends Command {
 
     static class DualTalonTrajectory {
 
-        final double[] pos;
-        final double[] vel;
-        final double[] pos2;
-        final double[] vel2;
+        final double[] posLeft;
+        final double[] velLeft;
+        final double[] posRight;
+        final double[] velRight;
         final double[] heading;
         final int[] time;
         final int size;
 
-        DualTalonTrajectory(double[] pos, double[] vel, double[] pos2, double[] vel2, double[] heading, int[] time, int size) {
-            this.pos = pos;
-            this.vel = vel;
-            this.pos2 = pos2;
-            this.vel2 = vel2;
+        DualTalonTrajectory(double[] posLeft, double[] velLeft, double[] posRight, double[] velRight, double[] heading, int[] time, int size) {
+            this.posLeft = posLeft;
+            this.velLeft = velLeft;
+            this.posRight = posRight;
+            this.velRight = velRight;
             this.heading = heading;
             this.time = time;
             this.size = size;

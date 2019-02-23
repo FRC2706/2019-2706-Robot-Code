@@ -744,15 +744,24 @@ public class DriveBase extends Subsystem {
         pointStream.Write(points);
     }
 
-    public void pushMotionProfile1Wheel(double[] pos, double[] vel, double[] heading, int[] time, int size) {
-        pushMotionProfile(pos, vel, heading, time, size, rightFrontMotor, motionProfilePointStreamRight);
+    public void pushMotionProfile1Wheel(boolean forwards, double[] pos, double[] vel, double[] heading, int[] time, int size) {
+        pushMotionProfile(forwards ? pos : negateDoubleArray(pos), forwards ? vel : negateDoubleArray(vel), heading, time, size, rightFrontMotor, motionProfilePointStreamRight);
     }
 
-    public void pushMotionProfile2Wheel(double[] posLeft, double[] velLeft, double[] heading, int[] time, int size, double[] posRight, double[] velRight) {
-        pushMotionProfile(posLeft, velLeft, heading, time, size, leftFrontMotor, motionProfilePointStreamLeft);
-        pushMotionProfile(posRight, velRight, heading, time, size, rightFrontMotor, motionProfilePointStreamRight);
+    public void pushMotionProfile2Wheel(boolean forwards, double[] posLeft, double[] velLeft, double[] heading, int[] time, int size, double[] posRight, double[] velRight) {
+        pushMotionProfile(forwards ? posLeft : negateDoubleArray(posLeft), forwards ? velLeft : negateDoubleArray(velLeft), heading, time, size, leftFrontMotor, motionProfilePointStreamLeft);
+        pushMotionProfile(forwards ? posRight : negateDoubleArray(posRight), forwards ? velRight : negateDoubleArray(velRight), heading, time, size, rightFrontMotor, motionProfilePointStreamRight);
     }
 
+    private static double[] negateDoubleArray(double[] array) {
+        double[] newArray = new double[array.length];
+
+        for(int i = 0; i < array.length; i++) {
+            newArray[i] = -array[i];
+        }
+
+        return newArray;
+    }
 
     /*
      * Sets the amount that the robot has to rotate.

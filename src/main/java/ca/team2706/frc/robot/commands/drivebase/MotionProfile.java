@@ -53,7 +53,7 @@ public class MotionProfile extends Command {
     @Override
     public void initialize() {
         DriveBase.getInstance().setBrakeMode(true);
-        DriveBase.getInstance().pushMotionProfile1Wheel(pos, vel, heading, time, size);
+        DriveBase.getInstance().pushMotionProfile1Wheel(speed.get() >= 0, pos, vel, heading, time, size);
         DriveBase.getInstance().setMotionProfile();
 
         doneCycles = 0;
@@ -61,7 +61,7 @@ public class MotionProfile extends Command {
 
     @Override
     public void execute() {
-            DriveBase.getInstance().runMotionProfile(speed.get());
+            DriveBase.getInstance().runMotionProfile(Math.abs(speed.get()));
     }
 
     @Override

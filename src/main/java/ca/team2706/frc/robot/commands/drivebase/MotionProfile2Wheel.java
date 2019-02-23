@@ -1,5 +1,7 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
+import ca.team2706.frc.robot.commands.mirrorable.IMirrorable;
+import ca.team2706.frc.robot.commands.mirrorable.MirroredCommand;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
@@ -11,7 +13,7 @@ import java.util.function.Supplier;
 /**
  * Drives in a straight line to a position
  */
-public class MotionProfile2Wheel extends Command {
+public class MotionProfile2Wheel extends MirroredCommand {
 
     /**
      * References to the speed and position that the robot should be travelling at
@@ -63,7 +65,7 @@ public class MotionProfile2Wheel extends Command {
     @Override
     public void initialize() {
         DriveBase.getInstance().setBrakeMode(true);
-        DriveBase.getInstance().pushMotionProfile2Wheel(posLeft, velLeft, heading, time, size, posRight, velRight);
+        DriveBase.getInstance().pushMotionProfile2Wheel(speed.get() >= 0, posLeft, velLeft, heading, time, size, posRight, velRight);
         DriveBase.getInstance().setMotionProfile2Wheel();
 
         doneCycles = 0;
@@ -71,7 +73,7 @@ public class MotionProfile2Wheel extends Command {
 
     @Override
     public void execute() {
-            DriveBase.getInstance().runMotionProfile2Wheel(speed.get());
+            DriveBase.getInstance().runMotionProfile2Wheel(Math.abs(speed.get()));
     }
 
     @Override

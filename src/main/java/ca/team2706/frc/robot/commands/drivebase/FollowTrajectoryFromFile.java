@@ -1,21 +1,23 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
+import ca.team2706.frc.robot.config.Config;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.function.Supplier;
 
 public class FollowTrajectoryFromFile extends FollowTrajectory {
-    public FollowTrajectoryFromFile(double speed, int minDoneCycles, Path trajectoryDir) {
-        this(()->speed, ()->minDoneCycles, trajectoryDir);
+    public FollowTrajectoryFromFile(double speed, int minDoneCycles, String trajectory) {
+        this(()->speed, ()->minDoneCycles, trajectory);
     }
 
-    public FollowTrajectoryFromFile(Supplier<Double> speed, Supplier<Integer> minDoneCycles, Path trajectoryDir) {
-        super(speed, minDoneCycles, readFromFile(trajectoryDir.resolve("middle.csv")),
-                readFromFile(trajectoryDir.resolve("left.csv")),
-                readFromFile(trajectoryDir.resolve("right.csv")));
+    public FollowTrajectoryFromFile(Supplier<Double> speed, Supplier<Integer> minDoneCycles, String trajectory) {
+        super(speed, minDoneCycles, readFromFile(Config.DEPLOY_DIR.resolve("motion-profiles/output/" + trajectory + ".pf1.csv")),
+                readFromFile(Config.DEPLOY_DIR.resolve("motion-profiles/output/" + trajectory + ".left.pf1.csv")),
+                readFromFile(Config.DEPLOY_DIR.resolve("motion-profiles/output/" + trajectory + ".right.pf1.csv")));
     }
 
     private static Trajectory readFromFile(Path trajectory) {
@@ -25,6 +27,4 @@ public class FollowTrajectoryFromFile extends FollowTrajectory {
            throw new RuntimeException(e);
         }
     }
-
-
 }

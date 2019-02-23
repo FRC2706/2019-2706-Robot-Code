@@ -23,7 +23,6 @@ public class CurveDrive2 extends FollowTrajectory{
 
         for(int i = 0; i < waypoints.length; i++) {
             newWaypoints[i] = waypoints[i];
-            newWaypoints[i].angle *= -1;
             newWaypoints[i].y *= -1;
         }
 

@@ -91,6 +91,8 @@ public class Config {
 
     public static final double WHEELBASE_WIDTH = robotSpecific(2.0, 2.0, 2.0);
 
+    public static final Path DEPLOY_DIR = Paths.get(System.getProperty("user.home"), "deploy");
+
     // #### Fluid constants ####
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_DEADBAND = constant("drive-deadband", 0.001);
     public static final FluidConstant<Double> DRIVE_OPEN_LOOP_DEADBAND = constant("drive-deadband", 0.04);

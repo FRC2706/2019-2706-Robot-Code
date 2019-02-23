@@ -73,7 +73,8 @@ public class FollowTrajectory extends MotionProfile2Wheel {
         for (int i = 0; i < degs.length; i++) {
             double temp = degs[i];
 
-            degs[i] = last + deltaAngle(lastBound, degs[i]);
+            // Invert angle to match robot direction by subtracting instead of adding
+            degs[i] = last - deltaAngle(lastBound, degs[i]);
             lastBound = temp;
 
             last = degs[i];

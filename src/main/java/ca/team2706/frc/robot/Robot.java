@@ -75,7 +75,7 @@ public class Robot extends TimedRobot {
                 new StraightDrive(0.2, 2.0, 100),  // 2
                 new MotionMagic(0.2, 15.54, 100),  //3
                 new StraightDriveGyro(0.2, 2.0, 100),  // 4
-                new FollowTrajectoryFromFile(1.0, 100, Paths.get("/U", "PathfinderStuff"))//5
+                new FollowTrajectoryFromFile(1.0, 100, "Test")//5
         };
     }
 

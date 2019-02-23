@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.function.Supplier;
@@ -23,10 +24,10 @@ import mockit.Verifications;
 import util.Util;
 
 public class TankDriveTest {
-    @Mocked
+    @Injectable
     private Supplier<Double> leftSpeed;
 
-    @Mocked
+    @Injectable
     private Supplier<Double> rightSpeed;
 
     @Mocked
@@ -64,6 +65,11 @@ public class TankDriveTest {
     @Test
     public void testBrakeModeOff() throws NoSuchFieldException, IllegalAccessException {
         testBrakeMode(false);
+    }
+
+    @BeforeClass
+    public static void classSetUp() throws NoSuchFieldException, IllegalAccessException {
+        Util.resetSubsystems();
     }
 
     @Before

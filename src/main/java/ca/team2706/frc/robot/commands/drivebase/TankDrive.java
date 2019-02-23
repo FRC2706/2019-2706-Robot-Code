@@ -5,6 +5,9 @@ import java.util.function.Supplier;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.command.Command;
 
+/**
+ * Class to allow for usage of WPI and Command functions with TankDrive
+ */
 public abstract class TankDrive extends Command {
     private final Supplier<Double> leftSpeed;
     private final Supplier<Double> rightSpeed;

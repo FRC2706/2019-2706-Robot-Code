@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import ca.team2706.frc.robot.config.Config;
@@ -56,9 +57,13 @@ public class TankDriveWithJoystickTest {
     @Injectable
     private Joystick joy2;
 
+    @BeforeClass
+    public static void classSetUp() throws NoSuchFieldException, IllegalAccessException {
+        Util.resetSubsystems();
+    }
+    
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
-        Util.resetSubsystems();
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;

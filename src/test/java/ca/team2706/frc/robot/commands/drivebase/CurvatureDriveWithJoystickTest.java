@@ -20,6 +20,7 @@ import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Mocked;
 import mockit.Verifications;
+import util.Util;
 
 public class CurvatureDriveWithJoystickTest {
 
@@ -61,6 +62,7 @@ public class CurvatureDriveWithJoystickTest {
 
     @Before
     public void setUp() {
+        
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;

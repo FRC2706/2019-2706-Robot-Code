@@ -70,6 +70,7 @@ public class CurvatureDriveTest {
 
     @Before
     public void setUp() {
+
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;

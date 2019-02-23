@@ -366,6 +366,28 @@ public class DriveBase extends Subsystem {
     }
 
     /**
+     * Sets motion magic
+     */
+    public void setMotionMagicWithGyroMode() {
+        if (driveMode != DriveMode.MotionMagicWithGyro) {
+            stop();
+            selectEncodersSumWithPigeon();
+            configMotionMagic();
+            reset();
+
+            driveMode = DriveMode.MotionMagicWithGyro;
+        }
+    }
+
+    /**
+     * Configures motion magic
+     */
+    private void configMotionMagic() {
+        rightFrontMotor.configMotionCruiseVelocity((int) (Config.MOTION_MAGIC_CRUISE_VELOCITY.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
+        rightFrontMotor.configMotionAcceleration((int) (Config.MOTION_MAGIC_ACCELERATION.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
+    }
+
+    /**
      * Gets the encoder sum using the pigeon
      */
     public void setPositionGyroMode() {
@@ -489,6 +511,25 @@ public class DriveBase extends Subsystem {
     }
 
     /**
+     * Goes to a position with the closed loop Talon PIDs using only encoder information and motion magic
+     *
+     * @param speed          The speed from 0 to 1
+     * @param setpoint       The setpoint to go to in feet
+     * @param targetRotation The desired rotation
+     */
+    public void setMotionMagicPositionGyro(double speed, double setpoint, double targetRotation) {
+        setMotionMagicWithGyroMode();
+
+        leftFrontMotor.configClosedLoopPeakOutput(0, speed);
+        rightFrontMotor.configClosedLoopPeakOutput(0, speed);
+        leftFrontMotor.configClosedLoopPeakOutput(1, speed);
+        rightFrontMotor.configClosedLoopPeakOutput(1, speed);
+
+        rightFrontMotor.set(ControlMode.Position, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation);
+        leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
+    }
+
+    /*
      * Sets the amount that the robot has to rotate.
      *
      * @param speed    The speed of the rotation.
@@ -738,6 +779,12 @@ public class DriveBase extends Subsystem {
          * Performs closed loop position control without heading support
          */
         PositionNoGyro,
+
+
+        /**
+         * Motion magic with gyro
+         */
+        MotionMagicWithGyro,
 
         /**
          * Closed loop control with Auxiliary Pigeon Support

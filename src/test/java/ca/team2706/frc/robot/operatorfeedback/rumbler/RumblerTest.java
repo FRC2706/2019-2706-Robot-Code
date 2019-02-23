@@ -1,6 +1,5 @@
 package ca.team2706.frc.robot.operatorfeedback.rumbler;
 
-import ca.team2706.frc.robot.OI;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -10,8 +9,8 @@ import mockit.Verifications;
 import mockit.VerificationsInOrder;
 import org.junit.Before;
 import org.junit.Test;
+import util.Util;
 
-import java.lang.reflect.Field;
 import java.time.Clock;
 
 import static org.junit.Assert.assertFalse;
@@ -30,9 +29,7 @@ public class RumblerTest {
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
         // I should re-initialize OI for each time.
-        Field currentInstanceField = OI.class.getDeclaredField("currentInstance");
-        currentInstanceField.setAccessible(true);
-        currentInstanceField.set(null, null);
+        Util.resetSubsystems();
 
         new Expectations() {{
             new Joystick(0);

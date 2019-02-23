@@ -28,15 +28,12 @@ public class DriverAssistWithVisionTest {
     @Mocked(stubOutClassInitialization = true)
     private Config config;
 
-/**
+    /**
      * Tests that the trajectory is generated
      *
-     * @throws NoSuchMethodException     In case the shutdown method can't be found
-     * @throws InvocationTargetException In case the shutdown method can't be invoked
-     * @throws IllegalAccessException    In case the reflection is illegal
      */
     @Test
-    public void generateTrajectory() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void generateTrajectory() {
 
         new Expectations() {{
             driveBase.getAbsoluteHeading();
@@ -60,12 +57,12 @@ public class DriverAssistWithVisionTest {
         Trajectory traj = driverAssistWithVision.getTraj();
 
         assert(traj.length() > 1);
-        assertEquals(traj.segments[0].x, 0.0, 2);
-        assertEquals(traj.segments[0].y, 0.0, 2);
-        assertEquals(traj.segments[0].heading, Pathfinder.d2r(90.0), 2);
-        assertEquals(traj.segments[traj.length()-1].x, 3.368, 2);
-        assertEquals(traj.segments[traj.length()-1].y, 6.721, 2);
-        assertEquals(traj.segments[traj.length()-1].heading, 0.349, 2);
+        assertEquals(traj.segments[0].x, 0.0, 0.01);
+        assertEquals(traj.segments[0].y, 0.0, 0.01);
+        assertEquals(traj.segments[0].heading, Pathfinder.d2r(90.0), 0.01);
+        assertEquals(traj.segments[traj.length()-1].x, 3.368, 0.01);
+        assertEquals(traj.segments[traj.length()-1].y, 6.721, 0.01);
+        assertEquals(traj.segments[traj.length()-1].heading, 0.349, 0.01);
     }
 
 }

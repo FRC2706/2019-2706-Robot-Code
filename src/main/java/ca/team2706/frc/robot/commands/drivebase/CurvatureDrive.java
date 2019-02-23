@@ -8,6 +8,9 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 import java.util.function.Supplier;
 
+/**
+ * Allows the WPI Curvature Drive to be used  with passed values
+ */
 public abstract class CurvatureDrive extends Command {
     private final Supplier<Double> forwardVal;
     private final Supplier<Double> curveSpeed;
@@ -44,7 +47,6 @@ public abstract class CurvatureDrive extends Command {
 
     @Override
     public void execute() {
-
         double rotation = (curveSpeed.get() > -0.05 && curveSpeed.get() < 0.05) ? 0 : curveSpeed.get();
         boolean override = ((forwardVal.get() > -0.25 && forwardVal.get() < 0.25));
 

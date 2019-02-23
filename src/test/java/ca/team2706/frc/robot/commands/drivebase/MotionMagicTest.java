@@ -167,6 +167,4 @@ public class MotionMagicTest {
     private static int intFeetToTicks(double feet) {
         return (int) (feetToTicks(feet));
     }
-
-
 }

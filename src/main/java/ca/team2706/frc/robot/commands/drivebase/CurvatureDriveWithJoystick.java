@@ -19,7 +19,8 @@ public class CurvatureDriveWithJoystick extends CurvatureDrive {
      * @param invert2 Whether to negate the second joystick input
      */
     public CurvatureDriveWithJoystick(Joystick joy1, int axis1, boolean invert1,
-                                      Joystick joy2, int axis2, boolean invert2, Joystick joy3, int button) {
+                                      Joystick joy2, int axis2, boolean invert2,
+                                      Joystick joy3, int button) {
         super(() -> sign(joy1.getRawAxis(axis1), invert1), () -> sign(joy2.getRawAxis(axis2), invert2),
                 Config.TELEOP_SQUARE_JOYSTICK_INPUTS, () -> joy3.getRawButton(button));
     }

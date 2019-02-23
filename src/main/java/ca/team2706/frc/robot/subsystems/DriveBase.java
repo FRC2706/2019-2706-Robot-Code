@@ -868,6 +868,11 @@ public class DriveBase extends Subsystem {
      * Resets the encoders and gyro
      */
     public void reset() {
+        xPos = 0;
+        yPos = 0;
+        lastEncoderAv = 0;
+        lastGyro = 0;
+
         resetEncoders();
         resetGyro();
     }
@@ -994,6 +999,58 @@ public class DriveBase extends Subsystem {
                 talon.setInverted(InvertType.FollowMaster);
             }
         }
+    }
+
+    @Override
+    public void periodic() {
+        findPosition();
+    }
+
+    private double xPos = 0;
+
+    private double yPos = 0;
+
+    private double lastEncoderAv = 0;
+    private double lastGyro = 0;
+
+    /**
+     * Called every tick to keep position, an x and y position, not always accurate due to a few
+     * reasons
+     */
+    private void findPosition() {
+        SmartDashboard.putNumber("Left Dist", -getLeftDistance());
+        SmartDashboard.putNumber("Right Dist", getRightDistance());
+
+        // Gets gyro angle
+        double gyroAngle = -getHeading();
+        double changeInGyro = gyroAngle - lastGyro;
+        double encoderAv = ((-getLeftDistance() + getRightDistance())/2.0 - lastEncoderAv);
+        // Gets the radius of the arc
+        double distance;
+        if (Math.abs(changeInGyro) > 0.001) {
+            double radius = encoderAv / Math.toRadians(changeInGyro);
+
+            // Calculate distance based on arc lengths, and invert if driving backwards
+            distance = (encoderAv > 0 ? 1 : -1) * Math.sqrt((2 * Math.pow(radius, 2))
+                    * (1 - Math.cos(Math.toRadians(changeInGyro))));
+        } else {
+            distance = encoderAv;
+        }
+
+        // Uses trigonometry 'n stuff to figure out how far right and forward you traveled
+        double changedXPos = Math.sin(Math.toRadians((lastGyro + gyroAngle) / 2.0)) * distance;
+        double changedYPos = Math.cos(Math.toRadians((lastGyro + gyroAngle) / 2.0)) * distance;
+
+        // Adjusts your current position accordingly.
+        xPos += changedXPos;
+        yPos += changedYPos;
+
+        SmartDashboard.putNumber("X Position", xPos);
+        SmartDashboard.putNumber("Y Position", yPos);
+        // System.out.println(xPos + " " + yPos);
+        // Saves your encoder distance so you can calculate how far you've went in the new tick
+        lastEncoderAv = (-getLeftDistance() + getRightDistance())/2.0;
+        lastGyro = gyroAngle;
     }
 
     /**

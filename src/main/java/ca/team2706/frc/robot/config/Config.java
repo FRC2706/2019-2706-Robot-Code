@@ -88,7 +88,6 @@ public class Config {
     public static final int ARCADE_DRIVE_ROTATE = 4;
 
     public static final double LOG_PERIOD = robotSpecific(0.02, 0.02, 0.02, Double.POSITIVE_INFINITY);
-    public static final double TRAJECTORY_PUSH_PERIOD = 0.005;
 
     public static final double WHEELBASE_WIDTH = robotSpecific(2.0, 2.0, 2.0);
 
@@ -103,7 +102,7 @@ public class Config {
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_I = constant("drive-I", 0.0);
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_D = constant("drive-D", 0.0);
 
-    public static final FluidConstant<Double> MOTION_MAGIC_CRUISE_VELOCITY = constant("mm-cruise-velocity", 4.0);
+    public static final FluidConstant<Double> MOTION_MAGIC_CRUISE_VELOCITY = constant("mm-cruise-velocity", 0.75);
     public static final FluidConstant<Double> MOTION_MAGIC_ACCELERATION = constant("mm-acceleration", 6.56);
     public static final FluidConstant<Integer> MOTION_MAGIC_SMOOTHING = constant("mm-smoothing", 0);
     public static final FluidConstant<Double> PATHFINDING_JERK = constant("pf-jerk", 197.0);
@@ -114,7 +113,7 @@ public class Config {
 
     public static final FluidConstant<Double> PIGEON_KP = constant("pigeon-kp", 2.0);
     public static final FluidConstant<Double> PIGEON_KI = constant("pigeon-ki", 0.0);
-    public static final FluidConstant<Double> PIGEON_KD = constant("pigeon-ki", 4.0);
+    public static final FluidConstant<Double> PIGEON_KD = constant("pigeon-kd", 4.0);
     public static final FluidConstant<Double> PIGEON_KF = constant("pigeon-kf", 0.0);
 
     // ### Methods, fields and Constructors ###

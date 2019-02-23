@@ -1,7 +1,5 @@
 package ca.team2706.frc.robot;
 
-import ca.team2706.frc.robot.commands.drivebase.ArcadeDriveWithJoystick;
-import ca.team2706.frc.robot.commands.drivebase.CurvatureDrive;
 import ca.team2706.frc.robot.commands.drivebase.CurvatureDriveWithJoystick;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.DriveBase;

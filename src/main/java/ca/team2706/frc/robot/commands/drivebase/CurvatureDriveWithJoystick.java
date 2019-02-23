@@ -2,7 +2,6 @@ package ca.team2706.frc.robot.commands.drivebase;
 
 import ca.team2706.frc.robot.config.Config;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 /**
  * Allows the robot to be driven using curve drive
@@ -43,6 +42,7 @@ public class CurvatureDriveWithJoystick extends CurvatureDrive {
         // The command should only finish when cancelled from somewhere else
         return false;
     }
+
     /**
      * Conditionally negates a number with a boolean
      *

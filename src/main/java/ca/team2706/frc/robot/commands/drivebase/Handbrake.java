@@ -12,11 +12,10 @@ public class Handbrake extends Command {
 
     @Override
     public void initialize() {
-        if(!DriveBase.getInstance().isBrakeMode()) {
+        if (!DriveBase.getInstance().isBrakeMode()) {
             DriveBase.getInstance().setBrakeMode(true);
             brake = true;
-        }
-        else {
+        } else {
             brake = false;
         }
     }
@@ -28,7 +27,7 @@ public class Handbrake extends Command {
 
     @Override
     public void end() {
-        if(brake) {
+        if (brake) {
             DriveBase.getInstance().setBrakeMode(false);
         }
     }

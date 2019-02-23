@@ -1,16 +1,12 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
+import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.subsystems.DriveBase;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Notifier;
@@ -20,6 +16,8 @@ import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Mocked;
 import mockit.Verifications;
+import org.junit.Before;
+import org.junit.Test;
 import util.Util;
 
 public class CurvatureDriveWithJoystickTest {
@@ -80,7 +78,7 @@ public class CurvatureDriveWithJoystickTest {
 
             // 0.0D, 0.1D
             joy2.getRawAxis(Config.CURVATURE_CURVE_SPEED);
-            returns(1D, -1D );
+            returns(1D, -1D);
 
             joy3.getRawButton(Config.SLOW_MODE);
             returns(true, false);

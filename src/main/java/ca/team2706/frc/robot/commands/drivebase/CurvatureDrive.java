@@ -1,13 +1,13 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
-import java.util.function.Supplier;
-
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  * Abstract class to extend when using curve drive, allows for basic Command architecture
  */
+import java.util.function.Supplier;
+
 public abstract class CurvatureDrive extends Command {
     private final Supplier<Double> forwardVal;
     private final Supplier<Double> curveSpeed;

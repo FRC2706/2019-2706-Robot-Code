@@ -57,12 +57,12 @@ public class TankDriveTest {
     private SensorCollection sensorCollection;
 
     @Test
-    public void testBrakeModeOn() {
+    public void testBrakeModeOn() throws NoSuchFieldException, IllegalAccessException {
         testBrakeMode(true);
     }
 
     @Test
-    public void testBrakeModeOff() {
+    public void testBrakeModeOff() throws NoSuchFieldException, IllegalAccessException {
         testBrakeMode(false);
     }
 

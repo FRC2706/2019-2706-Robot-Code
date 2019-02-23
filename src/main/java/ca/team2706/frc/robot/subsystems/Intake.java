@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Intake extends Subsystem {
     private static Intake currentInstance;
 
-    public WPI_TalonSRX intakeMotor;
+    private WPI_TalonSRX intakeMotor;
     private AnalogInput irSensor;
 
     private DoubleSolenoid intakeLiftSolenoid;
@@ -79,8 +79,7 @@ public class Intake extends Subsystem {
     }
 
     @Override
-    public void initDefaultCommand() {
-    }
+    public void initDefaultCommand() { }
 
     /**
      * Getting the voltage from the IR sensor, returning 0 if not configured to deal with cargo.

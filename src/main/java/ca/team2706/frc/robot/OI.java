@@ -37,6 +37,9 @@ public class OI {
         return currentInstance;
     }
 
+    /**
+     * Initializes a new instance of the OI class.
+     */
     public static void init() {
         if (currentInstance == null) {
             currentInstance = new OI();

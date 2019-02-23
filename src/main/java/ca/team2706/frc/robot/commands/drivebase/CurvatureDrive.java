@@ -5,6 +5,9 @@ import java.util.function.Supplier;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.command.Command;
 
+/**
+ * Abstract class to extend when using curve drive, allows for basic Command architecture
+ */
 public abstract class CurvatureDrive extends Command {
     private final Supplier<Double> forwardVal;
     private final Supplier<Double> curveSpeed;
@@ -20,10 +23,11 @@ public abstract class CurvatureDrive extends Command {
      */
     protected CurvatureDrive(Supplier<Double> forwardVal, Supplier<Double> curveSpeed,
                              boolean initBrake, Supplier<Boolean> buttonPress) {
-        // Ensure that this command is the only one to run on the drive base
-        // Requires must be included to use this command as a default command for the drive base
+        /*
+           Ensure that this command is the only one to run on the drive base
+           Requires must be included to use this command as a default command for the drive base
+        */
         requires(DriveBase.getInstance());
-
         this.forwardVal = forwardVal;
         this.curveSpeed = curveSpeed;
         this.initBrake = initBrake;

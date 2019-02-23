@@ -23,10 +23,10 @@ import mockit.Verifications;
 import util.Util;
 
 public class CurvatureDriveTest {
-    @Mocked
+    @Injectable
     private Supplier<Double> forwardVal;
 
-    @Mocked
+    @Injectable
     private Supplier<Double> curveSpeed;
 
     @Mocked

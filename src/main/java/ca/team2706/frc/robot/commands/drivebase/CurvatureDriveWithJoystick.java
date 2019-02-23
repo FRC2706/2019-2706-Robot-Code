@@ -4,6 +4,9 @@ import ca.team2706.frc.robot.config.Config;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
+/**
+ * Allows the robot to be driven using curve drive
+ */
 public class CurvatureDriveWithJoystick extends CurvatureDrive {
 
     /**

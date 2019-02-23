@@ -63,10 +63,18 @@ public class Intake extends Subsystem {
     }
 
     /**
+     * Gets the current intake mode, either hatch or cargo.
+     * @return The intake's current mode.
+     */
+    public IntakeMode getMode() {
+        return currentMode;
+    }
+
+    /**
      * Different states that the intake subsystem can be in, either
      * inhaling hatches or inhaling cargo.
      */
-    private enum IntakeMode {
+    public enum IntakeMode {
         CARGO, HATCH
     }
 

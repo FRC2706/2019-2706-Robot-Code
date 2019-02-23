@@ -1020,6 +1020,7 @@ public class DriveBase extends Subsystem {
     private void findPosition() {
         SmartDashboard.putNumber("Left Dist", -getLeftDistance());
         SmartDashboard.putNumber("Right Dist", getRightDistance());
+        SmartDashboard.putNumber(("Heading "), getHeading());
 
         // Gets gyro angle
         double gyroAngle = -getHeading();

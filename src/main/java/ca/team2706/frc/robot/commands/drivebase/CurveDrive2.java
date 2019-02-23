@@ -38,7 +38,7 @@ public class CurveDrive2 extends FollowTrajectory{
 // Max Velocity:        1.7 m/s
 // Max Acceleration:    2.0 m/s/s
 // Max Jerk:            60.0 m/s/s/s
-        Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.01, Config.MOTION_MAGIC_CRUISE_VELOCITY.value(), Config.MOTION_MAGIC_ACCELERATION.value(), Config.PATHFINDING_JERK.value());
+        Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.01, Config.PATHFINDING_VELOCITY.value(), Config.PATHFINDING_ACCELERATION.value(), Config.PATHFINDING_JERK.value());
 
 // Generate the trajectory
         return Pathfinder.generate(waypoints, config);

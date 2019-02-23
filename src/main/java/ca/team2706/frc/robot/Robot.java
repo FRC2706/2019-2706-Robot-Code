@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Waypoint;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -74,11 +75,7 @@ public class Robot extends TimedRobot {
                 new StraightDrive(0.2, 2.0, 100),  // 2
                 new MotionMagic(0.2, 15.54, 100),  //3
                 new StraightDriveGyro(0.2, 2.0, 100),  // 4
-                new CurveDrive2(1.0, 100, new Waypoint[] {
-                        new Waypoint(0, 0, 0),      // Waypoint @ x=-4, y=-1, exit angle=-45 degrees
-                        new Waypoint(5.0, 5.0, Pathfinder.d2r(90)),                        // Waypoint @ x=-2, y=-2, exit angle=0 radians
-                        new Waypoint(10.0, 10.0, 0)                           // Waypoint @ x=0, y=0,   exit angle=0 radians
-                })//5
+                new FollowTrajectoryFromFile(1.0, 100, Paths.get("/U", "PathfinderStuff"))//5
         };
     }
 

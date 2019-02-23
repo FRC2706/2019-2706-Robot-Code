@@ -1,6 +1,6 @@
 package ca.team2706.frc.robot;
 
-import ca.team2706.frc.robot.commands.drivebase.ArcadeDriveWithJoystick;
+import ca.team2706.frc.robot.commands.drivebase.CurvatureDriveWithJoystick;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.Joystick;
@@ -60,8 +60,8 @@ public class OI {
         // The Joystick for controlling the mechanisms of the robot
         this.controlStick = controlStick;
 
-        driveCommand = new ArcadeDriveWithJoystick(driverStick, Config.ARCADE_DRIVE_FORWARD, true,
-                Config.ARCADE_DRIVE_ROTATE, false);
+        driveCommand = new CurvatureDriveWithJoystick(driverStick, Config.CURVATURE_DRIVE_FORWARD, true,
+                Config.CURVATURE_CURVE_SPEED, false, Config.SLOW_MODE);
 
         // Set subsystem default commands
         DriveBase.getInstance().setDefaultCommand(driveCommand);

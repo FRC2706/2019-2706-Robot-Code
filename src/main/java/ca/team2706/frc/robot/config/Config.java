@@ -110,7 +110,7 @@ public class Config {
         constant("driver-assist-vision-rocket", XboxValue.XBOX_B_BUTTON.NTString);
 
     public static final FluidConstant<String> DRIVER_ASSIST_LASER = 
-        constant("driver-assist-laser", XboxValue.XBOX_A_BUTTON.NTString);
+        constant("driver-assist-laser", XboxValue.XBOX_Y_BUTTON.NTString);
 
     public static final FluidConstant<Double> TRAJ_DELTA_TIME = constant("traj-delta-time", 0.05);
     public static final FluidConstant<Double> ROBOT_MAX_VEL = constant("robot-max-vel", 1.7);

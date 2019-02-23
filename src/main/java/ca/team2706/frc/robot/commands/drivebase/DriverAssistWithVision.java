@@ -19,7 +19,10 @@ import jaci.pathfinder.Waypoint;
 public class DriverAssistWithVision extends Command {
 
     public DriverAssistWithVision() {
-        initNetworkTables();
+        // Ensure that this command is the only one to run on the drive base
+        requires(DriveBase.getInstance());
+
+        setupNetworkTables();
     }
 
     /**
@@ -29,18 +32,19 @@ public class DriverAssistWithVision extends Command {
     public DriverAssistWithVision(boolean driverAssistCargoAndLoading, boolean driverAssistRocket) {
         this.driverAssistCargoAndLoading = driverAssistCargoAndLoading;
         this.driverAssistRocket = driverAssistRocket;
-        initNetworkTables();
+
+        // Ensure that this command is the only one to run on the drive base
+        requires(DriveBase.getInstance());
+
+        setupNetworkTables();
     }
 
-    public void initTargetFlags(boolean driverAssistCargoAndLoading, boolean driverAssistRocket) {
+    public void setupTargetFlags(boolean driverAssistCargoAndLoading, boolean driverAssistRocket) {
         this.driverAssistCargoAndLoading = driverAssistCargoAndLoading;
         this.driverAssistRocket = driverAssistRocket;
     }
 
-    private void initNetworkTables() {
-        // Ensure that this command is the only one to run on the drive base
-        requires(DriveBase.getInstance());
-
+    private void setupNetworkTables() {
         // Set up network table
         inst = NetworkTableInstance.getDefault();
         table = inst.getTable("PathFinder");
@@ -48,17 +52,13 @@ public class DriverAssistWithVision extends Command {
         int port = 1735;
         inst.startClient(serverName, port);
 
-        trajGenerated = true;
+        trajGenerated = false;
     }
 
     @Override
     public void initialize() {
         DriveBase.getInstance().setBrakeMode(true);
         DriveBase.getInstance().setPositionNoGyroMode();
-    }
-
-    @Override
-    public void execute() {
 
         trajGenerated = false;
 
@@ -76,10 +76,17 @@ public class DriverAssistWithVision extends Command {
             trajGenerated = true;
             return;
         }
+
+        // Compute the trajectory
         generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, yawAngleCameraToTarget_Camera,
                 driverAssistCargoAndLoading, driverAssistRocket);
 
         trajGenerated = true;
+    }
+
+    @Override
+    public void execute() {
+        // Nothing to do here
     }
 
     @Override

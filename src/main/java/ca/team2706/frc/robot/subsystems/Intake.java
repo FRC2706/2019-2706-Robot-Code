@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Intake extends Subsystem {
     private static Intake currentInstance;
 
-    public WPI_TalonSRX intakeMotor;
+    private WPI_TalonSRX intakeMotor;
     private AnalogInput irSensor;
 
     private DoubleSolenoid intakeLiftSolenoid;
@@ -43,7 +43,15 @@ public class Intake extends Subsystem {
         }
     }
 
-    public Intake(WPI_TalonSRX intakeTalon, AnalogInput irSensor, DoubleSolenoid intakeLiftSolenoid, DoubleSolenoid hatchEjectorSolenoid) {
+    /**
+     * Constructs a new intake subsystem with the given parameters.
+     *
+     * @param intakeTalon          The motor controller object for the intake motor.
+     * @param irSensor             The ir sensor analog input object.
+     * @param intakeLiftSolenoid   The intake's lift solenoid object.
+     * @param hatchEjectorSolenoid The pneumatic piston hatch ejector solenoid.
+     */
+    private Intake(WPI_TalonSRX intakeTalon, AnalogInput irSensor, DoubleSolenoid intakeLiftSolenoid, DoubleSolenoid hatchEjectorSolenoid) {
         this.intakeMotor = intakeTalon;
         this.irSensor = irSensor;
         this.intakeLiftSolenoid = intakeLiftSolenoid;
@@ -55,7 +63,7 @@ public class Intake extends Subsystem {
     /**
      * Constructs a new Intake.
      */
-    public Intake() {
+    private Intake() {
         this(new WPI_TalonSRX(Config.INTAKE_MOTOR_ID),
                 new AnalogInput(Config.CARGO_IR_SENSOR_ID),
                 new DoubleSolenoid(Config.INTAKE_LIFT_SOLENOID_FORWARD_ID, Config.INTAKE_LIFT_SOLENOID_BACKWARD_ID),
@@ -79,8 +87,7 @@ public class Intake extends Subsystem {
     }
 
     @Override
-    public void initDefaultCommand() {
-    }
+    public void initDefaultCommand() { }
 
     /**
      * Getting the voltage from the IR sensor, returning 0 if not configured to deal with cargo.

@@ -61,7 +61,7 @@ public class TankDriveWithJoystickTest {
     public static void classSetUp() throws NoSuchFieldException, IllegalAccessException {
         Util.resetSubsystems();
     }
-    
+
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
         new Expectations() {{

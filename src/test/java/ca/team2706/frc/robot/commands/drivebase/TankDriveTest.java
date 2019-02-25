@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import mockit.Expectations;
 import mockit.Injectable;
+import mockit.Mock;
 import mockit.Mocked;
 import mockit.Verifications;
 import util.Util;
@@ -57,6 +58,15 @@ public class TankDriveTest {
     @Injectable
     private SensorCollection sensorCollection;
 
+    @Before
+    public void setUp() {
+            new Expectations() {{
+                talon.getSensorCollection();
+                result = sensorCollection;
+            }};
+
+    }
+
     @Test
     public void testBrakeModeOn() throws NoSuchFieldException, IllegalAccessException {
         testBrakeMode(true);
@@ -72,19 +82,10 @@ public class TankDriveTest {
         Util.resetSubsystems();
     }
 
-    @Before
-    public void setUp() {
-        new Expectations() {{
-            talon.getSensorCollection();
-            result = sensorCollection;
-        }};
-    }
-
     /**
      * Makes sure that the brake mode gets set to the correct value at the end of the match
      */
     private void testBrakeMode(boolean brake) throws NoSuchFieldException, IllegalAccessException {
-        Util.resetSubsystems();
         new Expectations() {{
             leftSpeed.get();
             result = 0.0;
@@ -102,10 +103,6 @@ public class TankDriveTest {
 
         tankDrive.initialize();
 
-        new Verifications() {{
-            DriveBase.getInstance().setBrakeMode(brake);
-        }};
-
         tankDrive.execute();
 
         tankDrive.end();
@@ -113,5 +110,6 @@ public class TankDriveTest {
         new Verifications() {{
             DriveBase.getInstance().setBrakeMode(brake);
         }};
+
     }
 }

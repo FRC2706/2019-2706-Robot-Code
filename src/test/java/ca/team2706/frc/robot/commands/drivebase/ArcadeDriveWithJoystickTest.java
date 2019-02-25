@@ -18,6 +18,7 @@ import mockit.Mocked;
 import mockit.Verifications;
 import org.junit.Before;
 import org.junit.Test;
+import util.Util;
 
 public class ArcadeDriveWithJoystickTest {
     @Mocked
@@ -47,18 +48,25 @@ public class ArcadeDriveWithJoystickTest {
     @Injectable
     private SensorCollection sensorCollection;
 
-    @Mocked
+    @Injectable
     private Joystick joy1;
 
-    @Mocked
+    @Injectable
     private Joystick joy2;
 
+    private static boolean initialized = false;
+
     @Before
-    public void setUp() {
-        new Expectations() {{
-            talon.getSensorCollection();
-            result = sensorCollection;
-        }};
+    public void setUp() throws NoSuchFieldException, IllegalAccessException {
+        if (!initialized) {
+            initialized = true;
+
+            Util.resetSubsystems();
+            new Expectations() {{
+                talon.getSensorCollection();
+                result = sensorCollection;
+            }};
+        }
     }
 
     /**

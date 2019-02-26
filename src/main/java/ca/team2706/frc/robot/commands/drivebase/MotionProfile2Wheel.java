@@ -58,6 +58,12 @@ public class MotionProfile2Wheel extends MirroredCommand {
         this.minDoneCycles = minDoneCycles;
     }
 
+    /**
+     *Motion profile for 2 wheel
+     * @param speed The speed of the robot
+     * @param minDoneCycles The number of cycles to complete after finishing the motion profile
+     * @param dualTalonTrajectory The trajectory
+     */
     MotionProfile2Wheel(Supplier<Double> speed, Supplier<Integer> minDoneCycles, DualTalonTrajectory dualTalonTrajectory) {
         this(speed, minDoneCycles, dualTalonTrajectory.posLeft, dualTalonTrajectory.velLeft, dualTalonTrajectory.posRight, dualTalonTrajectory.velRight,  dualTalonTrajectory.heading, dualTalonTrajectory.time, dualTalonTrajectory.size);
     }
@@ -76,6 +82,11 @@ public class MotionProfile2Wheel extends MirroredCommand {
         doneCycles = 0;
     }
 
+    /**
+     * Makes all the elements in the double array negative
+     * @param array The array that is negated
+     * @return The array
+     */
     private static double[] negateDoubleArray(double[] array) {
         double[] newArray = new double[array.length];
 
@@ -115,6 +126,16 @@ public class MotionProfile2Wheel extends MirroredCommand {
         final int[] time;
         final int size;
 
+        /**
+         * Applies the motion profile for 2 wheels
+         * @param posLeft The position of the robot at a trajectory point for the left wheel
+         * @param velLeft The velocity of the robot at a trajectory point for the left wheel
+         * @param heading The heading of the robot at a trajectory point
+         * @param time The time for each trajectory point
+         * @param size How many trajectory points there are
+         * @param posRight The position of the robot at a trajectory point for the right wheel
+         * @param velRight The velocity of the robot at a trajectory point for the right wheel
+         */
         DualTalonTrajectory(double[] posLeft, double[] velLeft, double[] posRight, double[] velRight, double[] heading, int[] time, int size) {
             this.posLeft = posLeft;
             this.velLeft = velLeft;

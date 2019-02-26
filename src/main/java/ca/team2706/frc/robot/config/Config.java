@@ -97,8 +97,8 @@ public class Config {
     public static final double LOG_PERIOD = robotSpecific(0.02, 0.02, 0.02, Double.POSITIVE_INFINITY);
 
     // #### Fluid constants ####
-    public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_DEADBAND = constant("drive-deadband", 0.001);
-    public static final FluidConstant<Double> DRIVE_OPEN_LOOP_DEADBAND = constant("drive-deadband", 0.04);
+    public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_DEADBAND = constant("closed-loop-drive-deadband", 0.001);
+    public static final FluidConstant<Double> DRIVE_OPEN_LOOP_DEADBAND = constant("open-loop-drive-deadband", 0.04);
 
     public static final FluidConstant<Boolean> DRIVE_SUM_PHASE_LEFT = constant("drive-sum-phase-left", true);
     public static final FluidConstant<Boolean> DRIVE_SUM_PHASE_RIGHT = constant("drive-sum-phase-right", true);

@@ -78,9 +78,18 @@ public class Config {
         LIFT_MOTOR_ID = robotSpecific(5, 5, 5),
         LIFT_DIGITAL_INPUT_ID = robotSpecific(1, 1, 1);
 
+    public static final double
+            // Max speed of the lift going up in override (between 0 and 1).
+        LIFT_OVERRIDE_UP_SPEED = 0.4,
+    // Max speed of the lift going down in override (betweeen -1 and 0).
+        LIFT_OVERRIDE_DOWN_SPEED = -0.4;
+
+
     public static boolean
         INVERT_LIFT_MOTOR = robotSpecific(false, false , false),
         ENABLE_LIFT_CURRENT_LIMIT = robotSpecific(false, false, false);
+
+    public static int MAX_LIFT_ENCODER_TICKS = 300000; // TODO need actual value here.
 
 
     public static final boolean ENABLE_DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);
@@ -95,7 +104,7 @@ public class Config {
     public static final double DRIVE_ENCODER_DPP
             = robotSpecific(Math.PI / 8192.0, Math.PI / 8192.0, Math.PI / 8192.0);
 
-    // TODO this is not right.
+    // TODO this is not right. Actual value plz.
     // The amount of encoder ticks that the robot must drive to go one foot
     public static final double LIFT_ENCODER_DPP
             = robotSpecific(Math.PI / 8192.0, Math.PI / 8192.0, Math.PI / 8192.0);
@@ -121,11 +130,15 @@ public class Config {
 
 
     // #### Fluid constants ####
-    public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_DEADBAND = constant("drive-deadband", 0.001);
-    public static final FluidConstant<Double> DRIVE_OPEN_LOOP_DEADBAND = constant("drive-deadband", 0.04);
+    public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_DEADBAND = constant("closed-loop-drive-deadband", 0.001);
+    public static final FluidConstant<Double> DRIVE_OPEN_LOOP_DEADBAND = constant("open-loop-drive-deadband", 0.04);
+
+    public static final FluidConstant<Double> LIFT_CLOSED_LOOP_DEADBAND = constant("lift-deadband", 0.001);
 
     public static final FluidConstant<Boolean> DRIVE_SUM_PHASE_LEFT = constant("drive-sum-phase-left", true);
     public static final FluidConstant<Boolean> DRIVE_SUM_PHASE_RIGHT = constant("drive-sum-phase-right", true);
+
+    public static final FluidConstant<Boolean> ENABLE_LIFT_SUM_PHASE = constant("lift-sum-phase", true);
 
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_P = constant("drive-P", 0.1);
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_I = constant("drive-I", 0.0);
@@ -137,6 +150,12 @@ public class Config {
     public static final FluidConstant<Double> TURN_P = constant("turn-P", 0.5);
     public static final FluidConstant<Double> TURN_I = constant("turn-I", 0.0);
     public static final FluidConstant<Double> TURN_D = constant("turn-D", 0.0);
+
+    public static final FluidConstant<Double>
+        LIFT_P = constant("lift-P", 0.5),
+        LIFT_I = constant("lift-I", 0.0),
+        LIFT_D = constant("lift-D", 0.0);
+
 
     public static final FluidConstant<Double> PIGEON_KP = constant("pigeon-kp", 2.0);
     public static final FluidConstant<Double> PIGEON_KI = constant("pigeon-ki", 0.0);

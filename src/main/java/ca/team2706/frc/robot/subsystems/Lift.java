@@ -1,8 +1,7 @@
 package ca.team2706.frc.robot.subsystems;
 
 import ca.team2706.frc.robot.config.Config;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -40,15 +39,9 @@ public class Lift extends Subsystem {
         CARGO_LOWER_SETPOINTS = new double[HATCH_SETPOINTS.length];
 
         for (int i = 0; i < HATCH_SETPOINTS.length; i++) {
-            CARGO_LOWER_SETPOINTS[i] = HATCH_SETPOINTS[i];
+            CARGO_LOWER_SETPOINTS[i] = HATCH_SETPOINTS[i] - 0.5;
         }
     }
-
-    private final double MAX_HEIGHT = CARGO_SETPOINTS[2]; // TODO we don't want to set this as the topmost height, we want it to be the actual lift's limit.
-
-    private double heightGoal = 1.0;
-
-    private boolean loweringForHatch = false; //if the lift is lowering in order to deploy a hatch
 
     private static Lift currentInstance;
 
@@ -91,24 +84,58 @@ public class Lift extends Subsystem {
         liftMotor.configFactoryDefault(Config.CAN_LONG);
         liftMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
         liftMotor.setInverted(Config.INVERT_LIFT_MOTOR);
+
+        liftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_LONG);
+        liftMotor.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.CTRE_MagEncoder_Relative, Config.CAN_LONG);
+        liftMotor.configSelectedFeedbackCoefficient(0.5, 0, Config.CAN_LONG);
+        liftMotor.setSensorPhase(Config.ENABLE_LIFT_SUM_PHASE.value());
+        liftMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Config.CAN_LONG);
+        liftMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Config.CAN_LONG);
+        liftMotor.configNeutralDeadband(Config.LIFT_CLOSED_LOOP_DEADBAND.value());
+
+        liftMotor.config_kP(0, Config.LIFT_P.value());
+        liftMotor.config_kP(0, Config.LIFT_I.value());
+        liftMotor.config_kP(0, Config.LIFT_D.value());
+
+        liftMotor.configClosedLoopPeriod(0, 1, Config.CAN_LONG);
+
+        enableLimit(true);
+
+        liftMotor.configForwardSoftLimitThreshold(Config.MAX_LIFT_ENCODER_TICKS, Config.CAN_LONG);
+        liftMotor.configReverseSoftLimitThreshold(0, Config.CAN_LONG);
+    }
+
+    /**
+     * Enables the limit on the lift so the lift won't go past certain points on the lift.
+     * @param enable True to enable, false otherwise.
+     */
+    private void enableLimit(final boolean enable) {
+        liftMotor.configForwardSoftLimitEnable(enable);
+        liftMotor.configReverseSoftLimitEnable(enable);
     }
 
     @Override
-    public void initDefaultCommand() { }
+    public void initDefaultCommand() {
+    }
+
+    @Override
+    public void periodic() {
+        super.periodic();
+        if (liftLimitSwitch.get() || liftMotor.getSelectedSensorPosition() < 0) {
+            zeroEncoderTicks();
+        }
+    }
 
     /**
-     * Updates the setpoint for the PID controller
-     *
-     * @param speed The speed at which the motor should move, from 0 to 1.
-     * @param setpoint The setpoint location in feet.
+     * Zeros the lift encoder ticks.
      */
-    public void setDesiredSetpoint(final double speed, final double setpoint) {
-        liftMotor.configClosedLoopPeakOutput(0, speed);
-        liftMotor.set(ControlMode.Position, setpoint / Config.LIFT_ENCODER_DPP);
+    private void zeroEncoderTicks() {
+        liftMotor.setSelectedSensorPosition(0);
     }
 
     /**
      * Determines what setpoints we're currently going to be using.
+     *
      * @return The current setpoints, sorted from lowest to highest.
      */
     private double[] getCurrentSetpoints() {
@@ -130,20 +157,62 @@ public class Lift extends Subsystem {
     }
 
     /**
-     * Stopping the lift
+     * Sets the position for the talons to reach.
+     *
+     * @param maxSpeed Maximum speed at which to travel, from 0 to 1.
+     * @param position The position, in feet.
      */
-    public void stop() {
-        if (!loweringForHatch) {
-            liftMotor.set(0);
-        } else {
-            Intake.getInstance().retractPlunger(); // Moving the plunger in.
-            Intake.getInstance().raiseIntake();
-            loweringForHatch = false;
+    public void setPosition(final double maxSpeed, final double position) {
+        enableLimit(true);
+            liftMotor.configClosedLoopPeakOutput(0, maxSpeed);
+            liftMotor.set(ControlMode.PercentOutput, position / Config.LIFT_ENCODER_DPP);
+    }
+
+    /**
+     * Sets a velocity for the talon motors.
+     *
+     * @param velocity Velocity in ft/s
+     */
+    public void setVelocity(final double velocity) {
+        enableLimit(true);
+            liftMotor.configClosedLoopPeakOutput(0, 1.0); // Peak output to max (1.0).
+            liftMotor.set(ControlMode.Velocity, velocity / Config.LIFT_ENCODER_DPP / 10.0);
+    }
+
+    /**
+     * Sets the percent output for the talon lift motor.
+     *
+     * @param percentOutput Percent output, between -1 and 1
+     */
+    public void setPercentOuput(double percentOutput) {
+        enableLimit(true);
+        liftMotor.set(percentOutput);
+    }
+
+    /**
+     * Overrides limits on the talons to go up with override.
+     */
+    public void overrideUp() {
+        liftMotor.set(Config.LIFT_OVERRIDE_UP_SPEED);
+    }
+
+    public void overrideDown() {
+        if (!liftLimitSwitch.get()) {
+            enableLimit(false);
+            liftMotor.set(-Config.LIFT_OVERRIDE_DOWN_SPEED);
         }
     }
 
     /**
+     * Stopping the lift
+     */
+    public void stop() {
+        liftMotor.set(0);
+    }
+
+    /**
      * Gets the current intake mode.
+     *
      * @return The intake mode
      */
     private static Intake.IntakeMode getIntakeMode() {

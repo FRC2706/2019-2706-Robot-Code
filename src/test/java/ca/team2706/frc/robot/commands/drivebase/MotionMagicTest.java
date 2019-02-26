@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import mockit.*;
+import util.Util;
+
 import org.junit.Before;
 import org.junit.Test;
 import util.Util;
@@ -58,7 +60,8 @@ public class MotionMagicTest {
 
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
-        Util.resetSubsystems(); // Always do this because it's useful.
+        Util.resetSubsystems();
+
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;

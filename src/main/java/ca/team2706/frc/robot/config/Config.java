@@ -5,6 +5,7 @@ import ca.team2706.frc.robot.RobotState;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -118,6 +119,8 @@ public class Config {
     public static final FluidConstant<Double> PIGEON_KI = constant("pigeon-ki", 0.0);
     public static final FluidConstant<Double> PIGEON_KD = constant("pigeon-ki", 4.0);
     public static final FluidConstant<Double> PIGEON_KF = constant("pigeon-kf", 0.0);
+
+    public static final FluidConstant<String> INTERRUPT_BUTTON = constant("interrupt-button", XboxValue.XBOX_A_BUTTON.getNTString());
 
     // ### Methods, fields and Constructors ###
     /**

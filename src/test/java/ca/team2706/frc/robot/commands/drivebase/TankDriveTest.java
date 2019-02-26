@@ -64,7 +64,6 @@ public class TankDriveTest {
                 talon.getSensorCollection();
                 result = sensorCollection;
             }};
-
     }
 
     @Test

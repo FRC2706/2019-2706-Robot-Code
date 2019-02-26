@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj.Joystick;
 public class TankDriveWithJoystick extends TankDrive {
 
     /**
+     * Initializes the TankDriveWithJoystick class
+     *
      * @param joy1 The First Joystick
      * @param axis1 The axis value of the joystick
      * @param invert1 Weather or not to invert the first axis value
@@ -22,6 +24,14 @@ public class TankDriveWithJoystick extends TankDrive {
                 Config.TELEOP_SQUARE_JOYSTICK_INPUTS, Config.TELEOP_BRAKE);
     }
 
+    /**
+     *
+     * @param joy The joystick to be used
+     * @param axis1 The left axis value
+     * @param invert1 Weather to invert the left axis value
+     * @param axis2 The right axis value
+     * @param invert2 Weather to invert the right axis value
+     */
     public TankDriveWithJoystick(Joystick joy, int axis1, boolean invert1, int axis2, boolean invert2) {
         this(joy, axis1, invert1, joy, axis2, invert2);
     }

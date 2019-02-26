@@ -118,6 +118,7 @@ public class Robot extends TimedRobot {
         selectorInit();
     }
 
+    // The command currently being run on the robot
     private static Command currentCommand;
 
     /**

@@ -66,15 +66,24 @@ public class Config {
             INVERT_FRONT_RIGHT_DRIVE = robotSpecific(true, true, true),
             INVERT_BACK_RIGHT_DRIVE = robotSpecific(true, true, true);
 
-    public static final int INTAKE_MOTOR_ID = robotSpecific(6, 6, 6),
+    public static final int
+            INTAKE_MOTOR_ID = robotSpecific(6, 6, 6),
             CARGO_IR_SENSOR_ID = robotSpecific(3, 3, 3),
             INTAKE_LIFT_SOLENOID_FORWARD_ID = robotSpecific(2, 2, 2),
             INTAKE_LIFT_SOLENOID_BACKWARD_ID = robotSpecific(3, 3, 3),
             HATCH_EJECTOR_SOLENOID_FORWARD_ID = robotSpecific(0, 0, 0),
             HATCH_EJECTOR_SOLENOID_BACKWARD_ID = robotSpecific(1, 1, 1);
 
+    public static final int
+        LIFT_MOTOR_ID = robotSpecific(5, 5, 5),
+        LIFT_DIGITAL_INPUT_ID = robotSpecific(1, 1, 1);
 
-    public static final boolean DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);
+    public static boolean
+        INVERT_LIFT_MOTOR = robotSpecific(false, false , false),
+        ENABLE_LIFT_CURRENT_LIMIT = robotSpecific(false, false, false);
+
+
+    public static final boolean ENABLE_DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);
 
     // Talon ID for the Pigeon
     public static final int GYRO_TALON_ID = robotSpecific(5, 5, 5);
@@ -84,6 +93,11 @@ public class Config {
 
     // The amount of encoder ticks that the robot must drive to go one foot
     public static final double DRIVE_ENCODER_DPP
+            = robotSpecific(Math.PI / 8192.0, Math.PI / 8192.0, Math.PI / 8192.0);
+
+    // TODO this is not right.
+    // The amount of encoder ticks that the robot must drive to go one foot
+    public static final double LIFT_ENCODER_DPP
             = robotSpecific(Math.PI / 8192.0, Math.PI / 8192.0, Math.PI / 8192.0);
 
     public static final double PIGEON_DPP = robotSpecific(360.0 / 8192.0, 360.0 / 8192.0, 360.0 / 8192.0);

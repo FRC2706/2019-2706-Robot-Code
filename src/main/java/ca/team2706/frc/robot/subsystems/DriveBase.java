@@ -94,7 +94,7 @@ public class DriveBase extends Subsystem {
 
         follow();
 
-        enableCurrentLimit(Config.DRIVEBASE_CURRENT_LIMIT);
+        enableCurrentLimit(Config.ENABLE_DRIVEBASE_CURRENT_LIMIT);
 
         robotDriveBase = new DifferentialDrive(leftFrontMotor, rightFrontMotor);
         robotDriveBase.setRightSideInverted(false);

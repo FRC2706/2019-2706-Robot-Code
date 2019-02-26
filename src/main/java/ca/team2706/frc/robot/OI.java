@@ -3,10 +3,12 @@ package ca.team2706.frc.robot;
 import ca.team2706.frc.robot.commands.drivebase.ArcadeDriveWithJoystick;
 import ca.team2706.frc.robot.commands.intake.ExhaleCargo;
 import ca.team2706.frc.robot.commands.intake.InhaleCargo;
+import ca.team2706.frc.robot.commands.lift.MoveLiftOnJoystickPID;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.input.FluidButton;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
@@ -14,10 +16,14 @@ import edu.wpi.first.wpilibj.command.Command;
  * and command groups that allow control of the robot.
  */
 public class OI {
-    // Joystick for driving the robot around
+    /**
+     * Joystick for driving the robot around
+     */
     private final Joystick driverStick;
 
-    // Joystick for controlling the mechanisms of the robot
+    /**
+     * Joystick for controlling the mechanisms of the robot
+     */
     private final Joystick controlStick;
 
     /**
@@ -71,10 +77,12 @@ public class OI {
         // Set subsystem default commands
         DriveBase.getInstance().setDefaultCommand(driveCommand);
 
-        new FluidButton(driverStick, Config.INTAKE_BINDING)
+        new FluidButton(controlStick, Config.INTAKE_BINDING)
                 .whileHeld(new InhaleCargo(driverStick, FluidButton.getPort(Config.INTAKE_BINDING).getPort()));
-        new FluidButton(driverStick, Config.EXHALE_BINDING)
-                .whileHeld(new ExhaleCargo(driverStick, FluidButton.getPort(Config.EXHALE_BINDING).getPort()));
+        new FluidButton(controlStick, Config.EXHALE_BINDING)
+                .whileHeld(new ExhaleCargo(controlStick, FluidButton.getPort(Config.EXHALE_BINDING).getPort()));
+        new FluidButton(controlStick, Config.MOVE_LIFT_BINDING)
+                .whileHeld(new MoveLiftOnJoystickPID(controlStick, FluidButton.getPort(Config.MOVE_LIFT_BINDING).getPort()));
     }
 
     /**

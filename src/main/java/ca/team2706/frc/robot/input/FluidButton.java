@@ -45,22 +45,27 @@ public class FluidButton extends EButton {
 
     @Override
     public boolean get() {
-        Config.XboxValue port = Config.XboxValue.getXboxValueFromNTKey(joystickPort.value());
+        return determineIfPressed(m_joystick, getPort(joystickPort));
+    }
 
-        boolean value = false;
+    static boolean determineIfPressed(GenericHID controller, final Config.XboxValue port) {
+        final boolean pressed;
 
         switch (port.getInputType()) {
             case Axis:
-                value = Math.abs(m_joystick.getRawAxis(port.getPort())) >= MIN_AXIS_ACTIVATION;
+                pressed = Math.abs(controller.getRawAxis(port.getPort())) >= MIN_AXIS_ACTIVATION;
                 break;
             case Button:
-                value = m_joystick.getRawButton(port.getPort());
+                pressed = controller.getRawButton(port.getPort());
                 break;
             case POV:
-                value = m_joystick.getPOV(POV_NUMBER) == port.getPort();
+                pressed = controller.getPOV(POV_NUMBER) == port.getPort();
+                break;
+            default:
+                pressed = false;
                 break;
         }
 
-        return value;
+        return pressed;
     }
 }

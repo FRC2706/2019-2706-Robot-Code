@@ -165,6 +165,7 @@ public class Config {
     public static final FluidConstant<String> MOVE_LIFT_UP_BINDING = constant("move-lift-up", XboxValue.XBOX_A_BUTTON.getNTString());
     public static final FluidConstant<String> INTAKE_BINDING = constant("intake-trigger", XboxValue.XBOX_BACK_LEFT_TRIGGER.getNTString());
     public static final FluidConstant<String> EXHALE_BINDING = constant("exhale-trigger", XboxValue.XBOX_BACK_RIGHT_TRIGGER.getNTString());
+    public static final FluidConstant<String> MOVE_LIFT_BINDING = constant("move-lift", XboxValue.XBOX_LEFT_STICK_Y.getNTString());
     /**
      * The minimum reading on the cargo IR sensor to assert that we have cargo in the mechanism.
      */

@@ -75,19 +75,19 @@ public class Config {
             HATCH_EJECTOR_SOLENOID_BACKWARD_ID = robotSpecific(1, 1, 1);
 
     public static final int
-        LIFT_MOTOR_ID = robotSpecific(5, 5, 5),
-        LIFT_DIGITAL_INPUT_ID = robotSpecific(1, 1, 1);
+            LIFT_MOTOR_ID = robotSpecific(5, 5, 5),
+            LIFT_DIGITAL_INPUT_ID = robotSpecific(1, 1, 1);
 
     public static final double
             // Max speed of the lift going up in override (between 0 and 1).
-        LIFT_OVERRIDE_UP_SPEED = 0.4,
+            LIFT_OVERRIDE_UP_SPEED = 0.4,
     // Max speed of the lift going down in override (betweeen -1 and 0).
-        LIFT_OVERRIDE_DOWN_SPEED = -0.4;
+    LIFT_OVERRIDE_DOWN_SPEED = -0.4;
 
 
     public static boolean
-        INVERT_LIFT_MOTOR = robotSpecific(false, false , false),
-        ENABLE_LIFT_CURRENT_LIMIT = robotSpecific(false, false, false);
+            INVERT_LIFT_MOTOR = robotSpecific(false, false, false),
+            ENABLE_LIFT_CURRENT_LIMIT = robotSpecific(false, false, false);
 
     public static int MAX_LIFT_ENCODER_TICKS = 300000; // TODO need actual value here.
 
@@ -152,9 +152,9 @@ public class Config {
     public static final FluidConstant<Double> TURN_D = constant("turn-D", 0.0);
 
     public static final FluidConstant<Double>
-        LIFT_P = constant("lift-P", 0.5),
-        LIFT_I = constant("lift-I", 0.0),
-        LIFT_D = constant("lift-D", 0.0);
+            LIFT_P = constant("lift-P", 0.5),
+            LIFT_I = constant("lift-I", 0.0),
+            LIFT_D = constant("lift-D", 0.0);
 
 
     public static final FluidConstant<Double> PIGEON_KP = constant("pigeon-kp", 2.0);

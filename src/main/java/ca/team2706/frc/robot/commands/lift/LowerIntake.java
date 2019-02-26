@@ -15,7 +15,8 @@ public class LowerIntake extends Command {
     }
 
     @Override
-    public void end() {}
+    public void end() {
+    }
 
     @Override
     protected boolean isFinished() {

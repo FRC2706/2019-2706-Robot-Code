@@ -99,14 +99,19 @@ public class Lift extends Subsystem {
 
         liftMotor.configClosedLoopPeriod(0, 1, Config.CAN_LONG);
 
+        liftMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, Config.CAN_LONG);
+        liftMotor.configClearPositionOnLimitR(true, Config.CAN_LONG);
+
         enableLimit(true);
 
+        // Set up the soft limit of encoder ticks.
         liftMotor.configForwardSoftLimitThreshold(Config.MAX_LIFT_ENCODER_TICKS, Config.CAN_LONG);
         liftMotor.configReverseSoftLimitThreshold(0, Config.CAN_LONG);
     }
 
     /**
      * Enables the limit on the lift so the lift won't go past certain points on the lift.
+     *
      * @param enable True to enable, false otherwise.
      */
     private void enableLimit(final boolean enable) {
@@ -121,7 +126,7 @@ public class Lift extends Subsystem {
     @Override
     public void periodic() {
         super.periodic();
-        if (liftLimitSwitch.get() || liftMotor.getSelectedSensorPosition() < 0) {
+        if (liftMotor.getSelectedSensorPosition() < 0) {
             zeroEncoderTicks();
         }
     }
@@ -164,8 +169,8 @@ public class Lift extends Subsystem {
      */
     public void setPosition(final double maxSpeed, final double position) {
         enableLimit(true);
-            liftMotor.configClosedLoopPeakOutput(0, maxSpeed);
-            liftMotor.set(ControlMode.PercentOutput, position / Config.LIFT_ENCODER_DPP);
+        liftMotor.configClosedLoopPeakOutput(0, maxSpeed);
+        liftMotor.set(ControlMode.PercentOutput, position / Config.LIFT_ENCODER_DPP);
     }
 
     /**
@@ -175,8 +180,8 @@ public class Lift extends Subsystem {
      */
     public void setVelocity(final double velocity) {
         enableLimit(true);
-            liftMotor.configClosedLoopPeakOutput(0, 1.0); // Peak output to max (1.0).
-            liftMotor.set(ControlMode.Velocity, velocity / Config.LIFT_ENCODER_DPP / 10.0);
+        liftMotor.configClosedLoopPeakOutput(0, 1.0); // Peak output to max (1.0).
+        liftMotor.set(ControlMode.Velocity, velocity / Config.LIFT_ENCODER_DPP / 10.0);
     }
 
     /**

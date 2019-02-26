@@ -72,6 +72,7 @@ public class Intake extends Subsystem {
 
     /**
      * Gets the current intake mode, either hatch or cargo.
+     *
      * @return The intake's current mode.
      */
     public IntakeMode getMode() {
@@ -87,7 +88,8 @@ public class Intake extends Subsystem {
     }
 
     @Override
-    public void initDefaultCommand() { }
+    public void initDefaultCommand() {
+    }
 
     /**
      * Getting the voltage from the IR sensor, returning 0 if not configured to deal with cargo.

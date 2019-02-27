@@ -162,10 +162,18 @@ public class Config {
     public static final FluidConstant<Double> PIGEON_KD = constant("pigeon-ki", 4.0);
     public static final FluidConstant<Double> PIGEON_KF = constant("pigeon-kf", 0.0);
 
-    public static final FluidConstant<String> MOVE_LIFT_UP_BINDING = constant("move-lift-up", XboxValue.XBOX_A_BUTTON.getNTString());
-    public static final FluidConstant<String> INTAKE_BINDING = constant("intake-trigger", XboxValue.XBOX_BACK_LEFT_TRIGGER.getNTString());
-    public static final FluidConstant<String> EXHALE_BINDING = constant("exhale-trigger", XboxValue.XBOX_BACK_RIGHT_TRIGGER.getNTString());
-    public static final FluidConstant<String> MOVE_LIFT_BINDING = constant("move-lift", XboxValue.XBOX_LEFT_STICK_Y.getNTString());
+    public static final FluidConstant<String> MOVE_LIFT_UP_BINDING = constant("move-lift-up", XboxValue.XBOX_A_BUTTON.getNTString()),
+            INTAKE_BINDING = constant("intake-trigger", XboxValue.XBOX_BACK_LEFT_TRIGGER.getNTString()),
+            EXHALE_BINDING = constant("exhale-trigger", XboxValue.XBOX_BACK_RIGHT_TRIGGER.getNTString()),
+            MOVE_LIFT_BINDING = constant("move-lift", XboxValue.XBOX_LEFT_STICK_Y.getNTString()),
+            LIFT_ARMS_BINDING = constant("lift_arms", XboxValue.XBOX_A_BUTTON.getNTString()),
+            LOWER_ARMS_BINDING = constant("lower-arms", XboxValue.XBOX_Y_BUTTON.getNTString());
+
+    /**
+     * Amount of time (in seconds) that it takes for the plunger to be stowed.
+     */
+    public static final double PLUNGER_TIMEOUT = 1.0;
+
     /**
      * The minimum reading on the cargo IR sensor to assert that we have cargo in the mechanism.
      */

@@ -3,12 +3,13 @@ package ca.team2706.frc.robot;
 import ca.team2706.frc.robot.commands.drivebase.ArcadeDriveWithJoystick;
 import ca.team2706.frc.robot.commands.intake.ExhaleCargo;
 import ca.team2706.frc.robot.commands.intake.InhaleCargo;
+import ca.team2706.frc.robot.commands.intake.arms.LowerArmsSafely;
+import ca.team2706.frc.robot.commands.intake.arms.RaiseArms;
 import ca.team2706.frc.robot.commands.lift.MoveLiftOnJoystickPID;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.input.FluidButton;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
@@ -83,6 +84,10 @@ public class OI {
                 .whileHeld(new ExhaleCargo(controlStick, FluidButton.getPort(Config.EXHALE_BINDING).getPort()));
         new FluidButton(controlStick, Config.MOVE_LIFT_BINDING)
                 .whileHeld(new MoveLiftOnJoystickPID(controlStick, FluidButton.getPort(Config.MOVE_LIFT_BINDING).getPort()));
+        new FluidButton(controlStick, Config.LIFT_ARMS_BINDING)
+                .whenPressed(new RaiseArms());
+        new FluidButton(controlStick, Config.LOWER_ARMS_BINDING)
+                .whenPressed(new LowerArmsSafely());
     }
 
     /**

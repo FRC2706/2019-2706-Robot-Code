@@ -15,8 +15,9 @@ public class MoveLiftOnJoystickPID extends Command {
 
     /**
      * Moves the lift down using PID.
+     *
      * @param joystick The joystick at which to look at to determine speed.
-     * @param port The axis port at which to look at for the speed.
+     * @param port     The axis port at which to look at for the speed.
      */
     public MoveLiftOnJoystickPID(Joystick joystick, final int port) {
         requires(Lift.getInstance());

@@ -114,22 +114,22 @@ public class Intake extends Subsystem {
     /**
      * Spins the wheels to intake cargo.
      *
-     * @param speed speed at which to change the wheels, in percentage.
+     * @param speed speed at which to change the wheels, between 0 and 1.
      */
     public void inhaleCargo(double speed) {
         if (currentMode == IntakeMode.CARGO) {
-            intakeMotor.set(speed * Config.MAX_INTAKE_SPEED);
+            intakeMotor.set(Math.abs(speed * Config.MAX_INTAKE_SPEED));
         }
     }
 
     /**
      * Spins the wheels to eject cargo.
      *
-     * @param speed Speed at which to spin the wheels, in percentage.
+     * @param speed Speed at which to spin the wheels, between 0 and 1.
      */
     public void exhaleCargo(double speed) {
         if (currentMode == IntakeMode.CARGO) {
-            speed = -(speed * Config.MAX_INTAKE_SPEED);
+            speed = -(Math.abs(speed * Config.MAX_INTAKE_SPEED));
             intakeMotor.set(speed);
         }
     }

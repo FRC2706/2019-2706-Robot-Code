@@ -2,7 +2,6 @@ package ca.team2706.frc.robot.commands.drivebase;
 
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Subsystem;
 
 import java.util.function.Supplier;
 
@@ -26,8 +25,24 @@ public abstract class DriveBaseCloseLoop extends Command {
      */
     private int doneCycles = 0;
 
-    protected DriveBaseCloseLoop(Subsystem subsystem, Supplier<Integer> minDoneCycles, double targetRange) {
-        requires(subsystem);
+    /**
+     * Requires the drivebase and holds the minDoneCycles
+     *
+     * @param minDoneCycles The minimum cycles at the desired position before the robot ends
+     * @param targetRange   The range before starting to count done cycles
+     */
+    protected DriveBaseCloseLoop(int minDoneCycles, double targetRange) {
+        this(() -> minDoneCycles, targetRange);
+    }
+
+    /**
+     * Requires the drivebase and holds the minDoneCycles
+     *
+     * @param minDoneCycles The minimum cycles at the desired position before the robot ends
+     * @param targetRange   The range before starting to count done cycles
+     */
+    protected DriveBaseCloseLoop(Supplier<Integer> minDoneCycles, double targetRange) {
+        requires(DriveBase.getInstance());
         this.minDoneCycles = minDoneCycles;
         this.targetRange = targetRange;
     }
@@ -48,5 +63,10 @@ public abstract class DriveBaseCloseLoop extends Command {
         }
 
         return doneCycles >= minDoneCycles.get();
+    }
+
+    @Override
+    public void end() {
+        DriveBase.getInstance().setDisabledMode();
     }
 }

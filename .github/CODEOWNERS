@@ -1,0 +1,15 @@
+# Global code owners
+* @eandr127 @KyleRAnderson @Zinka010 @carmen1234
+
+# Test code owners
+src/test/ @eandr127 @KyleRAnderson
+
+# Azure pipelines
+azure-pipelines.yml @KyleRAnderson @eandr127
+
+# Gradle
+gradle/ @eandr127
+gradlew.bat @eandr127
+gradlew @eandr127
+build.gradle @eandr127
+settings.gradle @eandr127

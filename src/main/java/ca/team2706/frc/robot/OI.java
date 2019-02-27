@@ -2,10 +2,12 @@ package ca.team2706.frc.robot;
 
 import ca.team2706.frc.robot.commands.drivebase.ArcadeDriveWithJoystick;
 import ca.team2706.frc.robot.commands.drivebase.DriverAssist;
+import ca.team2706.frc.robot.commands.drivebase.TankDrive;
+import ca.team2706.frc.robot.commands.drivebase.TankDriveWithJoystick;
+import ca.team2706.frc.robot.commands.drivebase.CurvatureDriveWithJoystick;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import ca.team2706.frc.robot.input.FluidButton;
-//import ca.team2706.frc.robot.config.Config;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -67,8 +69,8 @@ public class OI {
         // The Joystick for controlling the mechanisms of the robot
         this.controlStick = controlStick;
 
-        driveCommand = new ArcadeDriveWithJoystick(driverStick, Config.ARCADE_DRIVE_FORWARD, true,
-                Config.ARCADE_DRIVE_ROTATE, false);
+        driveCommand = new CurvatureDriveWithJoystick(driverStick, Config.CURVATURE_DRIVE_FORWARD, true,
+                Config.CURVATURE_CURVE_SPEED, false, Config.SLOW_MODE);
 
         buttonDriverAssistVisionCargoAndLoading = new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_CARGO_AND_LOADING);
         buttonDriverAssistVisionCargoAndLoading.whenPressed(new DriverAssist(true, false));

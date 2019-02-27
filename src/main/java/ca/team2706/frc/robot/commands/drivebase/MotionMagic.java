@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 /**
  * Drives in a straight line to a position
  */
-public class StraightDrive extends DriveBaseCloseLoop {
+public class MotionMagic extends DriveBaseCloseLoop {
 
     /**
      * The acceptable range in feet for the error between the target and actual position
@@ -27,7 +27,7 @@ public class StraightDrive extends DriveBaseCloseLoop {
      * @param minDoneCycles The minimum number of cycles for the robot to be within
      *                      the target zone before the command ends
      */
-    public StraightDrive(double speed, double position, int minDoneCycles) {
+    public MotionMagic(double speed, double position, int minDoneCycles) {
         this(() -> speed, () -> position, () -> minDoneCycles);
     }
 
@@ -39,7 +39,7 @@ public class StraightDrive extends DriveBaseCloseLoop {
      * @param minDoneCycles The minimum number of cycles for the robot to be within
      *                      the target zone before the command ends
      */
-    public StraightDrive(Supplier<Double> speed, Supplier<Double> position, Supplier<Integer> minDoneCycles) {
+    public MotionMagic(Supplier<Double> speed, Supplier<Double> position, Supplier<Integer> minDoneCycles) {
         super(minDoneCycles, TARGET_RANGE);
         this.speed = speed;
         this.position = position;
@@ -48,11 +48,11 @@ public class StraightDrive extends DriveBaseCloseLoop {
     @Override
     public void initialize() {
         super.initialize();
-        DriveBase.getInstance().setPositionNoGyroMode();
+        DriveBase.getInstance().setMotionMagicWithGyroMode();
     }
 
     @Override
     public void execute() {
-        DriveBase.getInstance().setPositionNoGyro(speed.get(), position.get());
+        DriveBase.getInstance().setMotionMagicPositionGyro(speed.get(), position.get(), 0);
     }
 }

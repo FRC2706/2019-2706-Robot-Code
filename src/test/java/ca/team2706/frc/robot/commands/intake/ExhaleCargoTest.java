@@ -35,13 +35,13 @@ public class ExhaleCargoTest {
     @Injectable
     private Joystick joystick;
 
-    private final int axisPort = FluidButton.getPort(Config.EXHALE_BINDING).getPort();
+    private final int axisPort = Config.XboxValue.getPortFromFluidConstant(Config.EXHALE_BINDING);
 
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
         Util.resetSubsystems();
 
-        exhaleCargo = new ExhaleCargo(joystick, axisPort);
+        exhaleCargo = new ExhaleCargo(joystick, Config.EXHALE_BINDING);
     }
 
     @Test

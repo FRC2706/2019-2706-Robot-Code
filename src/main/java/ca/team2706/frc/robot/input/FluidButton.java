@@ -33,19 +33,9 @@ public class FluidButton extends EButton {
         this.joystickPort = actionBinding;
     }
 
-    /**
-     * Gets the port value currently set to the action's binding.
-     *
-     * @param fluidConstant The fluid constant action of which to find the port value.
-     * @return The port value for the binding.
-     */
-    public static Config.XboxValue getPort(FluidConstant<String> fluidConstant) {
-        return Config.XboxValue.getXboxValueFromNTKey(fluidConstant.value());
-    }
-
     @Override
     public boolean get() {
-        return determineIfPressed(m_joystick, getPort(joystickPort));
+        return determineIfPressed(m_joystick, Config.XboxValue.getXboxValueFromFluidConstant(joystickPort));
     }
 
     static boolean determineIfPressed(GenericHID controller, final Config.XboxValue port) {

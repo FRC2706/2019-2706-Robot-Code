@@ -1,6 +1,9 @@
 package ca.team2706.frc.robot.commands.intake;
 
 
+import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.config.FluidConstant;
+import ca.team2706.frc.robot.input.FluidButton;
 import ca.team2706.frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
@@ -17,24 +20,20 @@ public class InhaleCargo extends Command {
     /**
      * Trigger axis id to be looked at.
      */
-    private final int triggerAxis;
+    private int triggerAxis;
 
     /**
      * Constructs a new InhaleCargo command on the given controller and with the given axis.
      *
      * @param controller The controller to be monitored.
-     * @param axis       The axis of the analog stick to be monitored.
+     * @param axisBinding       The axis of the analog stick to be monitored, as a fluid constant.
      */
-    public InhaleCargo(final Joystick controller, final int axis) {
+    public InhaleCargo(final Joystick controller, final FluidConstant<String> axisBinding) {
         requires(Intake.getInstance());
         this.controller = controller;
-        this.triggerAxis = axis;
-    }
+        this.triggerAxis = Config.XboxValue.getPortFromFluidConstant(axisBinding);
 
-    @Override
-    public void initialize() {
-        Intake.getInstance().retractPlunger();
-        Intake.getInstance().lowerIntake();
+        axisBinding.addChangeListener((oldValue, newValue) -> this.triggerAxis = Config.XboxValue.getPortFromNTString(newValue));
     }
 
     @Override

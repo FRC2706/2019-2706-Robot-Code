@@ -400,11 +400,42 @@ public class Config {
         /**
          * Gets the XboxValue constant with the given NetworkTables key.
          *
-         * @param ntKey The NetworkTables key for the constant.
+         * @param ntKey The string name for the given controller binding.
          * @return The constant object.
          */
         public static XboxValue getXboxValueFromNTKey(final String ntKey) {
             return nameMap.get(ntKey);
+        }
+
+        /**
+         * Gets the XboxValue constant with the given fluid constant.
+         * Used for fluid control bindings. Control bindings should be set up so that for every operator/driver
+         * action there is a networktables entry with the value being an XboxValue NT string which associates
+         * the action with a controller button.
+         *
+         * @param fluidConstant The fluid constant in managing the binding.
+         * @return The XboxValue to which the fluid constant is set.
+         */
+        public static XboxValue getXboxValueFromFluidConstant(FluidConstant<String> fluidConstant) {
+            return getXboxValueFromNTKey(fluidConstant.value());
+        }
+
+        /**
+         * Gets the controller button's port number from the given fluid constant.
+         * @param fluidConstant The fluid constant controlling the binding.
+         * @return The port number.
+         */
+        public static int getPortFromFluidConstant(FluidConstant<String> fluidConstant) {
+            return getXboxValueFromFluidConstant(fluidConstant).getPort();
+        }
+
+        /**
+         * Gets the port for a controller binding from the networktables key for the button.
+         * @param ntString The networktables key for the button. Should have come from {@link #getNTString()}
+         * @return The port for the button.
+         */
+        public static int getPortFromNTString(final String ntString) {
+            return getXboxValueFromNTKey(ntString).getPort();
         }
     }
 

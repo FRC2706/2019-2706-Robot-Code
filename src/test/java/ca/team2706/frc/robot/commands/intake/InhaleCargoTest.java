@@ -30,13 +30,13 @@ public class InhaleCargoTest {
     @Injectable
     private Joystick joystick;
 
-    private final int axisPort = FluidButton.getPort(Config.EXHALE_BINDING).getPort();
+    private final int axisPort = Config.XboxValue.getPortFromFluidConstant(Config.EXHALE_BINDING);
 
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
         Util.resetSubsystems();
 
-        inhaleCargo = new InhaleCargo(joystick, axisPort);
+        inhaleCargo = new InhaleCargo(joystick, Config.EXHALE_BINDING);
     }
 
     /**
@@ -48,8 +48,6 @@ public class InhaleCargoTest {
             joystick.getRawAxis(axisPort);
             returns(0D, 0.1, 0.2, 0.5, 0.8, 1.0, 1.5);
         }};
-
-        inhaleCargo.initialize();
 
         for (int i = 0; i < 7; i++) {
             inhaleCargo.execute();

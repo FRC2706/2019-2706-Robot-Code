@@ -79,11 +79,11 @@ public class OI {
         DriveBase.getInstance().setDefaultCommand(driveCommand);
 
         new FluidButton(controlStick, Config.INTAKE_BINDING)
-                .whileHeld(new InhaleCargo(driverStick, FluidButton.getPort(Config.INTAKE_BINDING).getPort()));
+                .whileHeld(new InhaleCargo(driverStick, Config.INTAKE_BINDING));
         new FluidButton(controlStick, Config.EXHALE_BINDING)
-                .whileHeld(new ExhaleCargo(controlStick, FluidButton.getPort(Config.EXHALE_BINDING).getPort()));
+                .whileHeld(new ExhaleCargo(controlStick, Config.EXHALE_BINDING));
         new FluidButton(controlStick, Config.MOVE_LIFT_BINDING)
-                .whileHeld(new MoveLiftOnJoystickPID(controlStick, FluidButton.getPort(Config.MOVE_LIFT_BINDING).getPort()));
+                .whileHeld(new MoveLiftOnJoystickPID(controlStick, Config.MOVE_LIFT_BINDING));
         new FluidButton(controlStick, Config.LIFT_ARMS_BINDING)
                 .whenPressed(new RaiseArms());
         new FluidButton(controlStick, Config.LOWER_ARMS_BINDING)

@@ -48,6 +48,9 @@ public class DriveBaseTest {
     @Mocked
     private Notifier notifier;
 
+    @Mocked(stubOutClassInitialization = true)
+    private Config config;
+
     @Injectable
     private SensorCollection sensorCollection;
 
@@ -89,6 +92,12 @@ public class DriveBaseTest {
      */
     @Test
     public void testAbsoluteGyro() {
+
+        new Expectations() {{
+            Config.getROBOT_START_ANGLE();
+            result = 0.0;
+        }};
+
         new Expectations() {{
             pigeon.getYawPitchRoll((double[]) any);
             returns(SendablesTest.makePigeonExpectation(0.0),
@@ -103,6 +112,8 @@ public class DriveBaseTest {
         }};
 
         //System.out.println("heading: " + driveBase.getAbsoluteHeading());
+
+        driveBase.initGyro();
 
         assertEquals(0.0, driveBase.getAbsoluteHeading(), 0.0);
         assertEquals(19.0, driveBase.getAbsoluteHeading(), 0.0);

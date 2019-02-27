@@ -112,15 +112,17 @@ public class Config {
     public static final FluidConstant<String> DRIVER_ASSIST_LASER = 
         constant("driver-assist-laser", XboxValue.XBOX_Y_BUTTON.NTString);
 
-    public static final FluidConstant<Double> TRAJ_DELTA_TIME = constant("traj-delta-time", 0.05);
+    public static final FluidConstant<Double> TRAJ_DELTA_TIME = constant("traj-delta-time", /*0.05*/ 0.5);
     public static final FluidConstant<Double> ROBOT_MAX_VEL = constant("robot-max-vel", 1.7);
     public static final FluidConstant<Double> ROBOT_MAX_ACC = constant("robot-max-acc", 2.0);
     public static final FluidConstant<Double> ROBOT_MAX_JERK = constant("robot-max-jerk", 60.0);
 
-    public static final FluidConstant<Double> ROBOT_TO_CAMERA_X_ROBOT = constant("robot-to-camera-x-robot", 0.3);
-    public static final FluidConstant<Double> ROBOT_TO_CAMERA_Y_ROBOT = constant("robot-to-camera-y-robot", 0.5);
+    public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTX = constant("robottocamera-robotx", 0.3);
+    public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTY = constant("robottocamera-roboty", 0.5);
 
-    public static final FluidConstant<Double> ROBOT_START_ANGLE_DEG = constant("robot-start-angle-deg", 45.0);
+    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE = constant("target-offset_distance", 0.5);
+
+    public static final FluidConstant<Double> ROBOT_START_ANGLE = constant("robot-start-angle-deg", 90.0);
 
     // ### Methods, fields and Constructors ###
     /**
@@ -368,20 +370,47 @@ public class Config {
     }
 
     /**
-     * Gets the value of ROBOT_TO_CAMERA_X_ROBOT.
+     * Gets the value of TRAJ_DELTA_TIME.
      *
-     * @return The value of ROBOT_TO_CAMERA_X_ROBOT.
+     * @return The value of TRAJ_DELTA_TIME.
      */
-    public static double get_ROBOT_TO_CAMERA_X_ROBOT() {
-        return ROBOT_TO_CAMERA_X_ROBOT.value();
+    public static double getTRAJ_DELTA_TIME() {
+        return TRAJ_DELTA_TIME.value();
     }
 
     /**
-     * Gets the value of ROBOT_TO_CAMERA_Y_ROBOT.
+     * Gets the value of ROBOTTOCAMERA_ROBOTX.
      *
-     * @return The value of ROBOT_TO_CAMERA_Y_ROBOT.
+     * @return The value of ROBOTTOCAMERA_ROBOTX.
      */
-    public static double get_ROBOT_TO_CAMERA_Y_ROBOT() {
-        return ROBOT_TO_CAMERA_Y_ROBOT.value();
+    public static double getROBOTTOCAMERA_ROBOTX() {
+        return ROBOTTOCAMERA_ROBOTX.value();
+    }
+
+    /**
+     * Gets the value of ROBOTTOCAMERA_ROBOTY.
+     *
+     * @return The value of ROBOTTOCAMERA_ROBOTY.
+     */
+    public static double getROBOTTOCAMERA_ROBOTY() {
+        return ROBOTTOCAMERA_ROBOTY.value();
+    }
+
+    /**
+     * Gets the value of TARGET_OFFSET_DISTANCE.
+     *
+     * @return The value of TARGET_OFFSET_DISTANCE.
+     */
+    public static double getTARGET_OFFSET_DISTANCE() {
+        return TARGET_OFFSET_DISTANCE.value();
+    }
+
+    /**
+     * Gets the value of ROBOT_START_ANGLE.
+     *
+     * @return The value of ROBOT_START_ANGLE.
+     */
+    public static double getROBOT_START_ANGLE() {
+        return ROBOT_START_ANGLE.value();
     }
 }

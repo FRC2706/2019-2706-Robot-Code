@@ -151,6 +151,8 @@ public class DriveBase extends Subsystem {
 
         loggingNotifier = new Notifier(this::log);
         loggingNotifier.startPeriodic(Config.LOG_PERIOD);
+
+        initGyro();
     }
 
     /**
@@ -516,6 +518,14 @@ public class DriveBase extends Subsystem {
     public void resetEncoders() {
         leftFrontMotor.getSensorCollection().setQuadraturePosition(0, Config.CAN_SHORT);
         rightFrontMotor.getSensorCollection().setQuadraturePosition(0, Config.CAN_SHORT);
+    }
+
+/**
+     * Resets the gyro to 0 degrees
+     */
+    public void initGyro() {
+        savedAngle = Config.getROBOT_START_ANGLE();
+        gyro.setYaw(0, Config.CAN_SHORT);
     }
 
     /**

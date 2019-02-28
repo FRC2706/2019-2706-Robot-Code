@@ -9,8 +9,7 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 public class LowerArms extends InstantCommand {
 
     @Override
-    protected void execute() {
-        super.execute();
+    protected void initialize() {
         Intake.getInstance().lowerIntake();
     }
 }

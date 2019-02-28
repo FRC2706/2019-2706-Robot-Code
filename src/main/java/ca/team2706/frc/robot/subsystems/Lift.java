@@ -107,6 +107,9 @@ public class Lift extends Subsystem {
         // Set up the soft limit of encoder ticks.
         liftMotor.configForwardSoftLimitThreshold(Config.MAX_LIFT_ENCODER_TICKS, Config.CAN_LONG);
         liftMotor.configReverseSoftLimitThreshold(0, Config.CAN_LONG);
+
+        liftMotor.configVoltageCompSaturation(10, Config.CAN_LONG);
+        liftMotor.enableVoltageCompensation(true);
     }
 
     /**

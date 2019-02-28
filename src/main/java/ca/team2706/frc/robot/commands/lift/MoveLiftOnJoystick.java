@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  * Command for moving the lift up and down with PID based on controller input.
  */
-public class MoveLiftOnJoystickPID extends Command {
+public class MoveLiftOnJoystick extends Command {
 
     private Joystick controller;
 
@@ -22,7 +22,7 @@ public class MoveLiftOnJoystickPID extends Command {
      * @param joystick The joystick at which to look at to determine speed.
      * @param portBinding     The axis port at which to look at for the speed.
      */
-    public MoveLiftOnJoystickPID(Joystick joystick, final FluidConstant<String> portBinding) {
+    public MoveLiftOnJoystick(Joystick joystick, final FluidConstant<String> portBinding) {
         requires(Lift.getInstance());
         controller = joystick;
 

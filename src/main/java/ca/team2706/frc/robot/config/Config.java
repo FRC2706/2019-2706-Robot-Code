@@ -68,7 +68,7 @@ public class Config {
     public static final boolean DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);
 
     // Talon ID for the Pigeon
-    public static final int GYRO_TALON_ID = robotSpecific(5, 5, 5);
+    public static final int GYRO_TALON_ID = robotSpecific(5, 3, 5);
 
     // Selector Channel
     public static final int SELECTOR_ID = robotSpecific(0, 0, 0);

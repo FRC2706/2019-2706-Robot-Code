@@ -34,17 +34,18 @@ import jaci.pathfinder.Waypoint;
  * NOTE: MOTION CONTROL FUNCTIONALITY IS CURRENTLY AWAITING COMPLETION
  * 
  */
-public class DriverAssist extends Command {
+public class DriverAssistVision extends Command {
 
     /**
      * Creates empty driver assist command object (needed for unit testing framework only)
      */
-    public DriverAssist() {
+    public DriverAssistVision() {
         // Ensure that this command is the only one to run on the drive base
         requires(DriveBase.getInstance());
 
         setupNetworkTables();
         trajGenerated = false;
+        visionOffline = false;
     }
 
     /**
@@ -53,7 +54,7 @@ public class DriverAssist extends Command {
      * @param driverAssistCargoAndLoading: True if target is cargo ship or loading bay, false otherwise
      * @param driverAssistRocket: True if target is a rocket ship, false otherwise
      */
-    public DriverAssist(boolean driverAssistCargoAndLoading, boolean driverAssistRocket) {
+    public DriverAssistVision(boolean driverAssistCargoAndLoading, boolean driverAssistRocket) {
         this.driverAssistCargoAndLoading = driverAssistCargoAndLoading;
         this.driverAssistRocket = driverAssistRocket;
 
@@ -62,10 +63,11 @@ public class DriverAssist extends Command {
 
         setupNetworkTables();
         trajGenerated = false;
+        visionOffline = false;
     }
 
     /** 
-     * Sets up network tables used to get data from visoin system
+     * Sets up network tables used to get data from vision system
      * 
     */
     private void setupNetworkTables() {
@@ -98,8 +100,20 @@ public class DriverAssist extends Command {
         System.out.println("DAV: angYawTargetWrtCameraLOSCWpos [deg]: " + angYawTargetWrtCameraLOSCWpos);
         System.out.println("DAV: distanceCameraToTarget_Camera [ft]: " + distanceCameraToTarget_Camera);
             
-        if(distanceCameraToTarget_Camera <= 0.1) {
-            Log.d("DAV: Vision data not available. Driver assist command rejected");
+        // Due to the inherent jitter of values computed by the vision system, it is next to impossible
+        // that values of yaw angle and distance to target will both be equal on successive commands unless
+        // the vision system is not updating them for some reason. Therefore, is this occurs, consider
+        // vision system offline. If they are different on any successive commands, consider vision system
+        // online.
+        if ((angYawTargetWrtCameraLOSCWpos == angYawTargetWrtCameraLOSCWposPrev) &&
+            (distanceCameraToTarget_Camera == distanceCameraToTarget_CameraPrev)    ) {
+            visionOffline = true;
+        } else {
+            visionOffline = false;
+        }
+
+        if(visionOffline) {
+            Log.d("DAV: Vision system offline. Driver assist command not performed.");
             trajGenerated = true;
             return;
         }
@@ -134,7 +148,7 @@ public class DriverAssist extends Command {
     /**
      * Gets the network table instance
      * 
-     * @return The network table instance
+     * @return Network table instance
      */
     public NetworkTableInstance getNetworkTableInstance() {
         return inst;
@@ -241,7 +255,7 @@ public class DriverAssist extends Command {
 
         // Compute final desired robot heading relative to field
         double angRobotHeadingFinal_Field = 
-            getAngRobotHeadingFinal_Field(angRobotHeadingCurrent_Field, driverAssistCargoAndLoading, driverAssistRocket);
+            computeAngRobotHeadingFinal_Field(angRobotHeadingCurrent_Field, driverAssistCargoAndLoading, driverAssistRocket);
         
         // Compute unit vector in direction facing target in field frame
         double finalRobotAngleRad_Field = Pathfinder.d2r(angRobotHeadingFinal_Field); 
@@ -315,7 +329,7 @@ public class DriverAssist extends Command {
     }
 
     /**
-     * Returns final desired angle of robot heading respect to field frame 
+     * Computes and returns final desired angle of robot heading respect to field frame 
      * 
      * @param angRobotHeadingCurrent_Field Angle of robot heading with respect to field frame
      * @param driverAssistCargoAndLoading True if target is cargo ship or loading bay
@@ -323,23 +337,25 @@ public class DriverAssist extends Command {
      * 
      * @return Final desired angle of robot heading respect to field frame in degrees
      */
-    public double getAngRobotHeadingFinal_Field(double angRobotHeadingCurrent_Field, boolean driverAssistCargoAndLoading, 
-                                                boolean driverAssistRocket) {
+    public double computeAngRobotHeadingFinal_Field(double angRobotHeadingCurrent_Field, boolean driverAssistCargoAndLoading, 
+                                                    boolean driverAssistRocket) {
  
         // Compute final robot angle relative to field based on current angle of robot relative to field.
         // Robot must be in an angular range such that it is approximately facing the desired target. 
-        double angRobotHeadingFinal_Field = 0.0;
+        angRobotHeadingFinal_Field = 0.0;
 
         if (driverAssistCargoAndLoading == true) {
             // Assist requested for cargo ship or loading dock targets
             Log.d("DAV: Assist for cargo ship or loading dock requested");
-            if ((angRobotHeadingCurrent_Field >= 0.0 && angRobotHeadingCurrent_Field <= 45.0) || (angRobotHeadingCurrent_Field >= 315.0 && angRobotHeadingCurrent_Field <= 360.0)) {
+            if ((angRobotHeadingCurrent_Field >= 0.0 && angRobotHeadingCurrent_Field <= 45.0) || (angRobotHeadingCurrent_Field >= 315.0 && angRobotHeadingCurrent_Field < 360.0)) {
                 angRobotHeadingFinal_Field = 0.0;
-            } else if (angRobotHeadingCurrent_Field >= 45.0 && angRobotHeadingCurrent_Field <= 135.0) {
+            } else if (angRobotHeadingCurrent_Field >= 45.0 && angRobotHeadingCurrent_Field < 135.0) {
                 angRobotHeadingFinal_Field = 90.0;
-            } else if (angRobotHeadingCurrent_Field >= 135.0 && angRobotHeadingCurrent_Field <= 225.0) {
+            } else if (angRobotHeadingCurrent_Field >= 135.0 && angRobotHeadingCurrent_Field < 225.0) {
                 angRobotHeadingFinal_Field = 180.0;
-            }   
+            } else if (angRobotHeadingCurrent_Field >= 225.0 && angRobotHeadingCurrent_Field < 315.0) {
+                angRobotHeadingFinal_Field = 270.0;
+            }
         }
         else if (driverAssistRocket == true) {
             // Assist request for rocket ship targets
@@ -367,6 +383,35 @@ public class DriverAssist extends Command {
         return angRobotHeadingFinal_Field;
     }
 
+    /**
+     * Returns previously computed final desired angle of robot heading respect to field frame.
+     * (For testing purposes.)
+     * 
+     * @return Previously computed final desired angle of robot heading respect to field frame in degrees
+     */
+    public double getAngRobotHeadingFinal_Field() {
+        return angRobotHeadingFinal_Field;
+    }
+
+    /** 
+     * Angle of robot heading with respect to x axis of field frame
+     * 
+    */
+    private double angRobotHeadingFinal_Field;
+
+    /**  
+     * Value of angYawTargetWrtCameraLOSCWposAngle (yaw angle to target wrt camera line of sight in degrees)
+     * from the previous time the command was issued.
+     * 
+    */
+    private double angYawTargetWrtCameraLOSCWposPrev = 0.0;
+
+   /**  
+     * Value of distanceCameraToTarget_Camera (distance from camera frame origin to target in feet)
+     * from the previous time the command was issued.
+     * 
+    */
+    private double distanceCameraToTarget_CameraPrev;
 
     /**
      * True if target is cargo ship or loading bay
@@ -399,4 +444,8 @@ public class DriverAssist extends Command {
      */
     private boolean trajGenerated = false;
 
+    /**
+     * True if vision system has been assessed to be offline
+     */
+    boolean visionOffline = false;
 }

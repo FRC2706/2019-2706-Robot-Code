@@ -1,7 +1,7 @@
 package ca.team2706.frc.robot;
 
 import ca.team2706.frc.robot.commands.drivebase.ArcadeDriveWithJoystick;
-import ca.team2706.frc.robot.commands.drivebase.DriverAssist;
+import ca.team2706.frc.robot.commands.drivebase.DriverAssistVision;
 import ca.team2706.frc.robot.commands.drivebase.TankDrive;
 import ca.team2706.frc.robot.commands.drivebase.TankDriveWithJoystick;
 import ca.team2706.frc.robot.commands.drivebase.CurvatureDriveWithJoystick;
@@ -73,9 +73,9 @@ public class OI {
                 Config.CURVATURE_CURVE_SPEED, false, Config.SLOW_MODE);
 
         buttonDriverAssistVisionCargoAndLoading = new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_CARGO_AND_LOADING);
-        buttonDriverAssistVisionCargoAndLoading.whenPressed(new DriverAssist(true, false));
+        buttonDriverAssistVisionCargoAndLoading.whenPressed(new DriverAssistVision(true, false));
         buttonDriverAssistVisionRocket = new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_ROCKET);
-        buttonDriverAssistVisionRocket.whenPressed(new DriverAssist(false, true));
+        buttonDriverAssistVisionRocket.whenPressed(new DriverAssistVision(false, true));
         buttonDriverAssistLaser = new FluidButton(driverStick, Config.DRIVER_ASSIST_LASER);
 
         // Set subsystem default commands

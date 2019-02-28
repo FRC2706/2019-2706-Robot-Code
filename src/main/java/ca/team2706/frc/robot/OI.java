@@ -6,6 +6,7 @@ import ca.team2706.frc.robot.commands.intake.InhaleCargo;
 import ca.team2706.frc.robot.commands.intake.arms.LowerArmsSafely;
 import ca.team2706.frc.robot.commands.intake.arms.RaiseArms;
 import ca.team2706.frc.robot.commands.lift.MoveLiftOnJoystick;
+import ca.team2706.frc.robot.commands.lift.MoveLiftOnOverride;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.input.FluidButton;
 import ca.team2706.frc.robot.subsystems.DriveBase;
@@ -79,6 +80,7 @@ public class OI {
         // Set subsystem default commands
         DriveBase.getInstance().setDefaultCommand(driveCommand);
 
+        // Operator controls.
         new FluidButton(controlStick, Config.INTAKE_BINDING)
                 .whileHeld(new InhaleCargo(driverStick, Config.INTAKE_BINDING));
         new FluidButton(controlStick, Config.EXHALE_BINDING)
@@ -89,6 +91,10 @@ public class OI {
                 .whenPressed(new RaiseArms());
         new FluidButton(controlStick, Config.LOWER_ARMS_BINDING)
                 .whenPressed(new LowerArmsSafely());
+        new FluidButton(controlStick, Config.OVERRIDE_LIFT_DOWN_BINDING)
+                .whileHeld(new MoveLiftOnOverride(false));
+        new FluidButton(controlStick, Config.OVERRIDE_LIFT_UP_BINDING)
+                .whileHeld(new MoveLiftOnOverride(true));
     }
 
     /**

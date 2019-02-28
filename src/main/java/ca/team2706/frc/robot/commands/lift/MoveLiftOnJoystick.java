@@ -2,7 +2,6 @@ package ca.team2706.frc.robot.commands.lift;
 
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.config.FluidConstant;
-import ca.team2706.frc.robot.input.FluidButton;
 import ca.team2706.frc.robot.subsystems.Lift;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
@@ -34,7 +33,7 @@ public class MoveLiftOnJoystick extends Command {
     @Override
     public void execute() {
         final double percentSpeed = controller.getRawAxis(axisPort);
-        Lift.getInstance().setPercentOuput(percentSpeed);
+        Lift.getInstance().setPercentOutput(percentSpeed);
     }
 
     @Override

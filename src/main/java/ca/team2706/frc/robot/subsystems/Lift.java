@@ -22,12 +22,14 @@ public class Lift extends Subsystem {
     public DigitalInput liftLimitSwitch;
 
     private static final double[] CARGO_SETPOINTS = {
+            0, // Bottom
             2.291667, // lowest in feet
             4.625, // med in feet
             6.958333 // highest in feet
     };
 
     private static final double[] HATCH_SETPOINTS = {
+            0, // Bottom
             1.583, // lowest in feet
             3.917, // med in feet
             6.25 // highest in feet
@@ -74,13 +76,13 @@ public class Lift extends Subsystem {
 
         liftMotor.enableCurrentLimit(Config.ENABLE_LIFT_CURRENT_LIMIT);
 
-        resetTalonConfiguration();
+        setupTalonConfig();
     }
 
     /**
      * Sets up the talon configuration.
      */
-    private void resetTalonConfiguration() {
+    private void setupTalonConfig() {
         liftMotor.configFactoryDefault(Config.CAN_LONG);
         liftMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
         liftMotor.setInverted(Config.INVERT_LIFT_MOTOR);
@@ -110,6 +112,9 @@ public class Lift extends Subsystem {
 
         liftMotor.configVoltageCompSaturation(10, Config.CAN_LONG);
         liftMotor.enableVoltageCompensation(true);
+
+        liftMotor.configMotionCruiseVelocity((int) (Config.LIFT_MOTION_MAGIC_VELOCITY.value() / Config.LIFT_ENCODER_DPP / 10), Config.CAN_LONG);
+        liftMotor.configMotionAcceleration((int)(Config.LIFT_MOTION_MAGIC_ACCELERATION.value() / Config.LIFT_ENCODER_DPP / 10), Config.CAN_LONG);
     }
 
     /**
@@ -173,7 +178,7 @@ public class Lift extends Subsystem {
     public void setPosition(final double maxSpeed, final double position) {
         enableLimit(true);
         liftMotor.configClosedLoopPeakOutput(0, maxSpeed);
-        liftMotor.set(ControlMode.PercentOutput, position / Config.LIFT_ENCODER_DPP);
+        liftMotor.set(ControlMode.MotionMagic, position / Config.LIFT_ENCODER_DPP);
     }
 
     /**
@@ -192,7 +197,7 @@ public class Lift extends Subsystem {
      *
      * @param percentOutput Percent output, between -1 and 1
      */
-    public void setPercentOuput(double percentOutput) {
+    public void setPercentOutput(double percentOutput) {
         enableLimit(true);
         liftMotor.set(percentOutput);
     }
@@ -225,5 +230,34 @@ public class Lift extends Subsystem {
      */
     private static Intake.IntakeMode getIntakeMode() {
         return Intake.getInstance().getMode();
+    }
+
+    /**
+     * Moves the lift to the given setpoint id.
+     *
+     * @param speed    The speed at which to move the lift.
+     * @param setpoint The setpoint id, between 0 and 3.
+     */
+    public void moveToSetpoint(final double speed, final int setpoint) {
+        final double[] currentSetpoints = getCurrentSetpoints();
+        if (0 <= setpoint && setpoint <= currentSetpoints.length) {
+            setPosition(speed, currentSetpoints[setpoint]);
+        }
+    }
+
+    /**
+     * Determines if the lift has reached the given setpoint.
+     * @param setpoint The setpoint.
+     * @return True if the lift has reached the setpoint, false otherwise.
+     */
+    public boolean hasReachedSetpoint(final int setpoint) {
+        final double[] currentSetpoints = getCurrentSetpoints();
+
+        boolean hasReachedSetpoint = false;
+        if (0 <= setpoint && setpoint <= currentSetpoints.length) {
+            hasReachedSetpoint = liftMotor.getSelectedSensorPosition() == currentSetpoints[setpoint] / Config.LIFT_ENCODER_DPP / 10;
+        }
+
+        return hasReachedSetpoint;
     }
 }

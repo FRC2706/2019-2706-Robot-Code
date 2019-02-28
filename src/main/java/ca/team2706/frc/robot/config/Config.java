@@ -152,6 +152,8 @@ public class Config {
 
     public static final FluidConstant<Double> MOTION_MAGIC_CRUISE_VELOCITY = constant("mm-cruise-velocity", 7.77);
     public static final FluidConstant<Double> MOTION_MAGIC_ACCELERATION = constant("mm-acceleration", 7.77);
+    public static final FluidConstant<Double> LIFT_MOTION_MAGIC_ACCELERATION = constant("mm-lift-acceleration", 7.77);
+    public static final FluidConstant<Double> LIFT_MOTION_MAGIC_VELOCITY = constant("mm-lift-velocity", 7.77);
 
     public static final FluidConstant<Double> TURN_P = constant("turn-P", 0.5);
     public static final FluidConstant<Double> TURN_I = constant("turn-I", 0.0);
@@ -168,12 +170,13 @@ public class Config {
     public static final FluidConstant<Double> PIGEON_KD = constant("pigeon-ki", 4.0);
     public static final FluidConstant<Double> PIGEON_KF = constant("pigeon-kf", 0.0);
 
-    public static final FluidConstant<String> MOVE_LIFT_UP_BINDING = constant("move-lift-up", XboxValue.XBOX_A_BUTTON.getNTString()),
-            INTAKE_BINDING = constant("intake-trigger", XboxValue.XBOX_BACK_LEFT_TRIGGER.getNTString()),
-            EXHALE_BINDING = constant("exhale-trigger", XboxValue.XBOX_BACK_RIGHT_TRIGGER.getNTString()),
-            MOVE_LIFT_BINDING = constant("move-lift", XboxValue.XBOX_LEFT_STICK_Y.getNTString()),
-            LIFT_ARMS_BINDING = constant("lift_arms", XboxValue.XBOX_A_BUTTON.getNTString()),
-            LOWER_ARMS_BINDING = constant("lower-arms", XboxValue.XBOX_Y_BUTTON.getNTString());
+    public static final FluidConstant<String> INTAKE_BINDING = constant("intake-trigger-binding", XboxValue.XBOX_BACK_LEFT_TRIGGER.getNTString()),
+            EXHALE_BINDING = constant("exhale-trigger-binding", XboxValue.XBOX_BACK_RIGHT_TRIGGER.getNTString()),
+            MOVE_LIFT_BINDING = constant("move-lift-binding", XboxValue.XBOX_LEFT_STICK_Y.getNTString()),
+            LIFT_ARMS_BINDING = constant("lift-arms-binding", XboxValue.XBOX_A_BUTTON.getNTString()),
+            LOWER_ARMS_BINDING = constant("lower-arms-binding", XboxValue.XBOX_Y_BUTTON.getNTString()),
+            OVERRIDE_LIFT_DOWN_BINDING = constant("override-lift-down-binding", XboxValue.XBOX_B_BUTTON.getNTString()),
+            OVERRIDE_LIFT_UP_BINDING = constant("override-lift-up-binding", XboxValue.XBOX_X_BUTTON.getNTString());
 
     /**
      * Amount of time (in seconds) that it takes for the plunger to be stowed.

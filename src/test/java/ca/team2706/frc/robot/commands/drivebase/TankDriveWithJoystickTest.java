@@ -1,12 +1,17 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
-import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.subsystems.DriveBase;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
+
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Notifier;
@@ -16,11 +21,9 @@ import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Mocked;
 import mockit.Verifications;
-import org.junit.Before;
-import org.junit.Test;
 import util.Util;
 
-public class ArcadeDriveWithJoystickTest {
+public class TankDriveWithJoystickTest {
     @Mocked
     private WPI_TalonSRX talon;
 
@@ -54,19 +57,17 @@ public class ArcadeDriveWithJoystickTest {
     @Injectable
     private Joystick joy2;
 
-    private static boolean initialized = false;
+    @BeforeClass
+    public static void classSetUp() throws NoSuchFieldException, IllegalAccessException {
+        Util.resetSubsystems();
+    }
 
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
-        if (!initialized) {
-            initialized = true;
-
-            Util.resetSubsystems();
-            new Expectations() {{
-                talon.getSensorCollection();
-                result = sensorCollection;
-            }};
-        }
+        new Expectations() {{
+            talon.getSensorCollection();
+            result = sensorCollection;
+        }};
     }
 
     /**
@@ -75,29 +76,28 @@ public class ArcadeDriveWithJoystickTest {
     @Test
     public void testNegate() {
         new Expectations() {{
-            joy1.getRawAxis(Config.ARCADE_DRIVE_FORWARD);
+            joy1.getRawAxis(Config.TANK_DRIVE_LEFT);
             returns(1.0D, -1.0D, 0.0D, 0.1D);
 
-            joy2.getRawAxis(Config.ARCADE_DRIVE_ROTATE);
+            joy2.getRawAxis(Config.TANK_DRIVE_RIGHT);
             returns(1.0D, -1.0D, 0.0D, 0.1D);
         }};
 
+        TankDriveWithJoystick tankDrive = new TankDriveWithJoystick(joy1, Config.TANK_DRIVE_LEFT, true, joy2, Config.TANK_DRIVE_RIGHT, false);
 
-        ArcadeDriveWithJoystick arcadeDrive = new ArcadeDriveWithJoystick(joy1, Config.ARCADE_DRIVE_FORWARD, true, joy2, Config.ARCADE_DRIVE_ROTATE, false);
-
-        arcadeDrive.initialize();
+        tankDrive.initialize();
 
         for (int i = 0; i < 4; i++) {
-            arcadeDrive.execute();
+            tankDrive.execute();
         }
 
-        arcadeDrive.end();
+        tankDrive.end();
 
         new Verifications() {{
-            DriveBase.getInstance().arcadeDrive(-1, 1, Config.TELEOP_SQUARE_JOYSTICK_INPUTS);
-            DriveBase.getInstance().arcadeDrive(1, -1, Config.TELEOP_SQUARE_JOYSTICK_INPUTS);
-            DriveBase.getInstance().arcadeDrive(-0.0, 0, Config.TELEOP_SQUARE_JOYSTICK_INPUTS);
-            DriveBase.getInstance().arcadeDrive(-0.1, 0.1, Config.TELEOP_SQUARE_JOYSTICK_INPUTS);
+            DriveBase.getInstance().tankDrive(-1, 1, Config.TELEOP_SQUARE_JOYSTICK_INPUTS);
+            DriveBase.getInstance().tankDrive(1, -1, Config.TELEOP_SQUARE_JOYSTICK_INPUTS);
+            DriveBase.getInstance().tankDrive(-0.0, 0, Config.TELEOP_SQUARE_JOYSTICK_INPUTS);
+            DriveBase.getInstance().tankDrive(-0.1, 0.1, Config.TELEOP_SQUARE_JOYSTICK_INPUTS);
         }};
     }
 }

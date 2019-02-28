@@ -95,7 +95,7 @@ public class Config {
     public static final boolean ENABLE_DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);
 
     // Talon ID for the Pigeon
-    public static final int GYRO_TALON_ID = robotSpecific(5, 5, 5);
+    public static final int GYRO_TALON_ID = robotSpecific(5, 3, 5);
 
     // Selector Channel
     public static final int SELECTOR_ID = robotSpecific(0, 0, 0);
@@ -115,8 +115,15 @@ public class Config {
 
     public static final int PURPLE_LIGHT = robotSpecific(3, 3, 3);
 
-    public static final int ARCADE_DRIVE_FORWARD = 5;
-    public static final int ARCADE_DRIVE_ROTATE = 4;
+    public static final int ARCADE_DRIVE_FORWARD = XboxValue.XBOX_RIGHT_STICK_Y.getPort();
+    public static final int ARCADE_DRIVE_ROTATE = XboxValue.XBOX_RIGHT_STICK_X.getPort();
+
+    public static final int CURVATURE_DRIVE_FORWARD = XboxValue.XBOX_LEFT_STICK_Y.getPort();
+    public static final int CURVATURE_CURVE_SPEED = XboxValue.XBOX_RIGHT_STICK_X.getPort();
+    public static final int SLOW_MODE = XboxValue.XBOX_LB_BUTTON.getPort();
+
+    public static final int TANK_DRIVE_RIGHT = XboxValue.XBOX_RIGHT_STICK_Y.getPort();
+    public static final int TANK_DRIVE_LEFT = XboxValue.XBOX_LEFT_STICK_Y.getPort();
 
 
     public static final double MAX_INTAKE_SPEED = 0.5; //to be finalized later, this has yet to be tested
@@ -132,7 +139,6 @@ public class Config {
     // #### Fluid constants ####
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_DEADBAND = constant("closed-loop-drive-deadband", 0.001);
     public static final FluidConstant<Double> DRIVE_OPEN_LOOP_DEADBAND = constant("open-loop-drive-deadband", 0.04);
-
     public static final FluidConstant<Double> LIFT_CLOSED_LOOP_DEADBAND = constant("lift-deadband", 0.001);
 
     public static final FluidConstant<Boolean> DRIVE_SUM_PHASE_LEFT = constant("drive-sum-phase-left", true);

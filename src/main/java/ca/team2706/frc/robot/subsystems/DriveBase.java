@@ -87,18 +87,19 @@ public class DriveBase extends Subsystem {
     private Notifier loggingNotifier;
 
     /**
-     *
+     *Holds the status for the motion profile
      */
     private MotionProfileStatus motionProfileStatus;
 
     /**
-     *
+     *Holds the points to stream for the right motion profile
      */
     private BufferedTrajectoryPointStream motionProfilePointStreamRight;
 
+    /**
+     * Holds the points to stream for the left motion profile
+     */
     private BufferedTrajectoryPointStream motionProfilePointStreamLeft;
-
-    private final PowerDistributionPanel powerDistributionPanel;
 
     /**
      * Creates a drive base, and initializes all required sensors and motors
@@ -127,8 +128,6 @@ public class DriveBase extends Subsystem {
 
         light.setRaw(4095);
 
-        powerDistributionPanel = new PowerDistributionPanel();
-
         addChild("Left Front Motor", leftFrontMotor);
         addChild("Left Back Motor", leftBackMotor);
         addChild("Right Front Motor", rightFrontMotor);
@@ -143,8 +142,6 @@ public class DriveBase extends Subsystem {
         addChild("Right Encoder", Sendables.newTalonEncoderSendable(rightFrontMotor));
 
         addChild("Merge Light", light);
-
-        addChild("PDP", powerDistributionPanel);
 
         setDisabledMode();
         setBrakeMode(false);
@@ -477,6 +474,9 @@ public class DriveBase extends Subsystem {
         }
     }
 
+    /**
+     * Sets the drive mode to motion profile
+     */
     public void setMotionProfile()
     {
         if (driveMode != DriveMode.MotionProfile) {
@@ -490,6 +490,9 @@ public class DriveBase extends Subsystem {
         }
     }
 
+    /**
+     * Sets the drive mode to 2 wheel motion profile
+     */
     public void setMotionProfile2Wheel()
     {
         if (driveMode != DriveMode.MotionProfile2Wheel) {
@@ -512,6 +515,9 @@ public class DriveBase extends Subsystem {
         rightFrontMotor.configMotionAcceleration((int) (Config.MOTION_MAGIC_ACCELERATION.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
     }
 
+    /**
+     * Configures motion profile
+     */
     private void configMotionProfile()
     {
         rightFrontMotor.configMotionSCurveStrength(Config.MOTION_MAGIC_SMOOTHING.value(), Config.CAN_SHORT);
@@ -665,6 +671,10 @@ public class DriveBase extends Subsystem {
         leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
     }
 
+    /**
+     * Runs the motion profile
+     * @param speed The speed from 0 to 1
+     */
     public void runMotionProfile(double speed) {
         setMotionProfile();
 
@@ -679,6 +689,10 @@ public class DriveBase extends Subsystem {
          leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
     }
 
+    /**
+     * Runs the motion profile for each wheel
+     * @param speed The speed from 0 to 1
+     */
     public void runMotionProfile2Wheel(double speed) {
         setMotionProfile2Wheel();
 
@@ -691,22 +705,16 @@ public class DriveBase extends Subsystem {
        leftFrontMotor.feed();
     }
 
-    public boolean motionProfileIsReadyLeft(){
-
-        leftFrontMotor.getMotionProfileStatus(motionProfileStatus);
-        int bufferCountLeft = motionProfileStatus.btmBufferCnt;
-
-        return bufferCountLeft > 20;
-    }
-
-    public boolean motionProfileIsReadyRight(){
-
-        rightFrontMotor.getMotionProfileStatus(motionProfileStatus);
-        int bufferCountRight = motionProfileStatus.btmBufferCnt;
-
-        return bufferCountRight > 20;
-    }
-
+    /**
+     * Applies the motion profile
+     * @param pos The position of the robot at a trajectory point
+     * @param vel The velocity of the robot at a trajectory point
+     * @param heading The heading of the robot at a trajectory point
+     * @param time The time for each trajectory point
+     * @param size How many trajectories there are
+     * @param talon The talon
+     * @param pointStream The point stream
+     */
     private void pushMotionProfile(double[] pos, double[] vel, double[] heading, int[] time, int size, WPI_TalonSRX talon, BufferedTrajectoryPointStream pointStream) {
         /* create an empty point */
         TrajectoryPoint [] points = new TrajectoryPoint[size];
@@ -744,15 +752,40 @@ public class DriveBase extends Subsystem {
         pointStream.Write(points);
     }
 
+    /**
+     * Applies the motion profile for 1 wheel
+     * @param forwards Whether the robot is going forwards or not
+     * @param pos The position of the robot at a trajectory point
+     * @param vel The velocity of the robot at a trajectory point
+     * @param heading The heading of the robot at a trajectory point
+     * @param time The time for each trajectory point
+     * @param size How many trajectory points there are
+     */
     public void pushMotionProfile1Wheel(boolean forwards, double[] pos, double[] vel, double[] heading, int[] time, int size) {
         pushMotionProfile(forwards ? pos : negateDoubleArray(pos), forwards ? vel : negateDoubleArray(vel), heading, time, size, rightFrontMotor, motionProfilePointStreamRight);
     }
 
+    /**
+     * Applies the motion profile for 2 wheels
+     * @param forwards Whether the robot is going forwards or not
+     * @param posLeft The position of the robot at a trajectory point for the left wheel
+     * @param velLeft The velocity of the robot at a trajectory point for the left wheel
+     * @param heading The heading of the robot at a trajectory point
+     * @param time The time for each trajectory point
+     * @param size How many trajectory points there are
+     * @param posRight The position of the robot at a trajectory point for the right wheel
+     * @param velRight The velocity of the robot at a trajectory point for the right wheel
+     */
     public void pushMotionProfile2Wheel(boolean forwards, double[] posLeft, double[] velLeft, double[] heading, int[] time, int size, double[] posRight, double[] velRight) {
         pushMotionProfile(forwards ? posLeft : negateDoubleArray(posLeft), forwards ? velLeft : negateDoubleArray(velLeft), heading, time, size, leftFrontMotor, motionProfilePointStreamLeft);
         pushMotionProfile(forwards ? posRight : negateDoubleArray(posRight), forwards ? velRight : negateDoubleArray(velRight), heading, time, size, rightFrontMotor, motionProfilePointStreamRight);
     }
 
+    /**
+     * Makes all the elements in the double array negative
+     * @param array The array that is negated
+     * @return The array
+     */
     private static double[] negateDoubleArray(double[] array) {
         double[] newArray = new double[array.length];
 
@@ -904,16 +937,27 @@ public class DriveBase extends Subsystem {
         return rightFrontMotor.getClosedLoopError(0) * Config.DRIVE_ENCODER_DPP;
     }
 
+    /**
+     * Returns if the motion profile for 1 wheel is finished
+     * @return if the motion profile is finished
+     */
     public boolean isFinishedMotionProfile(){
 
         return rightFrontMotor.isMotionProfileFinished();
     }
 
+    /**
+     * Returns if the motion profile for 2 wheels is finished
+     * @return If its finished or not
+     */
     public boolean isFinishedMotionProfile2Wheel(){
 
         return (rightFrontMotor.isMotionProfileFinished() || leftFrontMotor.isMotionProfileFinished());
     }
 
+    /**
+     * Logs
+     */
     public void log() {
         if (DriverStation.getInstance().isEnabled()) {
             Log.d("Relative Gyro: " + getHeading());

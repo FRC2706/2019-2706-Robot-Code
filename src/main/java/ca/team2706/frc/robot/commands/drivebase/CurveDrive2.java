@@ -9,14 +9,32 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 
 public class CurveDrive2 extends FollowTrajectory{
+
+    /**
+     * Takes waypoints and turns it into trajectories for following
+     * @param speed The speed of the robot
+     * @param minDoneCycles he number of cycles to complete after finishing the motion profile
+     * @param waypoints The array of waypoints
+     */
     public CurveDrive2(double speed, int minDoneCycles, Waypoint[] waypoints) {
         this(()->speed, ()->minDoneCycles, waypoints);
     }
 
+    /**
+     * Takes waypoints and turns it into trajectories for following
+     * @param speed The speed of the robot
+     * @param minDoneCycles he number of cycles to complete after finishing the motion profile
+     * @param waypoints The array of waypoints
+     */
     public CurveDrive2(Supplier<Double> speed, Supplier<Integer> minDoneCycles, Waypoint[] waypoints) {
         super(speed, minDoneCycles, generateTrajectory(waypoints));
     }
 
+    /**
+     * Generates a trajectory from the waypoints for the robot to follow
+     * @param waypoints The waypoints in the path for the robot to follow
+     * @return A trajectory for the robot to follow
+     */
     private static Trajectory generateTrajectory(Waypoint[] waypoints) {
 
         Waypoint[] newWaypoints = new Waypoint[waypoints.length];

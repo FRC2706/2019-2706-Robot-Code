@@ -22,28 +22,18 @@ public class Lift extends Subsystem {
     public DigitalInput liftLimitSwitch;
 
     private static final double[] CARGO_SETPOINTS = {
-            0, // Bottom
+            0, // Bottom for ground pickup
             2.291667, // lowest in feet
             4.625, // med in feet
             6.958333 // highest in feet
     };
 
     private static final double[] HATCH_SETPOINTS = {
-            0, // Bottom
+            0, // Loading station pickup // TODO get goodo height for this.
             1.583, // lowest in feet
             3.917, // med in feet
             6.25 // highest in feet
     };
-
-    private static final double[] CARGO_LOWER_SETPOINTS;
-
-    static {
-        CARGO_LOWER_SETPOINTS = new double[HATCH_SETPOINTS.length];
-
-        for (int i = 0; i < HATCH_SETPOINTS.length; i++) {
-            CARGO_LOWER_SETPOINTS[i] = HATCH_SETPOINTS[i] - 0.5;
-        }
-    }
 
     private static Lift currentInstance;
 

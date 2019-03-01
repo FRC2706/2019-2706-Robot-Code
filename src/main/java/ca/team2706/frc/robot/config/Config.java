@@ -170,13 +170,18 @@ public class Config {
     public static final FluidConstant<Double> PIGEON_KD = constant("pigeon-ki", 4.0);
     public static final FluidConstant<Double> PIGEON_KF = constant("pigeon-kf", 0.0);
 
+    // All controller bindings.
     public static final FluidConstant<String> INTAKE_BINDING = constant("intake-trigger-binding", XboxValue.XBOX_BACK_LEFT_TRIGGER.getNTString()),
             EXHALE_BINDING = constant("exhale-trigger-binding", XboxValue.XBOX_BACK_RIGHT_TRIGGER.getNTString()),
             MOVE_LIFT_BINDING = constant("move-lift-binding", XboxValue.XBOX_LEFT_STICK_Y.getNTString()),
             LIFT_ARMS_BINDING = constant("lift-arms-binding", XboxValue.XBOX_A_BUTTON.getNTString()),
             LOWER_ARMS_BINDING = constant("lower-arms-binding", XboxValue.XBOX_Y_BUTTON.getNTString()),
             OVERRIDE_LIFT_DOWN_BINDING = constant("override-lift-down-binding", XboxValue.XBOX_B_BUTTON.getNTString()),
-            OVERRIDE_LIFT_UP_BINDING = constant("override-lift-up-binding", XboxValue.XBOX_X_BUTTON.getNTString());
+            OVERRIDE_LIFT_UP_BINDING = constant("override-lift-up-binding", XboxValue.XBOX_X_BUTTON.getNTString()),
+            LIFT_FIRST_SETPOINT_BINDING = constant("lift-bottom-setpoint-binding", XboxValue.XBOX_POV_DOWN.getNTString()),
+            LIFT_SECOND_SETPOINT_BINDING = constant("lift-second-setpoint-binding", XboxValue.XBOX_POV_LEFT.getNTString()),
+            LIFT_THIRD_SETPOINT_BINDING = constant("lift-third-setpoint-binding", XboxValue.XBOX_POV_UP.getNTString()),
+            LIFT_FOURTH_SETPOINT_BINDING = constant("lift-top-setpoint-binding", XboxValue.XBOX_POV_RIGHT.getNTString());
 
     /**
      * Amount of time (in seconds) that it takes for the plunger to be stowed.
@@ -431,6 +436,7 @@ public class Config {
 
         /**
          * Gets the controller button's port number from the given fluid constant.
+         *
          * @param fluidConstant The fluid constant controlling the binding.
          * @return The port number.
          */
@@ -440,6 +446,7 @@ public class Config {
 
         /**
          * Gets the port for a controller binding from the networktables key for the button.
+         *
          * @param ntString The networktables key for the button. Should have come from {@link #getNTString()}
          * @return The port for the button.
          */

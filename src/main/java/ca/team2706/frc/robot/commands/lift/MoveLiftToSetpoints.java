@@ -18,6 +18,7 @@ public class MoveLiftToSetpoints extends Command {
      * @param setpoint The setpoint number.
      */
     public MoveLiftToSetpoints(final int setpoint) {
+        requires(Lift.getInstance());
         this.setpoint = setpoint;
     }
 
@@ -29,5 +30,10 @@ public class MoveLiftToSetpoints extends Command {
     @Override
     protected boolean isFinished() {
         return Lift.getInstance().hasReachedSetpoint(setpoint);
+    }
+
+    @Override
+    public void end() {
+        Lift.getInstance().stop();
     }
 }

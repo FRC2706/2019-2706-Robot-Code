@@ -17,6 +17,7 @@ public class MoveLiftOnOverride extends Command {
      * @param moveUp True to move up, false to move down.
      */
     public MoveLiftOnOverride(final boolean moveUp) {
+        requires(Lift.getInstance());
         this.moveUp = moveUp;
     }
 

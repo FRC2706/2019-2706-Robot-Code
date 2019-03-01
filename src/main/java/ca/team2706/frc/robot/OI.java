@@ -7,6 +7,7 @@ import ca.team2706.frc.robot.commands.intake.arms.LowerArmsSafely;
 import ca.team2706.frc.robot.commands.intake.arms.RaiseArms;
 import ca.team2706.frc.robot.commands.lift.MoveLiftOnJoystick;
 import ca.team2706.frc.robot.commands.lift.MoveLiftOnOverride;
+import ca.team2706.frc.robot.commands.lift.MoveLiftToSetpoints;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.input.FluidButton;
 import ca.team2706.frc.robot.subsystems.DriveBase;
@@ -95,6 +96,15 @@ public class OI {
                 .whileHeld(new MoveLiftOnOverride(false));
         new FluidButton(controlStick, Config.OVERRIDE_LIFT_UP_BINDING)
                 .whileHeld(new MoveLiftOnOverride(true));
+        new FluidButton(controlStick, Config.LIFT_FIRST_SETPOINT_BINDING)
+                .whileHeld(new MoveLiftToSetpoints(0));
+        new FluidButton(controlStick, Config.LIFT_SECOND_SETPOINT_BINDING)
+                .whileHeld(new MoveLiftToSetpoints(1));
+        new FluidButton(controlStick, Config.LIFT_THIRD_SETPOINT_BINDING)
+                .whileHeld(new MoveLiftToSetpoints(2));
+        new FluidButton(controlStick, Config.LIFT_FOURTH_SETPOINT_BINDING)
+                .whileHeld(new MoveLiftToSetpoints(3));
+
     }
 
     /**

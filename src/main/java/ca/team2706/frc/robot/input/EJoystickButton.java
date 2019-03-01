@@ -1,7 +1,6 @@
 package ca.team2706.frc.robot.input;
 
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.buttons.Button;
 
 /**
  * A {@link EButton} that gets its state from a {@link GenericHID}.

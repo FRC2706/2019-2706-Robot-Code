@@ -27,6 +27,7 @@ import util.Util;
 
 import java.io.File;
 import java.io.IOException;
+import static org.junit.Assert.assertEquals;
 
 public class FluidConstantTest {
     // We'll just use a string fluid constant to test.
@@ -142,5 +143,25 @@ public class FluidConstantTest {
             ntEntry.setValue("Test");
             times = 0;
         }};
+    }
+
+    /**
+     * Ensures that when changed, fluid constants call their listener.
+     */
+    @Test
+    public void testConstantCallsListenerWhenChanged() {
+        new Expectations() {{
+            driverStation.isDisabled();
+            returns(true, false, false, true);
+        }};
+
+        final int[] callCount = {0};
+        constantToTest.addChangeListener((oldValue, newValue) -> callCount[0]++);
+
+        for (int i = 0; i < 4; i++) {
+            constantToTest.setValue(String.valueOf(i));
+        }
+
+        assertEquals(2, callCount[0]);
     }
 }

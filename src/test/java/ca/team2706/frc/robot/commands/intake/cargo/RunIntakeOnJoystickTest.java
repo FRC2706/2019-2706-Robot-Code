@@ -1,6 +1,7 @@
 package ca.team2706.frc.robot.commands.intake.cargo;
 
 import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.config.XboxValue;
 import ca.team2706.frc.robot.subsystems.Intake;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
@@ -31,7 +32,7 @@ public class RunIntakeOnJoystickTest {
     @Injectable
     private Joystick joystick;
 
-    private final int axisPort = Config.XboxValue.getPortFromFluidConstant(Config.INTAKE_FORWARD_BINDING);
+    private final int axisPort = XboxValue.getPortFromFluidConstant(Config.INTAKE_FORWARD_BINDING);
 
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {

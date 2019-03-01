@@ -110,7 +110,6 @@ public class OI {
                 .whenPressed(new MovePlunger(!Intake.getInstance().isPlungerStowed()));
         new FluidButton(controlStick, Config.EJECT_BINDING)
                 .whileHeld(new EjectConditional());
-
     }
 
     /**

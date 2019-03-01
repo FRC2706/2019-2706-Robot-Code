@@ -3,6 +3,7 @@ package ca.team2706.frc.robot.commands.intake.cargo;
 
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.config.FluidConstant;
+import ca.team2706.frc.robot.config.XboxValue;
 import ca.team2706.frc.robot.input.FluidButton;
 import ca.team2706.frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj.Joystick;
@@ -37,10 +38,10 @@ public class RunIntakeOnJoystick extends Command {
     public RunIntakeOnJoystick(final Joystick controller, final FluidConstant<String> axisBinding, final boolean forward) {
         requires(Intake.getInstance());
         this.controller = controller;
-        this.triggerAxis = Config.XboxValue.getPortFromFluidConstant(axisBinding);
+        this.triggerAxis = XboxValue.getPortFromFluidConstant(axisBinding);
         this.forward = forward;
 
-        axisBinding.addChangeListener((oldValue, newValue) -> this.triggerAxis = Config.XboxValue.getPortFromNTString(newValue));
+        axisBinding.addChangeListener((oldValue, newValue) -> this.triggerAxis = XboxValue.getPortFromNTString(newValue));
     }
 
     @Override

@@ -1,9 +1,9 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
-import java.util.function.Supplier;
-
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.command.Command;
+
+import java.util.function.Supplier;
 
 /**
  * Class to allow for usage of WPI and Command functions with TankDrive
@@ -23,7 +23,7 @@ public abstract class TankDrive extends Command {
      * @param initBrake    Whether to start and end the command in brake or coast mode
      */
     protected TankDrive(Supplier<Double> leftSpeed, Supplier<Double> rightSpeed,
-                          boolean squareInputs, boolean initBrake) {
+                        boolean squareInputs, boolean initBrake) {
         // Ensure that this command is the only one to run on the drive base
         // Requires must be included to use this command as a default command for the drive base
         requires(DriveBase.getInstance());

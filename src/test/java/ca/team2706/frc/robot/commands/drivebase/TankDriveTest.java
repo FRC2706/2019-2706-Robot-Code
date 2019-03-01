@@ -1,28 +1,25 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
+import ca.team2706.frc.robot.subsystems.DriveBase;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
-
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.util.function.Supplier;
-
-import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import mockit.Expectations;
 import mockit.Injectable;
-import mockit.Mock;
 import mockit.Mocked;
 import mockit.Verifications;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import util.Util;
+
+import java.util.function.Supplier;
 
 public class TankDriveTest {
     @Injectable
@@ -60,10 +57,10 @@ public class TankDriveTest {
 
     @Before
     public void setUp() {
-            new Expectations() {{
-                talon.getSensorCollection();
-                result = sensorCollection;
-            }};
+        new Expectations() {{
+            talon.getSensorCollection();
+            result = sensorCollection;
+        }};
 
     }
 

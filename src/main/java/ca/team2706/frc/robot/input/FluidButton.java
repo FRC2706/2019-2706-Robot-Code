@@ -1,7 +1,7 @@
 package ca.team2706.frc.robot.input;
 
-import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.config.FluidConstant;
+import ca.team2706.frc.robot.config.XboxValue;
 import edu.wpi.first.wpilibj.GenericHID;
 
 /**
@@ -39,13 +39,13 @@ public class FluidButton extends EButton {
      * @param fluidConstant The fluid constant action of which to find the port value.
      * @return The port value for the binding.
      */
-    private static Config.XboxValue getPort(FluidConstant<String> fluidConstant) {
-        return Config.XboxValue.getXboxValueFromNTKey(fluidConstant.value());
+    private static XboxValue getPort(FluidConstant<String> fluidConstant) {
+        return XboxValue.getXboxValueFromNTKey(fluidConstant.value());
     }
 
     @Override
     public boolean get() {
-        Config.XboxValue port = Config.XboxValue.getXboxValueFromNTKey(joystickPort.value());
+        XboxValue port = XboxValue.getXboxValueFromNTKey(joystickPort.value());
 
         boolean value = false;
 

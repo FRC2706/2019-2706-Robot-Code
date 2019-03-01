@@ -2,6 +2,7 @@ package ca.team2706.frc.robot.subsystems;
 
 import ca.team2706.frc.robot.SendablesTest;
 import com.ctre.phoenix.CTREJNIWrapper;
+import com.ctre.phoenix.motion.BuffTrajPointStreamJNI;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
@@ -45,6 +46,9 @@ public class DriveBaseTest {
 
     @Mocked
     private Notifier notifier;
+
+    @Mocked(stubOutClassInitialization = true)
+    private BuffTrajPointStreamJNI jni2;
 
     @Injectable
     private SensorCollection sensorCollection;

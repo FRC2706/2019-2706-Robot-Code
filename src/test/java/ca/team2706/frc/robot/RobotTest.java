@@ -1,6 +1,7 @@
 package ca.team2706.frc.robot;
 
 import com.ctre.phoenix.CTREJNIWrapper;
+import com.ctre.phoenix.motion.BuffTrajPointStreamJNI;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -13,6 +14,8 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import jaci.pathfinder.Pathfinder;
+import jaci.pathfinder.Trajectory;
 import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Mocked;
@@ -21,6 +24,8 @@ import org.junit.Before;
 import org.junit.Test;
 import util.Util;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
@@ -62,6 +67,9 @@ public class RobotTest {
     @Mocked
     private Notifier notifier;
 
+    @Mocked(stubOutClassInitialization = true)
+    private BuffTrajPointStreamJNI jni2;
+
     @Mocked
     private NetworkTableInstance networkTableInstance;
 
@@ -78,11 +86,16 @@ public class RobotTest {
     private SensorCollection sensorCollection;
 
     @Before
-    public void setUp() throws NoSuchFieldException, IllegalAccessException {
+    public void setUp() throws IOException {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
             minTimes = 0;
+        }};
+
+        new Expectations(Pathfinder.class) {{
+            Pathfinder.readFromCSV((File) any);
+            result = new Trajectory(0);
         }};
     }
 

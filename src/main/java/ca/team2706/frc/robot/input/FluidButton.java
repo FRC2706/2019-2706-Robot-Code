@@ -1,7 +1,7 @@
 package ca.team2706.frc.robot.input;
 
-import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.config.FluidConstant;
+import ca.team2706.frc.robot.config.XboxValue;
 import edu.wpi.first.wpilibj.GenericHID;
 
 /**
@@ -35,7 +35,7 @@ public class FluidButton extends EButton {
 
     @Override
     public boolean get() {
-        return determineIfPressed(m_joystick, Config.XboxValue.getXboxValueFromFluidConstant(joystickPort));
+        return determineIfPressed(m_joystick, XboxValue.getXboxValueFromFluidConstant(joystickPort));
     }
 
     /**
@@ -44,7 +44,7 @@ public class FluidButton extends EButton {
      * @param port The port of the button which is being tested.
      * @return True if the button at the given port on the controller is being pressed, false otherwise.
      */
-    static boolean determineIfPressed(GenericHID controller, final Config.XboxValue port) {
+    static boolean determineIfPressed(GenericHID controller, final XboxValue port) {
         final boolean pressed;
 
         switch (port.getInputType()) {

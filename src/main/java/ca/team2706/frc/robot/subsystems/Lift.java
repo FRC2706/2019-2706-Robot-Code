@@ -3,7 +3,6 @@ package ca.team2706.frc.robot.subsystems;
 import ca.team2706.frc.robot.config.Config;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
@@ -15,11 +14,6 @@ public class Lift extends Subsystem {
      * The lift motor controller.
      */
     public WPI_TalonSRX liftMotor;
-
-    /**
-     * Limit switch used to zero the lift when in the furthest downwards position.
-     */
-    public DigitalInput liftLimitSwitch;
 
     private static final double[] CARGO_SETPOINTS = {
             0, // Bottom for ground pickup
@@ -61,7 +55,6 @@ public class Lift extends Subsystem {
      */
     private Lift() {
         liftMotor = new WPI_TalonSRX(Config.LIFT_MOTOR_ID);
-        liftLimitSwitch = new DigitalInput(Config.LIFT_DIGITAL_INPUT_ID);
         liftMotor.setNeutralMode(NeutralMode.Brake);
 
         liftMotor.enableCurrentLimit(Config.ENABLE_LIFT_CURRENT_LIMIT);
@@ -104,7 +97,7 @@ public class Lift extends Subsystem {
         liftMotor.enableVoltageCompensation(true);
 
         liftMotor.configMotionCruiseVelocity((int) (Config.LIFT_MOTION_MAGIC_VELOCITY.value() / Config.LIFT_ENCODER_DPP / 10), Config.CAN_LONG);
-        liftMotor.configMotionAcceleration((int)(Config.LIFT_MOTION_MAGIC_ACCELERATION.value() / Config.LIFT_ENCODER_DPP / 10), Config.CAN_LONG);
+        liftMotor.configMotionAcceleration((int) (Config.LIFT_MOTION_MAGIC_ACCELERATION.value() / Config.LIFT_ENCODER_DPP / 10), Config.CAN_LONG);
     }
 
     /**
@@ -200,10 +193,8 @@ public class Lift extends Subsystem {
     }
 
     public void overrideDown() {
-        if (!liftLimitSwitch.get()) {
-            enableLimit(false);
-            liftMotor.set(-Config.LIFT_OVERRIDE_DOWN_SPEED);
-        }
+        enableLimit(false);
+        liftMotor.set(-Config.LIFT_OVERRIDE_DOWN_SPEED);
     }
 
     /**
@@ -237,6 +228,7 @@ public class Lift extends Subsystem {
 
     /**
      * Determines if the lift has reached the given setpoint.
+     *
      * @param setpoint The setpoint.
      * @return True if the lift has reached the setpoint, false otherwise.
      */
@@ -245,9 +237,28 @@ public class Lift extends Subsystem {
 
         boolean hasReachedSetpoint = false;
         if (0 <= setpoint && setpoint <= currentSetpoints.length) {
-            hasReachedSetpoint = liftMotor.getSelectedSensorPosition() == currentSetpoints[setpoint] / Config.LIFT_ENCODER_DPP / 10;
+            // We're good as long as we're within 0.1 feet of the target position.
+            hasReachedSetpoint = Math.abs(getLiftHeight() - currentSetpoints[setpoint]) < 0.1;
         }
 
         return hasReachedSetpoint;
+    }
+
+    /**
+     * Gets the current height of the lift, in feet.
+     *
+     * @return The lift height as measured by encoders, in feet.
+     */
+    public double getLiftHeight() {
+        return liftMotor.getSelectedSensorPosition() * Config.LIFT_ENCODER_DPP;  // TODO make sure this is right.
+    }
+
+    /**
+     * Sets the lift's new destination height to the current height plus the height to subtract.
+     *
+     * @param heightToBeAdded The height to be added, in feet.
+     */
+    public void addToHeight(final double heightToBeAdded) {
+        setPosition(1.0, getLiftHeight() + heightToBeAdded);
     }
 }

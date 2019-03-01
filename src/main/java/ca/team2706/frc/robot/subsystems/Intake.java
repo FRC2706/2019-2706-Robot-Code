@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
- * The subsystem which comtrols the intake for cargo and hatches
+ * The subsystem which controls the intake for cargo and hatches
  */
 public class Intake extends Subsystem {
     private static Intake currentInstance;
@@ -21,11 +21,6 @@ public class Intake extends Subsystem {
 
     private DoubleSolenoid intakeLiftSolenoid;
     private DoubleSolenoid hatchEjectorSolenoid;
-
-    /**
-     * The state of the intake subsystem.
-     */
-    private IntakeMode currentMode;
 
     /**
      * Gets the current instance of this subsystem, creating it if it doesn't exist.
@@ -79,7 +74,20 @@ public class Intake extends Subsystem {
      * @return The intake's current mode.
      */
     public IntakeMode getMode() {
-        return currentMode;
+        final IntakeMode mode;
+        switch (intakeLiftSolenoid.get()) {
+            case kForward:
+                mode = IntakeMode.CARGO;
+                break;
+            case kReverse:
+                mode = IntakeMode.HATCH;
+                break;
+            default:
+                mode = null;
+                break;
+        }
+
+        return mode;
     }
 
     /**
@@ -103,7 +111,7 @@ public class Intake extends Subsystem {
         final double irValue;
 
         // We only want to be reading the real ir sensor if we're supposed to be dealing with cargo.
-        if (currentMode == IntakeMode.CARGO) {
+        if (getMode() == IntakeMode.CARGO) {
             irValue = irSensor.getVoltage();
         }
         // Otherwise we say 0 since we're dealing with hatches.
@@ -115,23 +123,23 @@ public class Intake extends Subsystem {
     }
 
     /**
-     * Spins the wheels to intake cargo.
+     * Spins the intake wheels forward both to intake and eject cargo.
      *
      * @param percentSpeed speed at which to change the wheels, between 0 and 1.
      */
-    public void inhaleCargo(final double percentSpeed) {
-        if (currentMode == IntakeMode.CARGO) {
+    public void runIntakeForward(final double percentSpeed) {
+        if (getMode() == IntakeMode.CARGO) {
             intakeMotor.set(ControlMode.PercentOutput, Math.abs(percentSpeed * Config.MAX_INTAKE_SPEED));
         }
     }
 
     /**
-     * Spins the wheels to eject cargo.
+     * Spins the intake wheels backwards.
      *
      * @param percentSpeed Speed at which to spin the wheels, between 0 and 1.
      */
-    public void exhaleCargo(final double percentSpeed) {
-        if (currentMode == IntakeMode.CARGO) {
+    public void runIntakeBackward(final double percentSpeed) {
+        if (getMode() == IntakeMode.CARGO) {
             intakeMotor.set(ControlMode.PercentOutput ,-(Math.abs(percentSpeed * Config.MAX_INTAKE_SPEED)));
         }
     }
@@ -159,7 +167,6 @@ public class Intake extends Subsystem {
         // We don't want to lower the intake onto the plunger.
         if (isPlungerStowed()) {
             intakeLiftSolenoid.set(DoubleSolenoid.Value.kForward);
-            currentMode = IntakeMode.CARGO;
         }
     }
 
@@ -168,7 +175,6 @@ public class Intake extends Subsystem {
      */
     public void raiseIntake() {
         intakeLiftSolenoid.set(DoubleSolenoid.Value.kReverse);
-        currentMode = IntakeMode.HATCH;
     }
 
     /**

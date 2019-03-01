@@ -1,6 +1,8 @@
 package ca.team2706.frc.robot.subsystems;
 
 import ca.team2706.frc.robot.config.Config;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -17,7 +19,7 @@ public class IntakeTest {
     private Intake intake;
 
     @Mocked
-    private WPI_TalonSRX intakeTalon;
+    private VictorSPX intakeMotor;
 
     @Mocked
     private DoubleSolenoid intakeLiftSolenoid;
@@ -33,8 +35,8 @@ public class IntakeTest {
         Util.resetSubsystems();
 
         new Expectations() {{
-            new WPI_TalonSRX(Config.INTAKE_MOTOR_ID);
-            result = intakeTalon;
+            new VictorSPX(Config.INTAKE_MOTOR_ID);
+            result = intakeMotor;
 
             new AnalogInput(Config.CARGO_IR_SENSOR_ID);
             result = irSensor;
@@ -48,21 +50,26 @@ public class IntakeTest {
     }
 
     /**
-     * Tests to ensure that exhaling on the motor works.
+     * Tests to ensure that exhaling on the motor works only when in cargo mode.
      */
     @Test
     public void testExhaleCargo() {
-        intake.lowerIntake();
-        intake.exhaleCargo(1.0);
-        intake.exhaleCargo(0.5);
-        intake.exhaleCargo(0.25);
-        intake.exhaleCargo(0D);
+        new Expectations() {{
+            // This will simulate being in cargo mode.
+            intakeLiftSolenoid.get();
+            result = DoubleSolenoid.Value.kForward;
+        }};
+
+        intake.runIntakeBackward(1.0);
+        intake.runIntakeBackward(0.5);
+        intake.runIntakeBackward(0.25);
+        intake.runIntakeBackward(0D);
 
         new VerificationsInOrder() {{
-            intakeTalon.set(-Config.MAX_INTAKE_SPEED);
-            intakeTalon.set(-Config.MAX_INTAKE_SPEED * 0.5);
-            intakeTalon.set(-Config.MAX_INTAKE_SPEED * 0.25);
-            intakeTalon.set(withEqual(0D, 0D));
+            intakeMotor.set(ControlMode.PercentOutput, -Config.MAX_INTAKE_SPEED);
+            intakeMotor.set(ControlMode.PercentOutput, -Config.MAX_INTAKE_SPEED * 0.5);
+            intakeMotor.set(ControlMode.PercentOutput, -Config.MAX_INTAKE_SPEED * 0.25);
+            intakeMotor.set(ControlMode.PercentOutput, withEqual(0D, 0D));
         }};
     }
 
@@ -71,17 +78,23 @@ public class IntakeTest {
      */
     @Test
     public void testInhaleCargo() {
+        new Expectations() {{
+            // This simulates being in cargo mode.
+            intakeLiftSolenoid.get();
+            result = DoubleSolenoid.Value.kForward;
+        }};
+
         intake.lowerIntake(); // Lower intake to get into cargo mode.
-        intake.inhaleCargo(1.0);
-        intake.inhaleCargo(0.5);
-        intake.inhaleCargo(0.25);
-        intake.inhaleCargo(0D);
+        intake.runIntakeForward(1.0);
+        intake.runIntakeForward(0.5);
+        intake.runIntakeForward(0.25);
+        intake.runIntakeForward(0D);
 
         new VerificationsInOrder() {{
-            intakeTalon.set(Config.MAX_INTAKE_SPEED);
-            intakeTalon.set(Config.MAX_INTAKE_SPEED * 0.5);
-            intakeTalon.set(Config.MAX_INTAKE_SPEED * 0.25);
-            intakeTalon.set(withEqual(0D, 0D));
+            intakeMotor.set(ControlMode.PercentOutput, Config.MAX_INTAKE_SPEED);
+            intakeMotor.set(ControlMode.PercentOutput, Config.MAX_INTAKE_SPEED * 0.5);
+            intakeMotor.set(ControlMode.PercentOutput, Config.MAX_INTAKE_SPEED * 0.25);
+            intakeMotor.set(ControlMode.PercentOutput, withEqual(0D, 0D));
         }};
     }
 
@@ -90,6 +103,12 @@ public class IntakeTest {
      */
     @Test
     public void testIsCargoCaptured() {
+        new Expectations() {{
+            // This will simulate being in cargo mode.
+            intakeLiftSolenoid.get();
+            returns(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kReverse, DoubleSolenoid.Value.kForward);
+        }};
+
         final double[] returnValues = new double[]{
                 Config.CARGO_CAPTURED_IR_VOLTAGE.value() * 0.25,
                 Config.CARGO_CAPTURED_IR_VOLTAGE.value() * 0.95,
@@ -119,30 +138,36 @@ public class IntakeTest {
      */
     @Test
     public void testStopCargoMotors() {
+        new Expectations() {{
+            // This will simulate cargo mode.
+            intakeLiftSolenoid.get();
+            result = DoubleSolenoid.Value.kForward;
+        }};
+
         intake.lowerIntake(); // Lower intake to go into cargo mode.
-        intake.exhaleCargo(0.5 * Config.MAX_INTAKE_SPEED);
+        intake.runIntakeBackward(0.5 * Config.MAX_INTAKE_SPEED);
         intake.stop();
 
         new VerificationsInOrder() {{
-            intakeTalon.set(withNotEqual(0D));
-            intakeTalon.set(withEqual(0D, 0D));
+            intakeMotor.set(ControlMode.PercentOutput, withNotEqual(0D));
+            intakeMotor.set(ControlMode.PercentOutput, withEqual(0D, 0D));
         }};
     }
 
     /**
-     * Ensures that the hatch is ejected properly.
+     * Ensures that the pneumatic plunger is ejected as it should be in both cargo and hatch mode.
      */
     @Test
     public void testEjectHatch() {
         intake.raiseIntake(); // Raise to go into hatch mode.
-        intake.ejectHatch();
+        intake.deployPlunger();
 
         intake.lowerIntake(); // Lower to go into cargo
-        intake.ejectHatch(); // Try to eject the hatch in cargo mode.
+        intake.deployPlunger(); // Try to eject the hatch in cargo mode, should work.
 
         new Verifications() {{
             hatchEjectorSolenoid.set(DoubleSolenoid.Value.kForward);
-            times = 1;
+            times = 2;
         }};
 
     }
@@ -152,6 +177,12 @@ public class IntakeTest {
      */
     @Test
     public void testRetractHatchDeploymentCylinder() {
+        new Expectations() {{
+            // This will ensure that we can go into cargo mode by lowering the arms.
+            hatchEjectorSolenoid.get();
+            result = DoubleSolenoid.Value.kReverse;
+        }};
+
         intake.raiseIntake(); // Go into hatch mode
         intake.retractPlunger();
 

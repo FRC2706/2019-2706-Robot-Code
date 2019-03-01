@@ -1,6 +1,7 @@
 package ca.team2706.frc.robot.operatorfeedback.rumbler;
 
 import ca.team2706.frc.robot.subsystems.DriveBase;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -30,7 +31,10 @@ public class RumblerTest {
     private DriveBase driveBase;
 
     @Mocked
-    private WPI_TalonSRX intakeTalon;
+    private VictorSPX intakeMotor;
+
+    @Mocked
+    private WPI_TalonSRX talons;
 
     @Mocked
     private DoubleSolenoid solenoids;

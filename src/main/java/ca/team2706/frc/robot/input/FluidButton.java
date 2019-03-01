@@ -38,6 +38,12 @@ public class FluidButton extends EButton {
         return determineIfPressed(m_joystick, Config.XboxValue.getXboxValueFromFluidConstant(joystickPort));
     }
 
+    /**
+     * Determines if the given controller's port is being pressed.
+     * @param controller The controller to test.
+     * @param port The port of the button which is being tested.
+     * @return True if the button at the given port on the controller is being pressed, false otherwise.
+     */
     static boolean determineIfPressed(GenericHID controller, final Config.XboxValue port) {
         final boolean pressed;
 

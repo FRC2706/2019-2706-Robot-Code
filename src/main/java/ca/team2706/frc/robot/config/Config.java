@@ -75,14 +75,17 @@ public class Config {
             HATCH_EJECTOR_SOLENOID_BACKWARD_ID = robotSpecific(1, 1, 1);
 
     public static final int
-            LIFT_MOTOR_ID = robotSpecific(5, 5, 5),
-            LIFT_DIGITAL_INPUT_ID = robotSpecific(1, 1, 1);
+            LIFT_MOTOR_ID = robotSpecific(5, 5, 5);
 
     public static final double
             // Max speed of the lift going up in override (between 0 and 1).
             LIFT_OVERRIDE_UP_SPEED = 0.4,
-    // Max speed of the lift going down in override (betweeen -1 and 0).
-    LIFT_OVERRIDE_DOWN_SPEED = -0.4;
+            /**
+             * Speed for automatically ejecting cargo from the intake, from 0 to 1.
+             */
+            AUTO_EJECT_CARGO_INTAKE_SPEED = 1.0,
+            // Max speed of the lift going down in override (between -1 and 0).
+            LIFT_OVERRIDE_DOWN_SPEED =-0.4;
 
 
     public static boolean
@@ -105,7 +108,9 @@ public class Config {
             = robotSpecific(Math.PI / 8192.0, Math.PI / 8192.0, Math.PI / 8192.0);
 
     // TODO this is not right. Actual value plz.
-    // The amount of encoder ticks that the robot must drive to go one foot
+    /**
+     * The amount of encoder ticks that the robot must move the lift to travel one foot
+     */
     public static final double LIFT_ENCODER_DPP
             = robotSpecific(Math.PI / 8192.0, Math.PI / 8192.0, Math.PI / 8192.0);
 
@@ -124,6 +129,20 @@ public class Config {
 
     public static final int TANK_DRIVE_RIGHT = XboxValue.XBOX_RIGHT_STICK_Y.getPort();
     public static final int TANK_DRIVE_LEFT = XboxValue.XBOX_LEFT_STICK_Y.getPort();
+
+    /**
+     * Amount of time (in seconds) that it takes for the plunger to be stowed.
+     */
+    public static final double PLUNGER_TIMEOUT = 1.0;
+    /**
+     * How long the intake motors should be running before the plunger deploys.
+     */
+    public static final double EXHALE_CARGO_WAIT_UNTIL_PLUNGER = 0.5;
+
+    /**
+     * How much height (in feet) to subtract from the lift's height for ejecting hatches.
+     */
+    public static final double SUBTRACT_LIFT_HEIGHT = 0.0833;
 
 
     public static final double MAX_INTAKE_SPEED = 0.5; //to be finalized later, this has yet to be tested
@@ -171,8 +190,8 @@ public class Config {
     public static final FluidConstant<Double> PIGEON_KF = constant("pigeon-kf", 0.0);
 
     // All controller bindings.
-    public static final FluidConstant<String> INTAKE_BINDING = constant("intake-trigger-binding", XboxValue.XBOX_BACK_LEFT_TRIGGER.getNTString()),
-            EXHALE_BINDING = constant("exhale-trigger-binding", XboxValue.XBOX_BACK_RIGHT_TRIGGER.getNTString()),
+    public static final FluidConstant<String> INTAKE_BACKWARD_BINDING = constant("intake-backward-binding", XboxValue.XBOX_BACK_LEFT_TRIGGER.getNTString()),
+            INTAKE_FORWARD_BINDING = constant("intake-forward-binding", XboxValue.XBOX_BACK_RIGHT_TRIGGER.getNTString()),
             MOVE_LIFT_BINDING = constant("move-lift-binding", XboxValue.XBOX_LEFT_STICK_Y.getNTString()),
             LIFT_ARMS_BINDING = constant("lift-arms-binding", XboxValue.XBOX_A_BUTTON.getNTString()),
             LOWER_ARMS_BINDING = constant("lower-arms-binding", XboxValue.XBOX_Y_BUTTON.getNTString()),
@@ -181,12 +200,9 @@ public class Config {
             LIFT_FIRST_SETPOINT_BINDING = constant("lift-bottom-setpoint-binding", XboxValue.XBOX_POV_DOWN.getNTString()),
             LIFT_SECOND_SETPOINT_BINDING = constant("lift-second-setpoint-binding", XboxValue.XBOX_POV_LEFT.getNTString()),
             LIFT_THIRD_SETPOINT_BINDING = constant("lift-third-setpoint-binding", XboxValue.XBOX_POV_UP.getNTString()),
-            LIFT_FOURTH_SETPOINT_BINDING = constant("lift-top-setpoint-binding", XboxValue.XBOX_POV_RIGHT.getNTString());
-
-    /**
-     * Amount of time (in seconds) that it takes for the plunger to be stowed.
-     */
-    public static final double PLUNGER_TIMEOUT = 1.0;
+            LIFT_FOURTH_SETPOINT_BINDING = constant("lift-top-setpoint-binding", XboxValue.XBOX_POV_RIGHT.getNTString()),
+            MANUAL_PISTON_BINDING = constant("manual-plunger-toggle", XboxValue.XBOX_RIGHT_AXIS_BUTTON.getNTString()),
+            EJECT_BINDING = constant("eject-multi-purpose-binding", XboxValue.XBOX_RB_BUTTON.getNTString());
 
     /**
      * The minimum reading on the cargo IR sensor to assert that we have cargo in the mechanism.

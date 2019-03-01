@@ -1,16 +1,18 @@
 package ca.team2706.frc.robot;
 
 import ca.team2706.frc.robot.commands.drivebase.CurvatureDriveWithJoystick;
-import ca.team2706.frc.robot.commands.intake.ExhaleCargo;
-import ca.team2706.frc.robot.commands.intake.InhaleCargo;
+import ca.team2706.frc.robot.commands.intake.EjectConditional;
 import ca.team2706.frc.robot.commands.intake.arms.LowerArmsSafely;
+import ca.team2706.frc.robot.commands.intake.arms.MovePlunger;
 import ca.team2706.frc.robot.commands.intake.arms.RaiseArms;
+import ca.team2706.frc.robot.commands.intake.cargo.RunIntakeOnJoystick;
 import ca.team2706.frc.robot.commands.lift.MoveLiftOnJoystick;
 import ca.team2706.frc.robot.commands.lift.MoveLiftOnOverride;
 import ca.team2706.frc.robot.commands.lift.MoveLiftToSetpoints;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.input.FluidButton;
 import ca.team2706.frc.robot.subsystems.DriveBase;
+import ca.team2706.frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -82,10 +84,10 @@ public class OI {
         DriveBase.getInstance().setDefaultCommand(driveCommand);
 
         // Operator controls.
-        new FluidButton(controlStick, Config.INTAKE_BINDING)
-                .whileHeld(new InhaleCargo(driverStick, Config.INTAKE_BINDING));
-        new FluidButton(controlStick, Config.EXHALE_BINDING)
-                .whileHeld(new ExhaleCargo(controlStick, Config.EXHALE_BINDING));
+        new FluidButton(controlStick, Config.INTAKE_BACKWARD_BINDING)
+                .whileHeld(new RunIntakeOnJoystick(controlStick, Config.INTAKE_BACKWARD_BINDING, false));
+        new FluidButton(controlStick, Config.INTAKE_FORWARD_BINDING)
+                .whileHeld(new RunIntakeOnJoystick(controlStick, Config.INTAKE_FORWARD_BINDING, true));
         new FluidButton(controlStick, Config.MOVE_LIFT_BINDING)
                 .whileHeld(new MoveLiftOnJoystick(controlStick, Config.MOVE_LIFT_BINDING));
         new FluidButton(controlStick, Config.LIFT_ARMS_BINDING)
@@ -104,6 +106,10 @@ public class OI {
                 .whileHeld(new MoveLiftToSetpoints(2));
         new FluidButton(controlStick, Config.LIFT_FOURTH_SETPOINT_BINDING)
                 .whileHeld(new MoveLiftToSetpoints(3));
+        new FluidButton(controlStick, Config.MANUAL_PISTON_BINDING)
+                .whenPressed(new MovePlunger(!Intake.getInstance().isPlungerStowed()));
+        new FluidButton(controlStick, Config.EJECT_BINDING)
+                .whileHeld(new EjectConditional());
 
     }
 

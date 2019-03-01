@@ -10,7 +10,7 @@ public class LowerArmsSafely extends CommandGroup {
      * Constructs a new lower arms safely command.
      */
     public LowerArmsSafely() {
-        addSequential(new StowPlunger());
-        addSequential(new LowerArms());
+        addSequential(new MovePlunger(true)); // Stow plunger. This finished immediately if already stowed.
+        addSequential(new LowerArms()); // Then lower arms.
     }
 }

@@ -1,4 +1,4 @@
-package ca.team2706.frc.robot.commands.intake;
+package ca.team2706.frc.robot.commands.intake.cargo;
 
 
 import ca.team2706.frc.robot.config.Config;
@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  * Command for inhaling cargo using the intake subsystems.
  */
-public class InhaleCargo extends Command {
+public class RunIntakeOnJoystick extends Command {
 
     /**
      * Joystick which is going to be used to determine speed.
@@ -23,15 +23,22 @@ public class InhaleCargo extends Command {
     private int triggerAxis;
 
     /**
-     * Constructs a new InhaleCargo command on the given controller and with the given axis.
+     * Which direction the motors should be moved, either true for forward or false for backward.
+     */
+    private final boolean forward;
+
+    /**
+     * Constructs a new RunIntakeOnJoystick command on the given controller and with the given axis.
      *
      * @param controller The controller to be monitored.
      * @param axisBinding       The axis of the analog stick to be monitored, as a fluid constant.
+     * @param forward True to move the motors forward (for inhaling and ejecting cargo), false to go backward.
      */
-    public InhaleCargo(final Joystick controller, final FluidConstant<String> axisBinding) {
+    public RunIntakeOnJoystick(final Joystick controller, final FluidConstant<String> axisBinding, final boolean forward) {
         requires(Intake.getInstance());
         this.controller = controller;
         this.triggerAxis = Config.XboxValue.getPortFromFluidConstant(axisBinding);
+        this.forward = forward;
 
         axisBinding.addChangeListener((oldValue, newValue) -> this.triggerAxis = Config.XboxValue.getPortFromNTString(newValue));
     }
@@ -39,7 +46,11 @@ public class InhaleCargo extends Command {
     @Override
     public void execute() {
         double speed = controller.getRawAxis(triggerAxis);
-        Intake.getInstance().inhaleCargo(speed);
+        if (forward) {
+            Intake.getInstance().runIntakeForward(speed);
+        } else {
+            Intake.getInstance().runIntakeBackward(speed);
+        }
     }
 
     @Override

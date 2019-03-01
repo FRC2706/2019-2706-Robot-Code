@@ -3,6 +3,7 @@ package ca.team2706.frc.robot.input;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj.*;
@@ -32,6 +33,12 @@ public class EButtonTest {
 
     @Mocked
     private WPI_TalonSRX talon;
+
+    @Mocked
+    private VictorSPX intakeMotor;
+
+    @Mocked
+    private DoubleSolenoid solenoids;
 
     @Mocked
     private PWM pwm;
@@ -74,6 +81,7 @@ public class EButtonTest {
         new Expectations() {{
             driverStation.isDisabled();
             result = false;
+
             genericHID.getRawAxis(anyInt);
             result = 0;
             minTimes = 0;

@@ -133,8 +133,8 @@ public class Config {
     public static final FluidConstant<Double> ROBOT_MAX_ACC = constant("robot-max-acc", 6.0);
     public static final FluidConstant<Double> ROBOT_MAX_JERK = constant("robot-max-jerk", 60.0);
 
-    public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTX = constant("robottocamera-robotx", 0.3);
-    public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTY = constant("robottocamera-roboty", 0.5);
+    public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTX = constant("robottocamera-robotx", -0.25);
+    public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTY = constant("robottocamera-roboty", 0.25);
 
     public static final FluidConstant<Double> VISION_DISTANCE_MIN = constant("target-offset_distance", 0.5);
     public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE = constant("target-offset_distance", 0.5);

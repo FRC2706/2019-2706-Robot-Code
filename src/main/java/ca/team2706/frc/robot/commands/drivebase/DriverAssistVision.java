@@ -92,7 +92,7 @@ public class DriverAssistVision extends Command {
         // See method generateTrajectoryRobotToTarget(...) for an explanation of variable names and coodinate
         // frames
 
-        System.out.println("DAV: initialize() called");
+        Log.d("DAV: initialize() called");
 
         DriveBase.getInstance().setBrakeMode(true);
         DriveBase.getInstance().setPositionNoGyroMode();
@@ -108,8 +108,8 @@ public class DriverAssistVision extends Command {
         double angYawTargetWrtCameraLOSCWpos = vectorCameraToTarget_Camera[0];
         double distanceCameraToTarget_Camera = vectorCameraToTarget_Camera[1];
 
-        System.out.println("DAV: angYawTargetWrtCameraLOSCWpos [deg]: " + angYawTargetWrtCameraLOSCWpos);
-        System.out.println("DAV: distanceCameraToTarget_Camera [ft]: " + distanceCameraToTarget_Camera);
+        Log.d("DAV: angYawTargetWrtCameraLOSCWpos [deg]: " + angYawTargetWrtCameraLOSCWpos);
+        Log.d("DAV: distanceCameraToTarget_Camera [ft]: " + distanceCameraToTarget_Camera);
             
         // Due to the inherent jitter of values computed by the vision system, it is next to impossible
         // that values of yaw angle and distance to target will both be equal on successive commands unless
@@ -132,13 +132,13 @@ public class DriverAssistVision extends Command {
             return;
         }
 
-        System.out.println("DAV: Generating trajectory");
+        Log.d("DAV: Generating trajectory");
 
         // Compute the trajectory
         generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, angYawTargetWrtCameraLOSCWpos,
                 driverAssistCargoAndLoading, driverAssistRocket);
 
-        System.out.println("DAV: Exiting initialize()");
+        Log.d("DAV: Exiting initialize()");
 
         trajGenerated = true;
     }
@@ -156,7 +156,7 @@ public class DriverAssistVision extends Command {
     @Override
     public void end() {
         // Go back to disabled mode
-        //DriveBase.getInstance().setDisabledMode();
+        DriveBase.getInstance().setDisabledMode();
     }
 
     /**
@@ -252,17 +252,17 @@ public class DriverAssistVision extends Command {
         // Vector 1: vRobotToCamera_Robot: Vector from robot to camera in robot frame
         double vRobotToCamera_RobotX = Config.getROBOTTOCAMERA_ROBOTX();
         double vRobotToCamera_RobotY = Config.getROBOTTOCAMERA_ROBOTY();
-        System.out.println("DAV: vRobotToCamera_RobotX: " + vRobotToCamera_RobotX + ", vRobotToCamera_RobotY: " + vRobotToCamera_RobotY);
+        Log.d("DAV: vRobotToCamera_RobotX: " + vRobotToCamera_RobotX + ", vRobotToCamera_RobotY: " + vRobotToCamera_RobotY);
 
         // Vector 2: vCameraToTarget_Robot: Vector from camera to target in robot frame
         double angYawTargetWrtCameraLOSRadCWpos = Pathfinder.d2r(angYawTargetWrtCameraLOSCWpos);
         double vCameraToTarget_RobotX =  distanceCameraToTarget_Camera * Math.sin(angYawTargetWrtCameraLOSRadCWpos);
         double vCameraToTarget_RobotY  = distanceCameraToTarget_Camera * Math.cos(angYawTargetWrtCameraLOSRadCWpos);        
-        System.out.println("DAV: vec_CameraToTargetX_Robot: " + vCameraToTarget_RobotX + ", vCameraToTarget_RobotY: " + vCameraToTarget_RobotY);
+        Log.d("DAV: vec_CameraToTargetX_Robot: " + vCameraToTarget_RobotX + ", vCameraToTarget_RobotY: " + vCameraToTarget_RobotY);
 
         // Get current robot heading relative to field frame from IMU
         double angRobotHeadingCurrent_Field = DriveBase.getInstance().getAbsoluteHeading();
-        System.out.println("DAV: angRobotHeadingCurrent_Field: " + angRobotHeadingCurrent_Field);
+        Log.d("DAV: angRobotHeadingCurrent_Field: " + angRobotHeadingCurrent_Field);
 
         // Compute final desired robot heading relative to field
         double angRobotHeadingFinal_Field = 
@@ -277,7 +277,7 @@ public class DriverAssistVision extends Command {
         double d = Config.getTARGET_OFFSET_DISTANCE();
         double vTargetToFinal_FieldX = -d * vUnitFacingTarget_FieldX;
         double vTargetToFinal_FieldY = -d * vUnitFacingTarget_FieldY;
-        System.out.println("DAV: vec_TargetToFinalX_Field: " + vTargetToFinal_FieldX + ", vTargetToFinal_FieldY: " + vTargetToFinal_FieldY);
+        Log.d("DAV: vec_TargetToFinalX_Field: " + vTargetToFinal_FieldX + ", vTargetToFinal_FieldY: " + vTargetToFinal_FieldY);
         
         // Vector 3: vTargetToFinal_Robot: Vector from target to final robot position in robot frame
         //           (need to do a coordinate frame transformation on vTargetToFinal_Field)
@@ -290,13 +290,13 @@ public class DriverAssistVision extends Command {
         double sinAngRobotCurrentRad_Field = Math.sin(angRobotCurrentRad_Field);
         double vTargetToFinal_RobotX = vTargetToFinal_FieldX * cosAngRobotCurrentRad_Field + vTargetToFinal_FieldY * sinAngRobotCurrentRad_Field;
         double vTargetToFinal_RobotY = -vTargetToFinal_FieldX * sinAngRobotCurrentRad_Field + vTargetToFinal_FieldY * cosAngRobotCurrentRad_Field;
-        System.out.println("DAV: vTargetToFinal_RobotX: " + vTargetToFinal_RobotX + ", vTargetToFinal_RobotY: " + vTargetToFinal_RobotY);
+        Log.d("DAV: vTargetToFinal_RobotX: " + vTargetToFinal_RobotX + ", vTargetToFinal_RobotY: " + vTargetToFinal_RobotY);
 
         // Compute vRobotToFinal_Robot as sum of Vectors 1, 2, and 3
         // vRobotToFinal_Robot = vRobotToCamera_Robot + vCameraToTarget_Robot + vTargetToFinal_Robot
         double vRobotToFinal_RobotX = vRobotToCamera_RobotX + vCameraToTarget_RobotX + vTargetToFinal_RobotX;
         double vRobotToFinal_RobotY = vRobotToCamera_RobotY + vCameraToTarget_RobotY + vTargetToFinal_RobotY;
-        System.out.println("DAV: vRobotToFinal_RobotX: " + vRobotToFinal_RobotX + ", vRobotToFinal_RobotY: " + vRobotToFinal_RobotY);
+        Log.d("DAV: vRobotToFinal_RobotX: " + vRobotToFinal_RobotX + ", vRobotToFinal_RobotY: " + vRobotToFinal_RobotY);
 
         // STEP 2: Compute final robot heading in robot frame
         double angRobotHeadingFinal_Robot = angRobotHeadingFinal_Field - angRobotCurrent_Field;
@@ -320,18 +320,6 @@ public class DriverAssistVision extends Command {
 
         // Send trajectory to motion control system
         // (Wait until integration with robot code)
-        
-        System.out.println("DAV: Trajectory length: " + traj.length());
-        for (int i = 0; i < traj.length(); i++)
-        {
-            String str = 
-                traj.segments[i].x + "," +
-                traj.segments[i].y + "," +
-                traj.segments[i].heading;
-
-            //System.out.println(str);
-        }
-
     }
 
     /**
@@ -393,7 +381,7 @@ public class DriverAssistVision extends Command {
                 angRobotHeadingFinal_Field = 300.0;
             }
         }
-        System.out.println("angRobotHeadingFinal_Field: " + angRobotHeadingFinal_Field);
+        Log.d("DAV: angRobotHeadingFinal_Field: " + angRobotHeadingFinal_Field);
 
         return angRobotHeadingFinal_Field;
     }

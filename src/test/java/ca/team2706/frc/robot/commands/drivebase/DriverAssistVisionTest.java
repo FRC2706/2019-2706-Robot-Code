@@ -69,14 +69,6 @@ public class DriverAssistVisionTest {
                 driverAssistCargoAndLoading, driverAssistRocket);
             Trajectory traj = driverAssistVision.getTraj();
 
-            System.out.println("angRobotHeadingFinal_Field(): " + driverAssistVision.getAngRobotHeadingFinal_Field());
-            System.out.println("traj.length(): " + traj.length());
-            System.out.println("traj.segments[0].x: " + traj.segments[0].x);
-            System.out.println("traj.segments[0].y: " + traj.segments[0].y);
-            System.out.println("traj.segments[0].heading: " + traj.segments[0].heading);
-            System.out.println("traj.segments[traj.length()-1].x: " + traj.segments[traj.length()-1].x);
-            System.out.println("traj.segments[traj.length()-1].y: " + traj.segments[traj.length()-1].y);
-            System.out.println("traj.segments[traj.length()-1].heading: " + traj.segments[traj.length()-1].heading);
             assertEquals(driverAssistVision.getAngRobotHeadingFinal_Field(), expectedAngRobotHeadingFinal_Field[i], 0.1);
             assertEquals(traj.segments[0].y, 0.0, 0.3);
             assertEquals(traj.segments[0].heading, Pathfinder.d2r(90.0), 0.3);
@@ -127,14 +119,6 @@ public class DriverAssistVisionTest {
                 driverAssistCargoAndLoading, driverAssistRocket);
             Trajectory traj = driverAssistVision.getTraj();
 
-            System.out.println("angRobotHeadingFinal_Field(): " + driverAssistVision.getAngRobotHeadingFinal_Field());
-            System.out.println("traj.length(): " + traj.length());
-            System.out.println("traj.segments[0].x: " + traj.segments[0].x);
-            System.out.println("traj.segments[0].y: " + traj.segments[0].y);
-            System.out.println("traj.segments[0].heading: " + traj.segments[0].heading);
-            System.out.println("traj.segments[traj.length()-1].x: " + traj.segments[traj.length()-1].x);
-            System.out.println("traj.segments[traj.length()-1].y: " + traj.segments[traj.length()-1].y);
-            System.out.println("traj.segments[traj.length()-1].heading: " + traj.segments[traj.length()-1].heading);
             assertEquals(driverAssistVision.getAngRobotHeadingFinal_Field(), expectedAngRobotHeadingFinal_Field[i], 0.1);
             assertEquals(traj.segments[0].y, 0.0, 0.3);
             assertEquals(traj.segments[0].heading, Pathfinder.d2r(90.0), 0.3);

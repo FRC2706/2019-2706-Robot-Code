@@ -41,8 +41,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
-
-        System.out.println("RCVI version");
         
         onStateChange(RobotState.ROBOT_INIT);
         isInitialized = true;

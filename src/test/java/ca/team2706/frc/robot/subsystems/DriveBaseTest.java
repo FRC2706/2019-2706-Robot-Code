@@ -111,8 +111,6 @@ public class DriveBaseTest {
                     SendablesTest.makePigeonExpectation(0.0));
         }};
 
-        //System.out.println("heading: " + driveBase.getAbsoluteHeading());
-
         driveBase.initGyro();
 
         assertEquals(0.0, driveBase.getAbsoluteHeading(), 0.0);

@@ -11,7 +11,7 @@ public class MoveLiftUpToHigherLevel extends Command {
 
     @Override
     public void execute() {
-        Lift.getInstance().addToHeightGoal();
+        //Lift.getInstance().addToHeightGoal();
     }
 
     @Override
@@ -21,7 +21,7 @@ public class MoveLiftUpToHigherLevel extends Command {
 
     @Override
     protected boolean isFinished() {
-        return Lift.getInstance().reachedGoal();
+        return false;//Lift.getInstance().reachedGoal();
     }
 
 }

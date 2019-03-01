@@ -16,8 +16,8 @@ public class Intake extends Subsystem {
     private WPI_TalonSRX intakeMotor;
     private AnalogInput irSensor;
 
-    private DoubleSolenoid intakeLiftSolenoid;
-    private DoubleSolenoid hatchEjectorSolenoid;
+    public DoubleSolenoid intakeLiftSolenoid;
+    public DoubleSolenoid hatchEjectorSolenoid;
 
     /**
      * The state of the intake subsystem.

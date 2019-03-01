@@ -11,7 +11,7 @@ public class MoveLiftDownToLowerLevel extends Command {
 
     @Override
     public void execute() {
-        Lift.getInstance().subtractFromHeightGoal();
+        //Lift.getInstance().subtractFromHeightGoal();
     }
 
     @Override
@@ -21,7 +21,7 @@ public class MoveLiftDownToLowerLevel extends Command {
 
     @Override
     protected boolean isFinished() {
-        return Lift.getInstance().reachedGoal();
+        return false;//Lift.getInstance().reachedGoal();
     }
 
 }

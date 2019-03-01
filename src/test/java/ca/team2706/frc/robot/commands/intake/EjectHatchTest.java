@@ -25,7 +25,9 @@ public class EjectHatchTest {
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
         Util.resetSubsystems();
-
+        new Verifications() {{
+            hatchEjectorSolenoid.set(DoubleSolenoid.Value.kForward);
+        }};
         new Expectations() {{
             new DoubleSolenoid(Config.HATCH_EJECTOR_SOLENOID_FORWARD_ID, Config.HATCH_EJECTOR_SOLENOID_BACKWARD_ID);
             result = hatchEjectorSolenoid;
@@ -37,6 +39,8 @@ public class EjectHatchTest {
      */
     @Test
     public void testEject() {
+        
+
         Intake.getInstance().raiseIntake(); // Go into hatch mode.
         EjectHatch hatchEject = new EjectHatch();
         hatchEject.execute();

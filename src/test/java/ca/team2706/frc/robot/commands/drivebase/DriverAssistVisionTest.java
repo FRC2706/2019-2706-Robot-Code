@@ -40,10 +40,7 @@ public class DriverAssistVisionTest {
             returns(0.0, 90.0, 180.0, 270.0);
 
             Config.getTRAJ_DELTA_TIME();
-            // The value below may seem high, but it is what is currently needed to 
-            // get Pathinder to generate a trajectory in a borderline usable time for 
-            // gameplay (currently 2 seconds).
-            result = 0.5;
+            result = 0.2;
 
             Config.getROBOTTOCAMERA_ROBOTX(); 
             result = 1.0;
@@ -56,7 +53,7 @@ public class DriverAssistVisionTest {
         }};
 
         // Run the test
-        double distanceCameraToTarget_Camera = 2.0*1.414213562373095;
+        double distanceCameraToTarget_Camera = 6.0*1.414213562373095;  //2.0
         double yawAngleCameraToTarget_Camera = -45.0;
         boolean driverAssistCargoAndLoading = true;
         boolean driverAssistRocket = false;
@@ -72,6 +69,7 @@ public class DriverAssistVisionTest {
                 driverAssistCargoAndLoading, driverAssistRocket);
             Trajectory traj = driverAssistVision.getTraj();
 
+            System.out.println("angRobotHeadingFinal_Field(): " + driverAssistVision.getAngRobotHeadingFinal_Field());
             System.out.println("traj.length(): " + traj.length());
             System.out.println("traj.segments[0].x: " + traj.segments[0].x);
             System.out.println("traj.segments[0].y: " + traj.segments[0].y);
@@ -82,8 +80,8 @@ public class DriverAssistVisionTest {
             assertEquals(driverAssistVision.getAngRobotHeadingFinal_Field(), expectedAngRobotHeadingFinal_Field[i], 0.1);
             assertEquals(traj.segments[0].y, 0.0, 0.3);
             assertEquals(traj.segments[0].heading, Pathfinder.d2r(90.0), 0.3);
-            assertEquals(traj.segments[traj.length()-1].x, -1.0, 0.3);
-            assertEquals(traj.segments[traj.length()-1].y, 2.5, 0.3);
+            assertEquals(traj.segments[traj.length()-1].x, -5.0, 0.3);
+            assertEquals(traj.segments[traj.length()-1].y, 6.5, 0.3);
             assertEquals(traj.segments[traj.length()-1].heading, Pathfinder.d2r(90.0), 0.3);
         }
     }
@@ -102,10 +100,7 @@ public class DriverAssistVisionTest {
             returns(60.0, 0.0, 300.0, 120.0, 180.0, 240.0);
 
             Config.getTRAJ_DELTA_TIME();
-            // The value below may seem high, but it is what is currently needed to 
-            // get Pathinder to generate a trajectory in a borderline usable time for 
-            // gameplay (currently 2 seconds).
-            result = 0.5;
+            result = 0.2;
 
             Config.getROBOTTOCAMERA_ROBOTX(); 
             result = 1.0;
@@ -118,7 +113,7 @@ public class DriverAssistVisionTest {
         }};
 
         // Run the test
-        double distanceCameraToTarget_Camera = 2.0*1.414213562373095;
+        double distanceCameraToTarget_Camera = 6.0*1.414213562373095;
         double yawAngleCameraToTarget_Camera = -45.0;
         boolean driverAssistCargoAndLoading = false;
         boolean driverAssistRocket = true;
@@ -143,8 +138,8 @@ public class DriverAssistVisionTest {
             assertEquals(driverAssistVision.getAngRobotHeadingFinal_Field(), expectedAngRobotHeadingFinal_Field[i], 0.1);
             assertEquals(traj.segments[0].y, 0.0, 0.3);
             assertEquals(traj.segments[0].heading, Pathfinder.d2r(90.0), 0.3);
-            assertEquals(traj.segments[traj.length()-1].x, -1.0, 0.3);
-            assertEquals(traj.segments[traj.length()-1].y, 2.5, 0.3);
+            assertEquals(traj.segments[traj.length()-1].x, -5.0, 0.3);
+            assertEquals(traj.segments[traj.length()-1].y, 6.5, 0.3);
             assertEquals(traj.segments[traj.length()-1].heading, Pathfinder.d2r(90.0), 0.3);
         }
     }

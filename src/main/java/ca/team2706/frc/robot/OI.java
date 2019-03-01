@@ -112,7 +112,7 @@ public class OI {
     /**
      * Gets a boolean indicating if the DriverAssistLaser button is pressed.
      *
-     * @return True if the DriverAssistVisionRocket button is pressed, false otherwise.
+     * @return True if the DriverAssistLaser button is pressed, false otherwise.
      */
     public boolean getButtonDriverAssistLaser() {
         return buttonDriverAssistLaser.get();

@@ -17,11 +17,10 @@ import jaci.pathfinder.Waypoint;
  * Command for 2-D driver assist using vision
  * 
  * This will drive the robot from its current position and heading to a position 
- * at a specific distance in front of and aligned with a target (cargo ship, rocket, 
- * or loading bay) using data provided by the vision system. The vision system will 
- * send data corresponding to the target nearest to the camera. The distance in front 
- * of the target or loading bay is specified in the TARGET_OFFSET_DISTANCE attribute 
- * of the Config class.
+ * at a specific distance in front of and aligned with the nearest target (either on 
+ * the cargo ship, rocket, or loading bay) using data provided by the vision system. 
+ * The distance in front of the target or loading bay is specified in the TARGET_OFFSET_DISTANCE 
+ * attribute of the Config class.
  * 
  * For the feature to work properly, the following must hold
  *     i.  the robot must have a heading that is "most facing" the desired target compared 
@@ -44,8 +43,12 @@ public class DriverAssistVision extends Command {
         requires(DriveBase.getInstance());
 
         setupNetworkTables();
+
+        commandAborted = false;
         trajGenerated = false;
         visionOffline = false;
+        angYawTargetWrtCameraLOSCWposPrev = 0.0;
+        distanceCameraToTarget_CameraPrev = 0.0;
     }
 
     /**
@@ -62,8 +65,12 @@ public class DriverAssistVision extends Command {
         requires(DriveBase.getInstance());
 
         setupNetworkTables();
+
+        commandAborted = false;
         trajGenerated = false;
         visionOffline = false;
+        angYawTargetWrtCameraLOSCWposPrev = 0.0;
+        distanceCameraToTarget_CameraPrev = 0.0;
     }
 
     /** 
@@ -82,15 +89,19 @@ public class DriverAssistVision extends Command {
     @Override
     public void initialize() {
 
+        // See method generateTrajectoryRobotToTarget(...) for an explanation of variable names and coodinate
+        // frames
+
         System.out.println("DAV: initialize() called");
 
         DriveBase.getInstance().setBrakeMode(true);
         DriveBase.getInstance().setPositionNoGyroMode();
 
+        commandAborted = false;
         trajGenerated = false;
 
-        // Get angle and position of vision target computed by vision subsystem in camera frame
-        // from network table
+        // Get angle and position of vision target in camera frame from network table
+        // (computed by vision subsystem)
         NetworkTableEntry vectorCameraToTarget = table.getEntry("vectorCameraToTarget");
 
         double[] vectorCameraToTarget_Camera = vectorCameraToTarget.getDoubleArray(new double[] {0,0});
@@ -103,7 +114,7 @@ public class DriverAssistVision extends Command {
         // Due to the inherent jitter of values computed by the vision system, it is next to impossible
         // that values of yaw angle and distance to target will both be equal on successive commands unless
         // the vision system is not updating them for some reason. Therefore, is this occurs, consider
-        // vision system offline. If they are different on any successive commands, consider vision system
+        // vision system offline. If they are different on successive commands, consider vision system
         // online.
         if ((angYawTargetWrtCameraLOSCWpos == angYawTargetWrtCameraLOSCWposPrev) &&
             (distanceCameraToTarget_Camera == distanceCameraToTarget_CameraPrev)    ) {
@@ -111,10 +122,13 @@ public class DriverAssistVision extends Command {
         } else {
             visionOffline = false;
         }
+        angYawTargetWrtCameraLOSCWposPrev = angYawTargetWrtCameraLOSCWpos;
+        distanceCameraToTarget_CameraPrev = distanceCameraToTarget_Camera;
 
-        if(visionOffline) {
+        // Abort if vision is offline or vision system is giving an unreasonably low value 
+        if(visionOffline || distanceCameraToTarget_Camera < Config.VISION_DISTANCE_MIN.value()) {
             Log.d("DAV: Vision system offline. Driver assist command not performed.");
-            trajGenerated = true;
+            commandAborted = true;
             return;
         }
 
@@ -124,7 +138,7 @@ public class DriverAssistVision extends Command {
         generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, angYawTargetWrtCameraLOSCWpos,
                 driverAssistCargoAndLoading, driverAssistRocket);
 
-        System.out.println("RCVI: Exiting initialize()");
+        System.out.println("DAV: Exiting initialize()");
 
         trajGenerated = true;
     }
@@ -136,7 +150,7 @@ public class DriverAssistVision extends Command {
 
     @Override
     public boolean isFinished() {
-        return trajGenerated;
+        return (trajGenerated || commandAborted);
     };
 
     @Override
@@ -169,20 +183,15 @@ public class DriverAssistVision extends Command {
          * 
          * A vector from point P1 to point P2 represented in a coordinate frame F3 is written as vP1ToP2_F3.
          * 
-         * The x and y components of this vector are written as vP1ToP2_F3_X and vP1ToP2_F3_Y. Note that it
-         * only makes sense to speak of x and y coordinates in relation to a coordinate frame which in this
-         * case is F3.
+         * The x and y components of this vector are written as vP1ToP2_F3X and vP1ToP2_F3Y. Note that it
+         * only makes sense to speak of x and y coordinates in relation to a coordinate frame (which in this
+         * case is F3).
          * 
-         * Points P1 or P2 can also be the origin of a coordinate frames. In this case, P1 is replaced by
+         * Points P1 or P2 can also be the origin of a coordinate frame. In this case, P1 is replaced by
          * the name of the frame. Thus, if F1, F2, and F3 are coordinatre frames, then vF1ToF2_F3 represents 
          * the vector from the origin of frame F1 to the origin of frame F2 represented in the frame F3. 
          * 
          * In this class, all vectors represent distances measured in feet.
-         *
-         * An angle in the 2-d plane is the angular measurement between two lines: the line of interest
-         * and a reference line. Angles will be measured in degrees and will increase in a counter-clockwise 
-         * direction unless otherwise noted. The name of the angle should make clear what the line of interest
-         * and the line of reference are, and whether
          *  
          * An angle in the 2-d plane can be defined with respect to a particular coordinate frame as the 
          * angle between the line of interest and the x-axis of the coordinate frame. An angle between 
@@ -191,25 +200,26 @@ public class DriverAssistVision extends Command {
          * of radians (which is needed when the sin or cos of an angle is taken), then the text "Rad" will be 
          * added after the name of the line of interest. Thus the previous angle in radians would be 
          * angZZZRad_F1. Angles are assumed to increase in the counter-clockwise direction by default. If an 
-         * angle increases in the clockwise direction, the "CWpos" will be added after the name and after the
-         * "Rad" text. In this case, the original example measurement in radians and where the angle increases
-         * in the clockwise direction would be written as angZZZRadCWpos.
+         * angle increases in the clockwise direction, "CWpos" will be added after the name and after the
+         * "Rad" text. In this case, if the original example is in units of radians and if the angle increases
+         * in the clockwise direction, it would be written as angZZZRadCWpos.
          * 
          * An angle in the 2-d plane can also be defined as the angular measurement between the line of
          * interest and a suitably chosen reference line. This will be written as angZZZWrtWWW where
          * ZZZ is the name of the line of interest and WWW is the name of the reference line. Use of
-         * non-default units of degrees or positive angle direction are represented as described above.
+         * non-default units of degrees or a clockwise positive angle direction are represented as 
+         * described above.
          * 
-         * The three coordinate frame of interest are given below. Note that these are planar frames and
+         * The three coordinate frames of interest are given below. Note that these are planar frames and
          * their height is not relevant for the model used in this class.
          * 
          *   Camera: Coordinate frame attached to camera with origin at focal point of lens, y axis 
          *           pointing along the camera line of sight, and x axis pointing to the right when 
-         *           looking from the front to the back of the camera.
+         *           looking from the back to the front of the camera.
          * 
          *   Robot:  Coordinate frame attached to camera with origin at the centre of the robot base, 
          *           y axis pointing toward the front along the centre line, and x axis pointing to 
-         *           the right when looking from the front to the back of the robot.
+         *           the right when looking from the back to the front of the robot.
          * 
          *   Field:  Coordinate frame attached to field where the origin is in the lower left corner 
          *           of the field, the y axis points down the field and the x axis points horizontally 
@@ -223,7 +233,8 @@ public class DriverAssistVision extends Command {
          *           the target is at the centre of the tape.
          * 
          *   Final:  Final position of robot as represented by the location of the origin of the robot
-         *           frame. This is offset by a user-specified distance from the front of the target.
+         *           frame. This is offset by a user-specified distance Config.TARGET_OFFSET_DISTANCE
+         *           from the front of the target.
          * 
          */ 
 
@@ -269,7 +280,11 @@ public class DriverAssistVision extends Command {
         System.out.println("DAV: vec_TargetToFinalX_Field: " + vTargetToFinal_FieldX + ", vTargetToFinal_FieldY: " + vTargetToFinal_FieldY);
         
         // Vector 3: vTargetToFinal_Robot: Vector from target to final robot position in robot frame
-        double angRobotCurrent_Field = angRobotHeadingCurrent_Field - 90.0;  // robot is along y of robot frame but want angle to x
+        //           (need to do a coordinate frame transformation on vTargetToFinal_Field)
+        // Note: angRobotCurrent_Field is the current angle from the x axis of robot frame with respect to the
+        //       x axis of the field frame, and the x axis of the robot frame is 90deg less than the robot heading
+        //       which points along the y axis by definition
+        double angRobotCurrent_Field = angRobotHeadingCurrent_Field - 90.0;  
         double angRobotCurrentRad_Field = Pathfinder.d2r(angRobotCurrent_Field);
         double cosAngRobotCurrentRad_Field = Math.cos(angRobotCurrentRad_Field);
         double sinAngRobotCurrentRad_Field = Math.sin(angRobotCurrentRad_Field);
@@ -283,11 +298,11 @@ public class DriverAssistVision extends Command {
         double vRobotToFinal_RobotY = vRobotToCamera_RobotY + vCameraToTarget_RobotY + vTargetToFinal_RobotY;
         System.out.println("DAV: vRobotToFinal_RobotX: " + vRobotToFinal_RobotX + ", vRobotToFinal_RobotY: " + vRobotToFinal_RobotY);
 
-        // Compute final robot heading in robot frame
+        // STEP 2: Compute final robot heading in robot frame
         double angRobotHeadingFinal_Robot = angRobotHeadingFinal_Field - angRobotCurrent_Field;
         Log.d("DAV: angRobotHeadingFinal_Robot: " + angRobotHeadingFinal_Robot);
 
-        // Generate trajectory in robot frame with PathFinder library using two waypoints: one at initial position
+        // STEP 3: Generate trajectory in robot frame with PathFinder library using two waypoints: one at initial position
         // and one at final position
         Log.d("DAV: Generating trajectory");
         Trajectory.Config config = 
@@ -397,7 +412,7 @@ public class DriverAssistVision extends Command {
      * Angle of robot heading with respect to x axis of field frame
      * 
     */
-    private double angRobotHeadingFinal_Field;
+    private double angRobotHeadingFinal_Field = 0.0;
 
     /**  
      * Value of angYawTargetWrtCameraLOSCWposAngle (yaw angle to target wrt camera line of sight in degrees)
@@ -406,22 +421,24 @@ public class DriverAssistVision extends Command {
     */
     private double angYawTargetWrtCameraLOSCWposPrev = 0.0;
 
-   /**  
+    private boolean commandAborted;
+
+    /**  
      * Value of distanceCameraToTarget_Camera (distance from camera frame origin to target in feet)
      * from the previous time the command was issued.
      * 
     */
-    private double distanceCameraToTarget_CameraPrev;
+    private double distanceCameraToTarget_CameraPrev = 0.0;
 
     /**
      * True if target is cargo ship or loading bay
      */
-    private boolean driverAssistCargoAndLoading;
+    private boolean driverAssistCargoAndLoading = false;
 
     /**
      * True if target is rocket
      */
-    private boolean driverAssistRocket;
+    private boolean driverAssistRocket = false;
 
     /**
      * Network table instance to get data from vision subsystem

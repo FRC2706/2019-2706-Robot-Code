@@ -1,7 +1,10 @@
 package ca.team2706.frc.robot.subsystems;
 
 import ca.team2706.frc.robot.config.Config;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -13,7 +16,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Intake extends Subsystem {
     private static Intake currentInstance;
 
-    private WPI_TalonSRX intakeMotor;
+    private VictorSPX intakeMotor;
     private AnalogInput irSensor;
 
     private DoubleSolenoid intakeLiftSolenoid;
@@ -51,7 +54,7 @@ public class Intake extends Subsystem {
      * @param intakeLiftSolenoid   The intake's lift solenoid object.
      * @param hatchEjectorSolenoid The pneumatic piston hatch ejector solenoid.
      */
-    private Intake(WPI_TalonSRX intakeTalon, AnalogInput irSensor, DoubleSolenoid intakeLiftSolenoid, DoubleSolenoid hatchEjectorSolenoid) {
+    private Intake(VictorSPX intakeTalon, AnalogInput irSensor, DoubleSolenoid intakeLiftSolenoid, DoubleSolenoid hatchEjectorSolenoid) {
         this.intakeMotor = intakeTalon;
         this.irSensor = irSensor;
         this.intakeLiftSolenoid = intakeLiftSolenoid;
@@ -64,7 +67,7 @@ public class Intake extends Subsystem {
      * Constructs a new Intake.
      */
     private Intake() {
-        this(new WPI_TalonSRX(Config.INTAKE_MOTOR_ID),
+        this(new VictorSPX(Config.INTAKE_MOTOR_ID),
                 new AnalogInput(Config.CARGO_IR_SENSOR_ID),
                 new DoubleSolenoid(Config.INTAKE_LIFT_SOLENOID_FORWARD_ID, Config.INTAKE_LIFT_SOLENOID_BACKWARD_ID),
                 new DoubleSolenoid(Config.HATCH_EJECTOR_SOLENOID_FORWARD_ID, Config.HATCH_EJECTOR_SOLENOID_BACKWARD_ID));
@@ -114,23 +117,22 @@ public class Intake extends Subsystem {
     /**
      * Spins the wheels to intake cargo.
      *
-     * @param speed speed at which to change the wheels, between 0 and 1.
+     * @param percentSpeed speed at which to change the wheels, between 0 and 1.
      */
-    public void inhaleCargo(double speed) {
+    public void inhaleCargo(final double percentSpeed) {
         if (currentMode == IntakeMode.CARGO) {
-            intakeMotor.set(Math.abs(speed * Config.MAX_INTAKE_SPEED));
+            intakeMotor.set(ControlMode.PercentOutput, Math.abs(percentSpeed * Config.MAX_INTAKE_SPEED));
         }
     }
 
     /**
      * Spins the wheels to eject cargo.
      *
-     * @param speed Speed at which to spin the wheels, between 0 and 1.
+     * @param percentSpeed Speed at which to spin the wheels, between 0 and 1.
      */
-    public void exhaleCargo(double speed) {
+    public void exhaleCargo(final double percentSpeed) {
         if (currentMode == IntakeMode.CARGO) {
-            speed = -(Math.abs(speed * Config.MAX_INTAKE_SPEED));
-            intakeMotor.set(speed);
+            intakeMotor.set(ControlMode.PercentOutput ,-(Math.abs(percentSpeed * Config.MAX_INTAKE_SPEED)));
         }
     }
 
@@ -138,7 +140,7 @@ public class Intake extends Subsystem {
      * Stop motors
      */
     public void stop() {
-        intakeMotor.set(0);
+        intakeMotor.set(ControlMode.PercentOutput, 0);
     }
 
     /**
@@ -172,10 +174,8 @@ public class Intake extends Subsystem {
     /**
      * Extends the hatch deployment cylinder
      */
-    public void ejectHatch() {
-        if (currentMode == IntakeMode.HATCH) {
-            hatchEjectorSolenoid.set(DoubleSolenoid.Value.kForward);
-        }
+    public void deployPlunger() {
+        hatchEjectorSolenoid.set(DoubleSolenoid.Value.kForward);
     }
 
     /**

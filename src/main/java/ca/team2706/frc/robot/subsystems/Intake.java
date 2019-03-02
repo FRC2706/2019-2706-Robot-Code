@@ -70,7 +70,7 @@ public class Intake extends Subsystem {
         final double irValue;
 
         // We only want to be reading the real ir sensor if we're supposed to be dealing with cargo.
-        if (IntakePneumatics.getInstance().getMode() == IntakePneumatics.IntakeMode.CARGO) {
+        if (Pneumatics.getInstance().getMode() == Pneumatics.IntakeMode.CARGO) {
             irValue = irSensor.getVoltage();
         }
         // Otherwise we say 0 since we're dealing with hatches.
@@ -87,7 +87,7 @@ public class Intake extends Subsystem {
      * @param percentSpeed speed at which to change the wheels, between 0 and 1.
      */
     public void runIntakeForward(final double percentSpeed) {
-        if (IntakePneumatics.getInstance().getMode() == IntakePneumatics.IntakeMode.CARGO) {
+        if (Pneumatics.getInstance().getMode() == Pneumatics.IntakeMode.CARGO) {
             intakeMotor.set(ControlMode.PercentOutput, Math.abs(percentSpeed * Config.MAX_INTAKE_SPEED));
         }
     }
@@ -98,7 +98,7 @@ public class Intake extends Subsystem {
      * @param percentSpeed Speed at which to spin the wheels, between 0 and 1.
      */
     public void runIntakeBackward(final double percentSpeed) {
-        if (IntakePneumatics.getInstance().getMode() == IntakePneumatics.IntakeMode.CARGO) {
+        if (Pneumatics.getInstance().getMode() == Pneumatics.IntakeMode.CARGO) {
             intakeMotor.set(ControlMode.PercentOutput, -(Math.abs(percentSpeed * Config.MAX_INTAKE_SPEED)));
         }
     }

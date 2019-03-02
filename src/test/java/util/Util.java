@@ -19,6 +19,7 @@ public class Util {
         setCurrentInstanceFieldNull(DriveBase.class);
         setCurrentInstanceFieldNull(Intake.class);
         setCurrentInstanceFieldNull(Lift.class);
+        setCurrentInstanceFieldNull(Pneumatics.class);
     }
 
     /**

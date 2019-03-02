@@ -1,7 +1,7 @@
 package ca.team2706.frc.robot.commands.intake.arms;
 
 import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.subsystems.IntakePneumatics;
+import ca.team2706.frc.robot.subsystems.Pneumatics;
 import edu.wpi.first.wpilibj.command.TimedCommand;
 
 /**
@@ -11,17 +11,17 @@ public class LowerArms extends TimedCommand {
 
     public LowerArms() {
         super(Config.INTAKE_ARMS_DELAY);
-        requires(IntakePneumatics.getInstance());
+        requires(Pneumatics.getInstance());
     }
 
     @Override
     protected void initialize() {
-        IntakePneumatics.getInstance().lowerArms();
+        Pneumatics.getInstance().lowerArms();
     }
 
     @Override
     protected void end() {
         super.end();
-        IntakePneumatics.getInstance().stopArmsPneumatics();
+        Pneumatics.getInstance().stopArmsPneumatics();
     }
 }

@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  * Subsystem for controlling pneumatics involved in intake.
  * This means the arms pneumatics and the plunger are controlled here.
  */
-public class IntakePneumatics extends Subsystem {
-    private static IntakePneumatics currentInstance;
+public class Pneumatics extends Subsystem {
+    private static Pneumatics currentInstance;
 
     private DoubleSolenoid intakeLiftSolenoid;
     private DoubleSolenoid hatchEjectorSolenoid;
@@ -37,35 +37,35 @@ public class IntakePneumatics extends Subsystem {
      */
     public static void init() {
         if (currentInstance == null) {
-            currentInstance = new IntakePneumatics();
+            currentInstance = new Pneumatics();
         }
     }
 
     /**
-     * Gets the current IntakePneumatics instance.
+     * Gets the current Pneumatics instance.
      *
-     * @return The current IntakePneumatics instance.
+     * @return The current Pneumatics instance.
      */
-    public static IntakePneumatics getInstance() {
+    public static Pneumatics getInstance() {
         init();
         return currentInstance;
     }
 
     /**
-     * Constructs a new IntakePneumatics with default DoubleSolenoids.
+     * Constructs a new Pneumatics with default DoubleSolenoids.
      */
-    private IntakePneumatics() {
+    private Pneumatics() {
         this(new DoubleSolenoid(Config.INTAKE_LIFT_SOLENOID_FORWARD_ID, Config.INTAKE_LIFT_SOLENOID_BACKWARD_ID),
                 new DoubleSolenoid(Config.HATCH_EJECTOR_SOLENOID_FORWARD_ID, Config.HATCH_EJECTOR_SOLENOID_BACKWARD_ID));
     }
 
     /**
-     * Constructs a new IntakePneumatics with the given double solenoids.
+     * Constructs a new Pneumatics with the given double solenoids.
      *
      * @param intakeLiftSolenoid   The intake lift double solenoid.
      * @param hatchEjectorSolenoid The hatch ejector (plunger) solenoid.
      */
-    private IntakePneumatics(final DoubleSolenoid intakeLiftSolenoid, final DoubleSolenoid hatchEjectorSolenoid) {
+    private Pneumatics(final DoubleSolenoid intakeLiftSolenoid, final DoubleSolenoid hatchEjectorSolenoid) {
         this.intakeLiftSolenoid = intakeLiftSolenoid;
         this.hatchEjectorSolenoid = hatchEjectorSolenoid;
     }
@@ -75,7 +75,7 @@ public class IntakePneumatics extends Subsystem {
      *
      * @return The intake's current mode.
      */
-    public IntakePneumatics.IntakeMode getMode() {
+    public Pneumatics.IntakeMode getMode() {
         return mode;
     }
 

@@ -2,7 +2,7 @@ package ca.team2706.frc.robot.commands.intake;
 
 import ca.team2706.frc.robot.commands.intake.cargo.AutoEjectCargo;
 import ca.team2706.frc.robot.commands.intake.hatch.EjectHatch;
-import ca.team2706.frc.robot.subsystems.IntakePneumatics;
+import ca.team2706.frc.robot.subsystems.Pneumatics;
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
 
 /**
@@ -20,6 +20,6 @@ public class EjectConditional extends ConditionalCommand {
 
     @Override
     protected boolean condition() {
-        return IntakePneumatics.getInstance().getMode() == IntakePneumatics.IntakeMode.CARGO;
+        return Pneumatics.getInstance().getMode() == Pneumatics.IntakeMode.CARGO;
     }
 }

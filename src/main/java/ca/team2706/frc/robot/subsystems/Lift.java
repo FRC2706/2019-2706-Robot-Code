@@ -215,8 +215,8 @@ public class Lift extends Subsystem {
      *
      * @return The intake mode
      */
-    private static IntakePneumatics.IntakeMode getIntakeMode() {
-        return IntakePneumatics.getInstance().getMode();
+    private static Pneumatics.IntakeMode getIntakeMode() {
+        return Pneumatics.getInstance().getMode();
     }
 
     /**

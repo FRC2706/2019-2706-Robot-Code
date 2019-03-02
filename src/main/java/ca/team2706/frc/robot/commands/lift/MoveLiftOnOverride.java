@@ -31,6 +31,12 @@ public class MoveLiftOnOverride extends Command {
     }
 
     @Override
+    protected void end() {
+        super.end();
+        Lift.getInstance().stop();
+    }
+
+    @Override
     protected boolean isFinished() {
         return false;
     }

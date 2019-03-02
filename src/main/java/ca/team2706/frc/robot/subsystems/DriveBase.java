@@ -127,7 +127,7 @@ public class DriveBase extends Subsystem {
         setBrakeMode(false);
 
         loggingNotifier = new Notifier(this::log);
-        loggingNotifier.startPeriodic(Config.LOG_PERIOD);
+//        loggingNotifier.startPeriodic(Config.LOG_PERIOD); // TODO logging causing loop time to overrun.
     }
 
     /**

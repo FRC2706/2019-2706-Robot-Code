@@ -1,9 +1,14 @@
 package ca.team2706.frc.robot.subsystems;
 
+import ca.team2706.frc.robot.commands.lift.HoldLift;
 import ca.team2706.frc.robot.config.Config;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import java.util.Arrays;
 
 /**
  * Subsystem that controls the elevator on the robot
@@ -16,14 +21,14 @@ public class Lift extends Subsystem {
     public WPI_TalonSRX liftMotor;
 
     private static final double[] CARGO_SETPOINTS = {
-            0, // Bottom for ground pickup
+            0, // Bottom for ground pickup // TODO get good heights.
             2.291667, // lowest in feet
             4.625, // med in feet
             6.958333 // highest in feet
     };
 
     private static final double[] HATCH_SETPOINTS = {
-            0, // Loading station pickup // TODO get goodo height for this.
+            0, // Loading station pickup // TODO get good height for this.
             1.583, // lowest in feet
             3.917, // med in feet
             6.25 // highest in feet
@@ -62,6 +67,11 @@ public class Lift extends Subsystem {
         setupTalonConfig();
     }
 
+    @Override
+    protected void initDefaultCommand() {
+
+    }
+
     /**
      * Sets up the talon configuration.
      */
@@ -71,7 +81,6 @@ public class Lift extends Subsystem {
         liftMotor.setInverted(Config.INVERT_LIFT_MOTOR);
 
         liftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_LONG);
-        liftMotor.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.CTRE_MagEncoder_Relative, Config.CAN_LONG);
         liftMotor.configSelectedFeedbackCoefficient(0.5, 0, Config.CAN_LONG);
         liftMotor.setSensorPhase(Config.ENABLE_LIFT_SUM_PHASE.value());
         liftMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Config.CAN_LONG);
@@ -79,8 +88,8 @@ public class Lift extends Subsystem {
         liftMotor.configNeutralDeadband(Config.LIFT_CLOSED_LOOP_DEADBAND.value());
 
         liftMotor.config_kP(0, Config.LIFT_P.value());
-        liftMotor.config_kP(0, Config.LIFT_I.value());
-        liftMotor.config_kP(0, Config.LIFT_D.value());
+        liftMotor.config_kI(0, Config.LIFT_I.value());
+        liftMotor.config_kD(0, Config.LIFT_D.value());
 
         liftMotor.configClosedLoopPeriod(0, 1, Config.CAN_LONG);
 
@@ -111,15 +120,15 @@ public class Lift extends Subsystem {
     }
 
     @Override
-    public void initDefaultCommand() {
-    }
-
-    @Override
     public void periodic() {
         super.periodic();
         if (liftMotor.getSelectedSensorPosition() < 0) {
             zeroEncoderTicks();
         }
+
+        SmartDashboard.putNumber("Lift Encoders", liftMotor.getSelectedSensorPosition());
+        SmartDashboard.putBoolean("Lift Rev Switch", liftMotor.getSensorCollection().isRevLimitSwitchClosed());
+        SmartDashboard.putBoolean("Lift Fwd Switch", liftMotor.getSensorCollection().isFwdLimitSwitchClosed());
     }
 
     /**
@@ -161,7 +170,7 @@ public class Lift extends Subsystem {
     public void setPosition(final double maxSpeed, final double position) {
         enableLimit(true);
         liftMotor.configClosedLoopPeakOutput(0, maxSpeed);
-        liftMotor.set(ControlMode.MotionMagic, position / Config.LIFT_ENCODER_DPP);
+        liftMotor.set(ControlMode.Position, position / Config.LIFT_ENCODER_DPP); // TODO go back to motion magic
     }
 
     /**
@@ -189,12 +198,13 @@ public class Lift extends Subsystem {
      * Overrides limits on the talons to go up with override.
      */
     public void overrideUp() {
+        enableLimit(false);
         liftMotor.set(Config.LIFT_OVERRIDE_UP_SPEED);
     }
 
     public void overrideDown() {
         enableLimit(false);
-        liftMotor.set(-Config.LIFT_OVERRIDE_DOWN_SPEED);
+        liftMotor.set(Config.LIFT_OVERRIDE_DOWN_SPEED);
     }
 
     /**
@@ -251,6 +261,14 @@ public class Lift extends Subsystem {
      */
     public double getLiftHeight() {
         return liftMotor.getSelectedSensorPosition() * Config.LIFT_ENCODER_DPP;  // TODO make sure this is right.
+    }
+
+    /**
+     * Gets the lift height in encoder ticks.
+     * @return The lift height in encoder ticks.
+     */
+    public int getLiftHeightEncoderTicks() {
+        return liftMotor.getSelectedSensorPosition();
     }
 
     /**

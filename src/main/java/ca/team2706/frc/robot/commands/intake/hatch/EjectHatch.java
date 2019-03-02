@@ -18,7 +18,7 @@ public class EjectHatch extends CommandGroup {
     public EjectHatch() {
         requires(Intake.getInstance());
 
-        addSequential(new MovePlunger(false)); // Put plunger out and wait (timed command).
+        addSequential(new MovePlunger(MovePlunger.DesiredState.DEPLOYED)); // Put plunger out and wait (timed command).
         // Move lift down slightly
         addSequential(new InstantCommand(() -> Lift.getInstance().addToHeight(-Config.SUBTRACT_LIFT_HEIGHT)));
     }

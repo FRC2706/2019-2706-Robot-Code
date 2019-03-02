@@ -24,6 +24,7 @@ public class MoveLiftToSetpoints extends Command {
 
     @Override
     protected void execute() {
+        System.out.println("Going to setpoint: " + setpoint); // TODO Remove
         Lift.getInstance().moveToSetpoint(1.0, setpoint);
     }
 

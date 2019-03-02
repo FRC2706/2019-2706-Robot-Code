@@ -3,9 +3,7 @@ package ca.team2706.frc.robot.subsystems;
 import ca.team2706.frc.robot.config.Config;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -21,6 +19,16 @@ public class Intake extends Subsystem {
 
     private DoubleSolenoid intakeLiftSolenoid;
     private DoubleSolenoid hatchEjectorSolenoid;
+
+    /**
+     * The current status of the intake arms, whether they're in hatch mode or in cargo mode.
+     */
+    private IntakeMode mode = IntakeMode.HATCH; // Always start in hatch mode.
+
+    /**
+     * True if the plunger is out, false otherwise.
+     */
+    private boolean plungerExtended = false;
 
     /**
      * Gets the current instance of this subsystem, creating it if it doesn't exist.
@@ -74,19 +82,6 @@ public class Intake extends Subsystem {
      * @return The intake's current mode.
      */
     public IntakeMode getMode() {
-        final IntakeMode mode;
-        switch (intakeLiftSolenoid.get()) {
-            case kForward:
-                mode = IntakeMode.CARGO;
-                break;
-            case kReverse:
-                mode = IntakeMode.HATCH;
-                break;
-            default:
-                mode = null;
-                break;
-        }
-
         return mode;
     }
 
@@ -140,7 +135,7 @@ public class Intake extends Subsystem {
      */
     public void runIntakeBackward(final double percentSpeed) {
         if (getMode() == IntakeMode.CARGO) {
-            intakeMotor.set(ControlMode.PercentOutput ,-(Math.abs(percentSpeed * Config.MAX_INTAKE_SPEED)));
+            intakeMotor.set(ControlMode.PercentOutput, -(Math.abs(percentSpeed * Config.MAX_INTAKE_SPEED)));
         }
     }
 
@@ -166,7 +161,8 @@ public class Intake extends Subsystem {
     public void lowerIntake() {
         // We don't want to lower the intake onto the plunger.
         if (isPlungerStowed()) {
-            intakeLiftSolenoid.set(DoubleSolenoid.Value.kForward);
+            intakeLiftSolenoid.set(DoubleSolenoid.Value.kReverse);
+            mode = IntakeMode.CARGO;
         }
     }
 
@@ -174,21 +170,38 @@ public class Intake extends Subsystem {
      * Raises the intake arms in preparation for manipulating hatches.
      */
     public void raiseIntake() {
-        intakeLiftSolenoid.set(DoubleSolenoid.Value.kReverse);
+        intakeLiftSolenoid.set(DoubleSolenoid.Value.kForward);
+        mode = IntakeMode.HATCH;
+    }
+
+    /**
+     * Turns off the intake arms pneumatics.
+     */
+    public void stopArmsPneumatics() {
+        intakeLiftSolenoid.set(DoubleSolenoid.Value.kOff);
     }
 
     /**
      * Extends the hatch deployment cylinder
      */
     public void deployPlunger() {
-        hatchEjectorSolenoid.set(DoubleSolenoid.Value.kForward);
+        hatchEjectorSolenoid.set(DoubleSolenoid.Value.kReverse);
+        plungerExtended = true;
     }
 
     /**
      * Retracts the hatch deployment cylinder
      */
     public void retractPlunger() {
-        hatchEjectorSolenoid.set(DoubleSolenoid.Value.kReverse);
+        hatchEjectorSolenoid.set(DoubleSolenoid.Value.kForward);
+        plungerExtended = false;
+    }
+
+    /**
+     * Turns the pneumatics for the plunger piston off.
+     */
+    public void stopPlunger() {
+        hatchEjectorSolenoid.set(DoubleSolenoid.Value.kOff);
     }
 
     /**
@@ -197,7 +210,7 @@ public class Intake extends Subsystem {
      * @return True if the plunger is stowed, false otherwise.
      */
     public boolean isPlungerStowed() {
-        return hatchEjectorSolenoid.get() == DoubleSolenoid.Value.kReverse;
+        return !plungerExtended;
     }
 
 }

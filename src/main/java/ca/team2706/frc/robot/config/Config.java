@@ -84,14 +84,14 @@ public class Config {
              */
             AUTO_EJECT_CARGO_INTAKE_SPEED = 1.0,
             // Max speed of the lift going down in override (between -1 and 0).
-            LIFT_OVERRIDE_DOWN_SPEED =-0.4;
+            LIFT_OVERRIDE_DOWN_SPEED = -0.2;
 
 
     public static boolean
             INVERT_LIFT_MOTOR = robotSpecific(false, false, false),
             ENABLE_LIFT_CURRENT_LIMIT = robotSpecific(false, false, false);
 
-    public static int MAX_LIFT_ENCODER_TICKS = 300000; // TODO need actual value here.
+    public static int MAX_LIFT_ENCODER_TICKS = 52_000;
 
 
     public static final boolean ENABLE_DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);
@@ -111,7 +111,7 @@ public class Config {
      * The amount of encoder ticks that the robot must move the lift to travel one foot
      */
     public static final double LIFT_ENCODER_DPP
-            = robotSpecific(Math.PI / 8192.0, Math.PI / 8192.0, Math.PI / 8192.0);
+            = robotSpecific(0.7 * Math.PI / 16_384.0, 0.7 * Math.PI / 16_384.0, 0.7 * Math.PI / 16_384.0);
 
     public static final double PIGEON_DPP = robotSpecific(360.0 / 8192.0, 360.0 / 8192.0, 360.0 / 8192.0);
 
@@ -132,7 +132,7 @@ public class Config {
     /**
      * Amount of time (in seconds) that it takes for the plunger to be stowed.
      */
-    public static final double PLUNGER_TIMEOUT = 1.0;
+    public static final double PLUNGER_TIMEOUT = 0.5;
     /**
      * How long the intake motors should be running before the plunger deploys.
      */
@@ -144,7 +144,7 @@ public class Config {
     public static final double SUBTRACT_LIFT_HEIGHT = 0.0833;
 
 
-    public static final double MAX_INTAKE_SPEED = 0.5; //to be finalized later, this has yet to be tested
+    public static final double MAX_INTAKE_SPEED = 1.0; //to be finalized later, this has yet to be tested
 
     public static final double[] ENCODER_LIFT_PID_UP = {0.5, 0, 50}; //to be finalized later, these values have not yet been tested
 
@@ -206,7 +206,7 @@ public class Config {
     /**
      * The minimum reading on the cargo IR sensor to assert that we have cargo in the mechanism.
      */
-    public static final FluidConstant<Double> CARGO_CAPTURED_IR_VOLTAGE = constant("cargo-ir-distance", 1.0);
+    public static final FluidConstant<Double> CARGO_CAPTURED_IR_VOLTAGE = constant("cargo-ir-distance", 0.625);
 
     // ### Methods, fields and Constructors ###
     /**

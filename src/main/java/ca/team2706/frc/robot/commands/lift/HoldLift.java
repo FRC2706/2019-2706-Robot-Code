@@ -1,0 +1,32 @@
+package ca.team2706.frc.robot.commands.lift;
+
+import ca.team2706.frc.robot.subsystems.Lift;
+import edu.wpi.first.wpilibj.command.Command;
+
+public class HoldLift extends Command {
+    /**
+     * Height to hold in encoder ticks.
+     */
+    private double heightToHold;
+
+    public HoldLift() {
+        requires(Lift.getInstance());
+    }
+
+    @Override
+    protected void initialize() {
+        super.initialize();
+        heightToHold = Lift.getInstance().getLiftHeight();
+    }
+
+    @Override
+    protected void execute() {
+        super.execute();
+        Lift.getInstance().setPosition(0.3, heightToHold);
+    }
+
+    @Override
+    protected boolean isFinished() {
+        return false;
+    }
+}

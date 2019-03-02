@@ -33,7 +33,7 @@ public class MoveLiftOnJoystick extends Command {
 
     @Override
     public void execute() {
-        final double percentSpeed = controller.getRawAxis(axisPort);
+        final double percentSpeed = -controller.getRawAxis(axisPort);
         Lift.getInstance().setPercentOutput(percentSpeed);
     }
 

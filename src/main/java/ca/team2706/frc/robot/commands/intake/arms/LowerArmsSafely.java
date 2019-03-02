@@ -10,7 +10,13 @@ public class LowerArmsSafely extends CommandGroup {
      * Constructs a new lower arms safely command.
      */
     public LowerArmsSafely() {
-        addSequential(new MovePlunger(true)); // Stow plunger. This finished immediately if already stowed.
+        addSequential(new MovePlunger(MovePlunger.DesiredState.STOWED)); // Stow plunger. This finished immediately if already stowed.
         addSequential(new LowerArms()); // Then lower arms.
+    }
+
+    @Override
+    protected void interrupted() {
+        super.interrupted();
+        System.out.println("LowerArmsSafely interrupted."); // TODO Remove
     }
 }

@@ -1,8 +1,13 @@
 package ca.team2706.frc.robot.subsystems;
 
+import ca.team2706.frc.robot.Robot;
+import ca.team2706.frc.robot.RobotState;
+import ca.team2706.frc.robot.commands.intake.arms.RaiseArmsSafely;
 import ca.team2706.frc.robot.config.Config;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
+
+import java.util.function.Consumer;
 
 /**
  * Subsystem for controlling pneumatics involved in intake.
@@ -59,6 +64,8 @@ public class Pneumatics extends Subsystem {
                 new DoubleSolenoid(Config.HATCH_EJECTOR_SOLENOID_FORWARD_ID, Config.HATCH_EJECTOR_SOLENOID_BACKWARD_ID));
     }
 
+    private final Consumer<RobotState> listener;
+
     /**
      * Constructs a new Pneumatics with the given double solenoids.
      *
@@ -68,6 +75,34 @@ public class Pneumatics extends Subsystem {
     private Pneumatics(final DoubleSolenoid intakeLiftSolenoid, final DoubleSolenoid hatchEjectorSolenoid) {
         this.intakeLiftSolenoid = intakeLiftSolenoid;
         this.hatchEjectorSolenoid = hatchEjectorSolenoid;
+
+        // Need to make sure that the robot's state is known at the beginning.
+        listener = this::onRobotStateChange;
+        Robot.setOnStateChange(listener);
+    }
+
+    /**
+     * Called when the robot's state changes.
+     *
+     * @param robotState The robot's state.
+     */
+    private void onRobotStateChange(RobotState robotState) {
+        if (robotState == RobotState.TELEOP) {
+            // Make sure the arms are in the right state for teleop (only useful during drive practice)
+            if (getMode() == null) {
+                if (Intake.getInstance().isCargoInMechanism()) {
+                    mode = IntakeMode.CARGO;
+                } else {
+                    new RaiseArmsSafely().start();
+                }
+            }
+            Robot.removeStateListener(listener);
+        }
+        // If we start in auto, assume robot was configured properly to start in hatch mode.
+        else if (robotState == RobotState.AUTONOMOUS) {
+            mode = IntakeMode.HATCH;
+            Robot.removeStateListener(listener);
+        }
     }
 
     /**

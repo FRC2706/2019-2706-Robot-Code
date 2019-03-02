@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import java.util.function.Supplier;
 
 /**
- * Drives in a straight line to a position
+ * Follows a motion profile using the sum of encoders
  */
 public class MotionProfile extends Command {
 
@@ -25,18 +25,30 @@ public class MotionProfile extends Command {
     private int doneCycles;
 
     /**
-     * Creates a straight drive command with constant values
+     * Creates a motion profile using the sum of two encoders
      *
-     * @param speed The maximum speed of the robot
+     * @param speed         The maximum speed of the robot
+     * @param minDoneCycles The cycles to hold after the motion profile has ended
+     * @param pos           The positions in feet at each point
+     * @param vel           The velocities in feet per second at each point
+     * @param heading       The heading at each point
+     * @param time          The milliseconds to run each segment
+     * @param size          The amount of segments in the trajectory
      */
     public MotionProfile(double speed, int minDoneCycles, double[] pos, double[] vel, double[] heading, int[] time, int size) {
         this(() -> speed, () -> minDoneCycles, pos, vel, heading, time, size);
     }
 
     /**
-     * Creates a straight drive command with references to values
+     * Creates a motion profile using the sum of two encoders
      *
-     * @param speed The maximum speed of the robot
+     * @param speed         The suppler to the maximum speed of the robot
+     * @param minDoneCycles The supplier to the cycles to hold after the motion profile has ended
+     * @param pos           The positions in feet at each point
+     * @param vel           The velocities in feet per second at each point
+     * @param heading       The heading at each point
+     * @param time          The milliseconds to run each segment
+     * @param size          The amount of segments in the trajectory
      */
     public MotionProfile(Supplier<Double> speed, Supplier<Integer> minDoneCycles, double[] pos, double[] vel, double[] heading, int[] time, int size) {
         requires(DriveBase.getInstance());

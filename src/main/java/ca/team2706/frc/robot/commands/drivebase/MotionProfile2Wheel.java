@@ -6,7 +6,7 @@ import ca.team2706.frc.robot.subsystems.DriveBase;
 import java.util.function.Supplier;
 
 /**
- * Drives in a straight line to a position
+ * Follows two motion profiles for each side of the robot
  */
 public class MotionProfile2Wheel extends MirroredCommand {
 
@@ -27,18 +27,34 @@ public class MotionProfile2Wheel extends MirroredCommand {
     private int doneCycles;
 
     /**
-     * Creates a straight drive command with constant values
+     * Creates a motion profile using two wheels
      *
-     * @param speed The maximum speed of the robot
+     * @param speed         The maximum speed of the robot
+     * @param minDoneCycles The cycles to hold after the motion profile has ended
+     * @param posLeft       The left wheel positions in feet at each point
+     * @param velLeft       The left wheel velocities in feet per second at each point
+     * @param posRight      The right wheel positions in feet at each point
+     * @param velRight      The right wheel velocities in feet per second at each point
+     * @param heading       The heading at each point
+     * @param time          The milliseconds to run each segment
+     * @param size          The amount of segments in the trajectory
      */
     public MotionProfile2Wheel(double speed, int minDoneCycles, double[] posLeft, double[] velLeft, double[] posRight, double[] velRight, double[] heading, int[] time, int size) {
         this(() -> speed, () -> minDoneCycles, posLeft, velLeft, posRight, velRight, heading, time, size);
     }
 
     /**
-     * Creates a straight drive command with references to values
+     * Creates a motion profile using two wheels
      *
-     * @param speed The maximum speed of the robot
+     * @param speed         The supplier to the maximum speed of the robot
+     * @param minDoneCycles The supplier to the cycles to hold after the motion profile has ended
+     * @param posLeft       The left wheel positions in feet at each point
+     * @param velLeft       The left wheel velocities in feet per second at each point
+     * @param posRight      The right wheel positions in feet at each point
+     * @param velRight      The right wheel velocities in feet per second at each point
+     * @param heading       The heading at each point
+     * @param time          The milliseconds to run each segment
+     * @param size          The amount of segments in the trajectory
      */
     public MotionProfile2Wheel(Supplier<Double> speed, Supplier<Integer> minDoneCycles, double[] posLeft, double[] velLeft, double[] posRight, double[] velRight, double[] heading, int[] time, int size) {
         requires(DriveBase.getInstance());
@@ -54,11 +70,11 @@ public class MotionProfile2Wheel extends MirroredCommand {
     }
 
     /**
-     * Motion profile for 2 wheel
+     * Creates a motion profile using the sum of two encoders
      *
-     * @param speed               The speed of the robot
-     * @param minDoneCycles       The number of cycles to complete after finishing the motion profile
-     * @param dualTalonTrajectory The trajectory
+     * @param speed               The maximum speed of the robot
+     * @param minDoneCycles       The cycles to hold after the motion profile has ended
+     * @param dualTalonTrajectory An object with all trajectory data for both wheels
      */
     MotionProfile2Wheel(Supplier<Double> speed, Supplier<Integer> minDoneCycles, DualTalonTrajectory dualTalonTrajectory) {
         this(speed, minDoneCycles, dualTalonTrajectory.posLeft, dualTalonTrajectory.velLeft, dualTalonTrajectory.posRight, dualTalonTrajectory.velRight, dualTalonTrajectory.heading, dualTalonTrajectory.time, dualTalonTrajectory.size);
@@ -112,6 +128,9 @@ public class MotionProfile2Wheel extends MirroredCommand {
         DriveBase.getInstance().setDisabledMode();
     }
 
+    /**
+     * Class with all trajectory data for both wheels
+     */
     static class DualTalonTrajectory {
 
         final double[] posLeft;

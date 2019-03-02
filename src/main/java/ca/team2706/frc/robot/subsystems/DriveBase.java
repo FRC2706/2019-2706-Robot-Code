@@ -145,17 +145,12 @@ public class DriveBase extends Subsystem {
         setBrakeMode(false);
 
         loggingNotifier = new Notifier(this::log);
-        //loggingNotifier.startPeriodic(Config.LOG_PERIOD);
+        loggingNotifier.startPeriodic(Config.LOG_PERIOD);
 
         motionProfileStatus = new MotionProfileStatus();
 
         motionProfilePointStreamLeft = new BufferedTrajectoryPointStream();
         motionProfilePointStreamRight = new BufferedTrajectoryPointStream();
-    }
-
-    private void updateMotionProfile() {
-        leftFrontMotor.processMotionProfileBuffer();
-        rightFrontMotor.processMotionProfileBuffer();
     }
 
     /**
@@ -298,7 +293,10 @@ public class DriveBase extends Subsystem {
         rightFrontMotor.selectProfileSlot(1, 1);
     }
 
-    public void selectEncodersGyro() {
+    /**
+     * Selects encoders for each wheel and configures the gyro as an auxiliary sensor for each wheel
+     */
+    private void selectEncodersGyro() {
         resetTalonConfiguration();
 
         leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_SHORT);
@@ -912,8 +910,6 @@ public class DriveBase extends Subsystem {
      * Resets the encoders and gyro
      */
     public void reset() {
-        xPos = 0;
-        yPos = 0;
         lastEncoderAv = 0;
         lastGyro = 0;
 
@@ -1058,58 +1054,8 @@ public class DriveBase extends Subsystem {
         }
     }
 
-    @Override
-    public void periodic() {
-        findPosition();
-    }
-
-    private double xPos = 0;
-
-    private double yPos = 0;
-
     private double lastEncoderAv = 0;
     private double lastGyro = 0;
-
-    /**
-     * Called every tick to keep position, an x and y position, not always accurate due to a few
-     * reasons
-     */
-    private void findPosition() {
-        SmartDashboard.putNumber("Left Dist", -getLeftDistance());
-        SmartDashboard.putNumber("Right Dist", getRightDistance());
-        SmartDashboard.putNumber(("Heading "), getHeading());
-
-        // Gets gyro angle
-        double gyroAngle = -getHeading();
-        double changeInGyro = gyroAngle - lastGyro;
-        double encoderAv = ((-getLeftDistance() + getRightDistance()) / 2.0 - lastEncoderAv);
-        // Gets the radius of the arc
-        double distance;
-        if (Math.abs(changeInGyro) > 0.001) {
-            double radius = encoderAv / Math.toRadians(changeInGyro);
-
-            // Calculate distance based on arc lengths, and invert if driving backwards
-            distance = (encoderAv > 0 ? 1 : -1) * Math.sqrt((2 * Math.pow(radius, 2))
-                    * (1 - Math.cos(Math.toRadians(changeInGyro))));
-        } else {
-            distance = encoderAv;
-        }
-
-        // Uses trigonometry 'n stuff to figure out how far right and forward you traveled
-        double changedXPos = Math.sin(Math.toRadians((lastGyro + gyroAngle) / 2.0)) * distance;
-        double changedYPos = Math.cos(Math.toRadians((lastGyro + gyroAngle) / 2.0)) * distance;
-
-        // Adjusts your current position accordingly.
-        xPos += changedXPos;
-        yPos += changedYPos;
-
-        SmartDashboard.putNumber("X Position", xPos);
-        SmartDashboard.putNumber("Y Position", yPos);
-        // System.out.println(xPos + " " + yPos);
-        // Saves your encoder distance so you can calculate how far you've went in the new tick
-        lastEncoderAv = (-getLeftDistance() + getRightDistance()) / 2.0;
-        lastGyro = gyroAngle;
-    }
 
     /**
      * The drive mode of the robot

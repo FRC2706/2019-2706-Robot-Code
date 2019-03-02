@@ -8,41 +8,88 @@ import jaci.pathfinder.modifiers.TankModifier;
 
 import java.util.function.Supplier;
 
+/**
+ * Follows a PathFinder/PathWeaver trajectory
+ */
 public class FollowTrajectory extends MotionProfile2Wheel {
 
+    /**
+     * Follows a single trajectory
+     *
+     * @param speed         The max speed
+     * @param minDoneCycles The cycles to hold after the profile has ended
+     * @param trajectory    The trajectory to follow
+     */
     public FollowTrajectory(double speed, int minDoneCycles, Trajectory trajectory) {
         this(() -> speed, () -> minDoneCycles, trajectory);
     }
 
+    /**
+     * Follows a single trajectory
+     *
+     * @param speed         The supplier to the max speed
+     * @param minDoneCycles The supplier to the cycles to hold after the profile has ended
+     * @param trajectory    The trajectory to follow
+     */
     public FollowTrajectory(Supplier<Double> speed, Supplier<Integer> minDoneCycles, Trajectory trajectory) {
         super(speed, minDoneCycles, generateDualTrajectory(trajectory, twoTrajectory(trajectory)));
     }
 
+    /**
+     * Follows a left and right trajectory
+     *
+     * @param speed         The supplier to the max speed
+     * @param minDoneCycles The supplier to the cycles to hold after the profile has ended
+     * @param trajectory    The trajectory to follow
+     * @param left          The left trajectory
+     * @param right         The right trajectory
+     */
     public FollowTrajectory(double speed, int minDoneCycles, Trajectory trajectory, Trajectory left, Trajectory right) {
         this(() -> speed, () -> minDoneCycles, trajectory, left, right);
     }
 
+    /**
+     * Follows a left and right trajectory
+     *
+     * @param speed         The max speed
+     * @param minDoneCycles The cycles to hold after the profile has ended
+     * @param trajectory    The trajectory to follow
+     * @param left          The left trajectory
+     * @param right         The right trajectory
+     */
     public FollowTrajectory(Supplier<Double> speed, Supplier<Integer> minDoneCycles, Trajectory trajectory, Trajectory left, Trajectory right) {
         super(speed, minDoneCycles, generateDualTrajectory(trajectory, Pair.of(left, right)));
     }
 
-    public static Pair<Trajectory> twoTrajectory(Trajectory trajectory) {
+    /**
+     * Creates a trajectory for each wheel to follow based on a single trajectory
+     *
+     * @param trajectory The trajectory to follow
+     * @return The generated trajectory for each side of the robot
+     */
+    private static Pair<Trajectory> twoTrajectory(Trajectory trajectory) {
         // The distance between the left and right sides of the wheelbase is 0.6m
         double wheelbase_width = Config.WHEELBASE_WIDTH;
 
-// Create the Modifier Object
+        // Create the Modifier Object
         TankModifier modifier = new TankModifier(trajectory);
 
-// Generate the Left and Right trajectories using the original trajectory
-// as the centre
+        // Generate the Left and Right trajectories using the original trajectory as the centre
         modifier.modify(wheelbase_width);
 
-        Trajectory left = modifier.getLeftTrajectory();       // Get the Left Side
-        Trajectory right = modifier.getRightTrajectory();      // Get the Right Side
+        Trajectory left = modifier.getLeftTrajectory();
+        Trajectory right = modifier.getRightTrajectory();
 
         return Pair.of(left, right);
     }
 
+    /**
+     * Generate a set of Talon points based on two trajectories
+     *
+     * @param trajectory          The main trajectory
+     * @param leftRightTrajectory The two derived trajectories
+     * @return The data that can be pased to the left and right talons
+     */
     private static DualTalonTrajectory generateDualTrajectory(Trajectory trajectory, Pair<Trajectory> leftRightTrajectory) {
 
         Trajectory left = leftRightTrajectory.getFirst();
@@ -64,6 +111,11 @@ public class FollowTrajectory extends MotionProfile2Wheel {
         return dualTalonTrajectory;
     }
 
+    /**
+     * Makes an angle that is between (0, 360] to between (-inf, +inf)
+     *
+     * @param degs The array of degrees to convert
+     */
     private static void unwrap(double[] degs) {
         // Assume starting at 0 rather than 360
         double last = 0;
@@ -80,6 +132,13 @@ public class FollowTrajectory extends MotionProfile2Wheel {
         }
     }
 
+    /**
+     * Gets the shortest difference between two angles [0, 360]
+     *
+     * @param angle1 The first angle
+     * @param angle2 The second angle
+     * @return The shortest angle, and makes it negative if counterclockwise
+     */
     private static double deltaAngle(double angle1, double angle2) {
         double delta = angle2 - angle1;
 

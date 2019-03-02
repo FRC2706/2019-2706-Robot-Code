@@ -7,6 +7,9 @@ import jaci.pathfinder.Waypoint;
 
 import java.util.function.Supplier;
 
+/**
+ * Class that takes waypoints and creates a path to follow them
+ */
 public class CurveDrive2 extends FollowTrajectory {
 
     /**
@@ -47,19 +50,9 @@ public class CurveDrive2 extends FollowTrajectory {
         }
 
         // Create the Trajectory Configuration
-//
-// Arguments:
-// Fit Method:          HERMITE_CUBIC or HERMITE_QUINTIC
-// Sample Count:        SAMPLES_HIGH (100 000)
-//                      SAMPLES_LOW  (10 000)
-//                      SAMPLES_FAST (1 000)
-// Time Step:           0.05 Seconds
-// Max Velocity:        1.7 m/s
-// Max Acceleration:    2.0 m/s/s
-// Max Jerk:            60.0 m/s/s/s
         Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.01, Config.PATHFINDING_VELOCITY.value(), Config.PATHFINDING_ACCELERATION.value(), Config.PATHFINDING_JERK.value());
 
-// Generate the trajectory
+        // Generate the trajectory
         return Pathfinder.generate(waypoints, config);
     }
 }

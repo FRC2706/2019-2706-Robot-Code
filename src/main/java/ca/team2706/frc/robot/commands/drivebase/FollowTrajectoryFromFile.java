@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.function.Supplier;
 
+/**
+ * Follows a trajectory from a CSV file
+ */
 public class FollowTrajectoryFromFile extends FollowTrajectory {
 
     /**

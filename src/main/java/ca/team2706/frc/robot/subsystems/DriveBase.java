@@ -633,8 +633,11 @@ public class DriveBase extends Subsystem {
         rightFrontMotor.getSensorCollection().setQuadraturePosition(0, Config.CAN_SHORT);
     }
 
-/**
-     * Resets the gyro to 0 degrees
+    /**
+     * Perform initializations so that the absolute gyro positon returned by
+     * the getAbsoluteHeading() method is equal to the angle specified by 
+     * Config.ROBOT_START_ANGLE. The gyro measurement device will be reset to 
+     * 0 degrees. 
      */
     public void initGyro() {
         savedAngle = Config.getROBOT_START_ANGLE();

@@ -16,8 +16,6 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import mockit.*;
-import util.Util;
-
 import org.junit.Before;
 import org.junit.Test;
 import util.Util;
@@ -104,7 +102,7 @@ public class MotionMagicTest {
         motionMagic.end();
 
         new Verifications() {{
-            talon.set(ControlMode.Position, position / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, 0);
+            talon.set(ControlMode.MotionMagic, position / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, 0);
             times = 3;
             talon.configClosedLoopPeakOutput(0, speed);
             times = 6;

@@ -24,13 +24,12 @@ import util.Util;
 
 import static org.junit.Assert.assertEquals;
 
-
 public class DriverAssistVisionTest {
 
     @Tested
     private DriverAssistVision driverAssistVision;
 
-    private DriveBase driveBase = DriveBase.getInstance();
+    DriveBase driveBase = DriveBase.getInstance();
 
     @Mocked
     private WPI_TalonSRX talon;
@@ -55,28 +54,6 @@ public class DriverAssistVisionTest {
     @Mocked
     private Notifier notifier;
 
-    //--See comment in setup() below
-    /*
-    @Injectable
-    private SensorCollection sensorCollection;
-    */
-
-    @Before
-    public void setUp() throws NoSuchFieldException, IllegalAccessException {
-        //--This independently causes the tests of this class to fail
-        /*
-        Util.resetSubsystems();
-        */
-
-        //--This independently causes the tests of this class to fail
-        /*
-        new Expectations() {{
-            talon.getSensorCollection();
-            result = sensorCollection;
-        }};
-        */
-    }
-
     /**
      * Runs various test for generating a trajectory to targets on the cargo ship or 
      * the loading bay. For each test, the same vision input is used but the heading
@@ -85,7 +62,6 @@ public class DriverAssistVisionTest {
      */
     @Test
     public void testGenerateTrajectoryCargoShipAndLoading() {
-
         new Expectations(Config.class) {{
             Config.getTRAJ_DELTA_TIME(); result = 0.2;
             Config.getROBOTTOCAMERA_ROBOTX(); result = 1.0;
@@ -132,7 +108,6 @@ public class DriverAssistVisionTest {
      */
     @Test
     public void testGenerateTrajectoryRocket() {
-
         new Expectations(Config.class) {{
             Config.getTRAJ_DELTA_TIME(); result = 0.2;
             Config.getROBOTTOCAMERA_ROBOTX(); result = 1.0;

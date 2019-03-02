@@ -48,9 +48,6 @@ public class DriveBaseTest {
     @Mocked
     private Notifier notifier;
 
-    @Mocked(stubOutClassInitialization = true)
-    private Config config;
-
     @Injectable
     private SensorCollection sensorCollection;
 
@@ -92,8 +89,7 @@ public class DriveBaseTest {
      */
     @Test
     public void testAbsoluteGyro() {
-
-        new Expectations() {{
+        new Expectations(Config.class) {{
             Config.getROBOT_START_ANGLE();
             result = 0.0;
         }};

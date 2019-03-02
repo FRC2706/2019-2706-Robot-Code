@@ -5,8 +5,7 @@ public class Pair<T> {
     private final T second;
 
     /**
-     *
-     * @param first The first item
+     * @param first  The first item
      * @param second The second item
      */
     private Pair(T first, T second) {
@@ -16,6 +15,7 @@ public class Pair<T> {
 
     /**
      * Gets the first item
+     *
      * @return Returns the first item
      */
     public T getFirst() {
@@ -24,6 +24,7 @@ public class Pair<T> {
 
     /**
      * Gets the second item
+     *
      * @return Returns the second item
      */
     public T getSecond() {
@@ -31,10 +32,9 @@ public class Pair<T> {
     }
 
     /**
-     *
-     * @param first The first item
+     * @param first  The first item
      * @param second The second item
-     * @param <T> The type of pair
+     * @param <T>    The type of pair
      * @return The pair
      */
     public static <T> Pair<T> of(T first, T second) {

@@ -6,7 +6,6 @@ import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.modifiers.TankModifier;
 
-import java.util.Arrays;
 import java.util.function.Supplier;
 
 public class FollowTrajectory extends MotionProfile2Wheel {

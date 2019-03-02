@@ -6,7 +6,6 @@ import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.sensors.AnalogSelector;
 import com.ctre.phoenix.motion.BufferedTrajectoryPointStream;
 import com.ctre.phoenix.motion.MotionProfileStatus;
-import com.ctre.phoenix.motion.SetValueMotionProfile;
 import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -15,7 +14,6 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -87,12 +85,12 @@ public class DriveBase extends Subsystem {
     private Notifier loggingNotifier;
 
     /**
-     *Holds the status for the motion profile
+     * Holds the status for the motion profile
      */
     private MotionProfileStatus motionProfileStatus;
 
     /**
-     *Holds the points to stream for the right motion profile
+     * Holds the points to stream for the right motion profile
      */
     private BufferedTrajectoryPointStream motionProfilePointStreamRight;
 
@@ -477,8 +475,7 @@ public class DriveBase extends Subsystem {
     /**
      * Sets the drive mode to motion profile
      */
-    public void setMotionProfile()
-    {
+    public void setMotionProfile() {
         if (driveMode != DriveMode.MotionProfile) {
             stop();
             selectEncodersSumWithPigeon();
@@ -493,8 +490,7 @@ public class DriveBase extends Subsystem {
     /**
      * Sets the drive mode to 2 wheel motion profile
      */
-    public void setMotionProfile2Wheel()
-    {
+    public void setMotionProfile2Wheel() {
         if (driveMode != DriveMode.MotionProfile2Wheel) {
             stop();
             selectEncodersGyro();
@@ -506,6 +502,7 @@ public class DriveBase extends Subsystem {
             driveMode = DriveMode.MotionProfile2Wheel;
         }
     }
+
     /**
      * Configures motion magic
      */
@@ -518,8 +515,7 @@ public class DriveBase extends Subsystem {
     /**
      * Configures motion profile
      */
-    private void configMotionProfile()
-    {
+    private void configMotionProfile() {
         rightFrontMotor.configMotionSCurveStrength(Config.MOTION_MAGIC_SMOOTHING.value(), Config.CAN_SHORT);
         rightFrontMotor.configMotionCruiseVelocity((int) (Config.MOTION_MAGIC_CRUISE_VELOCITY.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
         rightFrontMotor.configMotionAcceleration((int) (Config.MOTION_MAGIC_ACCELERATION.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
@@ -673,6 +669,7 @@ public class DriveBase extends Subsystem {
 
     /**
      * Runs the motion profile
+     *
      * @param speed The speed from 0 to 1
      */
     public void runMotionProfile(double speed) {
@@ -686,11 +683,12 @@ public class DriveBase extends Subsystem {
 
         //Doing it automatically so don't disable
         rightFrontMotor.feed();
-         leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
+        leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
     }
 
     /**
      * Runs the motion profile for each wheel
+     *
      * @param speed The speed from 0 to 1
      */
     public void runMotionProfile2Wheel(double speed) {
@@ -701,23 +699,24 @@ public class DriveBase extends Subsystem {
         leftFrontMotor.configClosedLoopPeakOutput(1, speed);
         rightFrontMotor.configClosedLoopPeakOutput(1, speed);
 
-       rightFrontMotor.feed();
-       leftFrontMotor.feed();
+        rightFrontMotor.feed();
+        leftFrontMotor.feed();
     }
 
     /**
      * Applies the motion profile
-     * @param pos The position of the robot at a trajectory point
-     * @param vel The velocity of the robot at a trajectory point
-     * @param heading The heading of the robot at a trajectory point
-     * @param time The time for each trajectory point
-     * @param size How many trajectories there are
-     * @param talon The talon
+     *
+     * @param pos         The position of the robot at a trajectory point
+     * @param vel         The velocity of the robot at a trajectory point
+     * @param heading     The heading of the robot at a trajectory point
+     * @param time        The time for each trajectory point
+     * @param size        How many trajectories there are
+     * @param talon       The talon
      * @param pointStream The point stream
      */
     private void pushMotionProfile(double[] pos, double[] vel, double[] heading, int[] time, int size, WPI_TalonSRX talon, BufferedTrajectoryPointStream pointStream) {
         /* create an empty point */
-        TrajectoryPoint [] points = new TrajectoryPoint[size];
+        TrajectoryPoint[] points = new TrajectoryPoint[size];
 
         /*
          * just in case we are interrupting another MP and there is still buffer
@@ -732,9 +731,9 @@ public class DriveBase extends Subsystem {
         for (int i = 0; i < size; ++i) {
             points[i] = new TrajectoryPoint();
             /* for each point, fill our structure and pass it to API */
-            points[i].position = pos[i]/Config.DRIVE_ENCODER_DPP;
-            points[i].velocity = vel[i]/Config.DRIVE_ENCODER_DPP/10;
-            points[i].auxiliaryPos = heading[i]/Config.PIGEON_DPP; /* scaled such that 3600 => 360 deg */
+            points[i].position = pos[i] / Config.DRIVE_ENCODER_DPP;
+            points[i].velocity = vel[i] / Config.DRIVE_ENCODER_DPP / 10;
+            points[i].auxiliaryPos = heading[i] / Config.PIGEON_DPP; /* scaled such that 3600 => 360 deg */
             points[i].headingDeg = heading[i];
             points[i].profileSlotSelect0 = 0;
             points[i].profileSlotSelect1 = 1;
@@ -754,12 +753,13 @@ public class DriveBase extends Subsystem {
 
     /**
      * Applies the motion profile for 1 wheel
+     *
      * @param forwards Whether the robot is going forwards or not
-     * @param pos The position of the robot at a trajectory point
-     * @param vel The velocity of the robot at a trajectory point
-     * @param heading The heading of the robot at a trajectory point
-     * @param time The time for each trajectory point
-     * @param size How many trajectory points there are
+     * @param pos      The position of the robot at a trajectory point
+     * @param vel      The velocity of the robot at a trajectory point
+     * @param heading  The heading of the robot at a trajectory point
+     * @param time     The time for each trajectory point
+     * @param size     How many trajectory points there are
      */
     public void pushMotionProfile1Wheel(boolean forwards, double[] pos, double[] vel, double[] heading, int[] time, int size) {
         pushMotionProfile(forwards ? pos : negateDoubleArray(pos), forwards ? vel : negateDoubleArray(vel), heading, time, size, rightFrontMotor, motionProfilePointStreamRight);
@@ -767,12 +767,13 @@ public class DriveBase extends Subsystem {
 
     /**
      * Applies the motion profile for 2 wheels
+     *
      * @param forwards Whether the robot is going forwards or not
-     * @param posLeft The position of the robot at a trajectory point for the left wheel
-     * @param velLeft The velocity of the robot at a trajectory point for the left wheel
-     * @param heading The heading of the robot at a trajectory point
-     * @param time The time for each trajectory point
-     * @param size How many trajectory points there are
+     * @param posLeft  The position of the robot at a trajectory point for the left wheel
+     * @param velLeft  The velocity of the robot at a trajectory point for the left wheel
+     * @param heading  The heading of the robot at a trajectory point
+     * @param time     The time for each trajectory point
+     * @param size     How many trajectory points there are
      * @param posRight The position of the robot at a trajectory point for the right wheel
      * @param velRight The velocity of the robot at a trajectory point for the right wheel
      */
@@ -783,13 +784,14 @@ public class DriveBase extends Subsystem {
 
     /**
      * Makes all the elements in the double array negative
+     *
      * @param array The array that is negated
      * @return The array
      */
     private static double[] negateDoubleArray(double[] array) {
         double[] newArray = new double[array.length];
 
-        for(int i = 0; i < array.length; i++) {
+        for (int i = 0; i < array.length; i++) {
             newArray[i] = -array[i];
         }
 
@@ -939,18 +941,20 @@ public class DriveBase extends Subsystem {
 
     /**
      * Returns if the motion profile for 1 wheel is finished
+     *
      * @return if the motion profile is finished
      */
-    public boolean isFinishedMotionProfile(){
+    public boolean isFinishedMotionProfile() {
 
         return rightFrontMotor.isMotionProfileFinished();
     }
 
     /**
      * Returns if the motion profile for 2 wheels is finished
+     *
      * @return If its finished or not
      */
-    public boolean isFinishedMotionProfile2Wheel(){
+    public boolean isFinishedMotionProfile2Wheel() {
 
         return (rightFrontMotor.isMotionProfileFinished() || leftFrontMotor.isMotionProfileFinished());
     }
@@ -1078,7 +1082,7 @@ public class DriveBase extends Subsystem {
         // Gets gyro angle
         double gyroAngle = -getHeading();
         double changeInGyro = gyroAngle - lastGyro;
-        double encoderAv = ((-getLeftDistance() + getRightDistance())/2.0 - lastEncoderAv);
+        double encoderAv = ((-getLeftDistance() + getRightDistance()) / 2.0 - lastEncoderAv);
         // Gets the radius of the arc
         double distance;
         if (Math.abs(changeInGyro) > 0.001) {
@@ -1103,7 +1107,7 @@ public class DriveBase extends Subsystem {
         SmartDashboard.putNumber("Y Position", yPos);
         // System.out.println(xPos + " " + yPos);
         // Saves your encoder distance so you can calculate how far you've went in the new tick
-        lastEncoderAv = (-getLeftDistance() + getRightDistance())/2.0;
+        lastEncoderAv = (-getLeftDistance() + getRightDistance()) / 2.0;
         lastGyro = gyroAngle;
     }
 

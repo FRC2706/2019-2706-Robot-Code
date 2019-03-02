@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import jaci.pathfinder.Pathfinder;
-import jaci.pathfinder.PathfinderJNI;
 import jaci.pathfinder.Trajectory;
 import mockit.Expectations;
 import mockit.Injectable;

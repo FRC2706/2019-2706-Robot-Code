@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import jaci.pathfinder.Pathfinder;
-import jaci.pathfinder.PathfinderJNI;
 import jaci.pathfinder.Trajectory;
 import mockit.*;
 import org.junit.Before;
@@ -27,6 +26,7 @@ import util.Util;
 
 import java.io.File;
 import java.io.IOException;
+
 import static org.junit.Assert.assertEquals;
 
 public class FluidConstantTest {

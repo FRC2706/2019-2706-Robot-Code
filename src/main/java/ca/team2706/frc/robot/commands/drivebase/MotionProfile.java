@@ -27,7 +27,7 @@ public class MotionProfile extends Command {
     /**
      * Creates a straight drive command with constant values
      *
-     * @param speed         The maximum speed of the robot
+     * @param speed The maximum speed of the robot
      */
     public MotionProfile(double speed, int minDoneCycles, double[] pos, double[] vel, double[] heading, int[] time, int size) {
         this(() -> speed, () -> minDoneCycles, pos, vel, heading, time, size);
@@ -36,7 +36,7 @@ public class MotionProfile extends Command {
     /**
      * Creates a straight drive command with references to values
      *
-     * @param speed         The maximum speed of the robot
+     * @param speed The maximum speed of the robot
      */
     public MotionProfile(Supplier<Double> speed, Supplier<Integer> minDoneCycles, double[] pos, double[] vel, double[] heading, int[] time, int size) {
         requires(DriveBase.getInstance());
@@ -61,20 +61,20 @@ public class MotionProfile extends Command {
 
     @Override
     public void execute() {
-            DriveBase.getInstance().runMotionProfile(Math.abs(speed.get()));
+        DriveBase.getInstance().runMotionProfile(Math.abs(speed.get()));
     }
 
     @Override
     protected boolean isFinished() {
-       if(DriveBase.getInstance().isFinishedMotionProfile()) {
-           doneCycles++;
-       }
+        if (DriveBase.getInstance().isFinishedMotionProfile()) {
+            doneCycles++;
+        }
 
-       return doneCycles >= minDoneCycles.get();
+        return doneCycles >= minDoneCycles.get();
     }
 
     @Override
-    public void end(){
+    public void end() {
         DriveBase.getInstance().setDisabledMode();
     }
 }

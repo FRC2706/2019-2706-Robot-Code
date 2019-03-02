@@ -12,19 +12,21 @@ public class FollowTrajectoryFromFile extends FollowTrajectory {
 
     /**
      * Follows the trajectory from a file
-     * @param speed The speed of the robot
+     *
+     * @param speed         The speed of the robot
      * @param minDoneCycles The number of cycles to complete after finishing the motion profile
-     * @param trajectory The trajectory for the robot
+     * @param trajectory    The trajectory for the robot
      */
     public FollowTrajectoryFromFile(double speed, int minDoneCycles, String trajectory) {
-        this(()->speed, ()->minDoneCycles, trajectory);
+        this(() -> speed, () -> minDoneCycles, trajectory);
     }
 
     /**
      * Follows the trajectory from a file
-     * @param speed The speed of the robot
+     *
+     * @param speed         The speed of the robot
      * @param minDoneCycles The number of cycles to complete after finishing the motion profile
-     * @param trajectory The trajectory for the robot
+     * @param trajectory    The trajectory for the robot
      */
     public FollowTrajectoryFromFile(Supplier<Double> speed, Supplier<Integer> minDoneCycles, String trajectory) {
         super(speed, minDoneCycles, readFromFile(Config.DEPLOY_DIR.resolve("motion-profiles/output/" + trajectory + ".pf1.csv")),
@@ -34,6 +36,7 @@ public class FollowTrajectoryFromFile extends FollowTrajectory {
 
     /**
      * Reads the trajectory from a file
+     *
      * @param trajectory The trajectory of the robot
      * @return The trajectory
      */
@@ -41,7 +44,7 @@ public class FollowTrajectoryFromFile extends FollowTrajectory {
         try {
             return Pathfinder.readFromCSV(trajectory.toFile());
         } catch (IOException e) {
-           throw new RuntimeException(e);
+            throw new RuntimeException(e);
         }
     }
 }

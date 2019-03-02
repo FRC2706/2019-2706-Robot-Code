@@ -1,13 +1,8 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
-import ca.team2706.frc.robot.commands.mirrorable.IMirrorable;
 import ca.team2706.frc.robot.commands.mirrorable.MirroredCommand;
 import ca.team2706.frc.robot.subsystems.DriveBase;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Command;
-import jaci.pathfinder.Trajectory;
 
-import java.util.Arrays;
 import java.util.function.Supplier;
 
 /**
@@ -34,16 +29,16 @@ public class MotionProfile2Wheel extends MirroredCommand {
     /**
      * Creates a straight drive command with constant values
      *
-     * @param speed         The maximum speed of the robot
+     * @param speed The maximum speed of the robot
      */
     public MotionProfile2Wheel(double speed, int minDoneCycles, double[] posLeft, double[] velLeft, double[] posRight, double[] velRight, double[] heading, int[] time, int size) {
-            this(() -> speed, () -> minDoneCycles, posLeft, velLeft, posRight, velRight, heading, time, size);
+        this(() -> speed, () -> minDoneCycles, posLeft, velLeft, posRight, velRight, heading, time, size);
     }
 
     /**
      * Creates a straight drive command with references to values
      *
-     * @param speed         The maximum speed of the robot
+     * @param speed The maximum speed of the robot
      */
     public MotionProfile2Wheel(Supplier<Double> speed, Supplier<Integer> minDoneCycles, double[] posLeft, double[] velLeft, double[] posRight, double[] velRight, double[] heading, int[] time, int size) {
         requires(DriveBase.getInstance());
@@ -59,22 +54,22 @@ public class MotionProfile2Wheel extends MirroredCommand {
     }
 
     /**
-     *Motion profile for 2 wheel
-     * @param speed The speed of the robot
-     * @param minDoneCycles The number of cycles to complete after finishing the motion profile
+     * Motion profile for 2 wheel
+     *
+     * @param speed               The speed of the robot
+     * @param minDoneCycles       The number of cycles to complete after finishing the motion profile
      * @param dualTalonTrajectory The trajectory
      */
     MotionProfile2Wheel(Supplier<Double> speed, Supplier<Integer> minDoneCycles, DualTalonTrajectory dualTalonTrajectory) {
-        this(speed, minDoneCycles, dualTalonTrajectory.posLeft, dualTalonTrajectory.velLeft, dualTalonTrajectory.posRight, dualTalonTrajectory.velRight,  dualTalonTrajectory.heading, dualTalonTrajectory.time, dualTalonTrajectory.size);
+        this(speed, minDoneCycles, dualTalonTrajectory.posLeft, dualTalonTrajectory.velLeft, dualTalonTrajectory.posRight, dualTalonTrajectory.velRight, dualTalonTrajectory.heading, dualTalonTrajectory.time, dualTalonTrajectory.size);
     }
 
     @Override
     public void initialize() {
         DriveBase.getInstance().setBrakeMode(true);
-        if(isMirrored()) {
+        if (isMirrored()) {
             DriveBase.getInstance().pushMotionProfile2Wheel(speed.get() >= 0, posRight, velRight, negateDoubleArray(heading), time, size, posLeft, velLeft);
-        }
-        else {
+        } else {
             DriveBase.getInstance().pushMotionProfile2Wheel(speed.get() >= 0, posLeft, velLeft, heading, time, size, posRight, velRight);
         }
         DriveBase.getInstance().setMotionProfile2Wheel();
@@ -84,13 +79,14 @@ public class MotionProfile2Wheel extends MirroredCommand {
 
     /**
      * Makes all the elements in the double array negative
+     *
      * @param array The array that is negated
      * @return The array
      */
     private static double[] negateDoubleArray(double[] array) {
         double[] newArray = new double[array.length];
 
-        for(int i = 0; i < array.length; i++) {
+        for (int i = 0; i < array.length; i++) {
             newArray[i] = -array[i];
         }
 
@@ -104,7 +100,7 @@ public class MotionProfile2Wheel extends MirroredCommand {
 
     @Override
     protected boolean isFinished() {
-        if(DriveBase.getInstance().isFinishedMotionProfile2Wheel()) {
+        if (DriveBase.getInstance().isFinishedMotionProfile2Wheel()) {
             doneCycles++;
         }
 
@@ -112,7 +108,7 @@ public class MotionProfile2Wheel extends MirroredCommand {
     }
 
     @Override
-    public void end(){
+    public void end() {
         DriveBase.getInstance().setDisabledMode();
     }
 
@@ -128,11 +124,12 @@ public class MotionProfile2Wheel extends MirroredCommand {
 
         /**
          * Applies the motion profile for 2 wheels
-         * @param posLeft The position of the robot at a trajectory point for the left wheel
-         * @param velLeft The velocity of the robot at a trajectory point for the left wheel
-         * @param heading The heading of the robot at a trajectory point
-         * @param time The time for each trajectory point
-         * @param size How many trajectory points there are
+         *
+         * @param posLeft  The position of the robot at a trajectory point for the left wheel
+         * @param velLeft  The velocity of the robot at a trajectory point for the left wheel
+         * @param heading  The heading of the robot at a trajectory point
+         * @param time     The time for each trajectory point
+         * @param size     How many trajectory points there are
          * @param posRight The position of the robot at a trajectory point for the right wheel
          * @param velRight The velocity of the robot at a trajectory point for the right wheel
          */

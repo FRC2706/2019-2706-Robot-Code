@@ -1,11 +1,11 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
-import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motion.BuffTrajPointStreamJNI;
 import com.ctre.phoenix.motion.BufferedTrajectoryPointStream;
-import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
@@ -60,23 +60,23 @@ public class MotionProfile2WheelTest {
     private SensorCollection sensorCollection;
 
     @Injectable
-    private double[] posLeft = { 1.0, 4.5, 2.4, -24 };
+    private double[] posLeft = {1.0, 4.5, 2.4, -24};
 
     @Injectable
-    private double[] velLeft = { 0.2, 2.1, -4.3, -2.1 };
+    private double[] velLeft = {0.2, 2.1, -4.3, -2.1};
 
 
     @Injectable
-    private double[] posRight = { 1.0, 4.5, 2.4, -24 };
+    private double[] posRight = {1.0, 4.5, 2.4, -24};
 
     @Injectable
-    private double[] velRight = { 0.2, 2.1, -4.3, -2.1 };
+    private double[] velRight = {0.2, 2.1, -4.3, -2.1};
 
     @Injectable
-    private double[] heading = { 42, 21, 21, -54};
+    private double[] heading = {42, 21, 21, -54};
 
     @Injectable
-    private int[] time = { 5, 5, 5, 5 };
+    private int[] time = {5, 5, 5, 5};
 
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
@@ -93,7 +93,7 @@ public class MotionProfile2WheelTest {
      *
      * @param speed         The speed to create the command with
      * @param minDoneCycles The minimum cycles to use
-     *                      @param size The number of trajectory points
+     * @param size          The number of trajectory points
      */
     @Test
     public void testCorrectState(@Injectable("0.0") double speed, @Injectable("1") int minDoneCycles, @Injectable("4") int size) {
@@ -111,7 +111,7 @@ public class MotionProfile2WheelTest {
      *
      * @param speed         The speed to inject
      * @param minDoneCycles The min cycles to inject
-     *                      @param size The number of trajectory points
+     * @param size          The number of trajectory points
      */
     @Test
     public void testSetting(@Injectable("0.0") double speed, @Injectable("1") int minDoneCycles, @Injectable("4") int size) {
@@ -140,13 +140,13 @@ public class MotionProfile2WheelTest {
      *
      * @param speed         The speed to inject
      * @param minDoneCycles The min cycles to inject
-     *                      @param size The number of trajectory points
+     * @param size          The number of trajectory points
      */
     @Test
     public void testFinished(@Injectable("0.0") double speed, @Injectable("3") int minDoneCycles, @Injectable("4") int size) {
         new Expectations() {{
             talon.isMotionProfileFinished();
-            returns(false, false,false, false, false, true, true, true, true, true, true, true, true, true);
+            returns(false, false, false, false, false, true, true, true, true, true, true, true, true, true);
         }};
 
 

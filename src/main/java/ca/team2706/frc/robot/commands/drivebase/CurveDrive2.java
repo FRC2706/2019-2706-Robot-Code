@@ -5,26 +5,27 @@ import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.Waypoint;
 
-import java.util.Arrays;
 import java.util.function.Supplier;
 
-public class CurveDrive2 extends FollowTrajectory{
+public class CurveDrive2 extends FollowTrajectory {
 
     /**
      * Takes waypoints and turns it into trajectories for following
-     * @param speed The speed of the robot
+     *
+     * @param speed         The speed of the robot
      * @param minDoneCycles he number of cycles to complete after finishing the motion profile
-     * @param waypoints The array of waypoints
+     * @param waypoints     The array of waypoints
      */
     public CurveDrive2(double speed, int minDoneCycles, Waypoint[] waypoints) {
-        this(()->speed, ()->minDoneCycles, waypoints);
+        this(() -> speed, () -> minDoneCycles, waypoints);
     }
 
     /**
      * Takes waypoints and turns it into trajectories for following
-     * @param speed The speed of the robot
+     *
+     * @param speed         The speed of the robot
      * @param minDoneCycles he number of cycles to complete after finishing the motion profile
-     * @param waypoints The array of waypoints
+     * @param waypoints     The array of waypoints
      */
     public CurveDrive2(Supplier<Double> speed, Supplier<Integer> minDoneCycles, Waypoint[] waypoints) {
         super(speed, minDoneCycles, generateTrajectory(waypoints));
@@ -32,6 +33,7 @@ public class CurveDrive2 extends FollowTrajectory{
 
     /**
      * Generates a trajectory from the waypoints for the robot to follow
+     *
      * @param waypoints The waypoints in the path for the robot to follow
      * @return A trajectory for the robot to follow
      */
@@ -39,7 +41,7 @@ public class CurveDrive2 extends FollowTrajectory{
 
         Waypoint[] newWaypoints = new Waypoint[waypoints.length];
 
-        for(int i = 0; i < waypoints.length; i++) {
+        for (int i = 0; i < waypoints.length; i++) {
             newWaypoints[i] = waypoints[i];
             newWaypoints[i].y *= -1;
         }

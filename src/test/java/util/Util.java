@@ -20,6 +20,7 @@ public class Util {
         setCurrentInstanceFieldNull(Intake.class);
         setCurrentInstanceFieldNull(Lift.class);
         setCurrentInstanceFieldNull(Pneumatics.class);
+        setCurrentInstanceFieldNull(RingLight.class);
     }
 
     /**

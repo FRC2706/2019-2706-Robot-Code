@@ -23,7 +23,7 @@ public class MoveLiftToSetpoint extends Command {
     }
 
     @Override
-    protected void execute() {
+    protected void initialize() {
         Lift.getInstance().moveToSetpoint(1.0, setpoint);
     }
 

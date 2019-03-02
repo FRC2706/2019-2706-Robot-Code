@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot;
 
+import ca.team2706.frc.robot.commands.ToggleRingLight;
 import ca.team2706.frc.robot.commands.drivebase.CurvatureDriveWithJoystick;
 import ca.team2706.frc.robot.commands.intake.EjectConditional;
 import ca.team2706.frc.robot.commands.intake.arms.LowerArmsSafely;
@@ -89,11 +90,11 @@ public class OI {
         Lift.getInstance().setDefaultCommand(liftCommand);
 
         // Operator controls.
-        new FluidButton(controlStick, Config.INTAKE_BACKWARD_BINDING, 0.1)
+        new FluidButton(controlStick, Config.INTAKE_BACKWARD_BINDING, 0.05)
                 .whenHeld(new RunIntakeOnJoystick(controlStick, Config.INTAKE_BACKWARD_BINDING, false));
-        new FluidButton(controlStick, Config.INTAKE_FORWARD_BINDING, 0.1)
+        new FluidButton(controlStick, Config.INTAKE_FORWARD_BINDING, 0.05)
                 .whenHeld(new RunIntakeOnJoystick(controlStick, Config.INTAKE_FORWARD_BINDING, true));
-        new FluidButton(controlStick, Config.MOVE_LIFT_BINDING, 0.1)
+        new FluidButton(controlStick, Config.MOVE_LIFT_BINDING, 0.05)
                 .whenHeld(new MoveLiftOnJoystick(controlStick, Config.MOVE_LIFT_BINDING));
         new FluidButton(controlStick, Config.LIFT_ARMS_BINDING)
                 .whenPressed(new RaiseArmsSafely());
@@ -118,6 +119,8 @@ public class OI {
         button.whenReleased(new MovePlunger(MovePlunger.DesiredState.STOWED));
         new FluidButton(controlStick, Config.AUTO_INTAKE_CARGO_BINDING)
                 .whenHeld(new AutoIntakeCargo());
+        new FluidButton(controlStick, Config.TOGGLE_RING_LIGHT_BINDING)
+                .whenPressed(new ToggleRingLight());
     }
 
     /**

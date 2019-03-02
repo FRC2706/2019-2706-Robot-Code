@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The subsystem which controls the intake for cargo and hatches
@@ -81,6 +82,11 @@ public class Intake extends Subsystem {
         return irValue;
     }
 
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("IR", readIr()); // TODO remove
+    }
+
     /**
      * Spins the intake wheels forward both to intake and eject cargo.
      *
@@ -125,7 +131,7 @@ public class Intake extends Subsystem {
      * @return True if the cargo is positioned well, false otherwise.
      */
     public boolean isCargoPositionedWell() {
-        return Math.abs(readIr() - Config.CARGO_CAPTURED_IDEAL_IR_VOLTAGE.value()) <= 0.5;
+        return Math.abs(readIr() - Config.CARGO_CAPTURED_IDEAL_IR_VOLTAGE.value()) <= 0.05;
     }
 
 }

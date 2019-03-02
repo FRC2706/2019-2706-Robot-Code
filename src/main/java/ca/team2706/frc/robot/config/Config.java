@@ -79,23 +79,23 @@ public class Config {
     public static final double
             // Max speed of the lift going up in override (between 0 and 1).
             LIFT_OVERRIDE_UP_SPEED = 0.4,
-    /**
-     * Speed for automatically ejecting cargo from the intake, from 0 to 1.
-     */
-    AUTO_EJECT_CARGO_INTAKE_SPEED = 1.0,
-    // Max speed of the lift going down in override (between -1 and 0).
-    LIFT_OVERRIDE_DOWN_SPEED = -0.2,
-    /**
-     * Speed (from 0 to 1) for automatically intaking cargo.
-     */
-    AUTO_INTAKE_CARGO_SPEED = 0.8;
+            /**
+             * Speed for automatically ejecting cargo from the intake, from 0 to 1.
+             */
+            AUTO_EJECT_CARGO_INTAKE_SPEED = 1.0,
+            // Max speed of the lift going down in override (between -1 and 0).
+            LIFT_OVERRIDE_DOWN_SPEED = -0.2,
+            /**
+             * Speed (from 0 to 1) for automatically intaking cargo.
+             */
+            AUTO_INTAKE_CARGO_SPEED = 0.8;
 
 
     public static boolean
             INVERT_LIFT_MOTOR = robotSpecific(false, false, false),
             ENABLE_LIFT_CURRENT_LIMIT = robotSpecific(false, false, false);
 
-    public static int MAX_LIFT_ENCODER_TICKS = 52_000;
+    public static int MAX_LIFT_ENCODER_TICKS = 54_000;
 
 
     public static final boolean ENABLE_DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);
@@ -106,11 +106,13 @@ public class Config {
     // Selector Channel
     public static final int SELECTOR_ID = robotSpecific(0, 0, 0);
 
+    // Ring light
+    public static final int RING_LIGHT_ID = robotSpecific(0, 0, 0);
+
     // The amount of encoder ticks that the robot must drive to go one foot
     public static final double DRIVE_ENCODER_DPP
             = robotSpecific(Math.PI / 8192.0, Math.PI / 8192.0, Math.PI / 8192.0);
 
-    // TODO this is not right. Actual value plz.
     /**
      * The amount of encoder ticks that the robot must move the lift to travel one foot
      */
@@ -119,7 +121,7 @@ public class Config {
 
     public static final double PIGEON_DPP = robotSpecific(360.0 / 8192.0, 360.0 / 8192.0, 360.0 / 8192.0);
 
-    public static final boolean ENABLE_CAMERA = robotSpecific(true, true, false);
+    public static final boolean ENABLE_CAMERA = robotSpecific(true, true, true);
 
     public static final int PURPLE_LIGHT = robotSpecific(3, 3, 3);
 
@@ -136,7 +138,7 @@ public class Config {
     /**
      * Amount of time (in seconds) that it takes for the plunger to be stowed.
      */
-    public static final double PLUNGER_TIMEOUT = 0.5;
+    public static final double PLUNGER_TIMEOUT = 0.25;
     /**
      * How long the intake motors should be running before the plunger deploys, in seconds.
      */
@@ -150,7 +152,7 @@ public class Config {
     /**
      * How much height (in feet) to subtract from the lift's height for ejecting hatches.
      */
-    public static final double SUBTRACT_LIFT_HEIGHT = -0.0833;
+    public static final double SUBTRACT_LIFT_HEIGHT = -0.125;
 
 
     public static final double MAX_INTAKE_SPEED = 1.0; //to be finalized later, this has yet to be tested
@@ -179,8 +181,9 @@ public class Config {
 
     public static final FluidConstant<Double> MOTION_MAGIC_CRUISE_VELOCITY = constant("mm-cruise-velocity", 7.77);
     public static final FluidConstant<Double> MOTION_MAGIC_ACCELERATION = constant("mm-acceleration", 7.77);
-    public static final FluidConstant<Double> LIFT_MOTION_MAGIC_ACCELERATION = constant("mm-lift-acceleration", 7.77);
+    public static final FluidConstant<Double> LIFT_MOTION_MAGIC_ACCELERATION = constant("mm-lift-acceleration", 4.0);
     public static final FluidConstant<Double> LIFT_MOTION_MAGIC_VELOCITY = constant("mm-lift-velocity", 7.77);
+    public static final FluidConstant<Double> LIFT_MAX_SPEED = constant("max-lift-velocity", 7.77);
 
     public static final FluidConstant<Double> TURN_P = constant("turn-P", 0.5);
     public static final FluidConstant<Double> TURN_I = constant("turn-I", 0.0);
@@ -211,17 +214,18 @@ public class Config {
             LIFT_FOURTH_SETPOINT_BINDING = constant("lift-top-setpoint-binding", XboxValue.XBOX_POV_RIGHT.getNTString()),
             MANUAL_PISTON_BINDING = constant("manual-plunger-toggle", XboxValue.XBOX_RIGHT_AXIS_BUTTON.getNTString()),
             EJECT_BINDING = constant("eject-multi-purpose-binding", XboxValue.XBOX_RB_BUTTON.getNTString()),
-            AUTO_INTAKE_CARGO_BINDING = constant("auto-intake-cargo-binding", XboxValue.XBOX_LB_BUTTON.getNTString());
+            AUTO_INTAKE_CARGO_BINDING = constant("auto-intake-cargo-binding", XboxValue.XBOX_LB_BUTTON.getNTString()),
+            TOGGLE_RING_LIGHT_BINDING = constant("toggle-ring-light-binding", XboxValue.XBOX_START_BUTTON.getNTString());
 
     /**
      * The minimum reading on the cargo IR sensor to assert that we have cargo in the mechanism.
      */
-    public static final FluidConstant<Double> CARGO_CAPTURED_IR_MIN_VOLTAGE = constant("cargo-min-ir-voltage", 0.625);
+    public static final FluidConstant<Double> CARGO_CAPTURED_IR_MIN_VOLTAGE = constant("cargo-min-ir-voltage", 0.2);
 
     /**
      * The idea voltage for captured cargo.
      */
-    public static final FluidConstant<Double> CARGO_CAPTURED_IDEAL_IR_VOLTAGE = constant("cargo-ideal-ir-voltage", 2.0);
+    public static final FluidConstant<Double> CARGO_CAPTURED_IDEAL_IR_VOLTAGE = constant("cargo-ideal-ir-voltage", 0.2);
 
     // ### Methods, fields and Constructors ###
     /**

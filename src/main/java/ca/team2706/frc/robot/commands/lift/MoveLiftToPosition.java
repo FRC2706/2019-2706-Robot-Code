@@ -6,8 +6,9 @@ import edu.wpi.first.wpilibj.command.Command;
 public class MoveLiftToPosition extends Command {
 
     private final double maxSpeed;
-    private double position;
+    private final double position;
     private final boolean additive;
+    private double absolutePosition;
 
     /**
      * Constructs a move lift to position command, moving the lift to the given position.
@@ -34,9 +35,12 @@ public class MoveLiftToPosition extends Command {
     }
 
     @Override
-    protected void execute() {
-        final double absolutePosition = (additive) ? position + Lift.getInstance().getLiftHeight() : position;
+    protected void initialize() {
+        absolutePosition = (additive) ? position + Lift.getInstance().getLiftHeight() : position;
+    }
 
+    @Override
+    protected void execute() {
         Lift.getInstance().setPosition(maxSpeed, absolutePosition);
     }
 

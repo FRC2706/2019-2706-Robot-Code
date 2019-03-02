@@ -7,12 +7,14 @@ import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.*;
 import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import org.opencv.video.Video;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +53,7 @@ public class Robot extends TimedRobot {
         Intake.init();
         Pneumatics.init();
         Lift.init();
+        RingLight.init();
 
         // Make sure that this is last initialized subsystem
         SensorExtras.init();

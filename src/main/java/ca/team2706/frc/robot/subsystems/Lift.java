@@ -1,10 +1,13 @@
 package ca.team2706.frc.robot.subsystems;
 
 import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.logging.Log;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import java.util.Arrays;
 
 /**
  * Subsystem that controls the elevator on the robot
@@ -97,7 +100,7 @@ public class Lift extends Subsystem {
         liftMotor.configForwardSoftLimitThreshold(Config.MAX_LIFT_ENCODER_TICKS, Config.CAN_LONG);
         liftMotor.configReverseSoftLimitThreshold(0, Config.CAN_LONG);
 
-        liftMotor.configVoltageCompSaturation(10, Config.CAN_LONG);
+        liftMotor.configVoltageCompSaturation(11, Config.CAN_LONG);
         liftMotor.enableVoltageCompensation(true);
 
         liftMotor.configMotionCruiseVelocity((int) (Config.LIFT_MOTION_MAGIC_VELOCITY.value() / Config.LIFT_ENCODER_DPP / 10), Config.CAN_LONG);
@@ -124,6 +127,9 @@ public class Lift extends Subsystem {
         SmartDashboard.putNumber("Lift Encoders", liftMotor.getSelectedSensorPosition());
         SmartDashboard.putBoolean("Lift Rev Switch", liftMotor.getSensorCollection().isRevLimitSwitchClosed());
         SmartDashboard.putBoolean("Lift Fwd Switch", liftMotor.getSensorCollection().isFwdLimitSwitchClosed());
+
+        Log.d("Lift Current: " + liftMotor.getOutputCurrent());
+        Log.d("Lift Voltage: " + liftMotor.getMotorOutputVoltage());
     }
 
     /**
@@ -165,7 +171,14 @@ public class Lift extends Subsystem {
     public void setPosition(final double maxSpeed, final double position) {
         enableLimit(true);
         liftMotor.configClosedLoopPeakOutput(0, maxSpeed);
-        liftMotor.set(ControlMode.Position, position / Config.LIFT_ENCODER_DPP); // TODO go back to motion magic
+        liftMotor.set(ControlMode.Position, position / Config.LIFT_ENCODER_DPP);
+    }
+
+
+    public void setPositionMotionMagic(final double maxSpeed, final double position) {
+        enableLimit(true);
+        liftMotor.configClosedLoopPeakOutput(0, maxSpeed);
+        liftMotor.set(ControlMode.MotionMagic, position / Config.LIFT_ENCODER_DPP);
     }
 
     /**
@@ -227,7 +240,7 @@ public class Lift extends Subsystem {
     public void moveToSetpoint(final double speed, final int setpoint) {
         final double[] currentSetpoints = getCurrentSetpoints();
         if (0 <= setpoint && setpoint <= currentSetpoints.length) {
-            setPosition(speed, currentSetpoints[setpoint]);
+            setPositionMotionMagic(speed, currentSetpoints[setpoint]);
         }
     }
 
@@ -251,6 +264,7 @@ public class Lift extends Subsystem {
 
     /**
      * Determines if the robot has reached the given position.
+     *
      * @param position The position in feet.
      * @return True if the lift is within a certain margin of error fo the position, false otherwise.
      */

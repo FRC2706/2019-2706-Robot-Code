@@ -35,6 +35,64 @@ import jaci.pathfinder.Waypoint;
  */
 public class DriverAssistVision extends Command {
 
+    /** 
+     * Angle of robot heading with respect to x axis of field frame
+     * 
+    */
+    private double angRobotHeadingFinal_Field = 0.0;
+
+    /**  
+     * Value of angYawTargetWrtCameraLOSCWposAngle (yaw angle to target wrt camera line of sight in degrees)
+     * from the previous time the command was issued.
+     * 
+    */
+    private double angYawTargetWrtCameraLOSCWposPrev = 0.0;
+
+    private boolean commandAborted;
+
+    /**  
+     * Value of distanceCameraToTarget_Camera (distance from camera frame origin to target in feet)
+     * from the previous time the command was issued.
+     * 
+    */
+    private double distanceCameraToTarget_CameraPrev = 0.0;
+
+    /**
+     * True if target is cargo ship or loading bay
+     */
+    private boolean driverAssistCargoAndLoading = false;
+
+    /**
+     * True if target is rocket
+     */
+    private boolean driverAssistRocket = false;
+
+    /**
+     * Network table instance to get data from vision subsystem
+     */
+    private NetworkTableInstance inst;
+
+     /**
+     * Network table to get data from vision subsystem
+     */
+    private NetworkTable table;
+
+    /**
+     * Trajectory generated to move robot to target
+     */
+    private Trajectory traj;
+
+    /**
+     * True if trajectory has been generated for this command, false otherwise.
+     * (This will be removed when motion control functionality is implemented.)
+     */
+    private boolean trajGenerated = false;
+
+    /**
+     * True if vision system has been assessed to be offline
+     */
+    boolean visionOffline = false;
+
     /**
      * Creates empty driver assist command object (needed for unit testing framework only)
      */
@@ -350,7 +408,7 @@ public class DriverAssistVision extends Command {
         // Robot must be in an angular range such that it is approximately facing the desired target. 
         angRobotHeadingFinal_Field = 0.0;
 
-        if (driverAssistCargoAndLoading == true) {
+        if (driverAssistCargoAndLoading) {
             // Assist requested for cargo ship or loading dock targets
             Log.d("DAV: Assist for cargo ship or loading dock requested");
             if ((angRobotHeadingCurrent_Field >= 0.0 && angRobotHeadingCurrent_Field <= 45.0) || (angRobotHeadingCurrent_Field >= 315.0 && angRobotHeadingCurrent_Field < 360.0)) {
@@ -363,7 +421,7 @@ public class DriverAssistVision extends Command {
                 angRobotHeadingFinal_Field = 270.0;
             }
         }
-        else if (driverAssistRocket == true) {
+        else if (driverAssistRocket) {
             // Assist request for rocket ship targets
             Log.d("DAV: Assist for rocket requested");
 
@@ -399,61 +457,4 @@ public class DriverAssistVision extends Command {
         return angRobotHeadingFinal_Field;
     }
 
-    /** 
-     * Angle of robot heading with respect to x axis of field frame
-     * 
-    */
-    private double angRobotHeadingFinal_Field = 0.0;
-
-    /**  
-     * Value of angYawTargetWrtCameraLOSCWposAngle (yaw angle to target wrt camera line of sight in degrees)
-     * from the previous time the command was issued.
-     * 
-    */
-    private double angYawTargetWrtCameraLOSCWposPrev = 0.0;
-
-    private boolean commandAborted;
-
-    /**  
-     * Value of distanceCameraToTarget_Camera (distance from camera frame origin to target in feet)
-     * from the previous time the command was issued.
-     * 
-    */
-    private double distanceCameraToTarget_CameraPrev = 0.0;
-
-    /**
-     * True if target is cargo ship or loading bay
-     */
-    private boolean driverAssistCargoAndLoading = false;
-
-    /**
-     * True if target is rocket
-     */
-    private boolean driverAssistRocket = false;
-
-    /**
-     * Network table instance to get data from vision subsystem
-     */
-    private NetworkTableInstance inst;
-
-    /**
-     * Network table to get data from vision subsystem
-     */
-    private NetworkTable table;
-
-    /**
-     * Trajectory generated to move robot to target
-     */
-    private Trajectory traj;
-
-    /**
-     * True if trajectory has been generated for this command, false otherwise.
-     * (This will be removed when motion control functionality is implemented.)
-     */
-    private boolean trajGenerated = false;
-
-    /**
-     * True if vision system has been assessed to be offline
-     */
-    boolean visionOffline = false;
 }

@@ -33,7 +33,6 @@ public class DriverAssistVisionTest {
      */
     @Test
     public void testGenerateTrajectoryCargoShipAndLoading() {
-
         // Set up values that the mocked methods return
         new Expectations() {{
             driveBase.getAbsoluteHeading();

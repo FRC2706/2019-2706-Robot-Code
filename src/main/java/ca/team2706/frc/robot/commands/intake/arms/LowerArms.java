@@ -1,8 +1,7 @@
 package ca.team2706.frc.robot.commands.intake.arms;
 
-import ca.team2706.frc.robot.subsystems.Intake;
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.subsystems.IntakePneumatics;
 import edu.wpi.first.wpilibj.command.TimedCommand;
 
 /**
@@ -11,18 +10,18 @@ import edu.wpi.first.wpilibj.command.TimedCommand;
 public class LowerArms extends TimedCommand {
 
     public LowerArms() {
-        super(1.0); // TODO add constant.
+        super(Config.INTAKE_ARMS_DELAY);
+        requires(IntakePneumatics.getInstance());
     }
 
     @Override
     protected void initialize() {
-        System.out.println("Lowering intake arms."); // TODO remove
-        Intake.getInstance().lowerIntake();
+        IntakePneumatics.getInstance().lowerArms();
     }
 
     @Override
     protected void end() {
         super.end();
-        Intake.getInstance().stopArmsPneumatics();
+        IntakePneumatics.getInstance().stopArmsPneumatics();
     }
 }

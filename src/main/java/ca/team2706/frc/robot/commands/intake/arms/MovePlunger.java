@@ -1,12 +1,10 @@
 package ca.team2706.frc.robot.commands.intake.arms;
 
 import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.subsystems.Intake;
-import edu.wpi.first.wpilibj.command.Command;
+import ca.team2706.frc.robot.subsystems.IntakePneumatics;
 import edu.wpi.first.wpilibj.command.TimedCommand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import java.sql.Time;
 import java.util.Arrays;
 
 /**
@@ -27,6 +25,7 @@ public class MovePlunger extends TimedCommand {
      */
     public MovePlunger(final DesiredState newState) {
         super(Config.PLUNGER_TIMEOUT);
+        requires(IntakePneumatics.getInstance());
         this.newState = newState;
     }
 
@@ -42,11 +41,11 @@ public class MovePlunger extends TimedCommand {
         System.out.println("Init on move plunger."); // TODO remove
 
         super.initialize();
-        oldState = (Intake.getInstance().isPlungerStowed()) ? DesiredState.STOWED : DesiredState.DEPLOYED;
+        oldState = (IntakePneumatics.getInstance().isPlungerStowed()) ? DesiredState.STOWED : DesiredState.DEPLOYED;
 
         DesiredState goodNewState = newState;
         if (goodNewState == DesiredState.TOGGLE) {
-            if (Intake.getInstance().isPlungerStowed()) {
+            if (IntakePneumatics.getInstance().isPlungerStowed()) {
                 goodNewState = DesiredState.DEPLOYED;
             } else {
                 goodNewState = DesiredState.STOWED;
@@ -55,10 +54,10 @@ public class MovePlunger extends TimedCommand {
 
         switch (goodNewState) {
             case DEPLOYED:
-                Intake.getInstance().deployPlunger();
+                IntakePneumatics.getInstance().deployPlunger();
                 break;
             case STOWED:
-                Intake.getInstance().retractPlunger();
+                IntakePneumatics.getInstance().retractPlunger();
                 break;
         }
     }
@@ -73,7 +72,7 @@ public class MovePlunger extends TimedCommand {
     @Override
     protected void end() {
         super.end();
-        Intake.getInstance().stopPlunger();
+        IntakePneumatics.getInstance().stopPlunger();
     }
 
     @Override

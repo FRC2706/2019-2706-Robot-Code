@@ -1,10 +1,8 @@
 package ca.team2706.frc.robot.commands.intake.cargo;
 
 
-import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.config.FluidConstant;
 import ca.team2706.frc.robot.config.XboxValue;
-import ca.team2706.frc.robot.input.FluidButton;
 import ca.team2706.frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
@@ -31,9 +29,9 @@ public class RunIntakeOnJoystick extends Command {
     /**
      * Constructs a new RunIntakeOnJoystick command on the given controller and with the given axis.
      *
-     * @param controller The controller to be monitored.
-     * @param axisBinding       The axis of the analog stick to be monitored, as a fluid constant.
-     * @param forward True to move the motors forward (for inhaling and ejecting cargo), false to go backward.
+     * @param controller  The controller to be monitored.
+     * @param axisBinding The axis of the analog stick to be monitored, as a fluid constant.
+     * @param forward     True to move the motors forward (for inhaling and ejecting cargo), false to go backward.
      */
     public RunIntakeOnJoystick(final Joystick controller, final FluidConstant<String> axisBinding, final boolean forward) {
         requires(Intake.getInstance());

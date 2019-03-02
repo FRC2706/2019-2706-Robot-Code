@@ -1,6 +1,5 @@
 package ca.team2706.frc.robot.commands.lift;
 
-import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.config.FluidConstant;
 import ca.team2706.frc.robot.config.XboxValue;
 import ca.team2706.frc.robot.subsystems.Lift;
@@ -19,8 +18,8 @@ public class MoveLiftOnJoystick extends Command {
     /**
      * Moves the lift down using PID.
      *
-     * @param joystick The joystick at which to look at to determine speed.
-     * @param portBinding     The axis port at which to look at for the speed.
+     * @param joystick    The joystick at which to look at to determine speed.
+     * @param portBinding The axis port at which to look at for the speed.
      */
     public MoveLiftOnJoystick(Joystick joystick, final FluidConstant<String> portBinding) {
         requires(Lift.getInstance());

@@ -47,8 +47,9 @@ public class FluidButton extends EButton {
 
     /**
      * Determines if the given controller's port is being pressed.
+     *
      * @param controller The controller to test.
-     * @param port The port of the button which is being tested.
+     * @param port       The port of the button which is being tested.
      * @return True if the button at the given port on the controller is being pressed, false otherwise.
      */
     static boolean determineIfPressed(GenericHID controller, final XboxValue port, final double minAxisActivation) {
@@ -74,8 +75,9 @@ public class FluidButton extends EButton {
 
     /**
      * Determines if the given button on the given controller is being pressed.
+     *
      * @param controller The controller.
-     * @param port The button binding.
+     * @param port       The button binding.
      * @return True if it's being pressed, false otherwise.
      */
     static boolean determineIfPressed(GenericHID controller, final XboxValue port) {

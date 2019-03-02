@@ -1,14 +1,10 @@
 package ca.team2706.frc.robot.subsystems;
 
-import ca.team2706.frc.robot.commands.lift.HoldLift;
 import ca.team2706.frc.robot.config.Config;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import java.util.Arrays;
 
 /**
  * Subsystem that controls the elevator on the robot
@@ -219,8 +215,8 @@ public class Lift extends Subsystem {
      *
      * @return The intake mode
      */
-    private static Intake.IntakeMode getIntakeMode() {
-        return Intake.getInstance().getMode();
+    private static IntakePneumatics.IntakeMode getIntakeMode() {
+        return IntakePneumatics.getInstance().getMode();
     }
 
     /**
@@ -265,6 +261,7 @@ public class Lift extends Subsystem {
 
     /**
      * Gets the lift height in encoder ticks.
+     *
      * @return The lift height in encoder ticks.
      */
     public int getLiftHeightEncoderTicks() {

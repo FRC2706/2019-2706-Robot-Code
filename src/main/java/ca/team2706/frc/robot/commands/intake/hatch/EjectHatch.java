@@ -3,6 +3,7 @@ package ca.team2706.frc.robot.commands.intake.hatch;
 import ca.team2706.frc.robot.commands.intake.arms.MovePlunger;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.Intake;
+import ca.team2706.frc.robot.subsystems.IntakePneumatics;
 import ca.team2706.frc.robot.subsystems.Lift;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.InstantCommand;
@@ -26,6 +27,6 @@ public class EjectHatch extends CommandGroup {
     @Override
     protected void end() {
         super.end();
-        Intake.getInstance().retractPlunger(); // Move plunger back in.
+        IntakePneumatics.getInstance().retractPlunger(); // Move plunger back in.
     }
 }

@@ -79,12 +79,12 @@ public class Config {
     public static final double
             // Max speed of the lift going up in override (between 0 and 1).
             LIFT_OVERRIDE_UP_SPEED = 0.4,
-            /**
-             * Speed for automatically ejecting cargo from the intake, from 0 to 1.
-             */
-            AUTO_EJECT_CARGO_INTAKE_SPEED = 1.0,
-            // Max speed of the lift going down in override (between -1 and 0).
-            LIFT_OVERRIDE_DOWN_SPEED = -0.2;
+    /**
+     * Speed for automatically ejecting cargo from the intake, from 0 to 1.
+     */
+    AUTO_EJECT_CARGO_INTAKE_SPEED = 1.0,
+    // Max speed of the lift going down in override (between -1 and 0).
+    LIFT_OVERRIDE_DOWN_SPEED = -0.2;
 
 
     public static boolean
@@ -134,9 +134,14 @@ public class Config {
      */
     public static final double PLUNGER_TIMEOUT = 0.5;
     /**
-     * How long the intake motors should be running before the plunger deploys.
+     * How long the intake motors should be running before the plunger deploys, in seconds.
      */
     public static final double EXHALE_CARGO_WAIT_UNTIL_PLUNGER = 0.5;
+
+    /**
+     * How long to wait to ensure the intake arms have fully moved.
+     */
+    public static final double INTAKE_ARMS_DELAY = 1.0;
 
     /**
      * How much height (in feet) to subtract from the lift's height for ejecting hatches.

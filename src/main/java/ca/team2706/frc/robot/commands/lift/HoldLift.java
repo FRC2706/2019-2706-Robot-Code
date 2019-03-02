@@ -3,7 +3,11 @@ package ca.team2706.frc.robot.commands.lift;
 import ca.team2706.frc.robot.subsystems.Lift;
 import edu.wpi.first.wpilibj.command.Command;
 
+/**
+ * Command for holding the position of the lift when there are no inputs being made to it.
+ */
 public class HoldLift extends Command {
+
     /**
      * Height to hold in encoder ticks.
      */

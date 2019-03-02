@@ -72,11 +72,11 @@ public class OI {
         driveCommand = new CurvatureDriveWithJoystick(driverStick, Config.CURVATURE_DRIVE_FORWARD, true,
                 Config.CURVATURE_CURVE_SPEED, false, Config.SLOW_MODE);
 
-        buttonDriverAssistVisionCargoAndLoading = new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_CARGO_AND_LOADING);
+        buttonDriverAssistVisionCargoAndLoading = new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING);
         buttonDriverAssistVisionCargoAndLoading.whenPressed(new DriverAssistVision(true, false));
-        buttonDriverAssistVisionRocket = new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_ROCKET);
+        buttonDriverAssistVisionRocket = new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_ROCKET_BINDING);
         buttonDriverAssistVisionRocket.whenPressed(new DriverAssistVision(false, true));
-        buttonDriverAssistLaser = new FluidButton(driverStick, Config.DRIVER_ASSIST_LASER);
+        buttonDriverAssistLaser = new FluidButton(driverStick, Config.DRIVER_ASSIST_LASER_BINDING);
 
         // Set subsystem default commands
         DriveBase.getInstance().setDefaultCommand(driveCommand);
@@ -100,30 +100,4 @@ public class OI {
         return controlStick;
     }
 
-    /**
-     * Gets a boolean indicating if the DriverAssistVisionCargoAndLoading button is pressed.
-     *
-     * @return True if the DriverAssistVisionCargoAndLoading button is pressed, false otherwise.
-     */
-    public boolean getButtonDriverAssistVisionCargoAndLoading() {
-        return buttonDriverAssistVisionCargoAndLoading.get();
-    }
-
-    /**
-     * Gets a boolean indicating if the DriverAssistLaser button is pressed.
-     *
-     * @return True if the DriverAssistLaser button is pressed, false otherwise.
-     */
-    public boolean getButtonDriverAssistLaser() {
-        return buttonDriverAssistLaser.get();
-    }
-
-    /**
-     * Gets a boolean indicating if the DriverAssistVisionRocket button is pressed.
-     *
-     * @return True if the DriverAssistVisionRocket button is pressed, false otherwise.
-     */
-    public boolean getButtonDriverAssistVisionRocket() {
-        return buttonDriverAssistVisionRocket.get();
-    }
 }

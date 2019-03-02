@@ -69,7 +69,6 @@ jar {
     manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
 }
 
-
 test {
     testLogging {
         showStandardStreams = true
@@ -78,7 +77,6 @@ test {
         jvmArgs "-javaagent:${classpath.find { it.name.contains("jmockit") }.absolutePath}"
     }
 }
-
 
 compileJava {
     sourceCompatibility = 11

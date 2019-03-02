@@ -84,7 +84,11 @@ public class Config {
      */
     AUTO_EJECT_CARGO_INTAKE_SPEED = 1.0,
     // Max speed of the lift going down in override (between -1 and 0).
-    LIFT_OVERRIDE_DOWN_SPEED = -0.2;
+    LIFT_OVERRIDE_DOWN_SPEED = -0.2,
+    /**
+     * Speed (from 0 to 1) for automatically intaking cargo.
+     */
+    AUTO_INTAKE_CARGO_SPEED = 0.8;
 
 
     public static boolean
@@ -206,12 +210,18 @@ public class Config {
             LIFT_THIRD_SETPOINT_BINDING = constant("lift-third-setpoint-binding", XboxValue.XBOX_POV_UP.getNTString()),
             LIFT_FOURTH_SETPOINT_BINDING = constant("lift-top-setpoint-binding", XboxValue.XBOX_POV_RIGHT.getNTString()),
             MANUAL_PISTON_BINDING = constant("manual-plunger-toggle", XboxValue.XBOX_RIGHT_AXIS_BUTTON.getNTString()),
-            EJECT_BINDING = constant("eject-multi-purpose-binding", XboxValue.XBOX_RB_BUTTON.getNTString());
+            EJECT_BINDING = constant("eject-multi-purpose-binding", XboxValue.XBOX_RB_BUTTON.getNTString()),
+            AUTO_INTAKE_CARGO_BINDING = constant("auto-intake-cargo-binding", XboxValue.XBOX_LB_BUTTON.getNTString());
 
     /**
      * The minimum reading on the cargo IR sensor to assert that we have cargo in the mechanism.
      */
-    public static final FluidConstant<Double> CARGO_CAPTURED_IR_VOLTAGE = constant("cargo-ir-distance", 0.625);
+    public static final FluidConstant<Double> CARGO_CAPTURED_IR_MIN_VOLTAGE = constant("cargo-min-ir-voltage", 0.625);
+
+    /**
+     * The idea voltage for captured cargo.
+     */
+    public static final FluidConstant<Double> CARGO_CAPTURED_IDEAL_IR_VOLTAGE = constant("cargo-ideal-ir-voltage", 2.0);
 
     // ### Methods, fields and Constructors ###
     /**

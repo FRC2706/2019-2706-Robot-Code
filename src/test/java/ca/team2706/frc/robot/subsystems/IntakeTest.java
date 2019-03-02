@@ -109,10 +109,10 @@ public class IntakeTest {
         }};
 
         final double[] returnValues = new double[]{
-                Config.CARGO_CAPTURED_IR_VOLTAGE.value() * 0.25,
-                Config.CARGO_CAPTURED_IR_VOLTAGE.value() * 0.95,
-                Config.CARGO_CAPTURED_IR_VOLTAGE.value() * 1.1,
-                Config.CARGO_CAPTURED_IR_VOLTAGE.value() * 1.5,
+                Config.CARGO_CAPTURED_IR_MIN_VOLTAGE.value() * 0.25,
+                Config.CARGO_CAPTURED_IR_MIN_VOLTAGE.value() * 0.95,
+                Config.CARGO_CAPTURED_IR_MIN_VOLTAGE.value() * 1.1,
+                Config.CARGO_CAPTURED_IR_MIN_VOLTAGE.value() * 1.5,
         };
 
         new Expectations() {{

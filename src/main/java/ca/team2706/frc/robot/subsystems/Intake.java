@@ -116,7 +116,16 @@ public class Intake extends Subsystem {
      * @return whether the intake has cargo or not
      */
     public boolean isCargoInMechanism() {
-        return readIr() > Config.CARGO_CAPTURED_IR_VOLTAGE.value();
+        return readIr() > Config.CARGO_CAPTURED_IR_MIN_VOLTAGE.value();
+    }
+
+    /**
+     * Determines if the cargo in the mechanisms is positioned well. Used for automatically intaking cargo.
+     *
+     * @return True if the cargo is positioned well, false otherwise.
+     */
+    public boolean isCargoPositionedWell() {
+        return Math.abs(readIr() - Config.CARGO_CAPTURED_IDEAL_IR_VOLTAGE.value()) <= 0.5;
     }
 
 }

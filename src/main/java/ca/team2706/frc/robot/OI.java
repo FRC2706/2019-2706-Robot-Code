@@ -5,6 +5,7 @@ import ca.team2706.frc.robot.commands.intake.EjectConditional;
 import ca.team2706.frc.robot.commands.intake.arms.LowerArmsSafely;
 import ca.team2706.frc.robot.commands.intake.arms.MovePlunger;
 import ca.team2706.frc.robot.commands.intake.arms.RaiseArmsSafely;
+import ca.team2706.frc.robot.commands.intake.cargo.AutoIntakeCargo;
 import ca.team2706.frc.robot.commands.intake.cargo.RunIntakeOnJoystick;
 import ca.team2706.frc.robot.commands.lift.HoldLift;
 import ca.team2706.frc.robot.commands.lift.MoveLiftOnJoystick;
@@ -115,6 +116,8 @@ public class OI {
         FluidButton button = new FluidButton(controlStick, Config.EJECT_BINDING);
         button.whenHeld(new EjectConditional());
         button.whenReleased(new MovePlunger(MovePlunger.DesiredState.STOWED));
+        new FluidButton(controlStick, Config.AUTO_INTAKE_CARGO_BINDING)
+                .whenHeld(new AutoIntakeCargo());
     }
 
     /**

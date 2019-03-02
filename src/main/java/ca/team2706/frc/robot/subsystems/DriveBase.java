@@ -525,7 +525,7 @@ public class DriveBase extends Subsystem {
         leftFrontMotor.configClosedLoopPeakOutput(1, speed);
         rightFrontMotor.configClosedLoopPeakOutput(1, speed);
 
-        rightFrontMotor.set(ControlMode.Position, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation);
+        rightFrontMotor.set(ControlMode.MotionMagic, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation);
         leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
     }
 

@@ -1,29 +1,81 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
+import ca.team2706.frc.robot.SendablesTest;
 import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.subsystems.DriveBase;
+import ca.team2706.frc.robot.subsystems.DriveBase;;
 
+import com.ctre.phoenix.CTREJNIWrapper;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.IMotorController;
+import com.ctre.phoenix.motorcontrol.SensorCollection;
+import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.sensors.PigeonIMU;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.PWM;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
-
-import mockit.Expectations;
-import mockit.Mocked;
+import mockit.*;
+import org.junit.Before;
 import org.junit.Test;
+import util.Util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
 
 public class DriverAssistVisionTest {
 
-    private final DriverAssistVision driverAssistVision = new DriverAssistVision();
+    @Tested
+    private DriverAssistVision driverAssistVision;
 
-    // Since these two classes are accessed statically (they are singletons), we have to mock 
-    // all instances and stub out the static initializer
+    private DriveBase driveBase = DriveBase.getInstance();
+
+    @Mocked
+    private WPI_TalonSRX talon;
+
+    @Mocked
+    private PWM pwm;
+
+    @Mocked
+    private AnalogInput analogInput;
 
     @Mocked(stubOutClassInitialization = true)
-    private DriveBase driveBase;
+    private PigeonIMU pigeon;
+
+    private DifferentialDrive differentialDrive;
 
     @Mocked(stubOutClassInitialization = true)
-    private Config config;
+    private CTREJNIWrapper jni;
+
+    @Mocked(stubOutClassInitialization = true)
+    private MotControllerJNI motControllerJNI;
+
+    @Mocked
+    private Notifier notifier;
+
+    //--See comment in setup() below
+    /*
+    @Injectable
+    private SensorCollection sensorCollection;
+    */
+
+    @Before
+    public void setUp() throws NoSuchFieldException, IllegalAccessException {
+        //--This independently causes the tests of this class to fail
+        /*
+        Util.resetSubsystems();
+        */
+
+        //--This independently causes the tests of this class to fail
+        /*
+        new Expectations() {{
+            talon.getSensorCollection();
+            result = sensorCollection;
+        }};
+        */
+    }
 
     /**
      * Runs various test for generating a trajectory to targets on the cargo ship or 
@@ -34,31 +86,26 @@ public class DriverAssistVisionTest {
     @Test
     public void testGenerateTrajectoryCargoShipAndLoading() {
 
-        // Set up values that the mocked methods return
+        new Expectations(Config.class) {{
+            Config.getTRAJ_DELTA_TIME(); result = 0.2;
+            Config.getROBOTTOCAMERA_ROBOTX(); result = 1.0;
+            Config.getROBOTTOCAMERA_ROBOTY(); result = 1.0;
+            Config.getTARGET_OFFSET_DISTANCE(); result = 0.5;
+        }};
+
         new Expectations() {{
-            driveBase.getAbsoluteHeading();
-            returns(0.0, 90.0, 180.0, 270.0);
-
-            Config.getTRAJ_DELTA_TIME();
-            result = 0.2;
-
-            Config.getROBOTTOCAMERA_ROBOTX(); 
-            result = 1.0;
-
-            Config.getROBOTTOCAMERA_ROBOTY();
-            result = 1.0;
-
-            Config.getTARGET_OFFSET_DISTANCE();
-            result = 0.5;
+            pigeon.getYawPitchRoll((double[]) any);
+            returns(SendablesTest.makePigeonExpectation(-90.0),
+                    SendablesTest.makePigeonExpectation(0.0),
+                    SendablesTest.makePigeonExpectation(90.0),
+                    SendablesTest.makePigeonExpectation(180.0));
         }};
 
         // Run the test
-        double distanceCameraToTarget_Camera = 6.0*1.414213562373095;  //2.0
+        double distanceCameraToTarget_Camera = 6.0*1.414213562373095;
         double yawAngleCameraToTarget_Camera = -45.0;
         boolean driverAssistCargoAndLoading = true;
         boolean driverAssistRocket = false;
-
-        
 
         // Verify the values produced with expected values. Note that the generated trajectory
         // is compared against the expected trajectory by comparing the expected x, y, and heading
@@ -86,24 +133,23 @@ public class DriverAssistVisionTest {
     @Test
     public void testGenerateTrajectoryRocket() {
 
-        // Set up values that the mocked methods return
-        new Expectations() {{
-            driveBase.getAbsoluteHeading();
-            returns(60.0, 0.0, 300.0, 120.0, 180.0, 240.0);
-
-            Config.getTRAJ_DELTA_TIME();
-            result = 0.2;
-
-            Config.getROBOTTOCAMERA_ROBOTX(); 
-            result = 1.0;
-
-            Config.getROBOTTOCAMERA_ROBOTY();
-            result = 1.0;
-
-            Config.getTARGET_OFFSET_DISTANCE();
-            result = 0.5;
+        new Expectations(Config.class) {{
+            Config.getTRAJ_DELTA_TIME(); result = 0.2;
+            Config.getROBOTTOCAMERA_ROBOTX(); result = 1.0;
+            Config.getROBOTTOCAMERA_ROBOTY(); result = 1.0;
+            Config.getTARGET_OFFSET_DISTANCE(); result = 0.5;
         }};
 
+        new Expectations() {{
+            pigeon.getYawPitchRoll((double[]) any);
+            returns(SendablesTest.makePigeonExpectation(-30.0),
+                    SendablesTest.makePigeonExpectation(-90.0),
+                    SendablesTest.makePigeonExpectation(210.0),
+                    SendablesTest.makePigeonExpectation(30.0),
+                    SendablesTest.makePigeonExpectation(90.0),
+                    SendablesTest.makePigeonExpectation(150.0));
+        }};
+        
         // Run the test
         double distanceCameraToTarget_Camera = 6.0*1.414213562373095;
         double yawAngleCameraToTarget_Camera = -45.0;

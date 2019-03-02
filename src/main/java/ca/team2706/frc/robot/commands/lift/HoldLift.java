@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class HoldLift extends Command {
 
     /**
-     * Height to hold in encoder ticks.
+     * Height to hold in feet.
      */
     private double heightToHold;
 

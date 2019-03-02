@@ -38,8 +38,6 @@ public class MovePlunger extends TimedCommand {
 
     @Override
     protected void initialize() {
-        System.out.println("Init on move plunger."); // TODO remove
-
         super.initialize();
         oldState = (Pneumatics.getInstance().isPlungerStowed()) ? DesiredState.STOWED : DesiredState.DEPLOYED;
 
@@ -60,13 +58,6 @@ public class MovePlunger extends TimedCommand {
                 Pneumatics.getInstance().retractPlunger();
                 break;
         }
-    }
-
-    // TODO remove overridden method.
-    @Override
-    protected void interrupted() {
-        super.interrupted();
-        SmartDashboard.putString("Error", Arrays.toString(new Exception().getStackTrace())); // TODO Remove
     }
 
     @Override

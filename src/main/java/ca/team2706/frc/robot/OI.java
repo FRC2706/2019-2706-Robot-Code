@@ -10,7 +10,7 @@ import ca.team2706.frc.robot.commands.intake.cargo.RunIntakeOnJoystick;
 import ca.team2706.frc.robot.commands.lift.HoldLift;
 import ca.team2706.frc.robot.commands.lift.MoveLiftOnJoystick;
 import ca.team2706.frc.robot.commands.lift.MoveLiftOnOverride;
-import ca.team2706.frc.robot.commands.lift.MoveLiftToSetpoints;
+import ca.team2706.frc.robot.commands.lift.MoveLiftToSetpoint;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.input.FluidButton;
 import ca.team2706.frc.robot.subsystems.DriveBase;
@@ -94,7 +94,7 @@ public class OI {
         new FluidButton(controlStick, Config.INTAKE_FORWARD_BINDING, 0.1)
                 .whenHeld(new RunIntakeOnJoystick(controlStick, Config.INTAKE_FORWARD_BINDING, true));
         new FluidButton(controlStick, Config.MOVE_LIFT_BINDING, 0.1)
-                .whenPressed(new MoveLiftOnJoystick(controlStick, Config.MOVE_LIFT_BINDING));
+                .whenHeld(new MoveLiftOnJoystick(controlStick, Config.MOVE_LIFT_BINDING));
         new FluidButton(controlStick, Config.LIFT_ARMS_BINDING)
                 .whenPressed(new RaiseArmsSafely());
         new FluidButton(controlStick, Config.LOWER_ARMS_BINDING)
@@ -104,13 +104,13 @@ public class OI {
         new FluidButton(controlStick, Config.OVERRIDE_LIFT_UP_BINDING)
                 .whenHeld(new MoveLiftOnOverride(true));
         new FluidButton(controlStick, Config.LIFT_FIRST_SETPOINT_BINDING)
-                .whenHeld(new MoveLiftToSetpoints(0));
+                .whenHeld(new MoveLiftToSetpoint(0));
         new FluidButton(controlStick, Config.LIFT_SECOND_SETPOINT_BINDING)
-                .whenHeld(new MoveLiftToSetpoints(1));
+                .whenHeld(new MoveLiftToSetpoint(1));
         new FluidButton(controlStick, Config.LIFT_THIRD_SETPOINT_BINDING)
-                .whenHeld(new MoveLiftToSetpoints(2));
+                .whenHeld(new MoveLiftToSetpoint(2));
         new FluidButton(controlStick, Config.LIFT_FOURTH_SETPOINT_BINDING)
-                .whenHeld(new MoveLiftToSetpoints(3));
+                .whenHeld(new MoveLiftToSetpoint(3));
         new FluidButton(controlStick, Config.MANUAL_PISTON_BINDING)
                 .whenPressed(new MovePlunger());
         FluidButton button = new FluidButton(controlStick, Config.EJECT_BINDING);

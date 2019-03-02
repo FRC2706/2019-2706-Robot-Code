@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  * Command for moving the lift to a given setpoint.
  */
-public class MoveLiftToSetpoints extends Command {
+public class MoveLiftToSetpoint extends Command {
 
     private final int setpoint;
 
@@ -17,14 +17,13 @@ public class MoveLiftToSetpoints extends Command {
      *
      * @param setpoint The setpoint number.
      */
-    public MoveLiftToSetpoints(final int setpoint) {
+    public MoveLiftToSetpoint(final int setpoint) {
         requires(Lift.getInstance());
         this.setpoint = setpoint;
     }
 
     @Override
     protected void execute() {
-        System.out.println("Going to setpoint: " + setpoint); // TODO Remove
         Lift.getInstance().moveToSetpoint(1.0, setpoint);
     }
 

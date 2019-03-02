@@ -56,22 +56,21 @@ public class Lift extends Subsystem {
      */
     private Lift() {
         liftMotor = new WPI_TalonSRX(Config.LIFT_MOTOR_ID);
-        liftMotor.setNeutralMode(NeutralMode.Brake);
-
-        liftMotor.enableCurrentLimit(Config.ENABLE_LIFT_CURRENT_LIMIT);
 
         setupTalonConfig();
     }
 
     @Override
     protected void initDefaultCommand() {
-
     }
 
     /**
      * Sets up the talon configuration.
      */
     private void setupTalonConfig() {
+        liftMotor.setNeutralMode(NeutralMode.Brake);
+        liftMotor.enableCurrentLimit(Config.ENABLE_LIFT_CURRENT_LIMIT);
+
         liftMotor.configFactoryDefault(Config.CAN_LONG);
         liftMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
         liftMotor.setInverted(Config.INVERT_LIFT_MOTOR);
@@ -244,10 +243,19 @@ public class Lift extends Subsystem {
         boolean hasReachedSetpoint = false;
         if (0 <= setpoint && setpoint <= currentSetpoints.length) {
             // We're good as long as we're within 0.1 feet of the target position.
-            hasReachedSetpoint = Math.abs(getLiftHeight() - currentSetpoints[setpoint]) < 0.1;
+            hasReachedSetpoint = hasReachedPosition(currentSetpoints[setpoint]);
         }
 
         return hasReachedSetpoint;
+    }
+
+    /**
+     * Determines if the robot has reached the given position.
+     * @param position The position in feet.
+     * @return True if the lift is within a certain margin of error fo the position, false otherwise.
+     */
+    public boolean hasReachedPosition(final double position) {
+        return Math.abs(getLiftHeight() - position) < 0.1;
     }
 
     /**
@@ -256,7 +264,7 @@ public class Lift extends Subsystem {
      * @return The lift height as measured by encoders, in feet.
      */
     public double getLiftHeight() {
-        return liftMotor.getSelectedSensorPosition() * Config.LIFT_ENCODER_DPP;  // TODO make sure this is right.
+        return liftMotor.getSelectedSensorPosition() * Config.LIFT_ENCODER_DPP;
     }
 
     /**

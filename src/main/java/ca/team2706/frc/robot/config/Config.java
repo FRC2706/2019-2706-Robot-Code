@@ -150,7 +150,7 @@ public class Config {
     /**
      * How much height (in feet) to subtract from the lift's height for ejecting hatches.
      */
-    public static final double SUBTRACT_LIFT_HEIGHT = 0.0833;
+    public static final double SUBTRACT_LIFT_HEIGHT = -0.0833;
 
 
     public static final double MAX_INTAKE_SPEED = 1.0; //to be finalized later, this has yet to be tested

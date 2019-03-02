@@ -99,31 +99,5 @@ public class OI {
     public Joystick getControlStick() {
         return controlStick;
     }
-
-    /**
-     * Gets a boolean indicating if the DriverAssistVisionCargoAndLoading button is pressed.
-     *
-     * @return True if the DriverAssistVisionCargoAndLoading button is pressed, false otherwise.
-     */
-    public boolean getButtonDriverAssistVisionCargoAndLoading() {
-        return buttonDriverAssistVisionCargoAndLoading.get();
-    }
-
-    /**
-     * Gets a boolean indicating if the DriverAssistLaser button is pressed.
-     *
-     * @return True if the DriverAssistLaser button is pressed, false otherwise.
-     */
-    public boolean getButtonDriverAssistLaser() {
-        return buttonDriverAssistLaser.get();
-    }
-
-    /**
-     * Gets a boolean indicating if the DriverAssistVisionRocket button is pressed.
-     *
-     * @return True if the DriverAssistVisionRocket button is pressed, false otherwise.
-     */
-    public boolean getButtonDriverAssistVisionRocket() {
-        return buttonDriverAssistVisionRocket.get();
-    }
+    
 }

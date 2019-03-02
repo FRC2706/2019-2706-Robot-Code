@@ -88,7 +88,6 @@ public class DriverAssistVision extends Command {
      */
     @Override
     public void initialize() {
-
         // See method generateTrajectoryRobotToTarget(...) for an explanation of variable names and coodinate
         // frames
 
@@ -144,11 +143,6 @@ public class DriverAssistVision extends Command {
     }
 
     @Override
-    public void execute() {
-        // Nothing to do here
-    }
-
-    @Override
     public boolean isFinished() {
         return (trajGenerated || commandAborted);
     };
@@ -174,7 +168,16 @@ public class DriverAssistVision extends Command {
     public NetworkTable getNetworkTable() {
         return table;
     }
-
+    
+    /** 
+     * Generates a trajectory using the Pathfinder library and sends it to the motion control 
+     * system 
+     * 
+     * @param distanceCameraToTarget_Camera distance from camera to target [ft]
+     * @param angYawTargetWrtCameraLOSCWpos yaw angle to target wrt camera line of sight, CW with increase angle [deg]
+     * @param driverAssistCargoAndLoading true if driver assist on cargo ship of loading bay target is requested
+     * @param driverAssistRocket true if drivers assist on rocket target is requested
+    */
     public void generateTrajectoryRobotToTarget(double distanceCameraToTarget_Camera, double angYawTargetWrtCameraLOSCWpos,
         boolean driverAssistCargoAndLoading, boolean driverAssistRocket) {
 

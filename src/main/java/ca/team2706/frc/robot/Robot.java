@@ -41,7 +41,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
-        
         onStateChange(RobotState.ROBOT_INIT);
         isInitialized = true;
 
@@ -76,7 +75,6 @@ public class Robot extends TimedRobot {
                 new MotionMagic(0.2, 15.54, 100),  //3
                 new StraightDriveGyro(0.2, 2.0, 100)  // 4
         };
-
     }
 
     /**

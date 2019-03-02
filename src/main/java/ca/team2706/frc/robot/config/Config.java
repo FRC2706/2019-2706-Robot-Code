@@ -160,6 +160,7 @@ public class Config {
         this.configTable = ntTable;
 
         Robot.setOnStateChange(this::robotStateChange);
+
         // If the robot has already initialized itself, we should initialize constants.
         if (Robot.isRobotInitialized()) {
             initializeFluidConstantNetworktables();

@@ -25,7 +25,6 @@ import util.Util;
 import static org.junit.Assert.assertEquals;
 
 public class DriverAssistVisionTest {
-
     @Tested
     private DriverAssistVision driverAssistVision;
 

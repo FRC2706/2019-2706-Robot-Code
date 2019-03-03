@@ -34,7 +34,6 @@ import jaci.pathfinder.Waypoint;
  * 
  */
 public class DriverAssistVision extends Command {
-
     /** 
      * Angle of robot heading with respect to x axis of field frame
      * 
@@ -456,5 +455,4 @@ public class DriverAssistVision extends Command {
     public double getAngRobotHeadingFinal_Field() {
         return angRobotHeadingFinal_Field;
     }
-
 }

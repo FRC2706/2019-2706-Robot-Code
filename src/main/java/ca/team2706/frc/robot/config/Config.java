@@ -426,13 +426,4 @@ public class Config {
     public static double getTARGET_OFFSET_DISTANCE() {
         return TARGET_OFFSET_DISTANCE.value();
     }
-
-    /**
-     * Gets the value of ROBOT_START_ANGLE.
-     *
-     * @return The value of ROBOT_START_ANGLE.
-     */
-    public static double getROBOT_START_ANGLE() {
-        return ROBOT_START_ANGLE.value();
-    }
 }

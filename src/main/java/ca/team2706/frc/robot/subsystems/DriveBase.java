@@ -640,7 +640,7 @@ public class DriveBase extends Subsystem {
      * 0 degrees. 
      */
     public void initGyro() {
-        savedAngle = Config.getROBOT_START_ANGLE();
+        savedAngle = Config.ROBOT_START_ANGLE.value();
         gyro.setYaw(0, Config.CAN_SHORT);
     }
 

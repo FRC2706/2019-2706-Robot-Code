@@ -89,11 +89,6 @@ public class DriveBaseTest {
      */
     @Test
     public void testAbsoluteGyro() {
-        new Expectations(Config.class) {{
-            Config.getROBOT_START_ANGLE();
-            result = 0.0;
-        }};
-
         new Expectations() {{
             pigeon.getYawPitchRoll((double[]) any);
             returns(SendablesTest.makePigeonExpectation(0.0),
@@ -109,18 +104,21 @@ public class DriveBaseTest {
 
         driveBase.initGyro();
 
-        assertEquals(0.0, driveBase.getAbsoluteHeading(), 0.0);
-        assertEquals(19.0, driveBase.getAbsoluteHeading(), 0.0);
-        assertEquals(-12.0, driveBase.getAbsoluteHeading(), 0.0);
+        double absoluteHeadingOffset = Config.ROBOT_START_ANGLE.value();
+        assertEquals(absoluteHeadingOffset + 0.0, driveBase.getAbsoluteHeading(), 0.0);
+        assertEquals(absoluteHeadingOffset + 19.0, driveBase.getAbsoluteHeading(), 0.0);
+        assertEquals(absoluteHeadingOffset - 12.0, driveBase.getAbsoluteHeading(), 0.0);
 
-        driveBase.reset();
+        driveBase.reset(); // Note: reset() calls getAbsoluteHeading() 
+        absoluteHeadingOffset = absoluteHeadingOffset - 12.0;
+ 
+        assertEquals(absoluteHeadingOffset + 0.0, driveBase.getAbsoluteHeading(), 0.0);
+        assertEquals(absoluteHeadingOffset + 90.0, driveBase.getAbsoluteHeading(), 0.0);
+        assertEquals(absoluteHeadingOffset + 34.0, driveBase.getAbsoluteHeading(), 0.0);
 
-        assertEquals(-12.0, driveBase.getAbsoluteHeading(), 0.0);
-        assertEquals(78.0, driveBase.getAbsoluteHeading(), 0.0);
-        assertEquals(22.0, driveBase.getAbsoluteHeading(), 0.0);
+        driveBase.reset(); // Note: reset() calls getAbsoluteHeading()
+        absoluteHeadingOffset = absoluteHeadingOffset + 34.0;
 
-        driveBase.reset();
-
-        assertEquals(22.0, driveBase.getAbsoluteHeading(), 0.0);
+        assertEquals(absoluteHeadingOffset + 0.0, driveBase.getAbsoluteHeading(), 0.0);
     }
 }

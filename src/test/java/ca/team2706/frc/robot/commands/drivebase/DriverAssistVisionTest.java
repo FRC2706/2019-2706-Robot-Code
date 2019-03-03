@@ -59,17 +59,6 @@ public class DriverAssistVisionTest {
      */
     @Test
     public void testGenerateTrajectoryCargoShipAndLoading() {
-        new Expectations(Config.class) {{
-            Config.getTRAJ_DELTA_TIME();
-            result = 0.2;
-            Config.getROBOTTOCAMERA_ROBOTX();
-            result = 1.0;
-            Config.getROBOTTOCAMERA_ROBOTY();
-            result = 1.0;
-            Config.getTARGET_OFFSET_DISTANCE();
-            result = 0.5;
-        }};
-
         new Expectations() {{
             pigeon.getYawPitchRoll((double[]) any);
             returns(SendablesTest.makePigeonExpectation(-90.0),
@@ -79,8 +68,13 @@ public class DriverAssistVisionTest {
         }};
 
         // Run the test
-        double distanceCameraToTarget_Camera = 6.0 * 1.414213562373095;
-        double yawAngleCameraToTarget_Camera = -45.0;
+        double vRobotToTarget_CameraX = -5.0;
+        double vRobotToTarget_CameraY = 7.0;
+        double vCameraToTarget_CameraX = vRobotToTarget_CameraX - Config.ROBOTTOCAMERA_ROBOTX.value();
+        double vCameraToTarget_CameraY = vRobotToTarget_CameraY - Config.ROBOTTOCAMERA_ROBOTY.value();
+
+        double distanceCameraToTarget_Camera = Math.sqrt(Math.pow(vCameraToTarget_CameraX,2) + Math.pow(vCameraToTarget_CameraY, 2));
+        double yawAngleCameraToTarget_Camera = Math.toDegrees(Math.atan2(vCameraToTarget_CameraX, vCameraToTarget_CameraY));
         boolean driverAssistCargoAndLoading = true;
         boolean driverAssistRocket = false;
 
@@ -94,10 +88,11 @@ public class DriverAssistVisionTest {
             Trajectory traj = driverAssistVision.getTraj();
 
             assertEquals(driverAssistVision.getAngRobotHeadingFinal_Field(), expectedAngRobotHeadingFinal_Field[i], 0.1);
+            assertEquals(traj.segments[0].x, 0.0, 0.3);
             assertEquals(traj.segments[0].y, 0.0, 0.3);
             assertEquals(traj.segments[0].heading, Pathfinder.d2r(90.0), 0.3);
-            assertEquals(traj.segments[traj.length() - 1].x, -5.0, 0.3);
-            assertEquals(traj.segments[traj.length() - 1].y, 6.5, 0.3);
+            assertEquals(traj.segments[traj.length() - 1].x, vRobotToTarget_CameraX, 0.3);
+            assertEquals(traj.segments[traj.length() - 1].y, vRobotToTarget_CameraY - Config.TARGET_OFFSET_DISTANCE.value(), 0.3); // 6.5
             assertEquals(traj.segments[traj.length() - 1].heading, Pathfinder.d2r(90.0), 0.3);
         }
     }
@@ -109,17 +104,6 @@ public class DriverAssistVisionTest {
      */
     @Test
     public void testGenerateTrajectoryRocket() {
-        new Expectations(Config.class) {{
-            Config.getTRAJ_DELTA_TIME();
-            result = 0.2;
-            Config.getROBOTTOCAMERA_ROBOTX();
-            result = 1.0;
-            Config.getROBOTTOCAMERA_ROBOTY();
-            result = 1.0;
-            Config.getTARGET_OFFSET_DISTANCE();
-            result = 0.5;
-        }};
-
         new Expectations() {{
             pigeon.getYawPitchRoll((double[]) any);
             returns(SendablesTest.makePigeonExpectation(-30.0),
@@ -131,8 +115,13 @@ public class DriverAssistVisionTest {
         }};
 
         // Run the test
-        double distanceCameraToTarget_Camera = 6.0 * 1.414213562373095;
-        double yawAngleCameraToTarget_Camera = -45.0;
+        double vRobotToTarget_CameraX = -5.0;
+        double vRobotToTarget_CameraY = 7.0;
+        double vCameraToTarget_CameraX = vRobotToTarget_CameraX - Config.ROBOTTOCAMERA_ROBOTX.value();
+        double vCameraToTarget_CameraY = vRobotToTarget_CameraY - Config.ROBOTTOCAMERA_ROBOTY.value();
+
+        double distanceCameraToTarget_Camera = Math.sqrt(Math.pow(vCameraToTarget_CameraX,2) + Math.pow(vCameraToTarget_CameraY, 2));
+        double yawAngleCameraToTarget_Camera = Math.toDegrees(Math.atan2(vCameraToTarget_CameraX, vCameraToTarget_CameraY));
         boolean driverAssistCargoAndLoading = false;
         boolean driverAssistRocket = true;
 
@@ -146,10 +135,11 @@ public class DriverAssistVisionTest {
             Trajectory traj = driverAssistVision.getTraj();
 
             assertEquals(driverAssistVision.getAngRobotHeadingFinal_Field(), expectedAngRobotHeadingFinal_Field[i], 0.1);
+            assertEquals(traj.segments[0].x, 0.0, 0.3);
             assertEquals(traj.segments[0].y, 0.0, 0.3);
             assertEquals(traj.segments[0].heading, Pathfinder.d2r(90.0), 0.3);
-            assertEquals(traj.segments[traj.length() - 1].x, -5.0, 0.3);
-            assertEquals(traj.segments[traj.length() - 1].y, 6.5, 0.3);
+            assertEquals(traj.segments[traj.length() - 1].x, vRobotToTarget_CameraX, 0.3);
+            assertEquals(traj.segments[traj.length() - 1].y, vRobotToTarget_CameraY - Config.TARGET_OFFSET_DISTANCE.value(), 0.3);
             assertEquals(traj.segments[traj.length() - 1].heading, Pathfinder.d2r(90.0), 0.3);
         }
     }

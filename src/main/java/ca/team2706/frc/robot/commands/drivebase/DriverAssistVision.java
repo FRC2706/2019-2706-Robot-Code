@@ -305,8 +305,8 @@ public class DriverAssistVision extends Command {
         // Vector 3 in the comments below
 
         // Vector 1: vRobotToCamera_Robot: Vector from robot to camera in robot frame
-        double vRobotToCamera_RobotX = Config.getROBOTTOCAMERA_ROBOTX();
-        double vRobotToCamera_RobotY = Config.getROBOTTOCAMERA_ROBOTY();
+        double vRobotToCamera_RobotX = Config.ROBOTTOCAMERA_ROBOTX.value();
+        double vRobotToCamera_RobotY = Config.ROBOTTOCAMERA_ROBOTY.value();
         Log.d("DAV: vRobotToCamera_RobotX: " + vRobotToCamera_RobotX + ", vRobotToCamera_RobotY: " + vRobotToCamera_RobotY);
 
         // Vector 2: vCameraToTarget_Robot: Vector from camera to target in robot frame
@@ -329,7 +329,7 @@ public class DriverAssistVision extends Command {
         double vUnitFacingTarget_FieldY = Math.sin(finalRobotAngleRad_Field);
 
         // Compute vector from target to final robot position in field frame from unit vector in field frame
-        double d = Config.getTARGET_OFFSET_DISTANCE();
+        double d = Config.TARGET_OFFSET_DISTANCE.value();
         double vTargetToFinal_FieldX = -d * vUnitFacingTarget_FieldX;
         double vTargetToFinal_FieldY = -d * vUnitFacingTarget_FieldY;
         Log.d("DAV: vec_TargetToFinalX_Field: " + vTargetToFinal_FieldX + ", vTargetToFinal_FieldY: " + vTargetToFinal_FieldY);
@@ -362,7 +362,7 @@ public class DriverAssistVision extends Command {
         Log.d("DAV: Generating trajectory");
         Trajectory.Config config =
                 new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH,
-                        Config.getTRAJ_DELTA_TIME(), Config.ROBOT_MAX_VEL.value(), Config.ROBOT_MAX_ACC.value(),
+                        Config.TRAJ_DELTA_TIME.value(), Config.ROBOT_MAX_VEL.value(), Config.ROBOT_MAX_ACC.value(),
                         Config.ROBOT_MAX_JERK.value());
         Waypoint[] points = new Waypoint[]{
                 // Initial position/heading of robot: at origin with heading at 90 deg

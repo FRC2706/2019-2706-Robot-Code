@@ -390,40 +390,4 @@ public class Config {
          */
         POV
     }
-
-    /**
-     * Gets the value of TRAJ_DELTA_TIME.
-     *
-     * @return The value of TRAJ_DELTA_TIME.
-     */
-    public static double getTRAJ_DELTA_TIME() {
-        return TRAJ_DELTA_TIME.value();
-    }
-
-    /**
-     * Gets the value of ROBOTTOCAMERA_ROBOTX.
-     *
-     * @return The value of ROBOTTOCAMERA_ROBOTX.
-     */
-    public static double getROBOTTOCAMERA_ROBOTX() {
-        return ROBOTTOCAMERA_ROBOTX.value();
-    }
-
-    /**
-     * Gets the value of ROBOTTOCAMERA_ROBOTY.
-     *
-     * @return The value of ROBOTTOCAMERA_ROBOTY.
-     */
-    public static double getROBOTTOCAMERA_ROBOTY() {
-        return ROBOTTOCAMERA_ROBOTY.value();
-    }
-
-    /**
-     * Gets the value of TARGET_OFFSET_DISTANCE.
-     *
-     * @return The value of TARGET_OFFSET_DISTANCE.
-     */
-    public static double getTARGET_OFFSET_DISTANCE() {
-        return TARGET_OFFSET_DISTANCE.value();
-    }
 }

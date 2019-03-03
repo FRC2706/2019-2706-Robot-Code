@@ -2,7 +2,6 @@ package ca.team2706.frc.robot.subsystems;
 
 import ca.team2706.frc.robot.SendablesTest;
 import ca.team2706.frc.robot.config.Config;
-
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.IMotorController;
@@ -111,7 +110,7 @@ public class DriveBaseTest {
 
         driveBase.reset(); // Note: reset() calls getAbsoluteHeading() 
         absoluteHeadingOffset = absoluteHeadingOffset - 12.0;
- 
+
         assertEquals(absoluteHeadingOffset + 0.0, driveBase.getAbsoluteHeading(), 0.0);
         assertEquals(absoluteHeadingOffset + 90.0, driveBase.getAbsoluteHeading(), 0.0);
         assertEquals(absoluteHeadingOffset + 34.0, driveBase.getAbsoluteHeading(), 0.0);

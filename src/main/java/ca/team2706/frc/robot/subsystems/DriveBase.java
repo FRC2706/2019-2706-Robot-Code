@@ -635,9 +635,9 @@ public class DriveBase extends Subsystem {
 
     /**
      * Perform initializations so that the absolute gyro positon returned by
-     * the getAbsoluteHeading() method is equal to the angle specified by 
-     * Config.ROBOT_START_ANGLE. The gyro measurement device will be reset to 
-     * 0 degrees. 
+     * the getAbsoluteHeading() method is equal to the angle specified by
+     * Config.ROBOT_START_ANGLE. The gyro measurement device will be reset to
+     * 0 degrees.
      */
     public void resetAbsoluteGyro() {
         savedAngle = Config.ROBOT_START_ANGLE.value();

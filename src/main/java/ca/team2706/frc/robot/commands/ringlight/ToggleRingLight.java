@@ -1,4 +1,4 @@
-package ca.team2706.frc.robot.commands;
+package ca.team2706.frc.robot.commands.ringlight;
 
 import ca.team2706.frc.robot.subsystems.RingLight;
 import edu.wpi.first.wpilibj.command.InstantCommand;

@@ -9,6 +9,7 @@ public class RingLight extends Subsystem {
 
     /**
      * Gets the current ring light instance.
+     *
      * @return The current instance.
      */
     public static RingLight getInstance() {
@@ -35,6 +36,7 @@ public class RingLight extends Subsystem {
 
     /**
      * Constructs a new ring light with the given Relay.
+     *
      * @param light The ring light's relay.
      */
     private RingLight(final Relay light) {
@@ -46,10 +48,24 @@ public class RingLight extends Subsystem {
      */
     public void toggleLight() {
         if (relay.get() == Relay.Value.kForward) {
-            relay.set(Relay.Value.kReverse);
+            disableLight();
         } else {
-            relay.set(Relay.Value.kForward);
+            enableLight();
         }
+    }
+
+    /**
+     * Turns on the ring light.
+     */
+    public void enableLight() {
+        relay.set(Relay.Value.kForward);
+    }
+
+    /**
+     * Turns off the ring light.
+     */
+    public void disableLight() {
+        relay.set(Relay.Value.kReverse);
     }
 
     @Override

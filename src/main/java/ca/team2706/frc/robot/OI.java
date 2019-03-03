@@ -1,17 +1,15 @@
 package ca.team2706.frc.robot;
 
-import ca.team2706.frc.robot.commands.ToggleRingLight;
 import ca.team2706.frc.robot.commands.drivebase.CurvatureDriveWithJoystick;
+import ca.team2706.frc.robot.commands.intake.AfterEjectConditional;
 import ca.team2706.frc.robot.commands.intake.EjectConditional;
 import ca.team2706.frc.robot.commands.intake.arms.LowerArmsSafely;
 import ca.team2706.frc.robot.commands.intake.arms.MovePlunger;
 import ca.team2706.frc.robot.commands.intake.arms.RaiseArmsSafely;
 import ca.team2706.frc.robot.commands.intake.cargo.AutoIntakeCargo;
 import ca.team2706.frc.robot.commands.intake.cargo.RunIntakeOnJoystick;
-import ca.team2706.frc.robot.commands.lift.HoldLift;
-import ca.team2706.frc.robot.commands.lift.MoveLiftOnJoystick;
-import ca.team2706.frc.robot.commands.lift.MoveLiftOnOverride;
-import ca.team2706.frc.robot.commands.lift.MoveLiftToSetpoint;
+import ca.team2706.frc.robot.commands.lift.*;
+import ca.team2706.frc.robot.commands.ringlight.ToggleRingLight;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.input.FluidButton;
 import ca.team2706.frc.robot.subsystems.DriveBase;
@@ -115,8 +113,9 @@ public class OI {
         new FluidButton(controlStick, Config.MANUAL_PISTON_BINDING)
                 .whenPressed(new MovePlunger());
         FluidButton button = new FluidButton(controlStick, Config.EJECT_BINDING);
-        button.whenHeld(new EjectConditional());
-        button.whenReleased(new MovePlunger(MovePlunger.DesiredState.STOWED));
+        LiftPosition position = new LiftPosition();
+        button.whenHeld(new EjectConditional(position));
+        button.whenReleased(new AfterEjectConditional(position::getPosition));
         new FluidButton(controlStick, Config.AUTO_INTAKE_CARGO_BINDING)
                 .whenHeld(new AutoIntakeCargo());
         new FluidButton(controlStick, Config.TOGGLE_RING_LIGHT_BINDING)

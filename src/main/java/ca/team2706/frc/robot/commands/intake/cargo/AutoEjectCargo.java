@@ -10,6 +10,10 @@ import edu.wpi.first.wpilibj.command.WaitCommand;
  * Command for automatically ejecting cargo from the mechanism.
  */
 public class AutoEjectCargo extends CommandGroup {
+
+    /**
+     * Constructs a new auto eject cargo command.
+     */
     public AutoEjectCargo() {
         requires(Intake.getInstance());
 

@@ -3,54 +3,52 @@ package ca.team2706.frc.robot.commands.lift;
 import ca.team2706.frc.robot.subsystems.Lift;
 import edu.wpi.first.wpilibj.command.Command;
 
+import java.util.function.Supplier;
+
 public class MoveLiftToPosition extends Command {
 
     private final double maxSpeed;
-    private final double position;
-    private final boolean additive;
-    private double absolutePosition;
+    private final Supplier<Double> position;
+    private double startLiftHeight;
 
     /**
      * Constructs a move lift to position command, moving the lift to the given position.
      *
      * @param maxSpeed The maximum lift speed, from 0 to 1.
      * @param position The new lift position, in feet.
-     * @param additive True to add the position to the lift's current position, false for an absolute position.
      */
-    public MoveLiftToPosition(final double maxSpeed, final double position, boolean additive) {
+    public MoveLiftToPosition(final double maxSpeed, final Supplier<Double> position) {
         requires(Lift.getInstance());
         this.maxSpeed = maxSpeed;
         this.position = position;
-        this.additive = additive;
-    }
-
-    /**
-     * Constructs a move lift to position command, moving the lift to the given absolute position.
-     *
-     * @param maxSpeed The maximum lift speed, from 0 to 1.
-     * @param position The absolute new position, in feeet.
-     */
-    public MoveLiftToPosition(final double maxSpeed, final double position) {
-        this(maxSpeed, position, false);
     }
 
     @Override
     protected void initialize() {
-        absolutePosition = (additive) ? position + Lift.getInstance().getLiftHeight() : position;
+        startLiftHeight = Lift.getInstance().getLiftHeight();
     }
 
     @Override
     protected void execute() {
-        Lift.getInstance().setPosition(maxSpeed, absolutePosition);
+        Lift.getInstance().setPosition(maxSpeed, position.get());
     }
 
     @Override
     protected boolean isFinished() {
-        return Lift.getInstance().hasReachedPosition(this.position);
+        return Lift.getInstance().hasReachedPosition(this.position.get());
     }
 
     @Override
     protected void end() {
         Lift.getInstance().stop();
+    }
+
+    /**
+     * Gets the lift height before the movement began.
+     *
+     * @return The start lift height.
+     */
+    public double getOriginalLiftHeight() {
+        return startLiftHeight;
     }
 }

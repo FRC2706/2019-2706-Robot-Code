@@ -70,9 +70,9 @@ public class OI {
 
         // Operator controls
         new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING)
-            .whenPressed(new DriverAssistVision(true, false));
+                .whenPressed(new DriverAssistVision(true, false));
         new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_ROCKET_BINDING)
-            .whenPressed(new DriverAssistVision(false, true));
+                .whenPressed(new DriverAssistVision(false, true));
     }
 
     /**

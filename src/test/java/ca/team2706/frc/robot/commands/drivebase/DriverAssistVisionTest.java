@@ -20,8 +20,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-;
-
 public class DriverAssistVisionTest {
     @Tested
     private DriverAssistVision driverAssistVision;
@@ -73,7 +71,7 @@ public class DriverAssistVisionTest {
         double vCameraToTarget_CameraX = vRobotToTarget_CameraX - Config.ROBOTTOCAMERA_ROBOTX.value();
         double vCameraToTarget_CameraY = vRobotToTarget_CameraY - Config.ROBOTTOCAMERA_ROBOTY.value();
 
-        double distanceCameraToTarget_Camera = Math.sqrt(Math.pow(vCameraToTarget_CameraX,2) + Math.pow(vCameraToTarget_CameraY, 2));
+        double distanceCameraToTarget_Camera = Math.sqrt(Math.pow(vCameraToTarget_CameraX, 2) + Math.pow(vCameraToTarget_CameraY, 2));
         double yawAngleCameraToTarget_Camera = Math.toDegrees(Math.atan2(vCameraToTarget_CameraX, vCameraToTarget_CameraY));
         boolean driverAssistCargoAndLoading = true;
         boolean driverAssistRocket = false;
@@ -120,7 +118,7 @@ public class DriverAssistVisionTest {
         double vCameraToTarget_CameraX = vRobotToTarget_CameraX - Config.ROBOTTOCAMERA_ROBOTX.value();
         double vCameraToTarget_CameraY = vRobotToTarget_CameraY - Config.ROBOTTOCAMERA_ROBOTY.value();
 
-        double distanceCameraToTarget_Camera = Math.sqrt(Math.pow(vCameraToTarget_CameraX,2) + Math.pow(vCameraToTarget_CameraY, 2));
+        double distanceCameraToTarget_Camera = Math.sqrt(Math.pow(vCameraToTarget_CameraX, 2) + Math.pow(vCameraToTarget_CameraY, 2));
         double yawAngleCameraToTarget_Camera = Math.toDegrees(Math.atan2(vCameraToTarget_CameraX, vCameraToTarget_CameraY));
         boolean driverAssistCargoAndLoading = false;
         boolean driverAssistRocket = true;

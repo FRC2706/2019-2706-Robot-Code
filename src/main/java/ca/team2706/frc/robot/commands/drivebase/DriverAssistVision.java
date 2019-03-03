@@ -167,12 +167,8 @@ public class DriverAssistVision extends Command {
         vision system offline. If they are different on successive commands, consider vision system
         online.
         */
-        if ((angYawTargetWrtCameraLOSCWpos == angYawTargetWrtCameraLOSCWposPrev) &&
-                (distanceCameraToTarget_Camera == distanceCameraToTarget_CameraPrev)) {
-            visionOffline = true;
-        } else {
-            visionOffline = false;
-        }
+        visionOffline = (angYawTargetWrtCameraLOSCWpos == angYawTargetWrtCameraLOSCWposPrev) &&
+                (distanceCameraToTarget_Camera == distanceCameraToTarget_CameraPrev);
         angYawTargetWrtCameraLOSCWposPrev = angYawTargetWrtCameraLOSCWpos;
         distanceCameraToTarget_CameraPrev = distanceCameraToTarget_Camera;
 

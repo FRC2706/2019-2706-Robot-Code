@@ -3,10 +3,11 @@ package ca.team2706.frc.robot.commands.drivebase;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.command.Command;
 
+import java.util.function.Supplier;
+
 /**
  * Abstract class to extend when using curve drive, allows for basic Command architecture
  */
-import java.util.function.Supplier;
 
 /**
  * Allows the WPI Curvature Drive to be used  with passed values

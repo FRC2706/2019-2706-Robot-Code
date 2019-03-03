@@ -128,6 +128,8 @@ public class DriveBase extends Subsystem {
 
         loggingNotifier = new Notifier(this::log);
         loggingNotifier.startPeriodic(Config.LOG_PERIOD);
+
+        resetAbsoluteGyro();
     }
 
     /**
@@ -525,7 +527,7 @@ public class DriveBase extends Subsystem {
         leftFrontMotor.configClosedLoopPeakOutput(1, speed);
         rightFrontMotor.configClosedLoopPeakOutput(1, speed);
 
-        rightFrontMotor.set(ControlMode.Position, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation);
+        rightFrontMotor.set(ControlMode.MotionMagic, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation);
         leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
     }
 
@@ -629,6 +631,17 @@ public class DriveBase extends Subsystem {
     public void resetEncoders() {
         leftFrontMotor.getSensorCollection().setQuadraturePosition(0, Config.CAN_SHORT);
         rightFrontMotor.getSensorCollection().setQuadraturePosition(0, Config.CAN_SHORT);
+    }
+
+    /**
+     * Perform initializations so that the absolute gyro positon returned by
+     * the getAbsoluteHeading() method is equal to the angle specified by
+     * Config.ROBOT_START_ANGLE. The gyro measurement device will be reset to
+     * 0 degrees.
+     */
+    public void resetAbsoluteGyro() {
+        savedAngle = Config.ROBOT_START_ANGLE.value();
+        gyro.setYaw(0, Config.CAN_SHORT);
     }
 
     /**

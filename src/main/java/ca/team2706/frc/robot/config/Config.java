@@ -119,14 +119,14 @@ public class Config {
     public static final FluidConstant<Double> PIGEON_KD = constant("pigeon-ki", 4.0);
     public static final FluidConstant<Double> PIGEON_KF = constant("pigeon-kf", 0.0);
 
-    public static final FluidConstant<String> DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING = 
-        constant("driver-assist-vision-cargo-loading-binding", XboxValue.XBOX_X_BUTTON.NTString);
-    
-    public static final FluidConstant<String> DRIVER_ASSIST_VISION_ROCKET_BINDING = 
-        constant("driver-assist-vision-rocket-binding", XboxValue.XBOX_B_BUTTON.NTString);
+    public static final FluidConstant<String> DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING =
+            constant("driver-assist-vision-cargo-loading-binding", XboxValue.XBOX_X_BUTTON.NTString);
 
-    public static final FluidConstant<String> DRIVER_ASSIST_LASER_BINDING = 
-        constant("driver-assist-laser-binding", XboxValue.XBOX_Y_BUTTON.NTString);
+    public static final FluidConstant<String> DRIVER_ASSIST_VISION_ROCKET_BINDING =
+            constant("driver-assist-vision-rocket-binding", XboxValue.XBOX_B_BUTTON.NTString);
+
+    public static final FluidConstant<String> DRIVER_ASSIST_LASER_BINDING =
+            constant("driver-assist-laser-binding", XboxValue.XBOX_Y_BUTTON.NTString);
 
     public static final FluidConstant<Double> TRAJ_DELTA_TIME = constant("traj-delta-time", 0.1);
     public static final FluidConstant<Double> ROBOT_MAX_VEL = constant("robot-max-vel", 3.0);

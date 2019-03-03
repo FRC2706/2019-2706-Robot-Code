@@ -31,13 +31,21 @@ public class FluidButton extends EButton {
      */
     public FluidButton(GenericHID genericHID, FluidConstant<String> actionBinding) {
         m_joystick = genericHID;
-        this.joystickPort = XboxValue.getPortFromFluidConstant(actionBinding);
+        updatePortAndInputType(XboxValue.getXboxValueFromFluidConstant(actionBinding));
 
         actionBinding.addChangeListener((oldValue, newValue) -> {
-            XboxValue value = XboxValue.getXboxValueFromNTKey(newValue);
-            this.joystickPort = value.getPort();
-            this.inputType = value.getInputType();
+            updatePortAndInputType(XboxValue.getXboxValueFromNTKey(newValue));
         });
+    }
+
+    /**
+     * Updates the port and input type for this button.
+     *
+     * @param value The XboxValue button binding.
+     */
+    private void updatePortAndInputType(XboxValue value) {
+        this.joystickPort = value.getPort();
+        this.inputType = value.getInputType();
     }
 
     /**

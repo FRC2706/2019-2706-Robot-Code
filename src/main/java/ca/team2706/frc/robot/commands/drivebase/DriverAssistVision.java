@@ -160,11 +160,13 @@ public class DriverAssistVision extends Command {
         Log.d("DAV: angYawTargetWrtCameraLOSCWpos [deg]: " + angYawTargetWrtCameraLOSCWpos);
         Log.d("DAV: distanceCameraToTarget_Camera [ft]: " + distanceCameraToTarget_Camera);
 
-        // Due to the inherent jitter of values computed by the vision system, it is next to impossible
-        // that values of yaw angle and distance to target will both be equal on successive commands unless
-        // the vision system is not updating them for some reason. Therefore, is this occurs, consider
-        // vision system offline. If they are different on successive commands, consider vision system
-        // online.
+        /*
+        Due to the inherent jitter of values computed by the vision system, it is next to impossible
+        that values of yaw angle and distance to target will both be equal on successive commands unless
+        the vision system is not updating them for some reason. Therefore, is this occurs, consider
+        vision system offline. If they are different on successive commands, consider vision system
+        online.
+        */
         if ((angYawTargetWrtCameraLOSCWpos == angYawTargetWrtCameraLOSCWposPrev) &&
                 (distanceCameraToTarget_Camera == distanceCameraToTarget_CameraPrev)) {
             visionOffline = true;
@@ -196,8 +198,6 @@ public class DriverAssistVision extends Command {
     public boolean isFinished() {
         return (trajGenerated || commandAborted);
     }
-
-    ;
 
     @Override
     public void end() {
@@ -373,8 +373,10 @@ public class DriverAssistVision extends Command {
         traj = Pathfinder.generate(points, config);
         Log.d("DAV: Trajectory generated");
 
-        // Send trajectory to motion control system
-        // (Wait until integration with robot code)
+        /*
+        Send trajectory to motion control system
+        (Wait until integration with robot code) TODO
+        */
     }
 
     /**
@@ -397,8 +399,10 @@ public class DriverAssistVision extends Command {
     public double computeAngRobotHeadingFinal_Field(double angRobotHeadingCurrent_Field, boolean driverAssistCargoAndLoading,
                                                     boolean driverAssistRocket) {
 
-        // Compute final robot angle relative to field based on current angle of robot relative to field.
-        // Robot must be in an angular range such that it is approximately facing the desired target. 
+        /*
+        Compute final robot angle relative to field based on current angle of robot relative to field.
+        Robot must be in an angular range such that it is approximately facing the desired target.
+        */
         angRobotHeadingFinal_Field = 0.0;
 
         if (driverAssistCargoAndLoading) {

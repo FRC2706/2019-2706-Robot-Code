@@ -106,7 +106,6 @@ public enum XboxValue {
 
     /**
      * Gets the controller button's port number from the given fluid constant.
-     *
      * @param fluidConstant The fluid constant controlling the binding.
      * @return The port number.
      */
@@ -116,7 +115,6 @@ public enum XboxValue {
 
     /**
      * Gets the port for a controller binding from the networktables key for the button.
-     *
      * @param ntString The networktables key for the button. Should have come from {@link #getNTString()}
      * @return The port for the button.
      */

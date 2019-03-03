@@ -26,10 +26,6 @@ public class OI {
 
     public final Command driveCommand;
 
-    public final FluidButton buttonDriverAssistVisionCargoAndLoading;
-    public final FluidButton buttonDriverAssistVisionRocket;
-    public final FluidButton buttonDriverAssistLaser;
-
     /**
      * Gets the current instance of the OI class.
      *
@@ -69,14 +65,14 @@ public class OI {
         driveCommand = new CurvatureDriveWithJoystick(driverStick, Config.CURVATURE_DRIVE_FORWARD, true,
                 Config.CURVATURE_CURVE_SPEED, false, Config.SLOW_MODE);
 
-        buttonDriverAssistVisionCargoAndLoading = new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING);
-        buttonDriverAssistVisionCargoAndLoading.whenPressed(new DriverAssistVision(true, false));
-        buttonDriverAssistVisionRocket = new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_ROCKET_BINDING);
-        buttonDriverAssistVisionRocket.whenPressed(new DriverAssistVision(false, true));
-        buttonDriverAssistLaser = new FluidButton(driverStick, Config.DRIVER_ASSIST_LASER_BINDING);
-
         // Set subsystem default commands
         DriveBase.getInstance().setDefaultCommand(driveCommand);
+
+        // Operator controls
+        new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING)
+            .whenPressed(new DriverAssistVision(true, false));
+        new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_ROCKET_BINDING)
+            .whenPressed(new DriverAssistVision(false, true));
     }
 
     /**

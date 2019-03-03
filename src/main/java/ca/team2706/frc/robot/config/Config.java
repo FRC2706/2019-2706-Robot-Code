@@ -128,9 +128,9 @@ public class Config {
             constant("driver-assist-laser-binding", XboxValue.XBOX_Y_BUTTON.getNTString());
 
     public static final FluidConstant<Double> TRAJ_DELTA_TIME = constant("traj-delta-time", 0.1);
-    public static final FluidConstant<Double> ROBOT_MAX_VEL = constant("robot-max-vel", 3.0);
-    public static final FluidConstant<Double> ROBOT_MAX_ACC = constant("robot-max-acc", 6.0);
-    public static final FluidConstant<Double> ROBOT_MAX_JERK = constant("robot-max-jerk", 60.0);
+    public static final FluidConstant<Double> VISION_ASSIST_MAX_VELOCITY = constant("robot-max-vel", 3.0);
+    public static final FluidConstant<Double> VISION_ASSIST_MAX_ACCELERATION = constant("robot-max-acc", 6.0);
+    public static final FluidConstant<Double> VISION_ASSIST_MAX_JERK = constant("robot-max-jerk", 60.0);
 
     public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTX = constant("robottocamera-robotx", -0.25);
     public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTY = constant("robottocamera-roboty", 0.25);

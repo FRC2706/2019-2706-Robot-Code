@@ -358,8 +358,8 @@ public class DriverAssistVision extends Command {
         Log.d("DAV: Generating trajectory");
         Trajectory.Config config =
                 new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH,
-                        Config.TRAJ_DELTA_TIME.value(), Config.ROBOT_MAX_VEL.value(), Config.ROBOT_MAX_ACC.value(),
-                        Config.ROBOT_MAX_JERK.value());
+                        Config.TRAJ_DELTA_TIME.value(), Config.VISION_ASSIST_MAX_VELOCITY.value(), Config.VISION_ASSIST_MAX_ACCELERATION.value(),
+                        Config.VISION_ASSIST_MAX_JERK.value());
         Waypoint[] points = new Waypoint[]{
                 // Initial position/heading of robot: at origin with heading at 90 deg
                 new Waypoint(0, 0, Pathfinder.d2r(90)),

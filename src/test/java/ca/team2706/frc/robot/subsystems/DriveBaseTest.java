@@ -102,7 +102,7 @@ public class DriveBaseTest {
                     SendablesTest.makePigeonExpectation(0.0));
         }};
 
-        driveBase.initGyro();
+        driveBase.resetAbsoluteGyro();
 
         double absoluteHeadingOffset = Config.ROBOT_START_ANGLE.value();
         assertEquals(absoluteHeadingOffset + 0.0, driveBase.getAbsoluteHeading(), 0.0);

@@ -129,7 +129,7 @@ public class DriveBase extends Subsystem {
         loggingNotifier = new Notifier(this::log);
         loggingNotifier.startPeriodic(Config.LOG_PERIOD);
 
-        initGyro();
+        resetAbsoluteGyro();
     }
 
     /**
@@ -639,7 +639,7 @@ public class DriveBase extends Subsystem {
      * Config.ROBOT_START_ANGLE. The gyro measurement device will be reset to 
      * 0 degrees. 
      */
-    public void initGyro() {
+    public void resetAbsoluteGyro() {
         savedAngle = Config.ROBOT_START_ANGLE.value();
         gyro.setYaw(0, Config.CAN_SHORT);
     }

@@ -10,6 +10,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -81,6 +82,9 @@ public class RobotTest {
 
     @Mocked
     private LiveWindow liveWindow;
+
+    @Mocked
+    private GenericHID genericHID;
 
     @Injectable
     private SensorCollection sensorCollection;

@@ -21,6 +21,8 @@ import org.junit.Before;
 import org.junit.Test;
 import util.Util;
 
+import static org.junit.Assert.assertFalse;
+
 public class CurvatureDriveWithJoystickTest {
 
     @Mocked
@@ -70,6 +72,20 @@ public class CurvatureDriveWithJoystickTest {
             result = sensorCollection;
         }};
     }
+
+    /**
+     * Makes sure it's not in brake mode
+     */
+    @Test
+    public void testBrakeMode() {
+
+        CurvatureDriveWithJoystick curveDrive = new CurvatureDriveWithJoystick(joy1, Config.CURVATURE_DRIVE_FORWARD, true, joy2, Config.CURVATURE_CURVE_SPEED, false, joy3, Config.SLOW_MODE);
+
+        curveDrive.initialize();
+
+        assertFalse(DriveBase.getInstance().isBrakeMode());
+    }
+
 
     /**
      * Makes sure that values are negated correctly

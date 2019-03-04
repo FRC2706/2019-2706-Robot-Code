@@ -4,7 +4,6 @@ import ca.team2706.frc.robot.commands.intake.arms.MovePlunger;
 import ca.team2706.frc.robot.commands.lift.LiftPosition;
 import ca.team2706.frc.robot.commands.lift.MoveLiftToPosition;
 import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.subsystems.Intake;
 import ca.team2706.frc.robot.subsystems.Lift;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
@@ -20,8 +19,6 @@ public class EjectHatch extends CommandGroup {
      * @param elevatorPosition The elevator position object to add the elevator's current position to.
      */
     public EjectHatch(LiftPosition elevatorPosition) {
-        requires(Intake.getInstance());
-
         addSequential(new InstantCommand(() -> elevatorPosition.setPosition(Lift.getInstance().getLiftHeight())));
         // Make sure lift is high enough.
         addSequential(new ConditionalCommand(new MoveLiftToPosition(0.7, () -> 0.05 - Config.SUBTRACT_LIFT_HEIGHT)) {

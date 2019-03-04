@@ -63,23 +63,12 @@ public class Intake extends Subsystem {
     }
 
     /**
-     * Getting the voltage from the IR sensor, returning 0 if not configured to deal with cargo.
+     * Getting the voltage from the IR sensor.
      *
      * @return the voltage reading
      */
     public double readIr() {
-        final double irValue;
-
-        // We only want to be reading the real ir sensor if we're supposed to be dealing with cargo.
-        if (Pneumatics.getInstance().getMode() == Pneumatics.IntakeMode.CARGO) {
-            irValue = irSensor.getVoltage();
-        }
-        // Otherwise we say 0 since we're dealing with hatches.
-        else {
-            irValue = 0;
-        }
-
-        return irValue;
+            return irSensor.getVoltage();
     }
 
     @Override

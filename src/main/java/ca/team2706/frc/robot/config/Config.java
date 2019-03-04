@@ -183,7 +183,7 @@ public class Config {
     public static final FluidConstant<Double> MOTION_MAGIC_ACCELERATION = constant("mm-acceleration", 7.77);
     public static final FluidConstant<Double> LIFT_MOTION_MAGIC_ACCELERATION = constant("mm-lift-acceleration", 4.0);
     public static final FluidConstant<Double> LIFT_MOTION_MAGIC_VELOCITY = constant("mm-lift-velocity", 7.77);
-    public static final FluidConstant<Double> LIFT_MAX_SPEED = constant("max-lift-velocity", 7.77);
+    public static final FluidConstant<Double> LIFT_MAX_SPEED = constant("max-lift-velocity", 7.77); // TODO this is not at all right.
 
     public static final FluidConstant<Double> TURN_P = constant("turn-P", 0.5);
     public static final FluidConstant<Double> TURN_I = constant("turn-I", 0.0);

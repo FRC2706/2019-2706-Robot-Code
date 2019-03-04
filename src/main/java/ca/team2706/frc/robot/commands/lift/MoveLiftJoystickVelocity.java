@@ -7,6 +7,9 @@ import ca.team2706.frc.robot.subsystems.Lift;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
 
+/**
+ * Command for moving the lift on joystick input using velocity.
+ */
 public class MoveLiftJoystickVelocity extends Command {
 
     private final Joystick controller;
@@ -24,7 +27,7 @@ public class MoveLiftJoystickVelocity extends Command {
     @Override
     public void execute() {
         final double percentSpeed = -controller.getRawAxis(axisPort);
-        Lift.getInstance().setVelocity(Config.LIFT_MAX_SPEED.value());
+        Lift.getInstance().setVelocity(percentSpeed * Config.LIFT_MAX_SPEED.value());
     }
 
     @Override

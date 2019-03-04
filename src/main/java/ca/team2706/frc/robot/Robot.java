@@ -131,10 +131,14 @@ public class Robot extends TimedRobot {
         // Check to see if the command exists in the desired index
         if (DriveBase.getInstance().getAnalogSelectorIndex() < commands.length && commands[index] != null) {
             currentCommand = commands[DriveBase.getInstance().getAnalogSelectorIndex()];
-            commands[DriveBase.getInstance().getAnalogSelectorIndex()].start();
+            //commands[DriveBase.getInstance().getAnalogSelectorIndex()].start();
         } else if (commands.length > 0 && commands[0] != null) {
             currentCommand = commands[0];
-            commands[0].start();
+           // commands[0].start();
+        }
+
+        if (currentCommand != null) {
+            currentCommand.start();
         }
     }
 
@@ -269,7 +273,7 @@ public class Robot extends TimedRobot {
      * Interrupt the current autonomous command and start teleop mode
      */
     public static void interruptCurrentCommand() {
-        currentCommand.close();
+        currentCommand.cancel();
     }
 
     /**

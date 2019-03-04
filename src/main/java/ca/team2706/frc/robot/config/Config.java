@@ -79,16 +79,16 @@ public class Config {
     public static final double
             // Max speed of the lift going up in override (between 0 and 1).
             LIFT_OVERRIDE_UP_SPEED = 0.4,
-    /**
-     * Speed for automatically ejecting cargo from the intake, from 0 to 1.
-     */
-    AUTO_EJECT_CARGO_INTAKE_SPEED = 1.0,
-    // Max speed of the lift going down in override (between -1 and 0).
-    LIFT_OVERRIDE_DOWN_SPEED = -0.2,
-    /**
-     * Speed (from 0 to 1) for automatically intaking cargo.
-     */
-    AUTO_INTAKE_CARGO_SPEED = 0.8;
+            /**
+             * Speed for automatically ejecting cargo from the intake, from 0 to 1.
+             */
+            AUTO_EJECT_CARGO_INTAKE_SPEED = 1.0,
+            // Max speed of the lift going down in override (between -1 and 0).
+            LIFT_OVERRIDE_DOWN_SPEED = -0.2,
+            /**
+             * Speed (from 0 to 1) for automatically intaking cargo.
+             */
+            AUTO_INTAKE_CARGO_SPEED = 0.8;
 
 
     public static boolean

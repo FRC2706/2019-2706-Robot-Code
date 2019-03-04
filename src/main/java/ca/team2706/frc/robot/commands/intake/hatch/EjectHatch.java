@@ -7,15 +7,13 @@ import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.Intake;
 import ca.team2706.frc.robot.subsystems.Lift;
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.ConditionalCommand;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
 /**
  * Command for ejecting hatches from the mechanism.
  */
 public class EjectHatch extends CommandGroup {
-
-    private MoveLiftToPosition liftMover;
-
     /**
      * Constructs the command to eject hatches.
      *
@@ -25,18 +23,16 @@ public class EjectHatch extends CommandGroup {
         requires(Intake.getInstance());
 
         addSequential(new InstantCommand(() -> elevatorPosition.setPosition(Lift.getInstance().getLiftHeight())));
+        // Make sure lift is high enough.
+        addSequential(new ConditionalCommand(new MoveLiftToPosition(0.7, () -> 0.05 - Config.SUBTRACT_LIFT_HEIGHT)) {
+            @Override
+            protected boolean condition() {
+                // Make sure that we're above the minimum hatch eject height before going.
+                return Lift.getInstance().getLiftHeight() < -Config.SUBTRACT_LIFT_HEIGHT + 0.05;
+            }
+        });
         addSequential(new MovePlunger(MovePlunger.DesiredState.DEPLOYED)); // Put plunger out and wait (timed command).
         // Move lift down slightly
-        liftMover = new MoveLiftToPosition(0.5, () -> Lift.getInstance().getLiftHeight() + Config.SUBTRACT_LIFT_HEIGHT);
-        addSequential(liftMover);
-    }
-
-    /**
-     * Gets the height of the lift before the eject hatch command started;
-     *
-     * @return The original height of the lift, in feet.
-     */
-    public double getOriginalLiftHeight() {
-        return liftMover.getOriginalLiftHeight();
+        addSequential(new MoveLiftToPosition(0.5, () -> Lift.getInstance().getLiftHeight() + Config.SUBTRACT_LIFT_HEIGHT));
     }
 }

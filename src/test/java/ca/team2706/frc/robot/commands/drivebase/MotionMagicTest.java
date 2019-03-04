@@ -107,7 +107,10 @@ public class MotionMagicTest {
 
         new Verifications() {{
             talon.set(ControlMode.MotionMagic, position / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, 0);
+            times = 1;
+            talon.feed();
             times = 3;
+            talon.follow((IMotorController) any, FollowerType.AuxOutput1);
             talon.configClosedLoopPeakOutput(0, speed);
             times = 6;
         }};

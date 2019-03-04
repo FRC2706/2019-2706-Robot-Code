@@ -49,10 +49,11 @@ public class MotionMagic extends DriveBaseCloseLoop {
     public void initialize() {
         super.initialize();
         DriveBase.getInstance().setMotionMagicWithGyroMode();
+        DriveBase.getInstance().runMotionMagic(position.get(), 0);
     }
 
     @Override
     public void execute() {
-        DriveBase.getInstance().setMotionMagicPositionGyro(speed.get(), position.get(), 0);
+        DriveBase.getInstance().setMotionMagicPositionGyro(speed.get());
     }
 }

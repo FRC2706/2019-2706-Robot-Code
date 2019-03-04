@@ -649,13 +649,11 @@ public class DriveBase extends Subsystem {
     }
 
     /**
-     * Goes to a position with the closed loop Talon PIDs using only encoder information and motion magic
+     * Follows a pre-set motion magic path. {@link DriveBase#runMotionMagic(double, double)} should be called first.
      *
-     * @param speed          The speed from 0 to 1
-     * @param setpoint       The setpoint to go to in feet
-     * @param targetRotation The desired rotation
+     * @param speed The speed from 0 to 1
      */
-    public void setMotionMagicPositionGyro(double speed, double setpoint, double targetRotation) {
+    public void setMotionMagicPositionGyro(double speed) {
         setMotionMagicWithGyroMode();
 
         leftFrontMotor.configClosedLoopPeakOutput(0, speed);
@@ -663,8 +661,23 @@ public class DriveBase extends Subsystem {
         leftFrontMotor.configClosedLoopPeakOutput(1, speed);
         rightFrontMotor.configClosedLoopPeakOutput(1, speed);
 
-        rightFrontMotor.set(ControlMode.MotionMagic, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation);
+        rightFrontMotor.feed();
         leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
+
+        follow();
+    }
+
+    /**
+     * Creates a motion magic profile to follow
+     *
+     * @param setpoint       The setpoint to go to in feet
+     * @param targetRotation The desired rotation
+     *                       , double setpoint, double targetRotation
+     */
+    public void runMotionMagic(double setpoint, double targetRotation) {
+        setMotionMagicWithGyroMode();
+
+        rightFrontMotor.set(ControlMode.MotionMagic, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation);
     }
 
     /**
@@ -738,14 +751,10 @@ public class DriveBase extends Subsystem {
             points[i].profileSlotSelect0 = 0;
             points[i].profileSlotSelect1 = 1;
             points[i].timeDur = time[i];
-            points[i].zeroPos = false;
-            if (i == 0)
-                points[i].zeroPos = true; /* set this to true on the first point */
+            points[i].zeroPos = i == 0;
             points[i].useAuxPID = true;
 
-            points[i].isLastPoint = false;
-            if ((i + 1) == size)
-                points[i].isLastPoint = true; /* set this to true on the last point  */
+            points[i].isLastPoint = (i + 1) == size;
         }
 
         pointStream.Write(points);

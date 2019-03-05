@@ -76,6 +76,9 @@ public class RobotTest {
     @Mocked
     private LiveWindow liveWindow;
 
+    @Mocked
+    private GenericHID genericHID;
+
     @Injectable
     private SensorCollection sensorCollection;
 

@@ -3,9 +3,7 @@ package ca.team2706.frc.robot.commands.drivebase;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import com.ctre.phoenix.CTREJNIWrapper;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.SensorCollection;
+import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
@@ -102,8 +100,11 @@ public class MotionMagicTest {
         motionMagic.end();
 
         new Verifications() {{
-            talon.set(ControlMode.Position, position / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, 0);
+            talon.set(ControlMode.MotionMagic, position / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, 0);
+            times = 1;
+            talon.feed();
             times = 3;
+            talon.follow((IMotorController) any, FollowerType.AuxOutput1);
             talon.configClosedLoopPeakOutput(0, speed);
             times = 6;
         }};

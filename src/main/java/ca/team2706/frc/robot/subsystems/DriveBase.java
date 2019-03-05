@@ -127,7 +127,7 @@ public class DriveBase extends Subsystem {
         setBrakeMode(false);
 
         loggingNotifier = new Notifier(this::log);
-//        loggingNotifier.startPeriodic(Config.LOG_PERIOD); // TODO add back logging
+        loggingNotifier.startPeriodic(Config.LOG_PERIOD);
     }
 
     /**
@@ -511,13 +511,11 @@ public class DriveBase extends Subsystem {
     }
 
     /**
-     * Goes to a position with the closed loop Talon PIDs using only encoder information and motion magic
+     * Follows a pre-set motion magic path. {@link DriveBase#runMotionMagic(double, double)} should be called first.
      *
-     * @param speed          The speed from 0 to 1
-     * @param setpoint       The setpoint to go to in feet
-     * @param targetRotation The desired rotation
+     * @param speed The speed from 0 to 1
      */
-    public void setMotionMagicPositionGyro(double speed, double setpoint, double targetRotation) {
+    public void setMotionMagicPositionGyro(double speed) {
         setMotionMagicWithGyroMode();
 
         leftFrontMotor.configClosedLoopPeakOutput(0, speed);
@@ -525,8 +523,23 @@ public class DriveBase extends Subsystem {
         leftFrontMotor.configClosedLoopPeakOutput(1, speed);
         rightFrontMotor.configClosedLoopPeakOutput(1, speed);
 
-        rightFrontMotor.set(ControlMode.Position, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation);
+        rightFrontMotor.feed();
         leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
+
+        follow();
+    }
+
+    /**
+     * Creates a motion magic profile to follow
+     *
+     * @param setpoint       The setpoint to go to in feet
+     * @param targetRotation The desired rotation
+     *                       , double setpoint, double targetRotation
+     */
+    public void runMotionMagic(double setpoint, double targetRotation) {
+        setMotionMagicWithGyroMode();
+
+        rightFrontMotor.set(ControlMode.MotionMagic, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation);
     }
 
     /*
@@ -629,6 +642,17 @@ public class DriveBase extends Subsystem {
     public void resetEncoders() {
         leftFrontMotor.getSensorCollection().setQuadraturePosition(0, Config.CAN_SHORT);
         rightFrontMotor.getSensorCollection().setQuadraturePosition(0, Config.CAN_SHORT);
+    }
+
+    /**
+     * Perform initializations so that the absolute gyro positon returned by
+     * the getAbsoluteHeading() method is equal to the angle specified by
+     * Config.ROBOT_START_ANGLE. The gyro measurement device will be reset to
+     * 0 degrees.
+     */
+    public void resetAbsoluteGyro() {
+        savedAngle = Config.ROBOT_START_ANGLE.value();
+        gyro.setYaw(0, Config.CAN_SHORT);
     }
 
     /**

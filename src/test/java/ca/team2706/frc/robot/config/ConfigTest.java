@@ -149,6 +149,7 @@ public class ConfigTest {
      * @param ntTable Will construct the config object using the table.
      */
     @Test
+    @SuppressWarnings("unchecked")
     public void testConfigIsInitializedWhenRobotIsAlreadyInit(@Mocked NetworkTableInstance ntInstance, @Injectable NetworkTable ntTable) throws NoSuchFieldException, IllegalAccessException {
         new Expectations() {{
             ntInstance.getTable("Fluid Constants");
@@ -161,7 +162,7 @@ public class ConfigTest {
 
         Field constantsList = Config.class.getDeclaredField("CONSTANTS");
         constantsList.setAccessible(true);
-        //noinspection unchecked
+
         ((ArrayList<FluidConstant<?>>) constantsList.get(null)).add(constant);
 
         Config.init();

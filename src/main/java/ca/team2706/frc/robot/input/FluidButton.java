@@ -21,7 +21,8 @@ public class FluidButton extends EButton {
     public static final int POV_NUMBER = 0;
 
     private final GenericHID m_joystick;
-    private final FluidConstant<String> joystickPort;
+    private int joystickPort;
+    private XboxValue.XboxInputType inputType;
 
     /**
      * Constructs a FluidButton with the given GenericHID interface and action binding.
@@ -35,35 +36,38 @@ public class FluidButton extends EButton {
 
     public FluidButton(GenericHID genericHID, FluidConstant<String> actionBinding, final double minActivation) {
         m_joystick = genericHID;
-        this.joystickPort = actionBinding;
         this.minAxisActivation = minActivation;
 
+        updatePortAndInputType(XboxValue.getXboxValueFromFluidConstant(actionBinding));
+
+        actionBinding.addChangeListener((oldValue, newValue) -> {
+            updatePortAndInputType(XboxValue.getXboxValueFromNTKey(newValue));
+        });
+    }
+
+    /**
+     * Updates the port and input type for this button.
+     *
+     * @param value The XboxValue button binding.
+     */
+    private void updatePortAndInputType(XboxValue value) {
+        this.joystickPort = value.getPort();
+        this.inputType = value.getInputType();
     }
 
     @Override
     public boolean get() {
-        return determineIfPressed(m_joystick, XboxValue.getXboxValueFromFluidConstant(joystickPort), minAxisActivation);
-    }
-
-    /**
-     * Determines if the given controller's port is being pressed.
-     *
-     * @param controller The controller to test.
-     * @param port       The port of the button which is being tested.
-     * @return True if the button at the given port on the controller is being pressed, false otherwise.
-     */
-    static boolean determineIfPressed(GenericHID controller, final XboxValue port, final double minAxisActivation) {
         final boolean pressed;
 
-        switch (port.getInputType()) {
+        switch (inputType) {
             case Axis:
-                pressed = Math.abs(controller.getRawAxis(port.getPort())) >= minAxisActivation;
+                pressed = Math.abs(m_joystick.getRawAxis(joystickPort)) >= minAxisActivation;
                 break;
             case Button:
-                pressed = controller.getRawButton(port.getPort());
+                pressed = m_joystick.getRawButton(joystickPort);
                 break;
             case POV:
-                pressed = controller.getPOV(POV_NUMBER) == port.getPort();
+                pressed = m_joystick.getPOV(POV_NUMBER) == joystickPort;
                 break;
             default:
                 pressed = false;
@@ -71,16 +75,5 @@ public class FluidButton extends EButton {
         }
 
         return pressed;
-    }
-
-    /**
-     * Determines if the given button on the given controller is being pressed.
-     *
-     * @param controller The controller.
-     * @param port       The button binding.
-     * @return True if it's being pressed, false otherwise.
-     */
-    static boolean determineIfPressed(GenericHID controller, final XboxValue port) {
-        return determineIfPressed(controller, port, DEFAULT_MIN_AXIS_ACTIVATION);
     }
 }

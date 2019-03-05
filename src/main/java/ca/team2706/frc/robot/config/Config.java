@@ -237,7 +237,14 @@ public class Config {
             MANUAL_PISTON_BINDING = constant("manual-plunger-toggle", XboxValue.XBOX_RIGHT_AXIS_BUTTON.getNTString()),
             EJECT_BINDING = constant("eject-multi-purpose-binding", XboxValue.XBOX_RB_BUTTON.getNTString()),
             AUTO_INTAKE_CARGO_BINDING = constant("auto-intake-cargo-binding", XboxValue.XBOX_LB_BUTTON.getNTString()),
-            TOGGLE_RING_LIGHT_BINDING = constant("toggle-ring-light-binding", XboxValue.XBOX_START_BUTTON.getNTString());
+            TOGGLE_RING_LIGHT_BINDING = constant("toggle-ring-light-binding", XboxValue.XBOX_START_BUTTON.getNTString()),
+            DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING =
+                    constant("driver-assist-vision-cargo-loading-binding", XboxValue.XBOX_X_BUTTON.getNTString()),
+            DRIVER_ASSIST_LASER_BINDING =
+                    constant("driver-assist-laser-binding", XboxValue.XBOX_Y_BUTTON.getNTString()),
+            DRIVER_ASSIST_VISION_ROCKET_BINDING =
+                    constant("driver-assist-vision-rocket-binding", XboxValue.XBOX_B_BUTTON.getNTString());
+
 
     /**
      * The minimum reading on the cargo IR sensor to assert that we have cargo in the mechanism.
@@ -248,6 +255,19 @@ public class Config {
      * The idea voltage for captured cargo.
      */
     public static final FluidConstant<Double> CARGO_CAPTURED_IDEAL_IR_VOLTAGE = constant("cargo-ideal-ir-voltage", 0.32);
+
+    public static final FluidConstant<Double> TRAJ_DELTA_TIME = constant("traj-delta-time", 0.1);
+    public static final FluidConstant<Double> VISION_ASSIST_MAX_VELOCITY = constant("robot-max-vel", 3.0);
+    public static final FluidConstant<Double> VISION_ASSIST_MAX_ACCELERATION = constant("robot-max-acc", 6.0);
+    public static final FluidConstant<Double> VISION_ASSIST_MAX_JERK = constant("robot-max-jerk", 60.0);
+
+    public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTX = constant("robottocamera-robotx", -0.25);
+    public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTY = constant("robottocamera-roboty", 0.25);
+
+    public static final FluidConstant<Double> VISION_DISTANCE_MIN = constant("target-offset_distance", 0.5);
+    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE = constant("target-offset_distance", 0.5);
+
+    public static final FluidConstant<Double> ROBOT_START_ANGLE = constant("robot-start-angle-deg", 90.0);
 
     // ### Methods, fields and Constructors ###
     /**

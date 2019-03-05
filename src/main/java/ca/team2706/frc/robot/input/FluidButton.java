@@ -20,7 +20,8 @@ public class FluidButton extends EButton {
     public static final int POV_NUMBER = 0;
 
     private final GenericHID m_joystick;
-    private final FluidConstant<String> joystickPort;
+    private int joystickPort;
+    private XboxValue.XboxInputType inputType;
 
     /**
      * Constructs a FluidButton with the given GenericHID interface and action binding.
@@ -30,7 +31,21 @@ public class FluidButton extends EButton {
      */
     public FluidButton(GenericHID genericHID, FluidConstant<String> actionBinding) {
         m_joystick = genericHID;
-        this.joystickPort = actionBinding;
+        updatePortAndInputType(XboxValue.getXboxValueFromFluidConstant(actionBinding));
+
+        actionBinding.addChangeListener((oldValue, newValue) -> {
+            updatePortAndInputType(XboxValue.getXboxValueFromNTKey(newValue));
+        });
+    }
+
+    /**
+     * Updates the port and input type for this button.
+     *
+     * @param value The XboxValue button binding.
+     */
+    private void updatePortAndInputType(XboxValue value) {
+        this.joystickPort = value.getPort();
+        this.inputType = value.getInputType();
     }
 
     /**
@@ -45,19 +60,20 @@ public class FluidButton extends EButton {
 
     @Override
     public boolean get() {
-        XboxValue port = XboxValue.getXboxValueFromNTKey(joystickPort.value());
+        final boolean value;
 
-        boolean value = false;
-
-        switch (port.getInputType()) {
+        switch (inputType) {
             case Axis:
-                value = Math.abs(m_joystick.getRawAxis(port.getPort())) >= MIN_AXIS_ACTIVATION;
+                value = Math.abs(m_joystick.getRawAxis(joystickPort)) >= MIN_AXIS_ACTIVATION;
                 break;
             case Button:
-                value = m_joystick.getRawButton(port.getPort());
+                value = m_joystick.getRawButton(joystickPort);
                 break;
             case POV:
-                value = m_joystick.getPOV(POV_NUMBER) == port.getPort();
+                value = m_joystick.getPOV(POV_NUMBER) == joystickPort;
+                break;
+            default:
+                value = false;
                 break;
         }
 

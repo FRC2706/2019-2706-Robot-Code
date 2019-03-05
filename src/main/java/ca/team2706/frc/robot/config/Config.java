@@ -99,15 +99,15 @@ public class Config {
             /**
              * Maximum lift current, in amps.
              */
-            MAX_LIFT_CURRENT = 11,
+            MAX_LIFT_CURRENT = 16,
     /**
      * How long the lift current has to be over the current limit before it is cut out.
      */
-    CURRENT_LIMIT_THRESHOLD_MS = 500,
+    CURRENT_LIMIT_THRESHOLD_MS = 1000,
     /**
      * Continuous current limit
      */
-    CONTINUOUS_CURRENT_LIMIT = 3;
+    CONTINUOUS_CURRENT_LIMIT = 4;
 
     public static int MAX_LIFT_ENCODER_TICKS = 54_000;
 

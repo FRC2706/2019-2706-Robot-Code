@@ -74,13 +74,13 @@ public class Lift extends Subsystem {
      */
     private void setupTalonConfig() {
         liftMotor.setNeutralMode(NeutralMode.Brake);
+        liftMotor.configFactoryDefault(Config.CAN_LONG);
+        liftMotor.setInverted(Config.INVERT_LIFT_MOTOR);
+
         liftMotor.configPeakCurrentLimit(Config.MAX_LIFT_CURRENT, Config.CAN_LONG);
         liftMotor.configContinuousCurrentLimit(Config.CONTINUOUS_CURRENT_LIMIT);
         liftMotor.configPeakCurrentDuration(Config.CURRENT_LIMIT_THRESHOLD_MS);
         liftMotor.enableCurrentLimit(Config.ENABLE_LIFT_CURRENT_LIMIT);
-
-        liftMotor.configFactoryDefault(Config.CAN_LONG);
-        liftMotor.setInverted(Config.INVERT_LIFT_MOTOR);
 
         liftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_LONG);
         liftMotor.configSelectedFeedbackCoefficient(0.5, 0, Config.CAN_LONG);

@@ -691,6 +691,10 @@ public class DriveBase extends Subsystem {
         return rightFrontMotor.getClosedLoopError(0) * Config.DRIVE_ENCODER_DPP;
     }
 
+    public double getRightPigeonError() {
+        return rightFrontMotor.getClosedLoopError(0) * Config.PIGEON_DPP;
+    }
+
     public void log() {
         if (DriverStation.getInstance().isEnabled()) {
             Log.d("Relative Gyro: " + getHeading());

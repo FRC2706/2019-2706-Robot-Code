@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
+import ca.team2706.frc.robot.Sendables;
 import ca.team2706.frc.robot.SendablesTest;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.DriveBase;
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import mockit.*;
 import org.junit.Before;
 import org.junit.Test;
+import util.Util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -52,22 +54,24 @@ public class AbsoluteRotateWithGyroTest {
     private SensorCollection sensorCollection;
 
     @Before
-    public void setUp() {
+    public void setUp() throws NoSuchFieldException, IllegalAccessException {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
         }};
+
+        Util.resetSubsystems();
     }
 
     /**
      * Tests that the command puts the drivetrain into the correct state
      *
      * @param speed         The speed to create the command with
-     * @param position      The rotation to create the command with
+     * @param angle      The rotation to create the command with
      * @param minDoneCycles The minimum cycles to use
      */
     @Test
-    public void testCorrectState(@Injectable("0.0") double speed, @Injectable("0.0") double position, @Injectable("1") int minDoneCycles) {
+    public void testCorrectState(@Injectable("0.0") double speed, @Injectable("0.0") double angle, @Injectable("1") int minDoneCycles) {
         assertEquals(DriveBase.DriveMode.Disabled, DriveBase.getInstance().getDriveMode());
         absoluteRotateWithGyro.initialize();
         assertEquals(DriveBase.DriveMode.Rotate, DriveBase.getInstance().getDriveMode());
@@ -81,15 +85,18 @@ public class AbsoluteRotateWithGyroTest {
      * Tests that the setpoint commands are called and speed is limited each tick
      *
      * @param speed         The speed to inject
-     * @param position      The rotation to inject
+     * @param angle      The rotation to inject
      * @param minDoneCycles The min cycles to inject
      */
     @Test
-    public void testSetting(@Injectable("0.0") double speed, @Injectable("30") double position, @Injectable("1") int minDoneCycles) {
+    public void testSetting(@Injectable("0.0") double speed, @Injectable("30") double angle, @Injectable("1") int minDoneCycles) {
         new Expectations() {{
             pigeon.getYawPitchRoll((double[]) any);
             // 300 positive
-            result = SendablesTest.makePigeonExpectation(-3300.0);
+            returns(
+                    SendablesTest.makePigeonExpectation(0),
+                    SendablesTest.makePigeonExpectation(-3300.0 - Config.ROBOT_START_ANGLE.value())
+            );
         }};
 
 
@@ -102,7 +109,7 @@ public class AbsoluteRotateWithGyroTest {
         absoluteRotateWithGyro.end();
 
         new Verifications() {{
-            talon.set(ControlMode.Position, degreesToTicks(90));
+            talon.set(ControlMode.Position, degreesToTicksDouble(90));
             times = 3;
             talon.configClosedLoopPeakOutput(0, speed);
             times = 6;
@@ -113,15 +120,18 @@ public class AbsoluteRotateWithGyroTest {
      * Tests that the setpoint commands are called and speed is limited each tick
      *
      * @param speed         The speed to inject
-     * @param position      The rotation to inject
+     * @param angle      The rotation to inject
      * @param minDoneCycles The min cycles to inject
      */
     @Test
-    public void testSettingMirror(@Injectable("0.0") double speed, @Injectable("330") double position, @Injectable("1") int minDoneCycles) {
+    public void testSettingMirror(@Injectable("0.0") double speed, @Injectable("330") double angle, @Injectable("1") int minDoneCycles) {
         new Expectations() {{
             pigeon.getYawPitchRoll((double[]) any);
             // 60 positive
-            result = SendablesTest.makePigeonExpectation(3300.0);
+            returns(
+                    SendablesTest.makePigeonExpectation(0),
+                    SendablesTest.makePigeonExpectation(3300.0 - Config.ROBOT_START_ANGLE.value())
+            );
         }};
 
         absoluteRotateWithGyro.mirror();
@@ -135,7 +145,7 @@ public class AbsoluteRotateWithGyroTest {
         absoluteRotateWithGyro.end();
 
         new Verifications() {{
-            talon.set(ControlMode.Position, degreesToTicks(90));
+            talon.set(ControlMode.Position, degreesToTicksDouble(-30.0));
             times = 3;
             talon.configClosedLoopPeakOutput(0, speed);
             times = 6;
@@ -144,5 +154,9 @@ public class AbsoluteRotateWithGyroTest {
 
     private int degreesToTicks(double degrees) {
         return (int) (degrees / Config.PIGEON_DPP);
+    }
+
+    private double degreesToTicksDouble(double degrees) {
+        return degrees / Config.PIGEON_DPP;
     }
 }

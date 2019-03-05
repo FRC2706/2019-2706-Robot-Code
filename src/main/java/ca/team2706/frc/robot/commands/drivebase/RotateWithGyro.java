@@ -19,6 +19,9 @@ public class RotateWithGyro extends DriveBaseCloseLoop implements IMirrorable<Co
     protected final Supplier<Double> speedSupplier, angleSupplier;
     protected boolean mirrored = false;
 
+    private final Supplier<Integer> minDoneCycles;
+    private int doneCycles;
+
     /**
      * Constructs a new rotate with gyro command for rotating the robot a set number of degrees.
      *
@@ -43,17 +46,29 @@ public class RotateWithGyro extends DriveBaseCloseLoop implements IMirrorable<Co
         super(minCyclesWithinThreshold, TARGET_ANGLE_RANGE);
         this.speedSupplier = speed;
         this.angleSupplier = angle;
+        this.minDoneCycles = minCyclesWithinThreshold;
     }
 
     @Override
     public void initialize() {
         super.initialize();
         DriveBase.getInstance().setRotateMode();
+        doneCycles = 0;
     }
 
     @Override
     public void execute() {
         DriveBase.getInstance().setRotation(speedSupplier.get(), (mirrored ? -1 : 1) * angleSupplier.get());
+    }
+
+    public boolean isFinished() {
+        if (Math.abs(DriveBase.getInstance().getRightPigeonError()) <= TARGET_ANGLE_RANGE) {
+            doneCycles++;
+        } else {
+            doneCycles = 0;
+        }
+
+        return doneCycles >= minDoneCycles.get();
     }
 
     @Override

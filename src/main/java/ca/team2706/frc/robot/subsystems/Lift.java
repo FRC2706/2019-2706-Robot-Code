@@ -1,7 +1,6 @@
 package ca.team2706.frc.robot.subsystems;
 
 import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.logging.Log;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -75,10 +74,12 @@ public class Lift extends Subsystem {
      */
     private void setupTalonConfig() {
         liftMotor.setNeutralMode(NeutralMode.Brake);
+        liftMotor.configPeakCurrentLimit(Config.MAX_LIFT_CURRENT, Config.CAN_LONG);
+        liftMotor.configContinuousCurrentLimit(Config.CONTINUOUS_CURRENT_LIMIT);
+        liftMotor.configPeakCurrentDuration(Config.CURRENT_LIMIT_THRESHOLD_MS);
         liftMotor.enableCurrentLimit(Config.ENABLE_LIFT_CURRENT_LIMIT);
 
         liftMotor.configFactoryDefault(Config.CAN_LONG);
-        liftMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
         liftMotor.setInverted(Config.INVERT_LIFT_MOTOR);
 
         liftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_LONG);
@@ -134,9 +135,8 @@ public class Lift extends Subsystem {
         SmartDashboard.putNumber("Lift Encoders", liftMotor.getSelectedSensorPosition());
         SmartDashboard.putBoolean("Lift Rev Switch", liftMotor.getSensorCollection().isRevLimitSwitchClosed());
         SmartDashboard.putBoolean("Lift Fwd Switch", liftMotor.getSensorCollection().isFwdLimitSwitchClosed());
-
-        Log.d("Lift Current: " + liftMotor.getOutputCurrent());
-        Log.d("Lift Voltage: " + liftMotor.getMotorOutputVoltage());
+        SmartDashboard.putNumber("Lift Current", liftMotor.getOutputCurrent());
+        SmartDashboard.putNumber("Lift Voltage", liftMotor.getMotorOutputVoltage());
     }
 
     /**

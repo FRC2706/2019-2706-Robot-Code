@@ -68,12 +68,7 @@ public class Intake extends Subsystem {
      * @return the voltage reading
      */
     public double readIr() {
-            return irSensor.getVoltage();
-    }
-
-    @Override
-    public void periodic() {
-        SmartDashboard.putNumber("IR", readIr()); // TODO remove
+            return irSensor.getAverageVoltage();
     }
 
     /**
@@ -120,7 +115,7 @@ public class Intake extends Subsystem {
      * @return True if the cargo is positioned well, false otherwise.
      */
     public boolean isCargoPositionedWell() {
-        return Math.abs(readIr() - Config.CARGO_CAPTURED_IDEAL_IR_VOLTAGE.value()) <= 0.05;
+        return Math.abs(readIr() - Config.CARGO_CAPTURED_IDEAL_IR_VOLTAGE.value()) <= 0.01;
     }
 
 }

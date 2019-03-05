@@ -153,6 +153,11 @@ public class Config {
      * How much height (in feet) to subtract from the lift's height for ejecting hatches.
      */
     public static final double SUBTRACT_LIFT_HEIGHT = -0.125;
+    /**
+     * How far from the top and the bottom of the lift that the lift should begin to slow down, in manual control.
+     */
+    public static final double LIFT_SLOWDOWN_RANGE_UP = 0.5;
+    public static final double LIFT_SLOWDOWN_RANGE_DOWN = 1.0;
 
 
     public static final double MAX_INTAKE_SPEED = 1.0; //to be finalized later, this has yet to be tested
@@ -183,7 +188,10 @@ public class Config {
     public static final FluidConstant<Double> MOTION_MAGIC_ACCELERATION = constant("mm-acceleration", 7.77);
     public static final FluidConstant<Double> LIFT_MOTION_MAGIC_ACCELERATION = constant("mm-lift-acceleration", 4.0);
     public static final FluidConstant<Double> LIFT_MOTION_MAGIC_VELOCITY = constant("mm-lift-velocity", 7.77);
-    public static final FluidConstant<Double> LIFT_MAX_SPEED = constant("max-lift-velocity", 7.77); // TODO this is not at all right.
+    /**
+     * Max speed of the lift in encoder ticks.
+     */
+    public static final FluidConstant<Integer> LIFT_MAX_SPEED = constant("max-lift-velocity", 2766);
 
     public static final FluidConstant<Double> TURN_P = constant("turn-P", 0.5);
     public static final FluidConstant<Double> TURN_I = constant("turn-I", 0.0);
@@ -220,12 +228,12 @@ public class Config {
     /**
      * The minimum reading on the cargo IR sensor to assert that we have cargo in the mechanism.
      */
-    public static final FluidConstant<Double> CARGO_CAPTURED_IR_MIN_VOLTAGE = constant("cargo-min-ir-voltage", 0.2);
+    public static final FluidConstant<Double> CARGO_CAPTURED_IR_MIN_VOLTAGE = constant("cargo-min-ir-voltage", 0.27);
 
     /**
      * The idea voltage for captured cargo.
      */
-    public static final FluidConstant<Double> CARGO_CAPTURED_IDEAL_IR_VOLTAGE = constant("cargo-ideal-ir-voltage", 0.2);
+    public static final FluidConstant<Double> CARGO_CAPTURED_IDEAL_IR_VOLTAGE = constant("cargo-ideal-ir-voltage", 0.32);
 
     // ### Methods, fields and Constructors ###
     /**

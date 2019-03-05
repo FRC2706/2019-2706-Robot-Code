@@ -93,7 +93,7 @@ public class OI {
         new FluidButton(controlStick, Config.INTAKE_FORWARD_BINDING, 0.05)
                 .whenHeld(new RunIntakeOnJoystick(controlStick, Config.INTAKE_FORWARD_BINDING, true));
         new FluidButton(controlStick, Config.MOVE_LIFT_BINDING, 0.05)
-                .whenHeld(new MoveLiftOnJoystick(controlStick, Config.MOVE_LIFT_BINDING));
+                .whenHeld(new MoveLiftJoystickVelocity(controlStick, Config.MOVE_LIFT_BINDING));
         new FluidButton(controlStick, Config.LIFT_ARMS_BINDING)
                 .whenPressed(new RaiseArmsSafely());
         new FluidButton(controlStick, Config.LOWER_ARMS_BINDING)

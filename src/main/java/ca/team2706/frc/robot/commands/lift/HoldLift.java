@@ -26,7 +26,7 @@ public class HoldLift extends Command {
     @Override
     protected void execute() {
         super.execute();
-        Lift.getInstance().setPosition(0.7, heightToHold);
+        Lift.getInstance().setPosition(1.0, heightToHold);
     }
 
     @Override

@@ -9,7 +9,7 @@ public class MoveLiftToPosition extends Command {
 
     private final double maxSpeed;
     private final Supplier<Double> position;
-    private double startLiftHeight;
+    private double currentTarget;
 
     /**
      * Constructs a move lift to position command, moving the lift to the given position.
@@ -25,12 +25,12 @@ public class MoveLiftToPosition extends Command {
 
     @Override
     protected void initialize() {
-        startLiftHeight = Lift.getInstance().getLiftHeight();
+        currentTarget = position.get();
     }
 
     @Override
     protected void execute() {
-        Lift.getInstance().setPosition(maxSpeed, position.get());
+        Lift.getInstance().setPosition(maxSpeed, currentTarget);
     }
 
     @Override
@@ -41,14 +41,5 @@ public class MoveLiftToPosition extends Command {
     @Override
     protected void end() {
         Lift.getInstance().stop();
-    }
-
-    /**
-     * Gets the lift height before the movement began.
-     *
-     * @return The start lift height.
-     */
-    public double getOriginalLiftHeight() {
-        return startLiftHeight;
     }
 }

@@ -102,6 +102,8 @@ public class DriverAssistVision extends Command {
         distanceCameraToTarget_CameraPrev = 0.0;
     }
 
+    private FollowTrajectory followTrajectory;
+
     /**
      * Creates the driver assist command
      *
@@ -197,8 +199,12 @@ public class DriverAssistVision extends Command {
 
     @Override
     public void end() {
-        // Go back to disabled mode
-        DriveBase.getInstance().setDisabledMode();
+        if(followTrajectory != null) {
+            if(followTrajectory.isRunning()) {
+                followTrajectory.cancel();
+            }
+            followCommand = null;
+        }
     }
 
     /**
@@ -369,10 +375,8 @@ public class DriverAssistVision extends Command {
         traj = Pathfinder.generate(points, config);
         Log.d("DAV: Trajectory generated");
 
-        /*
-        Send trajectory to motion control system
-        (Wait until integration with robot code) TODO
-        */
+        followTrajectory = new FollowTrajectory(0.2, 100, traj);
+        followTrajectory.start();
     }
 
     /**

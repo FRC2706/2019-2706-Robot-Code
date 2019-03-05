@@ -17,18 +17,24 @@ public class Lift extends Subsystem {
      */
     public WPI_TalonSRX liftMotor;
 
-    private static final double[] CARGO_SETPOINTS = {
-            0, // Bottom for ground pickup // TODO get good heights.
-            2.291667, // lowest in feet
-            4.625, // med in feet
-            6.958333 // highest in feet
+    /**
+     * Setpoints for cargo, in encoder ticks.
+     */
+    private static final int[] CARGO_SETPOINTS = {
+            0, // Cargo ground pickup
+            6500, // lowest cargo
+            34311, // med cargo
+            Config.MAX_LIFT_ENCODER_TICKS // highest cargo.
     };
 
-    private static final double[] HATCH_SETPOINTS = {
-            0, // Loading station pickup // TODO get good height for this.
-            1.583, // lowest in feet
-            3.917, // med in feet
-            6.25 // highest in feet
+    /**
+     * Setpoints for hatches, in encoder ticks.
+     */
+    private static final int[] HATCH_SETPOINTS = {
+            0, // Loading station pickup
+            499, // lowest hatch deploy
+            27138, // middle hatch
+            Config.MAX_LIFT_ENCODER_TICKS // highest hatch
     };
 
     private static Lift currentInstance;
@@ -57,7 +63,6 @@ public class Lift extends Subsystem {
      */
     private Lift() {
         liftMotor = new WPI_TalonSRX(Config.LIFT_MOTOR_ID);
-
         setupTalonConfig();
     }
 
@@ -90,7 +95,7 @@ public class Lift extends Subsystem {
         liftMotor.configClosedLoopPeriod(0, 1, Config.CAN_LONG);
 
         liftMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, Config.CAN_LONG);
-        liftMotor.configClearPositionOnLimitR(true, Config.CAN_LONG);
+        enableLimitSwitch(true);
 
         enableLimit(true);
 
@@ -98,11 +103,15 @@ public class Lift extends Subsystem {
         liftMotor.configForwardSoftLimitThreshold(Config.MAX_LIFT_ENCODER_TICKS, Config.CAN_LONG);
         liftMotor.configReverseSoftLimitThreshold(0, Config.CAN_LONG);
 
-        liftMotor.configVoltageCompSaturation(11, Config.CAN_LONG);
+        liftMotor.configVoltageCompSaturation(12, Config.CAN_LONG);
         liftMotor.enableVoltageCompensation(true);
 
         liftMotor.configMotionCruiseVelocity((int) (Config.LIFT_MOTION_MAGIC_VELOCITY.value() / Config.LIFT_ENCODER_DPP / 10), Config.CAN_LONG);
         liftMotor.configMotionAcceleration((int) (Config.LIFT_MOTION_MAGIC_ACCELERATION.value() / Config.LIFT_ENCODER_DPP / 10), Config.CAN_LONG);
+    }
+
+    private void enableLimitSwitch(final boolean enable) {
+        liftMotor.configClearPositionOnLimitR(enable, Config.CAN_SHORT);
     }
 
     /**
@@ -142,8 +151,8 @@ public class Lift extends Subsystem {
      *
      * @return The current setpoints, sorted from lowest to highest.
      */
-    private double[] getCurrentSetpoints() {
-        final double[] setpoints;
+    private int[] getCurrentSetpoints() {
+        final int[] setpoints;
 
         switch (getIntakeMode()) {
             case CARGO:
@@ -153,7 +162,7 @@ public class Lift extends Subsystem {
                 setpoints = HATCH_SETPOINTS;
                 break;
             default:
-                setpoints = new double[0];
+                setpoints = new int[0];
                 break;
         }
 
@@ -167,27 +176,77 @@ public class Lift extends Subsystem {
      * @param position The position, in feet.
      */
     public void setPosition(final double maxSpeed, final double position) {
+        setPositionEncoderTicks( maxSpeed,position / Config.LIFT_ENCODER_DPP);
+    }
+
+    /**
+     * Sets the position for the talons to reach in encoder ticks.
+     * @param maxSpeed The maximum speed at which to travel.
+     * @param encoderTicksPosition The position, in encoder ticks.
+     */
+    public void setPositionEncoderTicks(final double maxSpeed, final double encoderTicksPosition) {
         enableLimit(true);
+        enableLimitSwitch(true);
         liftMotor.configClosedLoopPeakOutput(0, maxSpeed);
-        liftMotor.set(ControlMode.Position, position / Config.LIFT_ENCODER_DPP);
+        liftMotor.set(ControlMode.Position, encoderTicksPosition);
     }
 
 
+    /**
+     * Sets a position to for the talons to reach using motion magic.
+     * @param maxSpeed The maximum speed (from 0 to 1).
+     * @param position The position in feet.
+     */
     public void setPositionMotionMagic(final double maxSpeed, final double position) {
+        setPositionMotionMagicEncoderTicks(maxSpeed, position / Config.LIFT_ENCODER_DPP);
+    }
+
+    /**
+     * Sets a position for the talons to reach using motion magic in terms of encoder ticks.
+     * @param maxSpeed The max speed (from 0 to 1).
+     * @param position The number of encoder ticks.
+     */
+    public void setPositionMotionMagicEncoderTicks(final double maxSpeed, final double position) {
         enableLimit(true);
+        enableLimitSwitch(getLiftHeight() > 0);
+
         liftMotor.configClosedLoopPeakOutput(0, maxSpeed);
-        liftMotor.set(ControlMode.MotionMagic, position / Config.LIFT_ENCODER_DPP);
+        liftMotor.set(ControlMode.MotionMagic, position);
     }
 
     /**
      * Sets a velocity for the talon motors.
      *
-     * @param velocity Velocity in ft/s
+     * @param velocity Velocity in encoder ticks.
      */
-    public void setVelocity(final double velocity) {
+    public void setVelocity(int velocity) {
         enableLimit(true);
+        enableLimitSwitch(true);
+
+        // If we're approaching either the top of the bottom of the lift, begin to slow down.
+        final double liftHeight = getLiftHeight(); // Get lift height above bottom.
+        // Get lift distance from top
+        final double liftDistanceFromTop = Config.MAX_LIFT_ENCODER_TICKS * Config.LIFT_ENCODER_DPP - liftHeight;
+
+        final boolean needToSlowDown = (liftDistanceFromTop < Config.LIFT_SLOWDOWN_RANGE_DOWN && velocity > 0) || (liftHeight < Config.LIFT_SLOWDOWN_RANGE_DOWN && velocity < 0);
+        if (needToSlowDown) {
+            int maxLiftSpeedAtThisHeight;
+            // If we're going down.
+            if (velocity < 0) {
+                maxLiftSpeedAtThisHeight = -(int)(Config.LIFT_MAX_SPEED.value() * (liftHeight
+                        / Config.LIFT_SLOWDOWN_RANGE_UP + 0.45));
+                velocity = Math.max(velocity, maxLiftSpeedAtThisHeight);
+            }
+            // If we're going up.
+            else {
+                maxLiftSpeedAtThisHeight = (int)(Config.LIFT_MAX_SPEED.value() * (liftDistanceFromTop
+                        / Config.LIFT_SLOWDOWN_RANGE_DOWN + 0.45));
+                velocity = Math.min(velocity, maxLiftSpeedAtThisHeight);
+            }
+        }
+
         liftMotor.configClosedLoopPeakOutput(0, 1.0); // Peak output to max (1.0).
-        liftMotor.set(ControlMode.Velocity, velocity / Config.LIFT_ENCODER_DPP / 10.0);
+        liftMotor.set(ControlMode.Velocity, velocity);
     }
 
     /**
@@ -197,6 +256,7 @@ public class Lift extends Subsystem {
      */
     public void setPercentOutput(double percentOutput) {
         enableLimit(true);
+        enableLimitSwitch(true);
         liftMotor.set(percentOutput);
     }
 
@@ -205,11 +265,13 @@ public class Lift extends Subsystem {
      */
     public void overrideUp() {
         enableLimit(false);
+        enableLimitSwitch(true);
         liftMotor.set(Config.LIFT_OVERRIDE_UP_SPEED);
     }
 
     public void overrideDown() {
         enableLimit(false);
+        enableLimitSwitch(true);
         liftMotor.set(Config.LIFT_OVERRIDE_DOWN_SPEED);
     }
 
@@ -236,9 +298,9 @@ public class Lift extends Subsystem {
      * @param setpoint The setpoint id, between 0 and 3.
      */
     public void moveToSetpoint(final double speed, final int setpoint) {
-        final double[] currentSetpoints = getCurrentSetpoints();
+        final int[] currentSetpoints = getCurrentSetpoints();
         if (0 <= setpoint && setpoint <= currentSetpoints.length) {
-            setPositionMotionMagic(speed, currentSetpoints[setpoint]);
+            setPositionMotionMagicEncoderTicks(speed, currentSetpoints[setpoint]);
         }
     }
 
@@ -249,7 +311,7 @@ public class Lift extends Subsystem {
      * @return True if the lift has reached the setpoint, false otherwise.
      */
     public boolean hasReachedSetpoint(final int setpoint) {
-        final double[] currentSetpoints = getCurrentSetpoints();
+        final int[] currentSetpoints = getCurrentSetpoints();
 
         boolean hasReachedSetpoint = false;
         if (0 <= setpoint && setpoint <= currentSetpoints.length) {
@@ -267,7 +329,7 @@ public class Lift extends Subsystem {
      * @return True if the lift is within a certain margin of error fo the position, false otherwise.
      */
     public boolean hasReachedPosition(final double position) {
-        return Math.abs(getLiftHeight() - position) < 0.1;
+        return Math.abs(getLiftHeightEncoderTicks() - position / Config.LIFT_ENCODER_DPP) < 750;
     }
 
     /**
@@ -286,14 +348,5 @@ public class Lift extends Subsystem {
      */
     public int getLiftHeightEncoderTicks() {
         return liftMotor.getSelectedSensorPosition();
-    }
-
-    /**
-     * Sets the lift's new destination height to the current height plus the height to subtract.
-     *
-     * @param heightToBeAdded The height to be added, in feet.
-     */
-    public void addToHeight(final double heightToBeAdded) {
-        setPosition(1.0, getLiftHeight() + heightToBeAdded);
     }
 }

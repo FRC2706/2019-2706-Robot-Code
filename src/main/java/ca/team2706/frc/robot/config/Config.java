@@ -191,7 +191,7 @@ public class Config {
     /**
      * Max speed of the lift in encoder ticks.
      */
-    public static final FluidConstant<Integer> LIFT_MAX_SPEED = constant("max-lift-velocity", 2766);
+    public static final FluidConstant<Integer> LIFT_MAX_SPEED = constant("max-lift-velocity", 3000);
 
     public static final FluidConstant<Double> TURN_P = constant("turn-P", 0.5);
     public static final FluidConstant<Double> TURN_I = constant("turn-I", 0.0);

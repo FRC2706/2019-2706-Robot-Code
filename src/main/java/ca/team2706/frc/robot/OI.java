@@ -1,6 +1,7 @@
 package ca.team2706.frc.robot;
 
 import ca.team2706.frc.robot.commands.drivebase.CurvatureDriveWithJoystick;
+import ca.team2706.frc.robot.commands.drivebase.DriverAssistVision;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.input.FluidButton;
 import ca.team2706.frc.robot.subsystems.DriveBase;
@@ -55,7 +56,7 @@ public class OI {
      * @param driverStick  The driver joystick to use
      * @param controlStick The operator joystick to use
      */
-    private OI(Joystick driverStick, Joystick controlStick) {
+    public OI(Joystick driverStick, Joystick controlStick) {
         // Joystick for driving the robot around
         this.driverStick = driverStick;
 
@@ -70,6 +71,12 @@ public class OI {
 
         // The button to use to interrupt the robots current command
         new FluidButton(driverStick, Config.INTERRUPT_BUTTON).whenPressed(new InstantCommand(Robot::interruptCurrentCommand));
+
+        // Operator controls
+        new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING)
+                .whenPressed(new DriverAssistVision(true, false));
+        new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_ROCKET_BINDING)
+                .whenPressed(new DriverAssistVision(false, true));
     }
 
     /**

@@ -6,17 +6,13 @@ import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
-import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.input.EButton;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
-import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import mockit.Expectations;
@@ -80,11 +76,11 @@ public class RobotTest {
     @Mocked
     private LiveWindow liveWindow;
 
-    @Injectable
-    private SensorCollection sensorCollection;
+    @Mocked
+    private GenericHID genericHID;
 
     @Injectable
-    private GenericHID genericHID;
+    private SensorCollection sensorCollection;
 
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {

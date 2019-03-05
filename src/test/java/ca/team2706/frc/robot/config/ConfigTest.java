@@ -7,6 +7,8 @@ import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Notifier;
@@ -29,8 +31,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ConfigTest {
     private Robot robot;
@@ -112,6 +116,61 @@ public class ConfigTest {
             robot = new Robot();
             robot.robotInit();
         }
+    }
+
+
+    private static class FakeFluidConstant extends FluidConstant<String> {
+        private boolean ntEntryAdded;
+
+        /**
+         * Creates a new FluidConstant class.
+         *
+         * @param name         The name of the constant used when printing it to file.
+         * @param initialValue The initial value of the constant.
+         */
+        FakeFluidConstant(String name, String initialValue) {
+            super(name, initialValue);
+        }
+
+        @Override
+        void addNTEntry(NetworkTable table) {
+            this.ntEntryAdded = true;
+            table.getEntry("Test123");
+        }
+    }
+
+    /**
+     * Ensures that the config stuff initializes properly when the config class is
+     * initialized after the robot has already initialized.
+     *
+     * @param ntTable Will construct the config object using the table.
+     */
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testConfigIsInitializedWhenRobotIsAlreadyInit(@Mocked NetworkTableInstance ntInstance, @Injectable NetworkTable ntTable) throws NoSuchFieldException, IllegalAccessException {
+        new Expectations() {{
+            ntInstance.getTable("Fluid Constants");
+            result = ntTable;
+        }};
+
+        Config.init();
+
+        FakeFluidConstant constant = new FakeFluidConstant("Test", "Test");
+
+        Field constantsList = Config.class.getDeclaredField("CONSTANTS");
+        constantsList.setAccessible(true);
+
+        ((ArrayList<FluidConstant<?>>) constantsList.get(null)).add(constant);
+
+        Config.init();
+
+        assertTrue("Fluid constants aren't initialized when the robot starts initialized.", constant.ntEntryAdded);
+
+        // Make sure that this stuff is only called once.
+        new Verifications() {{
+            ntTable.getEntry("Test123");
+            times = 1;
+        }};
     }
 
     /**

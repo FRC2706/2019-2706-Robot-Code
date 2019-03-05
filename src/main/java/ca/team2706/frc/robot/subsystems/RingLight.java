@@ -13,6 +13,7 @@ public class RingLight extends Subsystem {
      * @return The current instance.
      */
     public static RingLight getInstance() {
+        init();
         return currentInstance;
     }
 

@@ -48,6 +48,9 @@ public class RobotTest {
     private PWM pwm;
 
     @Mocked
+    private Relay relays;
+
+    @Mocked
     private AnalogInput analogInput;
 
     @Mocked(stubOutClassInitialization = true)

@@ -35,6 +35,9 @@ public class EButtonTest {
     private WPI_TalonSRX talon;
 
     @Mocked
+    private Relay relay;
+
+    @Mocked
     private VictorSPX intakeMotor;
 
     @Mocked
@@ -77,7 +80,7 @@ public class EButtonTest {
      * Tests that the command initializes when the button is first pressed, and releases ends when released
      */
     @Test
-    public void whenPressedTest() {
+    public void whenHeldTest() {
         new Expectations() {{
             driverStation.isDisabled();
             result = false;
@@ -100,7 +103,7 @@ public class EButtonTest {
 
         assertFalse(command.isRunning());
 
-        button.whenPressed(command);
+        button.whenHeld(command);
         Scheduler.getInstance().run();
         assertFalse(command.isRunning());
 

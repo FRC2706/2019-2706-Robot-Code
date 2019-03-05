@@ -3,10 +3,7 @@ package ca.team2706.frc.robot.operatorfeedback.rumbler;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.*;
 import mockit.Expectations;
 import mockit.Mocked;
 import mockit.Verifications;
@@ -38,6 +35,9 @@ public class RumblerTest {
 
     @Mocked
     private DoubleSolenoid solenoids;
+
+    @Mocked
+    private Relay relays;
 
     @Mocked
     private AnalogInput irSensor;

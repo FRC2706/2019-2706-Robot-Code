@@ -55,6 +55,9 @@ public class ConfigTest {
     @Mocked
     private AnalogInput analogInput;
 
+    @Mocked
+    private Relay relays;
+
     @Mocked(stubOutClassInitialization = true)
     private PigeonIMU pigeon;
 

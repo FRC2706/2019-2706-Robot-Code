@@ -2,8 +2,8 @@ package ca.team2706.frc.robot.commands.drivebase;
 
 import ca.team2706.frc.robot.SendablesTest;
 import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.subsystems.DriveBase;
 import com.ctre.phoenix.CTREJNIWrapper;
+import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
@@ -14,8 +14,10 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
 import mockit.Expectations;
+import mockit.Injectable;
 import mockit.Mocked;
 import mockit.Tested;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -23,8 +25,6 @@ import static org.junit.Assert.assertEquals;
 public class DriverAssistVisionTest {
     @Tested
     private DriverAssistVision driverAssistVision;
-
-    DriveBase driveBase = DriveBase.getInstance();
 
     @Mocked
     private WPI_TalonSRX talon;
@@ -48,6 +48,17 @@ public class DriverAssistVisionTest {
 
     @Mocked
     private Notifier notifier;
+
+    @Injectable
+    private SensorCollection sensorCollection;
+
+    @Before
+    public void setUp() {
+        new Expectations() {{
+            talon.getSensorCollection();
+            result = sensorCollection;
+        }};
+    }
 
     /**
      * Runs various test for generating a trajectory to targets on the cargo ship or
@@ -89,9 +100,9 @@ public class DriverAssistVisionTest {
             assertEquals(traj.segments[0].x, 0.0, 0.3);
             assertEquals(traj.segments[0].y, 0.0, 0.3);
             assertEquals(traj.segments[0].heading, Pathfinder.d2r(90.0), 0.3);
-            assertEquals(traj.segments[traj.length() - 1].x, vRobotToTarget_CameraX, 0.3);
-            assertEquals(traj.segments[traj.length() - 1].y, vRobotToTarget_CameraY - Config.TARGET_OFFSET_DISTANCE.value(), 0.3); // 6.5
-            assertEquals(traj.segments[traj.length() - 1].heading, Pathfinder.d2r(90.0), 0.3);
+            assertEquals(vRobotToTarget_CameraX, traj.segments[traj.length() - 1].x, 0.3);
+            assertEquals(vRobotToTarget_CameraY - Config.TARGET_OFFSET_DISTANCE.value(), traj.segments[traj.length() - 1].y, 0.3); // 6.5
+            assertEquals(Pathfinder.d2r(90.0), traj.segments[traj.length() - 1].heading, 0.3);
         }
     }
 
@@ -132,13 +143,13 @@ public class DriverAssistVisionTest {
                     driverAssistCargoAndLoading, driverAssistRocket);
             Trajectory traj = driverAssistVision.getTraj();
 
-            assertEquals(driverAssistVision.getAngRobotHeadingFinal_Field(), expectedAngRobotHeadingFinal_Field[i], 0.1);
-            assertEquals(traj.segments[0].x, 0.0, 0.3);
-            assertEquals(traj.segments[0].y, 0.0, 0.3);
-            assertEquals(traj.segments[0].heading, Pathfinder.d2r(90.0), 0.3);
-            assertEquals(traj.segments[traj.length() - 1].x, vRobotToTarget_CameraX, 0.3);
-            assertEquals(traj.segments[traj.length() - 1].y, vRobotToTarget_CameraY - Config.TARGET_OFFSET_DISTANCE.value(), 0.3);
-            assertEquals(traj.segments[traj.length() - 1].heading, Pathfinder.d2r(90.0), 0.3);
+            assertEquals(expectedAngRobotHeadingFinal_Field[i], driverAssistVision.getAngRobotHeadingFinal_Field(), 0.1);
+            assertEquals(0D, traj.segments[0].x, 0.3);
+            assertEquals(0D, traj.segments[0].y, 0.3);
+            assertEquals(Pathfinder.d2r(90.0), traj.segments[0].heading, 0.3);
+            assertEquals(vRobotToTarget_CameraX, traj.segments[traj.length() - 1].x, 0.3);
+            assertEquals(vRobotToTarget_CameraY - Config.TARGET_OFFSET_DISTANCE.value(), traj.segments[traj.length() - 1].y, 0.3);
+            assertEquals(Pathfinder.d2r(90.0), traj.segments[traj.length() - 1].heading, 0.3);
         }
     }
 }

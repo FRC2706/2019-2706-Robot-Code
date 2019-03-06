@@ -19,6 +19,7 @@ import mockit.Mocked;
 import mockit.Tested;
 import org.junit.Before;
 import org.junit.Test;
+import util.Util;
 
 import static org.junit.Assert.assertEquals;
 
@@ -53,11 +54,14 @@ public class DriverAssistVisionTest {
     private SensorCollection sensorCollection;
 
     @Before
-    public void setUp() {
+    public void setUp() throws NoSuchFieldException, IllegalAccessException {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
+            minTimes = 0;
         }};
+
+        Util.resetSubsystems();
     }
 
     /**

@@ -128,6 +128,8 @@ public class DriveBase extends Subsystem {
 
         loggingNotifier = new Notifier(this::log);
         loggingNotifier.startPeriodic(Config.LOG_PERIOD);
+
+        resetAbsoluteGyro();
     }
 
     /**

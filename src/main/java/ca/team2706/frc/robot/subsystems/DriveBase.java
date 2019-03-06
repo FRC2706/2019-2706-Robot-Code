@@ -691,6 +691,10 @@ public class DriveBase extends Subsystem {
         return rightFrontMotor.getClosedLoopError(0) * Config.DRIVE_ENCODER_DPP;
     }
 
+    /**
+     * Gets the current error on the right pigeon (how far off target it is).
+     * @return Right pigeon error.
+     */
     public double getRightPigeonError() {
         return rightFrontMotor.getClosedLoopError(0) * Config.PIGEON_DPP;
     }

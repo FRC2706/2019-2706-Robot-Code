@@ -61,6 +61,7 @@ public class RotateWithGyro extends DriveBaseCloseLoop implements IMirrorable<Co
         DriveBase.getInstance().setRotation(speedSupplier.get(), (mirrored ? -1 : 1) * angleSupplier.get());
     }
 
+    @Override
     public boolean isFinished() {
         if (Math.abs(DriveBase.getInstance().getRightPigeonError()) <= TARGET_ANGLE_RANGE) {
             doneCycles++;

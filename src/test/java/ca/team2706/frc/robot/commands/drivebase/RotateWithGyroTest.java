@@ -90,9 +90,9 @@ public class RotateWithGyroTest {
     public void testSetting(@Injectable("0.0") double speed, @Injectable("5") double angle, @Injectable("1") int minDoneCycles) {
         rotateWithGyro.initialize();
 
-        rotateWithGyro.execute();
-        rotateWithGyro.execute();
-        rotateWithGyro.execute();
+        for (int i = 0; i < 3; i++) {
+            rotateWithGyro.execute();
+        }
 
         rotateWithGyro.end();
 
@@ -117,9 +117,9 @@ public class RotateWithGyroTest {
 
         rotateWithGyro.initialize();
 
-        rotateWithGyro.execute();
-        rotateWithGyro.execute();
-        rotateWithGyro.execute();
+        for (int i = 0; i < 3; i++) {
+            rotateWithGyro.execute();
+        }
 
         rotateWithGyro.end();
 

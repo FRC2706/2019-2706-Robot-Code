@@ -9,13 +9,16 @@ import java.util.function.Supplier;
  */
 public class AbsoluteRotateWithGyro extends RotateWithGyro {
 
+    /**
+     * Gyro angle in degrees.
+     */
     private double gyroAngle;
 
     /**
      * Constructs a new rotate with gyro command for rotating the robot to an absolute heading.
      *
      * @param speed         The speed of the rotation.
-     * @param angle         The new absolute heading to rotate to.
+     * @param angle         The new absolute heading to rotate to, in degrees.
      * @param minDoneCycles The minimum number of cycles that the robot should be in the position it wants to be before
      *                      ending the command.
      */
@@ -27,7 +30,7 @@ public class AbsoluteRotateWithGyro extends RotateWithGyro {
      * Constructs a new rotate with gyro command for rotating the robot a set number of degrees.
      *
      * @param speed                    The speed supplier for the rotation.
-     * @param angle                    The new absolute heading to rotate to.
+     * @param angle                    The new absolute heading to rotate to, in degrees.
      * @param minCyclesWithinThreshold The supplier for the number of cycles in which the robot should be in
      *                                 the target position.
      */

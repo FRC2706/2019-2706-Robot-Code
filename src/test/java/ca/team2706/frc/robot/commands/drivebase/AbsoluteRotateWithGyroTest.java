@@ -102,9 +102,9 @@ public class AbsoluteRotateWithGyroTest {
 
         absoluteRotateWithGyro.initialize();
 
-        absoluteRotateWithGyro.execute();
-        absoluteRotateWithGyro.execute();
-        absoluteRotateWithGyro.execute();
+        for (int i = 0; i < 3; i++) {
+            absoluteRotateWithGyro.execute();
+        }
 
         absoluteRotateWithGyro.end();
 
@@ -138,9 +138,9 @@ public class AbsoluteRotateWithGyroTest {
 
         absoluteRotateWithGyro.initialize();
 
-        absoluteRotateWithGyro.execute();
-        absoluteRotateWithGyro.execute();
-        absoluteRotateWithGyro.execute();
+        for (int i = 0; i < 3; i++) {
+            absoluteRotateWithGyro.execute();
+        }
 
         absoluteRotateWithGyro.end();
 

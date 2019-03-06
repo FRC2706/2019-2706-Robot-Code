@@ -1,5 +1,9 @@
 package ca.team2706.frc.robot;
 
+/**
+ * Class for keeping track a pair of objects.
+ * @param <T> The type of data to be stored.
+ */
 public class Pair<T> {
     private final T first;
     private final T second;
@@ -32,10 +36,12 @@ public class Pair<T> {
     }
 
     /**
+     * Creates a new pair object with the provided items in it.
+     *
      * @param first  The first item
      * @param second The second item
      * @param <T>    The type of pair
-     * @return The pair
+     * @return The pair object with the two items in it.
      */
     public static <T> Pair<T> of(T first, T second) {
         return new Pair<>(first, second);

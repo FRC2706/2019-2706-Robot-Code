@@ -18,6 +18,9 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import java.util.Arrays;
+import java.util.stream.DoubleStream;
+
 /**
  * Subsystem that controls the driving of the robot as well as certain sensors that are used for driving
  */
@@ -655,15 +658,7 @@ public class DriveBase extends Subsystem {
      */
     public void setMotionMagicPositionGyro(double speed) {
         setMotionMagicWithGyroMode();
-
-        leftFrontMotor.configClosedLoopPeakOutput(0, speed);
-        rightFrontMotor.configClosedLoopPeakOutput(0, speed);
-        leftFrontMotor.configClosedLoopPeakOutput(1, speed);
-        rightFrontMotor.configClosedLoopPeakOutput(1, speed);
-
-        rightFrontMotor.feed();
-        leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
-
+        configTalons(speed);
         follow();
     }
 
@@ -685,10 +680,18 @@ public class DriveBase extends Subsystem {
      *
      * @param speed The speed from 0 to 1
      */
-    public void runMotionProfile(double speed) {
+    public void runMotionProfile(final double speed) {
         setMotionProfile();
 
+        configTalons(speed);
+    }
 
+    /**
+     * Configures the talons for motion profiling.
+     *
+     * @param speed The speed, from 0 to 1.
+     */
+    private void configTalons(final double speed) {
         leftFrontMotor.configClosedLoopPeakOutput(0, speed);
         rightFrontMotor.configClosedLoopPeakOutput(0, speed);
         leftFrontMotor.configClosedLoopPeakOutput(1, speed);
@@ -704,15 +707,10 @@ public class DriveBase extends Subsystem {
      *
      * @param speed The speed from 0 to 1
      */
-    public void runMotionProfile2Wheel(double speed) {
+    public void runMotionProfile2Wheel(final double speed) {
         setMotionProfile2Wheel();
 
-        leftFrontMotor.configClosedLoopPeakOutput(0, speed);
-        rightFrontMotor.configClosedLoopPeakOutput(0, speed);
-        leftFrontMotor.configClosedLoopPeakOutput(1, speed);
-        rightFrontMotor.configClosedLoopPeakOutput(1, speed);
-
-        rightFrontMotor.feed();
+        configTalons(speed);
         leftFrontMotor.feed();
     }
 
@@ -797,14 +795,10 @@ public class DriveBase extends Subsystem {
      * @param array The array that is negated
      * @return The array
      */
-    private static double[] negateDoubleArray(double[] array) {
-        double[] newArray = new double[array.length];
-
-        for (int i = 0; i < array.length; i++) {
-            newArray[i] = -array[i];
-        }
-
-        return newArray;
+    public static double[] negateDoubleArray(final double[] array) {
+        return Arrays.stream(array)
+                .map(operand -> -operand)
+                .toArray();
     }
 
     /*

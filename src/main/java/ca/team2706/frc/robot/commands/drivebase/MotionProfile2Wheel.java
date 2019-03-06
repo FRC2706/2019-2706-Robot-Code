@@ -5,6 +5,8 @@ import ca.team2706.frc.robot.subsystems.DriveBase;
 
 import java.util.function.Supplier;
 
+import static ca.team2706.frc.robot.subsystems.DriveBase.negateDoubleArray;
+
 /**
  * Follows two motion profiles for each side of the robot
  */
@@ -91,22 +93,6 @@ public class MotionProfile2Wheel extends MirroredCommand {
         DriveBase.getInstance().setMotionProfile2Wheel();
 
         doneCycles = 0;
-    }
-
-    /**
-     * Makes all the elements in the double array negative
-     *
-     * @param array The array that is negated
-     * @return The array
-     */
-    private static double[] negateDoubleArray(double[] array) {
-        double[] newArray = new double[array.length];
-
-        for (int i = 0; i < array.length; i++) {
-            newArray[i] = -array[i];
-        }
-
-        return newArray;
     }
 
     @Override

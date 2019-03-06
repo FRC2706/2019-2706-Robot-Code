@@ -68,12 +68,12 @@ public class CurveDrive2Test {
 
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
-        Util.resetSubsystems();
-
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
         }};
+
+        Util.resetSubsystems();
     }
 
     /**

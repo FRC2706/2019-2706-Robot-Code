@@ -93,7 +93,7 @@ public class Config {
 
     public static boolean
             INVERT_LIFT_MOTOR = robotSpecific(false, false, false),
-            ENABLE_LIFT_CURRENT_LIMIT = robotSpecific(false, true);
+            ENABLE_LIFT_CURRENT_LIMIT = robotSpecific(false, true, true);
 
     public static int
             /**

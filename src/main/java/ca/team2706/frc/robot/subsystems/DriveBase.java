@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Arrays;
-import java.util.stream.DoubleStream;
 
 /**
  * Subsystem that controls the driving of the robot as well as certain sensors that are used for driving

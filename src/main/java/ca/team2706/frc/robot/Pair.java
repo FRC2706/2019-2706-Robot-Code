@@ -2,6 +2,7 @@ package ca.team2706.frc.robot;
 
 /**
  * Class for keeping track a pair of objects.
+ *
  * @param <T> The type of data to be stored.
  */
 public class Pair<T> {

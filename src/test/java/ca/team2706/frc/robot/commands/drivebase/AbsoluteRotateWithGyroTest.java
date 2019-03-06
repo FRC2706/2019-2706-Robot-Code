@@ -1,6 +1,5 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
-import ca.team2706.frc.robot.Sendables;
 import ca.team2706.frc.robot.SendablesTest;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.DriveBase;
@@ -67,7 +66,7 @@ public class AbsoluteRotateWithGyroTest {
      * Tests that the command puts the drivetrain into the correct state
      *
      * @param speed         The speed to create the command with
-     * @param angle      The rotation to create the command with
+     * @param angle         The rotation to create the command with
      * @param minDoneCycles The minimum cycles to use
      */
     @Test
@@ -85,7 +84,7 @@ public class AbsoluteRotateWithGyroTest {
      * Tests that the setpoint commands are called and speed is limited each tick
      *
      * @param speed         The speed to inject
-     * @param angle      The rotation to inject
+     * @param angle         The rotation to inject
      * @param minDoneCycles The min cycles to inject
      */
     @Test
@@ -120,7 +119,7 @@ public class AbsoluteRotateWithGyroTest {
      * Tests that the setpoint commands are called and speed is limited each tick
      *
      * @param speed         The speed to inject
-     * @param angle      The rotation to inject
+     * @param angle         The rotation to inject
      * @param minDoneCycles The min cycles to inject
      */
     @Test

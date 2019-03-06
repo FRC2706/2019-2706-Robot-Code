@@ -693,6 +693,7 @@ public class DriveBase extends Subsystem {
 
     /**
      * Gets the current error on the right pigeon (how far off target it is).
+     *
      * @return Right pigeon error.
      */
     public double getRightPigeonError() {

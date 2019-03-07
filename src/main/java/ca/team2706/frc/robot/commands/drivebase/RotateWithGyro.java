@@ -1,17 +1,26 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
+import ca.team2706.frc.robot.commands.mirrorable.IMirrorable;
 import ca.team2706.frc.robot.subsystems.DriveBase;
+import edu.wpi.first.wpilibj.command.Command;
 
 import java.util.function.Supplier;
 
-public class RotateWithGyro extends DriveBaseCloseLoop {
+/**
+ * Rotates to a relative heading using the gyroscope
+ */
+public class RotateWithGyro extends DriveBaseCloseLoop implements IMirrorable<Command> {
 
     /**
      * How close to the target angle we should be, in degrees.
      */
     public static final double TARGET_ANGLE_RANGE = 5D;
 
-    private final Supplier<Double> speedSupplier, angleSupplier;
+    protected final Supplier<Double> speedSupplier, angleSupplier;
+    protected boolean mirrored = false;
+
+    private final Supplier<Integer> minDoneCycles;
+    private int doneCycles;
 
     /**
      * Constructs a new rotate with gyro command for rotating the robot a set number of degrees.
@@ -19,7 +28,7 @@ public class RotateWithGyro extends DriveBaseCloseLoop {
      * @param speed         The speed of the rotation.
      * @param angle         The new heading to rotate to.
      * @param minDoneCycles The minimum number of cycles that the robot should be in the position it wants to be before
-     *                      ending the cmmand.
+     *                      ending the command.
      */
     public RotateWithGyro(double speed, double angle, int minDoneCycles) {
         this(() -> speed, () -> angle, () -> minDoneCycles);
@@ -37,16 +46,40 @@ public class RotateWithGyro extends DriveBaseCloseLoop {
         super(minCyclesWithinThreshold, TARGET_ANGLE_RANGE);
         this.speedSupplier = speed;
         this.angleSupplier = angle;
+        this.minDoneCycles = minCyclesWithinThreshold;
     }
 
     @Override
     public void initialize() {
         super.initialize();
         DriveBase.getInstance().setRotateMode();
+        doneCycles = 0;
     }
 
     @Override
     public void execute() {
-        DriveBase.getInstance().setRotation(speedSupplier.get(), angleSupplier.get());
+        DriveBase.getInstance().setRotation(speedSupplier.get(), (mirrored ? -1 : 1) * angleSupplier.get());
+    }
+
+    @Override
+    public boolean isFinished() {
+        if (Math.abs(DriveBase.getInstance().getPigeonError()) <= TARGET_ANGLE_RANGE) {
+            doneCycles++;
+        } else {
+            doneCycles = 0;
+        }
+
+        return doneCycles >= minDoneCycles.get();
+    }
+
+    @Override
+    public RotateWithGyro mirror() {
+        mirrored = true;
+        return this;
+    }
+
+    @Override
+    public RotateWithGyro get() {
+        return this;
     }
 }

@@ -127,13 +127,15 @@ public class Config {
     public static final FluidConstant<Double> PIGEON_KF = constant("pigeon-kf", 0.0);
 
     public static final FluidConstant<String> DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING =
-            constant("driver-assist-vision-cargo-loading-binding", XboxValue.XBOX_X_BUTTON.getNTString());
-
-    public static final FluidConstant<String> DRIVER_ASSIST_VISION_ROCKET_BINDING =
-            constant("driver-assist-vision-rocket-binding", XboxValue.XBOX_B_BUTTON.getNTString());
-
-    public static final FluidConstant<String> DRIVER_ASSIST_LASER_BINDING =
-            constant("driver-assist-laser-binding", XboxValue.XBOX_Y_BUTTON.getNTString());
+            constant("driver-assist-vision-cargo-loading-binding", XboxValue.XBOX_X_BUTTON.getNTString()),
+            DRIVER_ASSIST_VISION_ROCKET_BINDING =
+                    constant("driver-assist-vision-rocket-binding", XboxValue.XBOX_B_BUTTON.getNTString()),
+            DRIVER_ASSIST_LASER_BINDING =
+                    constant("driver-assist-laser-binding", XboxValue.XBOX_Y_BUTTON.getNTString()),
+            FACE_FORWARD_BINDING = constant("face-forward-binding", XboxValue.XBOX_POV_UP.getNTString()),
+            FACE_RIGHT_BINDING = constant("face-right-binding", XboxValue.XBOX_POV_RIGHT.getNTString()),
+            FACE_LEFT_BINDING = constant("face-left-binding", XboxValue.XBOX_POV_LEFT.getNTString()),
+            FACE_BACK_BINDING = constant("face-back-binding", XboxValue.XBOX_POV_DOWN.getNTString());
 
     public static final FluidConstant<Double> TRAJ_DELTA_TIME = constant("traj-delta-time", 0.1);
     public static final FluidConstant<Double> VISION_ASSIST_MAX_VELOCITY = constant("robot-max-vel", 3.0);

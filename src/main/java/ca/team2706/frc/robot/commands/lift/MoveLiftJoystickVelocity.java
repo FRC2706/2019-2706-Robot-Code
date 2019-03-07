@@ -15,6 +15,11 @@ public class MoveLiftJoystickVelocity extends Command {
     private final Joystick controller;
     private int axisPort;
 
+    /**
+     * Moves the lift on joystick input using velocity.
+     * @param joystick The joystick to be looking at for percent speed.
+     * @param portBinding The port binding at which to look at.
+     */
     public MoveLiftJoystickVelocity(Joystick joystick, final FluidConstant<String> portBinding) {
         requires(Lift.getInstance());
         controller = joystick;

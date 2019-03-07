@@ -11,8 +11,12 @@ import edu.wpi.first.wpilibj.command.TimedCommand;
 public class MovePlunger extends TimedCommand {
     private DesiredState oldState;
 
+    /**
+     * Enum for the desired new state of the plunger, either {@link #STOWED}, {@link #DEPLOYED}
+     * or the opposite of whatever it currently is ({@link #TOGGLE}
+     */
     public enum DesiredState {
-        STOWED, DEPLOYED, TOGGLE;
+        STOWED, DEPLOYED, TOGGLE
     }
 
     private DesiredState newState;

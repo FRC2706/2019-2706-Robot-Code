@@ -9,6 +9,9 @@ import edu.wpi.first.wpilibj.command.TimedCommand;
  */
 public class LowerArms extends TimedCommand {
 
+    /**
+     * Constructs a new command to lower the intake arms in preparation for handling cargo.
+     */
     public LowerArms() {
         super(Config.INTAKE_ARMS_DELAY);
         requires(Pneumatics.getInstance());

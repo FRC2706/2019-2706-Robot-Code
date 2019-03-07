@@ -5,6 +5,9 @@ import edu.wpi.first.wpilibj.command.Command;
 
 import java.util.function.Supplier;
 
+/**
+ * Command for moving the lift to a certain position, without motion magic.
+ */
 public class MoveLiftToPosition extends Command {
 
     private final double maxSpeed;

@@ -17,7 +17,7 @@ public class AutoEjectCargo extends CommandGroup {
     public AutoEjectCargo() {
         requires(Intake.getInstance());
 
-        addParallel(new RunIntakeAtSpeed(1.0));
+        addParallel(new RunIntakeAtSpeed(() -> 1.0));
         addSequential(new WaitCommand(Config.EXHALE_CARGO_WAIT_UNTIL_PLUNGER));
         addSequential(new MovePlunger(MovePlunger.DesiredState.DEPLOYED));
     }

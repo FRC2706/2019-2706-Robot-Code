@@ -80,7 +80,6 @@ public class Robot extends TimedRobot {
                 new StraightDriveGyro(0.2, 2.0, 100),  // 4
                 new FollowTrajectoryFromFile(1.0, 100, "Test")//5
         };
-
     }
 
     /**

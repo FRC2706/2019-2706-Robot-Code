@@ -61,5 +61,4 @@ public class RunIntakeOnJoystick extends Command {
     protected boolean isFinished() {
         return false;
     }
-
 }

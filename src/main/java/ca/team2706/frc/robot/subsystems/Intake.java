@@ -6,7 +6,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The subsystem which controls the intake for cargo and hatches
@@ -68,7 +67,7 @@ public class Intake extends Subsystem {
      * @return the voltage reading
      */
     public double readIr() {
-            return irSensor.getAverageVoltage();
+        return irSensor.getAverageVoltage();
     }
 
     /**

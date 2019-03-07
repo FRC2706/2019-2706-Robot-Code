@@ -8,6 +8,9 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
  */
 public class ToggleRingLight extends InstantCommand {
 
+    /**
+     * Constructs a nwe command for toggling the ring light with default arguments.
+     */
     public ToggleRingLight() {
         requires(RingLight.getInstance());
     }

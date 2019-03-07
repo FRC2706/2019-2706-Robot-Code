@@ -9,6 +9,9 @@ import edu.wpi.first.wpilibj.command.TimedCommand;
  */
 public class RaiseArms extends TimedCommand {
 
+    /**
+     * Constructs a new command to raise the intake arms in preparation for handling hatches.
+     */
     public RaiseArms() {
         super(Config.INTAKE_ARMS_DELAY);
         requires(Pneumatics.getInstance());

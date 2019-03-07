@@ -123,7 +123,7 @@ public class OI {
         new FluidButton(controlStick, Config.TOGGLE_RING_LIGHT_BINDING)
                 .whenPressed(new ToggleRingLight());
 
-        // Operator controls
+        // Driver controls.
         new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING)
                 .whenPressed(new DriverAssistVision(true, false));
         new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_ROCKET_BINDING)

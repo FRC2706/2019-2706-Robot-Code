@@ -175,6 +175,4 @@ public class Pneumatics extends Subsystem {
     @Override
     protected void initDefaultCommand() {
     }
-
-
 }

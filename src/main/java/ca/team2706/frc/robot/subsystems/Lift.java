@@ -1,10 +1,11 @@
 package ca.team2706.frc.robot.subsystems;
 
 import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.logging.Log;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Subsystem that controls the elevator on the robot
@@ -134,11 +135,13 @@ public class Lift extends Subsystem {
             zeroEncoderTicks();
         }
 
-        SmartDashboard.putNumber("Lift Encoders", liftMotor.getSelectedSensorPosition());
-        SmartDashboard.putBoolean("Lift Rev Switch", liftMotor.getSensorCollection().isRevLimitSwitchClosed());
-        SmartDashboard.putBoolean("Lift Fwd Switch", liftMotor.getSensorCollection().isFwdLimitSwitchClosed());
-        SmartDashboard.putNumber("Lift Current", liftMotor.getOutputCurrent());
-        SmartDashboard.putNumber("Lift Voltage", liftMotor.getMotorOutputVoltage());
+        if (DriverStation.getInstance().isEnabled()) {
+            Log.d("Lift Encoders " +  liftMotor.getSelectedSensorPosition());
+            Log.d("Lift Rev Switch " + liftMotor.getSensorCollection().isRevLimitSwitchClosed());
+            Log.d("Lift Fwd Switch " + liftMotor.getSensorCollection().isFwdLimitSwitchClosed());
+            Log.d("Lift Current " + liftMotor.getOutputCurrent());
+            Log.d("Lift Voltage " + liftMotor.getMotorOutputVoltage());
+        }
     }
 
     /**
@@ -178,7 +181,7 @@ public class Lift extends Subsystem {
      * @param position The position, in feet.
      */
     public void setPosition(final double maxSpeed, final double position) {
-        setPositionEncoderTicks( maxSpeed,position / Config.LIFT_ENCODER_DPP);
+        setPositionEncoderTicks(maxSpeed,position / Config.LIFT_ENCODER_DPP);
     }
 
     /**

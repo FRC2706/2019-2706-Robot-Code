@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
  * Lowers the arms, checking if the plunger is stowed beforehand and lowering it safely if not.
  */
 public class LowerArmsSafely extends CommandGroup {
+
     /**
      * Constructs a new lower arms safely command.
      */

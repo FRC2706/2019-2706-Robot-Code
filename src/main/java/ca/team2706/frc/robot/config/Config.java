@@ -140,7 +140,7 @@ public class Config {
 
     public static final double PIGEON_DPP = robotSpecific(360.0 / 8192.0, 360.0 / 8192.0, 360.0 / 8192.0);
 
-    public static final boolean ENABLE_CAMERA = robotSpecific(true, true, true);
+    public static final boolean ENABLE_CAMERA = robotSpecific(true, true, false);
 
     public static final int PURPLE_LIGHT = robotSpecific(3, 3, 3);
 
@@ -179,11 +179,7 @@ public class Config {
     public static final double LIFT_SLOWDOWN_RANGE_DOWN = 1.0;
 
 
-    public static final double MAX_INTAKE_SPEED = 1.0; //to be finalized later, this has yet to be tested
-
-    public static final double[] ENCODER_LIFT_PID_UP = {0.5, 0, 50}; //to be finalized later, these values have not yet been tested
-
-    public static final double[] ENCODER_LIFT_PID_DOWN = {0.5, 0.5, 160}; //to be finalized later, these values have not yet been tested
+    public static final double MAX_INTAKE_SPEED = 1.0;
 
 
     public static final double LOG_PERIOD = robotSpecific(0.02, 0.02, 0.02, Double.POSITIVE_INFINITY);

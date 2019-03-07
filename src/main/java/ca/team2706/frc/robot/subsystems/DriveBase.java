@@ -973,7 +973,6 @@ public class DriveBase extends Subsystem {
      * Returns if the motion profile for 1 wheel is finished
      */
     public boolean isFinishedMotionProfile() {
-
         return rightFrontMotor.isMotionProfileFinished();
     }
 
@@ -983,7 +982,6 @@ public class DriveBase extends Subsystem {
      * @return If its finished or not
      */
     public boolean isFinishedMotionProfile2Wheel() {
-
         return (rightFrontMotor.isMotionProfileFinished() || leftFrontMotor.isMotionProfileFinished());
     }
 

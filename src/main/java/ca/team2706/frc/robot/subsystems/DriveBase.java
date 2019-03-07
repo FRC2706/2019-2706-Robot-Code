@@ -1,5 +1,7 @@
 package ca.team2706.frc.robot.subsystems;
 
+import ca.team2706.frc.robot.Robot;
+import ca.team2706.frc.robot.RobotState;
 import ca.team2706.frc.robot.Sendables;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
@@ -130,6 +132,13 @@ public class DriveBase extends Subsystem {
         loggingNotifier.startPeriodic(Config.LOG_PERIOD);
 
         resetAbsoluteGyro();
+
+        // Reset absolute gyro when robot goes into autonomous for the first time in a real match
+        Robot.setOnStateChange(robotState -> {
+            if (robotState == RobotState.AUTONOMOUS && DriverStation.getInstance().isFMSAttached()) {
+                resetAbsoluteGyro();
+            }
+        });
     }
 
     /**
@@ -661,6 +670,7 @@ public class DriveBase extends Subsystem {
      * Resets the gyro to 0 degrees
      */
     public void resetGyro() {
+        System.out.println("Resetting gyro");
         savedAngle = getAbsoluteHeading();
         gyro.setYaw(0, Config.CAN_SHORT);
     }
@@ -692,11 +702,11 @@ public class DriveBase extends Subsystem {
     }
 
     /**
-     * Gets the current error on the right pigeon (how far off target it is).
+     * Gets the current error on the pigeon (how far off target it is).
      *
-     * @return Right pigeon error.
+     * @return Pigeon error in degrees.
      */
-    public double getRightPigeonError() {
+    public double getPigeonError() {
         return rightFrontMotor.getClosedLoopError(0) * Config.PIGEON_DPP;
     }
 

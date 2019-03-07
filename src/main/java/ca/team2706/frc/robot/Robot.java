@@ -126,8 +126,8 @@ public class Robot extends TimedRobot {
         final int index = DriveBase.getInstance().getAnalogSelectorIndex();
 
         // Check to see if the command exists in the desired index
-        if (DriveBase.getInstance().getAnalogSelectorIndex() < commands.length && commands[index] != null) {
-            commands[DriveBase.getInstance().getAnalogSelectorIndex()].start();
+        if (index < commands.length && commands[index] != null) {
+            commands[index].start();
         } else if (commands.length > 0 && commands[0] != null) {
             commands[0].start();
         }

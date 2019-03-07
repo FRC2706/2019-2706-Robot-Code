@@ -140,6 +140,11 @@ public class Config {
 
     public static final FluidConstant<Double> ROBOT_START_ANGLE = constant("robot-start-angle-deg", 90.0);
 
+    public static final FluidConstant<String> FACE_FORWARD_BINDING = constant("face-forward-binding", XboxValue.XBOX_POV_UP.getNTString());
+    public static final FluidConstant<String> FACE_RIGHT_BINDING = constant("face-right-binding", XboxValue.XBOX_POV_RIGHT.getNTString());
+    public static final FluidConstant<String> FACE_LEFT_BINDING = constant("face-left-binding", XboxValue.XBOX_POV_LEFT.getNTString());
+    public static final FluidConstant<String> FACE_BACK_BINDING = constant("face-back-binding", XboxValue.XBOX_POV_DOWN.getNTString());
+
     // ### Methods, fields and Constructors ###
     /**
      * The network table for fluid constants.

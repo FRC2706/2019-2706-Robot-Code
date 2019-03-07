@@ -2,6 +2,7 @@ package ca.team2706.frc.robot.commands.drivebase;
 
 import ca.team2706.frc.robot.config.Config;
 import com.ctre.phoenix.CTREJNIWrapper;
+import com.ctre.phoenix.motion.BuffTrajPointStreamJNI;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -52,6 +53,9 @@ public class DriveBaseClosedLoopTest {
 
     @Mocked
     private Notifier notifier;
+
+    @Mocked(stubOutClassInitialization = true)
+    private BuffTrajPointStreamJNI jni2;
 
     @Injectable
     private SensorCollection sensorCollection;

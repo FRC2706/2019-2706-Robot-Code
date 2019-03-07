@@ -136,7 +136,7 @@ public class Lift extends Subsystem {
         }
 
         if (DriverStation.getInstance().isEnabled()) {
-            Log.d("Lift Encoders " +  liftMotor.getSelectedSensorPosition());
+            Log.d("Lift Encoders " + liftMotor.getSelectedSensorPosition());
             Log.d("Lift Rev Switch " + liftMotor.getSensorCollection().isRevLimitSwitchClosed());
             Log.d("Lift Fwd Switch " + liftMotor.getSensorCollection().isFwdLimitSwitchClosed());
             Log.d("Lift Current " + liftMotor.getOutputCurrent());
@@ -181,12 +181,13 @@ public class Lift extends Subsystem {
      * @param position The position, in feet.
      */
     public void setPosition(final double maxSpeed, final double position) {
-        setPositionEncoderTicks(maxSpeed,position / Config.LIFT_ENCODER_DPP);
+        setPositionEncoderTicks(maxSpeed, position / Config.LIFT_ENCODER_DPP);
     }
 
     /**
      * Sets the position for the talons to reach in encoder ticks.
-     * @param maxSpeed The maximum speed at which to travel.
+     *
+     * @param maxSpeed             The maximum speed at which to travel.
      * @param encoderTicksPosition The position, in encoder ticks.
      */
     public void setPositionEncoderTicks(final double maxSpeed, final double encoderTicksPosition) {
@@ -199,6 +200,7 @@ public class Lift extends Subsystem {
 
     /**
      * Sets a position to for the talons to reach using motion magic.
+     *
      * @param maxSpeed The maximum speed (from 0 to 1).
      * @param position The position in feet.
      */
@@ -208,6 +210,7 @@ public class Lift extends Subsystem {
 
     /**
      * Sets a position for the talons to reach using motion magic in terms of encoder ticks.
+     *
      * @param maxSpeed The max speed (from 0 to 1).
      * @param position The number of encoder ticks.
      */
@@ -238,13 +241,13 @@ public class Lift extends Subsystem {
             int maxLiftSpeedAtThisHeight;
             // If we're going down.
             if (velocity < 0) {
-                maxLiftSpeedAtThisHeight = -(int)(Config.LIFT_MAX_SPEED.value() * (liftHeight
+                maxLiftSpeedAtThisHeight = -(int) (Config.LIFT_MAX_SPEED.value() * (liftHeight
                         / Config.LIFT_SLOWDOWN_RANGE_UP + 0.45));
                 velocity = Math.max(velocity, maxLiftSpeedAtThisHeight);
             }
             // If we're going up.
             else {
-                maxLiftSpeedAtThisHeight = (int)(Config.LIFT_MAX_SPEED.value() * (liftDistanceFromTop
+                maxLiftSpeedAtThisHeight = (int) (Config.LIFT_MAX_SPEED.value() * (liftDistanceFromTop
                         / Config.LIFT_SLOWDOWN_RANGE_DOWN + 0.45));
                 velocity = Math.min(velocity, maxLiftSpeedAtThisHeight);
             }

@@ -2,6 +2,7 @@ package ca.team2706.frc.robot;
 
 import ca.team2706.frc.robot.commands.drivebase.AbsoluteRotateWithGyro;
 import ca.team2706.frc.robot.commands.drivebase.CurvatureDriveWithJoystick;
+import ca.team2706.frc.robot.commands.drivebase.DriverAssistVision;
 import ca.team2706.frc.robot.commands.intake.AfterEjectConditional;
 import ca.team2706.frc.robot.commands.intake.EjectConditional;
 import ca.team2706.frc.robot.commands.intake.arms.LowerArmsSafely;
@@ -11,7 +12,6 @@ import ca.team2706.frc.robot.commands.intake.cargo.AutoIntakeCargo;
 import ca.team2706.frc.robot.commands.intake.cargo.RunIntakeOnJoystick;
 import ca.team2706.frc.robot.commands.lift.*;
 import ca.team2706.frc.robot.commands.ringlight.ToggleRingLight;
-import ca.team2706.frc.robot.commands.drivebase.DriverAssistVision;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.input.FluidButton;
 import ca.team2706.frc.robot.subsystems.DriveBase;

@@ -109,6 +109,11 @@ public class Config {
      */
     CONTINUOUS_CURRENT_LIMIT = 4;
 
+    /**
+     * How long (in seconds) the lift ramp up on voltage should be.
+     */
+    public static double LIFT_VOLTAGE_RAMP_UP_PERIOD = 0.6;
+
     public static int MAX_LIFT_ENCODER_TICKS = 54_000;
 
 
@@ -156,7 +161,7 @@ public class Config {
     /**
      * How long the intake motors should be running before the plunger deploys, in seconds.
      */
-    public static final double EXHALE_CARGO_WAIT_UNTIL_PLUNGER = 0.5;
+    public static final double EXHALE_CARGO_WAIT_UNTIL_PLUNGER = 0.2;
 
     /**
      * How long to wait to ensure the intake arms have fully moved.
@@ -166,7 +171,7 @@ public class Config {
     /**
      * How much height (in feet) to subtract from the lift's height for ejecting hatches.
      */
-    public static final double SUBTRACT_LIFT_HEIGHT = -0.125;
+    public static final double SUBTRACT_LIFT_HEIGHT = -0.2;
     /**
      * How far from the top and the bottom of the lift that the lift should begin to slow down, in manual control.
      */
@@ -266,7 +271,7 @@ public class Config {
     /**
      * The idea voltage for captured cargo.
      */
-    public static final FluidConstant<Double> CARGO_CAPTURED_IDEAL_IR_VOLTAGE = constant("cargo-ideal-ir-voltage", 0.32);
+    public static final FluidConstant<Double> CARGO_CAPTURED_IDEAL_IR_VOLTAGE = constant("cargo-ideal-ir-voltage", 0.29);
 
     public static final FluidConstant<Double> TRAJ_DELTA_TIME = constant("traj-delta-time", 0.1);
     public static final FluidConstant<Double> VISION_ASSIST_MAX_VELOCITY = constant("robot-max-vel", 3.0);

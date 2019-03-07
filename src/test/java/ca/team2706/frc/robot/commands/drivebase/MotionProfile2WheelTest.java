@@ -1,10 +1,11 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
-import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motion.BuffTrajPointStreamJNI;
-import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motion.BufferedTrajectoryPointStream;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
@@ -21,10 +22,10 @@ import util.Util;
 
 import static org.junit.Assert.*;
 
-public class MotionMagicTest {
+public class MotionProfile2WheelTest {
 
     @Tested
-    private MotionMagic motionMagic;
+    private MotionProfile2Wheel motionProfile2Wheel;
 
     @Mocked
     private WPI_TalonSRX talon;
@@ -58,6 +59,25 @@ public class MotionMagicTest {
     @Injectable
     private SensorCollection sensorCollection;
 
+    @Injectable
+    private double[] posLeft = {1.0, 4.5, 2.4, -24};
+
+    @Injectable
+    private double[] velLeft = {0.2, 2.1, -4.3, -2.1};
+
+
+    @Injectable
+    private double[] posRight = {1.0, 4.5, 2.4, -24};
+
+    @Injectable
+    private double[] velRight = {0.2, 2.1, -4.3, -2.1};
+
+    @Injectable
+    private double[] heading = {42, 21, 21, -54};
+
+    @Injectable
+    private int[] time = {5, 5, 5, 5};
+
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
         Util.resetSubsystems();
@@ -72,17 +92,17 @@ public class MotionMagicTest {
      * Tests that the command puts the drivetrain into the correct state
      *
      * @param speed         The speed to create the command with
-     * @param position      The position to create the command with
      * @param minDoneCycles The minimum cycles to use
+     * @param size          The number of trajectory points
      */
     @Test
-    public void testCorrectState(@Injectable("0.0") double speed, @Injectable("0.0") double position, @Injectable("1") int minDoneCycles) {
+    public void testCorrectState(@Injectable("0.0") double speed, @Injectable("1") int minDoneCycles, @Injectable("4") int size) {
         assertEquals(DriveBase.DriveMode.Disabled, DriveBase.getInstance().getDriveMode());
-        motionMagic.initialize();
-        assertEquals(DriveBase.DriveMode.MotionMagicWithGyro, DriveBase.getInstance().getDriveMode());
+        motionProfile2Wheel.initialize();
+        assertEquals(DriveBase.DriveMode.MotionProfile2Wheel, DriveBase.getInstance().getDriveMode());
         assertTrue(DriveBase.getInstance().isBrakeMode());
 
-        motionMagic.end();
+        motionProfile2Wheel.end();
         assertEquals(DriveBase.DriveMode.Disabled, DriveBase.getInstance().getDriveMode());
     }
 
@@ -90,26 +110,27 @@ public class MotionMagicTest {
      * Tests that the setpoint commands are called and speed is limited each tick
      *
      * @param speed         The speed to inject
-     * @param position      The position to inject
      * @param minDoneCycles The min cycles to inject
+     * @param size          The number of trajectory points
      */
     @Test
-    public void testSetting(@Injectable("0.0") double speed, @Injectable("0.5") double position, @Injectable("1") int minDoneCycles) {
-        motionMagic.initialize();
+    public void testSetting(@Injectable("0.0") double speed, @Injectable("1") int minDoneCycles, @Injectable("4") int size) {
+        motionProfile2Wheel.initialize();
 
         for (int i = 0; i < 3; i++) {
-            motionMagic.execute();
+            motionProfile2Wheel.execute();
         }
 
-        motionMagic.end();
+        motionProfile2Wheel.end();
 
         new Verifications() {{
-            talon.set(ControlMode.MotionMagic, position / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, 0);
-            times = 1;
+            talon.startMotionProfile((BufferedTrajectoryPointStream) any, 20, ControlMode.MotionProfileArc);
+            times = 2;
             talon.feed();
-            times = 3;
-            talon.follow((IMotorController) any, FollowerType.AuxOutput1);
+            times = 6;
             talon.configClosedLoopPeakOutput(0, speed);
+            times = 6;
+            talon.configClosedLoopPeakOutput(1, speed);
             times = 6;
         }};
     }
@@ -118,59 +139,34 @@ public class MotionMagicTest {
      * Tests that the command finishes in the right conditions
      *
      * @param speed         The speed to inject
-     * @param position      The position to inject
      * @param minDoneCycles The min cycles to inject
+     * @param size          The number of trajectory points
      */
     @Test
-    public void testFinished(@Injectable("0.0") double speed, @Injectable("5") double position, @Injectable("3") int minDoneCycles) {
+    public void testFinished(@Injectable("0.0") double speed, @Injectable("3") int minDoneCycles, @Injectable("4") int size) {
         new Expectations() {{
-            talon.getClosedLoopError(0);
-            returns(intFeetToTicks(5), intFeetToTicks(4), intFeetToTicks(1), intFeetToTicks(0.25), intFeetToTicks(1), intFeetToTicks(0.25),
-                    intFeetToTicks(-0.4), intFeetToTicks(0), intFeetToTicks(0), intFeetToTicks(0), intFeetToTicks(0));
+            talon.isMotionProfileFinished();
+            returns(false, false, false, false, false, true, true, true, true, true, true, true, true, true);
         }};
 
 
         Scheduler.getInstance().disable();
 
-        motionMagic.initialize();
+        motionProfile2Wheel.initialize();
 
-        assertFalse(motionMagic.isFinished());
-        assertFalse(motionMagic.isFinished());
-        assertFalse(motionMagic.isFinished());
-        assertFalse(motionMagic.isFinished());
-        assertFalse(motionMagic.isFinished());
-        assertFalse(motionMagic.isFinished());
-        assertFalse(motionMagic.isFinished());
-        assertFalse(motionMagic.isFinished());
-        assertFalse(motionMagic.isFinished());
-        assertTrue(motionMagic.isFinished());
+        assertFalse(motionProfile2Wheel.isFinished());
+        assertFalse(motionProfile2Wheel.isFinished());
+        assertFalse(motionProfile2Wheel.isFinished());
+        assertFalse(motionProfile2Wheel.isFinished());
+        assertTrue(motionProfile2Wheel.isFinished());
 
-        motionMagic.end();
+        motionProfile2Wheel.end();
 
-        motionMagic.initialize();
+        motionProfile2Wheel.initialize();
 
-        assertFalse(motionMagic.isFinished());
+        assertFalse(motionProfile2Wheel.isFinished());
+        assertFalse(motionProfile2Wheel.isFinished());
 
-        motionMagic.end();
-    }
-
-    /**
-     * Converts feet to encoder ticks
-     *
-     * @param feet The distance in feet
-     * @return The amount of ticks
-     */
-    private static double feetToTicks(double feet) {
-        return feet / Config.DRIVE_ENCODER_DPP;
-    }
-
-    /**
-     * Converts feet to integer encoder ticks
-     *
-     * @param feet The distance in feet
-     * @return The amount of ticks as integer
-     */
-    private static int intFeetToTicks(double feet) {
-        return (int) (feetToTicks(feet));
+        motionProfile2Wheel.end();
     }
 }

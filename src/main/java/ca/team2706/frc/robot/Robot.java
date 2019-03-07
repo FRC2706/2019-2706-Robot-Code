@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot;
 
+import ca.team2706.frc.robot.commands.drivebase.FollowTrajectoryFromFile;
 import ca.team2706.frc.robot.commands.drivebase.MotionMagic;
 import ca.team2706.frc.robot.commands.drivebase.StraightDrive;
 import ca.team2706.frc.robot.commands.drivebase.StraightDriveGyro;
@@ -76,7 +77,8 @@ public class Robot extends TimedRobot {
                 OI.getInstance().driveCommand,                               // 1
                 new StraightDrive(0.2, 2.0, 100),  // 2
                 new MotionMagic(0.2, 15.54, 100),  //3
-                new StraightDriveGyro(0.2, 2.0, 100)  // 4
+                new StraightDriveGyro(0.2, 2.0, 100),  // 4
+                new FollowTrajectoryFromFile(1.0, 100, "Test")//5
         };
 
     }
@@ -130,8 +132,8 @@ public class Robot extends TimedRobot {
         final int index = DriveBase.getInstance().getAnalogSelectorIndex();
 
         // Check to see if the command exists in the desired index
-        if (DriveBase.getInstance().getAnalogSelectorIndex() < commands.length && commands[index] != null) {
-            commands[DriveBase.getInstance().getAnalogSelectorIndex()].start();
+        if (index < commands.length && commands[index] != null) {
+            commands[index].start();
         } else if (commands.length > 0 && commands[0] != null) {
             commands[0].start();
         }

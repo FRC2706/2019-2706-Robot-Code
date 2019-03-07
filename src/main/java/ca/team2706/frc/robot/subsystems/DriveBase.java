@@ -978,7 +978,7 @@ public class DriveBase extends Subsystem {
             Log.d("Relative Gyro: " + getHeading());
             Log.d("Absolute Gyro: " + getAbsoluteHeading());
 
-           Log.d("Left front motor temperature: " + leftFrontMotor.getTemperature());
+            Log.d("Left front motor temperature: " + leftFrontMotor.getTemperature());
             Log.d("Right front motor temperature: " + rightFrontMotor.getTemperature());
             Log.d("Left back motor temperature: " + leftBackMotor.getTemperature());
             Log.d("Right back motor temperature: " + rightBackMotor.getTemperature());

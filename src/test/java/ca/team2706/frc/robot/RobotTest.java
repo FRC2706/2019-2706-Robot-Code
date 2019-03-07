@@ -113,6 +113,11 @@ public class RobotTest {
             minTimes = 0;
         }};
 
+        new Expectations(Pathfinder.class) {{
+            Pathfinder.readFromCSV((File) any);
+            result = new Trajectory(0);
+        }};
+
         Util.resetSubsystems();
     }
 

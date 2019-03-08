@@ -10,6 +10,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import jaci.pathfinder.Pathfinder;
@@ -24,6 +25,7 @@ import util.Util;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
@@ -104,6 +106,7 @@ public class RobotTest {
         new Expectations(Pathfinder.class) {{
             Pathfinder.readFromCSV((File) any);
             result = new Trajectory(0);
+            minTimes = 0;
         }};
 
         Util.resetSubsystems();
@@ -254,5 +257,136 @@ public class RobotTest {
             pigeon.setYaw(0, anyInt);
             times = 2;
         }};
+    }
+
+    /**
+     * Tests that the commands are correctly set and run
+     *
+     * @throws NoSuchFieldException   Reflection exception
+     * @throws IllegalAccessException Relfection exception
+     */
+    @Test
+    public void testCommandSelector() throws NoSuchFieldException, IllegalAccessException {
+        new Expectations() {{
+            analogInput.getAverageVoltage();
+            returns(0.0, 3.0, 3.3, 4.45, 4.45);
+        }};
+
+        EmptyCommand a = new EmptyCommand();
+        EmptyCommand b = new EmptyCommand();
+        EmptyCommand c = new EmptyCommand();
+        EmptyCommand d = new EmptyCommand();
+
+        setCommands(a, b, null, c, d);
+
+        robot.autonomousInit();
+
+        assertEquals(a, getCurrentCommand());
+        assertTrue(a.inProgress());
+
+        robot.autonomousInit();
+
+        assertEquals(a, getCurrentCommand());
+        assertTrue(a.inProgress());
+
+        robot.autonomousInit();
+
+        assertEquals(c, getCurrentCommand());
+        assertTrue(c.inProgress());
+
+        robot.autonomousInit();
+
+        assertEquals(a, getCurrentCommand());
+        assertTrue(a.inProgress());
+
+        setCommands(null, b, null, c, d);
+
+        robot.autonomousInit();
+
+        assertNull(getCurrentCommand());
+    }
+
+    /**
+     * Tests that the autonomous commands can be interrupted
+     *
+     * @throws NoSuchFieldException   Reflection exception
+     * @throws IllegalAccessException Relfection exception
+     */
+    @Test
+    public void testInterrupt() throws NoSuchFieldException, IllegalAccessException {
+        new Expectations() {{
+            analogInput.getAverageVoltage();
+            result = 0.0;
+        }};
+
+        EmptyCommand a = new EmptyCommand();
+
+        setCommands(a);
+
+        robot.autonomousInit();
+
+        assertTrue(a.inProgress());
+
+        Robot.interruptCurrentCommand();
+
+        assertFalse(a.inProgress());
+    }
+
+    /**
+     * Sets the list of commands to run
+     *
+     * @param commands The commands to set
+     * @throws NoSuchFieldException   Reflection exception
+     * @throws IllegalAccessException Reflection exception
+     */
+    private void setCommands(Command... commands) throws NoSuchFieldException, IllegalAccessException {
+        Field commandsField = Robot.class.getDeclaredField("commands");
+        commandsField.setAccessible(true);
+        commandsField.set(robot, commands);
+    }
+
+    /**
+     * Gets the current autonomous command
+     *
+     * @return The current command that should be running
+     * @throws NoSuchFieldException   Reflection exception
+     * @throws IllegalAccessException Reflection exception
+     */
+    private Command getCurrentCommand() throws NoSuchFieldException, IllegalAccessException {
+        Field currentCommandField = Robot.class.getDeclaredField("currentCommand");
+        currentCommandField.setAccessible(true);
+        return (Command) currentCommandField.get(robot);
+    }
+
+    /**
+     * Empty command that keeps track of when it's run
+     */
+    private static class EmptyCommand extends Command {
+
+        private boolean isRunning;
+
+        @Override
+        public void start() {
+            isRunning = true;
+        }
+
+        @Override
+        protected boolean isFinished() {
+            return false;
+        }
+
+        @Override
+        public void cancel() {
+            isRunning = false;
+        }
+
+        /**
+         * Whether the command is running
+         *
+         * @return True after calling {@code start()} and false after calling {@code cancel()}
+         */
+        public boolean inProgress() {
+            return isRunning;
+        }
     }
 }

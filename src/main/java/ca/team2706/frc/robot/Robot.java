@@ -135,6 +135,8 @@ public class Robot extends TimedRobot {
             currentCommand = commands[index];
         } else if (commands.length > 0 && commands[0] != null) {
             currentCommand = commands[0];
+        } else {
+            currentCommand = null;
         }
 
         if (currentCommand != null) {

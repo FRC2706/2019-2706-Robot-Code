@@ -1,6 +1,7 @@
 package ca.team2706.frc.robot;
 
 import com.ctre.phoenix.CTREJNIWrapper;
+import com.ctre.phoenix.motion.BuffTrajPointStreamJNI;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -8,12 +9,11 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.PWM;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import jaci.pathfinder.Pathfinder;
+import jaci.pathfinder.Trajectory;
 import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Mocked;
@@ -22,6 +22,8 @@ import org.junit.Before;
 import org.junit.Test;
 import util.Util;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
@@ -63,6 +65,9 @@ public class RobotTest {
     @Mocked
     private Notifier notifier;
 
+    @Mocked(stubOutClassInitialization = true)
+    private BuffTrajPointStreamJNI jni2;
+
     @Mocked
     private NetworkTableInstance networkTableInstance;
 
@@ -76,13 +81,16 @@ public class RobotTest {
     private LiveWindow liveWindow;
 
     @Mocked
+    private DriverStation driverStation;
+
+    @Mocked
     private GenericHID genericHID;
 
     @Injectable
     private SensorCollection sensorCollection;
 
     @Before
-    public void setUp() throws NoSuchFieldException, IllegalAccessException {
+    public void setUp() throws IOException, NoSuchFieldException, IllegalAccessException {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
@@ -92,6 +100,13 @@ public class RobotTest {
             result = 0;
             minTimes = 0;
         }};
+
+        new Expectations(Pathfinder.class) {{
+            Pathfinder.readFromCSV((File) any);
+            result = new Trajectory(0);
+        }};
+
+        Util.resetSubsystems();
     }
 
     /**
@@ -191,6 +206,52 @@ public class RobotTest {
 
         new Verifications() {{
             LiveWindow.setEnabled(anyBoolean);
+            times = 2;
+        }};
+    }
+
+    /**
+     * Tests whether the absolute gyro is reset when in a match
+     */
+    @Test
+    public void testAbsoluteResetOn() {
+        new Expectations() {{
+            DriverStation.getInstance();
+            result = driverStation;
+
+            driverStation.isFMSAttached();
+            result = true;
+        }};
+
+        robot.robotInit();
+
+        robot.autonomousInit();
+
+        new Verifications() {{
+            pigeon.setYaw(0, anyInt);
+            times = 3;
+        }};
+    }
+
+    /**
+     * Tests whether the absolute gyro is reset when not in a match
+     */
+    @Test
+    public void testAbsoluteResetOff() {
+        new Expectations() {{
+            DriverStation.getInstance();
+            result = driverStation;
+
+            driverStation.isFMSAttached();
+            result = false;
+        }};
+
+        robot.robotInit();
+
+        robot.autonomousInit();
+
+        new Verifications() {{
+            pigeon.setYaw(0, anyInt);
             times = 2;
         }};
     }

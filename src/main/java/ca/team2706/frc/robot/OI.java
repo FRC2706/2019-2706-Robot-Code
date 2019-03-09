@@ -129,13 +129,13 @@ public class OI {
         new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_ROCKET_BINDING)
                 .whenPressed(new DriverAssistVision(false, true));
         new FluidButton(driverStick, Config.FACE_FORWARD_BINDING)
-                .whenPressed(new AbsoluteRotateWithGyro(0.6, 90, Integer.MAX_VALUE));
+                .whenHeld(new AbsoluteRotateWithGyro(0.6, 90, Integer.MAX_VALUE));
         new FluidButton(driverStick, Config.FACE_RIGHT_BINDING)
-                .whenPressed(new AbsoluteRotateWithGyro(0.6, 0, Integer.MAX_VALUE));
+                .whenHeld(new AbsoluteRotateWithGyro(0.6, 0, Integer.MAX_VALUE));
         new FluidButton(driverStick, Config.FACE_LEFT_BINDING)
-                .whenPressed(new AbsoluteRotateWithGyro(0.6, 180, Integer.MAX_VALUE));
+                .whenHeld(new AbsoluteRotateWithGyro(0.6, 180, Integer.MAX_VALUE));
         new FluidButton(driverStick, Config.FACE_BACK_BINDING)
-                .whenPressed(new AbsoluteRotateWithGyro(0.6, 270, Integer.MAX_VALUE));
+                .whenHeld(new AbsoluteRotateWithGyro(0.6, 270, Integer.MAX_VALUE));
     }
 
     /**

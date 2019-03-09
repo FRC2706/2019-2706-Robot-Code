@@ -63,12 +63,10 @@ public class Robot extends TimedRobot {
         // The USB camera used on the Robot, not enabled during simulation mode
         if (Config.ENABLE_CAMERA) {
             UsbCamera camera0 = CameraServer.getInstance().startAutomaticCapture();
-            UsbCamera camera1 = CameraServer.getInstance().startAutomaticCapture();
 
             // Prevents crashing of simulation robot
             if (isReal()) {
                 camera0.setConnectVerbose(0);
-                camera1.setConnectVerbose(0);
             }
         }
 

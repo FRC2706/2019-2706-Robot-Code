@@ -222,7 +222,8 @@ public class Config {
     public static final FluidConstant<Double>
             LIFT_P = constant("lift-P", 0.5),
             LIFT_I = constant("lift-I", 0.0),
-            LIFT_D = constant("lift-D", 0.0);
+            LIFT_D = constant("lift-D", 0.0),
+            LIFT_F = constant("lift-F", 0.0);
 
     public static final FluidConstant<Double> PIGEON_KP = constant("pigeon-kp", 2.0);
     public static final FluidConstant<Double> PIGEON_KI = constant("pigeon-ki", 0.0);

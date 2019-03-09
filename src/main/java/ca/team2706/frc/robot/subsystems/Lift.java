@@ -93,6 +93,7 @@ public class Lift extends Subsystem {
         liftMotor.config_kP(0, Config.LIFT_P.value());
         liftMotor.config_kI(0, Config.LIFT_I.value());
         liftMotor.config_kD(0, Config.LIFT_D.value());
+        liftMotor.config_kF(0, Config.LIFT_F.value());
 
         liftMotor.configClosedLoopPeriod(0, 1, Config.CAN_LONG);
 

@@ -16,6 +16,7 @@ public class RunIntakeOnJoystick extends Command {
      * Joystick which is going to be used to determine speed.
      */
     private Joystick controller;
+
     /**
      * Trigger axis id to be looked at.
      */

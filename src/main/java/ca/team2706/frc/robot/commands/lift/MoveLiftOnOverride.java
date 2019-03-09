@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class MoveLiftOnOverride extends Command {
 
-
     private final boolean moveUp;
 
     /**

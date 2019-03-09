@@ -337,7 +337,7 @@ public class Lift extends Subsystem {
      * @return True if the lift is within a certain margin of error fo the position, false otherwise.
      */
     public boolean hasReachedPosition(final double position) {
-        return Math.abs(getLiftHeightEncoderTicks() - position / Config.LIFT_ENCODER_DPP) < 250;
+        return Math.abs(getLiftHeightEncoderTicks() - position / Config.LIFT_ENCODER_DPP) < 500;
     }
 
     /**

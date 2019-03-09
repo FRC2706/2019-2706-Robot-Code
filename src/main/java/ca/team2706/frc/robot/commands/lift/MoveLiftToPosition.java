@@ -38,7 +38,7 @@ public class MoveLiftToPosition extends Command {
 
     @Override
     protected boolean isFinished() {
-        return Lift.getInstance().hasReachedPosition(this.position.get());
+        return Lift.getInstance().hasReachedPosition(currentTarget);
     }
 
     @Override

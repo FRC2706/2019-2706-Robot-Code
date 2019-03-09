@@ -277,33 +277,33 @@ public class RobotTest {
         EmptyCommand c = new EmptyCommand();
         EmptyCommand d = new EmptyCommand();
 
-        setCommands(a, b, null, c, d);
+        setCommands(robot, a, b, null, c, d);
 
         robot.autonomousInit();
 
-        assertEquals(a, getCurrentCommand());
+        assertEquals(a, getCurrentCommand(robot));
         assertTrue(a.inProgress());
 
         robot.autonomousInit();
 
-        assertEquals(a, getCurrentCommand());
+        assertEquals(a, getCurrentCommand(robot));
         assertTrue(a.inProgress());
 
         robot.autonomousInit();
 
-        assertEquals(c, getCurrentCommand());
+        assertEquals(c, getCurrentCommand(robot));
         assertTrue(c.inProgress());
 
         robot.autonomousInit();
 
-        assertEquals(a, getCurrentCommand());
+        assertEquals(a, getCurrentCommand(robot));
         assertTrue(a.inProgress());
 
-        setCommands(null, b, null, c, d);
+        setCommands(robot, null, b, null, c, d);
 
         robot.autonomousInit();
 
-        assertNull(getCurrentCommand());
+        assertNull(getCurrentCommand(robot));
     }
 
     /**
@@ -321,7 +321,7 @@ public class RobotTest {
 
         EmptyCommand a = new EmptyCommand();
 
-        setCommands(a);
+        setCommands(robot, a);
 
         robot.autonomousInit();
 
@@ -335,11 +335,12 @@ public class RobotTest {
     /**
      * Sets the list of commands to run
      *
+     * @param robot    The robot with the commands
      * @param commands The commands to set
      * @throws NoSuchFieldException   Reflection exception
      * @throws IllegalAccessException Reflection exception
      */
-    private void setCommands(Command... commands) throws NoSuchFieldException, IllegalAccessException {
+    public static void setCommands(Robot robot, Command... commands) throws NoSuchFieldException, IllegalAccessException {
         Field commandsField = Robot.class.getDeclaredField("commands");
         commandsField.setAccessible(true);
         commandsField.set(robot, commands);
@@ -348,11 +349,12 @@ public class RobotTest {
     /**
      * Gets the current autonomous command
      *
+     * @param robot The robot with the commands
      * @return The current command that should be running
      * @throws NoSuchFieldException   Reflection exception
      * @throws IllegalAccessException Reflection exception
      */
-    private Command getCurrentCommand() throws NoSuchFieldException, IllegalAccessException {
+    public static Command getCurrentCommand(Robot robot) throws NoSuchFieldException, IllegalAccessException {
         Field currentCommandField = Robot.class.getDeclaredField("currentCommand");
         currentCommandField.setAccessible(true);
         return (Command) currentCommandField.get(robot);
@@ -361,7 +363,7 @@ public class RobotTest {
     /**
      * Empty command that keeps track of when it's run
      */
-    private static class EmptyCommand extends Command {
+    public static class EmptyCommand extends Command {
 
         private boolean isRunning;
 

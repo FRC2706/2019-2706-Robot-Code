@@ -275,7 +275,9 @@ public class Robot extends TimedRobot {
      * Interrupt the current autonomous command and start teleop mode
      */
     public static void interruptCurrentCommand() {
-        currentCommand.cancel();
+        if (currentCommand != null) {
+            currentCommand.cancel();
+        }
     }
 
     /**

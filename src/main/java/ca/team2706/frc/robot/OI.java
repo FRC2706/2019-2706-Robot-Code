@@ -90,7 +90,7 @@ public class OI {
         DriveBase.getInstance().setDefaultCommand(driveCommand);
         Lift.getInstance().setDefaultCommand(liftCommand);
 
-        // Operator controls.
+        // ---- Operator controls ----
         new FluidButton(controlStick, Config.INTAKE_BACKWARD_BINDING, 0.05)
                 .whenHeld(new RunIntakeOnJoystick(controlStick, Config.INTAKE_BACKWARD_BINDING, false));
         new FluidButton(controlStick, Config.INTAKE_FORWARD_BINDING, 0.05)
@@ -124,10 +124,9 @@ public class OI {
         new FluidButton(controlStick, Config.TOGGLE_RING_LIGHT_BINDING)
                 .whenPressed(new ToggleRingLight());
 
-        /*
-        Driver controls.
-        The button to use to interrupt the robots current command
-        */
+        // ---- Driver controls ----
+
+        // The button to use to interrupt the robots current command
         new FluidButton(driverStick, Config.INTERRUPT_BUTTON).whenPressed(new InstantCommand(Robot::interruptCurrentCommand));
         new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING)
                 .whenPressed(new DriverAssistVision(true, false));

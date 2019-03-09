@@ -90,10 +90,15 @@ public class Lift extends Subsystem {
         liftMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Config.CAN_LONG);
         liftMotor.configNeutralDeadband(Config.LIFT_CLOSED_LOOP_DEADBAND.value());
 
-        liftMotor.config_kP(0, Config.LIFT_P.value());
-        liftMotor.config_kI(0, Config.LIFT_I.value());
-        liftMotor.config_kD(0, Config.LIFT_D.value());
-        liftMotor.config_kF(0, Config.LIFT_F.value());
+        liftMotor.config_kP(0, Config.LIFT_HOLD_P.value());
+        liftMotor.config_kI(0, Config.LIFT_HOLD_I.value());
+        liftMotor.config_kD(0, Config.LIFT_HOLD_D.value());
+        liftMotor.config_kF(0, Config.LIFT_HOLD_F.value());
+
+        liftMotor.config_kP(1, Config.LIFT_MM_P.value());
+        liftMotor.config_kI(1, Config.LIFT_MM_I.value());
+        liftMotor.config_kD(1, Config.LIFT_MM_D.value());
+        liftMotor.config_kF(1, Config.LIFT_MM_F.value());
 
         liftMotor.configClosedLoopPeriod(0, 1, Config.CAN_LONG);
 
@@ -195,6 +200,7 @@ public class Lift extends Subsystem {
         enableLimit(true);
         enableLimitSwitch(true);
         liftMotor.configClosedLoopPeakOutput(0, maxSpeed);
+        liftMotor.selectProfileSlot(0, 0);
         liftMotor.set(ControlMode.Position, encoderTicksPosition);
     }
 
@@ -220,6 +226,7 @@ public class Lift extends Subsystem {
         enableLimitSwitch(getLiftHeight() > 0);
 
         liftMotor.configClosedLoopPeakOutput(0, maxSpeed);
+        liftMotor.selectProfileSlot(1, 0);
         liftMotor.set(ControlMode.MotionMagic, position);
     }
 
@@ -231,6 +238,7 @@ public class Lift extends Subsystem {
     public void setVelocity(int velocity) {
         enableLimit(true);
         enableLimitSwitch(true);
+        liftMotor.selectProfileSlot(0, 0);
 
         // If we're approaching either the top of the bottom of the lift, begin to slow down.
         final double liftHeight = getLiftHeight(); // Get lift height above bottom.

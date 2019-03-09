@@ -111,8 +111,8 @@ public class OI {
                 .whenHeld(new MoveLiftToSetpoint(1));
         new FluidButton(controlStick, Config.LIFT_THIRD_SETPOINT_BINDING)
                 .whenHeld(new MoveLiftToSetpoint(2));
-        new FluidButton(controlStick, Config.LIFT_FOURTH_SETPOINT_BINDING)
-                .whenHeld(new MoveLiftToSetpoint(3));
+//        new FluidButton(controlStick, Config.LIFT_FOURTH_SETPOINT_BINDING)
+//                .whenHeld(new MoveLiftToSetpoint(3));
         new FluidButton(controlStick, Config.MANUAL_PISTON_BINDING)
                 .whenPressed(new MovePlunger());
         FluidButton button = new FluidButton(controlStick, Config.EJECT_BINDING);

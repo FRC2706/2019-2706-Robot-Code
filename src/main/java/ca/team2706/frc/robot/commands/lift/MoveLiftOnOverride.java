@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.command.Command;
  * Moves the lift up or down on override.
  */
 public class MoveLiftOnOverride extends Command {
-
     private final boolean moveUp;
 
     /**

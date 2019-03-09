@@ -106,13 +106,13 @@ public class OI {
         new FluidButton(controlStick, Config.OVERRIDE_LIFT_UP_BINDING)
                 .whenHeld(new MoveLiftOnOverride(true));
         new FluidButton(controlStick, Config.LIFT_FIRST_SETPOINT_BINDING)
-                .whenHeld(new MoveLiftToSetpoint(0, 7));
+                .whenHeld(new MoveLiftToSetpoint(0, 15));
         new FluidButton(controlStick, Config.LIFT_SECOND_SETPOINT_BINDING)
-                .whenHeld(new MoveLiftToSetpoint(1, 7));
+                .whenHeld(new MoveLiftToSetpoint(1, 15));
         new FluidButton(controlStick, Config.LIFT_THIRD_SETPOINT_BINDING)
-                .whenHeld(new MoveLiftToSetpoint(2, 7));
+                .whenHeld(new MoveLiftToSetpoint(2, 15));
         new FluidButton(controlStick, Config.LIFT_FOURTH_SETPOINT_BINDING)
-                .whenHeld(new MoveLiftToSetpoint(3, 7));
+                .whenHeld(new MoveLiftToSetpoint(3, 15));
         new FluidButton(controlStick, Config.MANUAL_PISTON_BINDING)
                 .whenPressed(new MovePlunger());
         FluidButton button = new FluidButton(controlStick, Config.EJECT_BINDING);

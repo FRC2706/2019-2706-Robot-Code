@@ -112,7 +112,7 @@ public class Config {
     /**
      * How long (in seconds) the lift ramp up on voltage should be.
      */
-    public static double LIFT_VOLTAGE_RAMP_UP_PERIOD = 0.6;
+    public static double LIF_RAMP_UP_PERIOD = 0.8;
 
     public static int MAX_LIFT_ENCODER_TICKS = 54_000;
 

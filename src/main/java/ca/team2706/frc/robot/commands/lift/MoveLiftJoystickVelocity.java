@@ -32,7 +32,7 @@ public class MoveLiftJoystickVelocity extends Command {
 
     @Override
     public void execute() {
-        final double percentSpeed = -controller.getRawAxis(axisPort);
+        final double percentSpeed = -controller.getRawAxis(axisPort) * Config.MANUAL_LIFT_MAX_PERCENT.value();
         Lift.getInstance().setVelocity((int) (percentSpeed * Config.LIFT_MAX_SPEED.value()));
     }
 

@@ -209,6 +209,7 @@ public class Config {
      * Max speed of the lift in encoder ticks.
      */
     public static final FluidConstant<Integer> LIFT_MAX_SPEED = constant("max-lift-velocity", 3000);
+    public static final FluidConstant<Double> MANUAL_LIFT_MAX_PERCENT = constant("max-manual-lift-percent-velocity", 0.7);
     public static final FluidConstant<Integer> MOTION_MAGIC_SMOOTHING = constant("mm-smoothing", 0);
     public static final FluidConstant<Double> PATHFINDING_JERK = constant("pf-jerk", 197.0);
     public static final FluidConstant<Double> PATHFINDING_VELOCITY = constant("pf-velocity", 2.0);

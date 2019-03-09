@@ -236,19 +236,19 @@ public class Lift extends Subsystem {
         // Get lift distance from top
         final double liftDistanceFromTop = Config.MAX_LIFT_ENCODER_TICKS * Config.LIFT_ENCODER_DPP - liftHeight;
 
-        final boolean needToSlowDown = (liftDistanceFromTop < Config.LIFT_SLOWDOWN_RANGE_DOWN && velocity > 0) || (liftHeight < Config.LIFT_SLOWDOWN_RANGE_DOWN && velocity < 0);
+        final boolean needToSlowDown = (liftDistanceFromTop < Config.LIFT_SLOWDOWN_RANGE_UP && velocity > 0) || (liftHeight < Config.LIFT_SLOWDOWN_RANGE_DOWN && velocity < 0);
         if (needToSlowDown) {
             int maxLiftSpeedAtThisHeight;
             // If we're going down.
             if (velocity < 0) {
                 maxLiftSpeedAtThisHeight = -(int) (Config.LIFT_MAX_SPEED.value() * (liftHeight
-                        / Config.LIFT_SLOWDOWN_RANGE_UP + 0.45));
+                        / Config.LIFT_SLOWDOWN_RANGE_UP + 0.25));
                 velocity = Math.max(velocity, maxLiftSpeedAtThisHeight);
             }
             // If we're going up.
             else {
                 maxLiftSpeedAtThisHeight = (int) (Config.LIFT_MAX_SPEED.value() * (liftDistanceFromTop
-                        / Config.LIFT_SLOWDOWN_RANGE_DOWN + 0.45));
+                        / Config.LIFT_SLOWDOWN_RANGE_DOWN + 0.25));
                 velocity = Math.min(velocity, maxLiftSpeedAtThisHeight);
             }
         }
@@ -337,7 +337,7 @@ public class Lift extends Subsystem {
      * @return True if the lift is within a certain margin of error fo the position, false otherwise.
      */
     public boolean hasReachedPosition(final double position) {
-        return Math.abs(getLiftHeightEncoderTicks() - position / Config.LIFT_ENCODER_DPP) < 750;
+        return Math.abs(getLiftHeightEncoderTicks() - position / Config.LIFT_ENCODER_DPP) < 250;
     }
 
     /**

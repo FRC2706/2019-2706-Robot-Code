@@ -120,6 +120,9 @@ public class Robot extends TimedRobot {
         selectorInit();
     }
 
+    // The command currently being run on the robot
+    private static Command currentCommand;
+
     /**
      * Checks to see if the desired command is assigned and runs 0 or does nothing if not
      */
@@ -129,9 +132,15 @@ public class Robot extends TimedRobot {
 
         // Check to see if the command exists in the desired index
         if (index < commands.length && commands[index] != null) {
-            commands[index].start();
+            currentCommand = commands[index];
         } else if (commands.length > 0 && commands[0] != null) {
-            commands[0].start();
+            currentCommand = commands[0];
+        } else {
+            currentCommand = null;
+        }
+
+        if (currentCommand != null) {
+            currentCommand.start();
         }
     }
 
@@ -260,6 +269,13 @@ public class Robot extends TimedRobot {
         // Make shallow copy of this.
         ArrayList<Consumer<RobotState>> listeners = new ArrayList<>(stateListeners);
         listeners.forEach(action -> action.accept(newState));
+    }
+
+    /**
+     * Interrupt the current autonomous command and start teleop mode
+     */
+    public static void interruptCurrentCommand() {
+        currentCommand.cancel();
     }
 
     /**

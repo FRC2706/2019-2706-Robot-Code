@@ -8,6 +8,7 @@ import ca.team2706.frc.robot.input.FluidButton;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 
 /**
  * This class is the glue that binds the controls on the physical operator interface to the commands
@@ -68,6 +69,9 @@ public class OI {
 
         // Set subsystem default commands
         DriveBase.getInstance().setDefaultCommand(driveCommand);
+
+        // The button to use to interrupt the robots current command
+        new FluidButton(driverStick, Config.INTERRUPT_BUTTON).whenPressed(new InstantCommand(Robot::interruptCurrentCommand));
 
         // Operator controls
         new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING)

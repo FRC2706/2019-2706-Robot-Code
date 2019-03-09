@@ -3,6 +3,7 @@ package ca.team2706.frc.robot.commands.drivebase;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import com.ctre.phoenix.CTREJNIWrapper;
+import com.ctre.phoenix.motion.BuffTrajPointStreamJNI;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
@@ -43,6 +44,9 @@ public class StraightDriveTest {
 
     @Mocked(stubOutClassInitialization = true)
     private MotControllerJNI motControllerJNI;
+
+    @Mocked(stubOutClassInitialization = true)
+    private BuffTrajPointStreamJNI jni2;
 
     @Mocked
     private Notifier notifier;

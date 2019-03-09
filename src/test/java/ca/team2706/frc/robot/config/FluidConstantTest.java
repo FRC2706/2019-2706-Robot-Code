@@ -2,6 +2,7 @@ package ca.team2706.frc.robot.config;
 
 import ca.team2706.frc.robot.Robot;
 import com.ctre.phoenix.CTREJNIWrapper;
+import com.ctre.phoenix.motion.BuffTrajPointStreamJNI;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -16,10 +17,15 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import jaci.pathfinder.Pathfinder;
+import jaci.pathfinder.Trajectory;
 import mockit.*;
 import org.junit.Before;
 import org.junit.Test;
 import util.Util;
+
+import java.io.File;
+import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -64,6 +70,9 @@ public class FluidConstantTest {
     @Mocked
     private Notifier notifier;
 
+    @Mocked(stubOutClassInitialization = true)
+    private BuffTrajPointStreamJNI jni2;
+
     @Mocked
     private CameraServer cameraServer;
 
@@ -77,7 +86,7 @@ public class FluidConstantTest {
     private static boolean isInitialized = false;
 
     @Before
-    public void setUp() throws NoSuchFieldException, IllegalAccessException {
+    public void setUp() throws NoSuchFieldException, IllegalAccessException, IOException {
         if (!isInitialized) {
             isInitialized = true;
 
@@ -93,6 +102,11 @@ public class FluidConstantTest {
                 talon.getSensorCollection();
                 result = sensorCollection;
                 minTimes = 0;
+            }};
+
+            new Expectations(Pathfinder.class) {{
+                Pathfinder.readFromCSV((File) any);
+                result = new Trajectory(0);
             }};
 
             Util.resetSubsystems();

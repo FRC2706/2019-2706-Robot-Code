@@ -95,6 +95,10 @@ public class Config {
 
     public static final double LOG_PERIOD = robotSpecific(0.02, 0.02, 0.02, Double.POSITIVE_INFINITY);
 
+    public static final double WHEELBASE_WIDTH = robotSpecific(2.0, 2.0, 2.0);
+
+    public static final Path DEPLOY_DIR = Paths.get(System.getProperty("user.home"), "deploy");
+
     // #### Fluid constants ####
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_DEADBAND = constant("closed-loop-drive-deadband", 0.001);
     public static final FluidConstant<Double> DRIVE_OPEN_LOOP_DEADBAND = constant("open-loop-drive-deadband", 0.04);
@@ -108,6 +112,10 @@ public class Config {
 
     public static final FluidConstant<Double> MOTION_MAGIC_CRUISE_VELOCITY = constant("mm-cruise-velocity", 7.77);
     public static final FluidConstant<Double> MOTION_MAGIC_ACCELERATION = constant("mm-acceleration", 7.77);
+    public static final FluidConstant<Integer> MOTION_MAGIC_SMOOTHING = constant("mm-smoothing", 0);
+    public static final FluidConstant<Double> PATHFINDING_JERK = constant("pf-jerk", 197.0);
+    public static final FluidConstant<Double> PATHFINDING_VELOCITY = constant("pf-velocity", 2.0);
+    public static final FluidConstant<Double> PATHFINDING_ACCELERATION = constant("pf-acceleration", 6.56);
 
     public static final FluidConstant<Double> TURN_P = constant("turn-P", 0.5);
     public static final FluidConstant<Double> TURN_I = constant("turn-I", 0.0);
@@ -115,19 +123,21 @@ public class Config {
 
     public static final FluidConstant<Double> PIGEON_KP = constant("pigeon-kp", 2.0);
     public static final FluidConstant<Double> PIGEON_KI = constant("pigeon-ki", 0.0);
-    public static final FluidConstant<Double> PIGEON_KD = constant("pigeon-ki", 4.0);
+    public static final FluidConstant<Double> PIGEON_KD = constant("pigeon-kd", 4.0);
     public static final FluidConstant<Double> PIGEON_KF = constant("pigeon-kf", 0.0);
 
-    public static final FluidConstant<String> INTERRUPT_BUTTON = constant("interrupt-button", XboxValue.XBOX_A_BUTTON.getNTString());
-
+    // Controller bindings
     public static final FluidConstant<String> DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING =
-            constant("driver-assist-vision-cargo-loading-binding", XboxValue.XBOX_X_BUTTON.getNTString());
-
-    public static final FluidConstant<String> DRIVER_ASSIST_VISION_ROCKET_BINDING =
-            constant("driver-assist-vision-rocket-binding", XboxValue.XBOX_B_BUTTON.getNTString());
-
-    public static final FluidConstant<String> DRIVER_ASSIST_LASER_BINDING =
-            constant("driver-assist-laser-binding", XboxValue.XBOX_Y_BUTTON.getNTString());
+            constant("driver-assist-vision-cargo-loading-binding", XboxValue.XBOX_X_BUTTON.getNTString()),
+            DRIVER_ASSIST_VISION_ROCKET_BINDING =
+                    constant("driver-assist-vision-rocket-binding", XboxValue.XBOX_B_BUTTON.getNTString()),
+            DRIVER_ASSIST_LASER_BINDING =
+                    constant("driver-assist-laser-binding", XboxValue.XBOX_Y_BUTTON.getNTString()),
+            FACE_FORWARD_BINDING = constant("face-forward-binding", XboxValue.XBOX_POV_UP.getNTString()),
+            FACE_RIGHT_BINDING = constant("face-right-binding", XboxValue.XBOX_POV_RIGHT.getNTString()),
+            FACE_LEFT_BINDING = constant("face-left-binding", XboxValue.XBOX_POV_LEFT.getNTString()),
+            FACE_BACK_BINDING = constant("face-back-binding", XboxValue.XBOX_POV_DOWN.getNTString()),
+            INTERRUPT_BUTTON = constant("interrupt-button", XboxValue.XBOX_A_BUTTON.getNTString());
 
     public static final FluidConstant<Double> TRAJ_DELTA_TIME = constant("traj-delta-time", 0.1);
     public static final FluidConstant<Double> VISION_ASSIST_MAX_VELOCITY = constant("robot-max-vel", 3.0);

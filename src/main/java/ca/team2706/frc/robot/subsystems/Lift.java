@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Subsystem that controls the elevator on the robot
@@ -33,7 +34,7 @@ public class Lift extends Subsystem {
     private static final int[] HATCH_SETPOINTS = {
             0, // Loading station pickup
             499, // lowest hatch deploy
-            27138, // middle hatch
+            10000, // middle hatch
             Config.MAX_LIFT_ENCODER_TICKS // highest hatch
     };
 
@@ -148,6 +149,8 @@ public class Lift extends Subsystem {
             Log.d("Lift Current " + liftMotor.getOutputCurrent());
             Log.d("Lift Voltage " + liftMotor.getMotorOutputVoltage());
         }
+
+        SmartDashboard.putNumber("Lift Position", liftMotor.getSelectedSensorPosition());
     }
 
     /**

@@ -114,7 +114,7 @@ public class Config {
      */
     public static double LIF_RAMP_UP_PERIOD = 0.8;
 
-    public static int MAX_LIFT_ENCODER_TICKS = 54_000;
+    public static int MAX_LIFT_ENCODER_TICKS = 33_000;
 
 
     public static final boolean ENABLE_DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);
@@ -220,10 +220,10 @@ public class Config {
     public static final FluidConstant<Double> TURN_D = constant("turn-D", 0.0);
 
     public static final FluidConstant<Double>
-            LIFT_MM_P = constant("lift-mm-P", 0.5),
+            LIFT_MM_P = constant("lift-mm-P", 0.0),
             LIFT_MM_I = constant("lift-mm-I", 0.0),
             LIFT_MM_D = constant("lift-mm--D", 0.0),
-            LIFT_MM_F = constant("lift-mm-F", 0.0);
+            LIFT_MM_F = constant("lift-mm-F", 0.341);
 
     public static final FluidConstant<Double>
             LIFT_HOLD_P = constant("lift-hold-P", 0.5),

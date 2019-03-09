@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot.input;
 
+import ca.team2706.frc.robot.Robot;
 import ca.team2706.frc.robot.config.FluidConstant;
 import ca.team2706.frc.robot.config.XboxValue;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -59,6 +60,11 @@ public class FluidButton extends EButton {
             case POV:
                 value = m_joystick.getPOV(POV_NUMBER) == port.getPort();
                 break;
+        }
+
+        // Interrupt the current command on any button press
+        if (value) {
+            Robot.interruptCurrentCommand();
         }
 
         return value;

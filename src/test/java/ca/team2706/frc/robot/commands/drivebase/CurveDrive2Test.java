@@ -1,28 +1,36 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
-import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.subsystems.DriveBase;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motion.BuffTrajPointStreamJNI;
+import com.ctre.phoenix.motion.BufferedTrajectoryPointStream;
+import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import jaci.pathfinder.Pathfinder;
+import jaci.pathfinder.Waypoint;
 import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Mocked;
 import mockit.Verifications;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import util.Util;
 
-public class TankDriveWithJoystickTest {
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+public class CurveDrive2Test {
     @Mocked
     private WPI_TalonSRX talon;
 
@@ -35,8 +43,10 @@ public class TankDriveWithJoystickTest {
     @Mocked(stubOutClassInitialization = true)
     private PigeonIMU pigeon;
 
-    @Mocked
     private DifferentialDrive differentialDrive;
+
+    @Mocked
+    private SmartDashboard smartDashboard;
 
     @Mocked(stubOutClassInitialization = true)
     private CTREJNIWrapper jni;
@@ -47,22 +57,14 @@ public class TankDriveWithJoystickTest {
     @Mocked
     private Notifier notifier;
 
+    @Mocked
+    private BufferedTrajectoryPointStream bufferedTrajectoryPointStream;
+
     @Mocked(stubOutClassInitialization = true)
     private BuffTrajPointStreamJNI jni2;
 
     @Injectable
     private SensorCollection sensorCollection;
-
-    @Injectable
-    private Joystick joy1;
-
-    @Injectable
-    private Joystick joy2;
-
-    @BeforeClass
-    public static void classSetUp() throws NoSuchFieldException, IllegalAccessException {
-        Util.resetSubsystems();
-    }
 
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
@@ -70,36 +72,31 @@ public class TankDriveWithJoystickTest {
             talon.getSensorCollection();
             result = sensorCollection;
         }};
+
+        Util.resetSubsystems();
     }
 
     /**
-     * Makes sure that values are negated correctly
+     * Tests trajectory from waypoints
      */
     @Test
-    public void testNegate() {
-        new Expectations() {{
-            joy1.getRawAxis(Config.TANK_DRIVE_LEFT);
-            returns(1.0D, -1.0D, 0.0D, 0.1D);
+    public void createWayPoints() throws IOException {
+        CurveDrive2 curveDrive2 = new CurveDrive2(0.0, 0, new Waypoint[]{
+                new Waypoint(0, 0, 0),
+                new Waypoint(10, 10, Pathfinder.d2r(90))
+        });
 
-            joy2.getRawAxis(Config.TANK_DRIVE_RIGHT);
-            returns(1.0D, -1.0D, 0.0D, 0.1D);
-        }};
-
-        TankDriveWithJoystick tankDrive = new TankDriveWithJoystick(joy1, Config.TANK_DRIVE_LEFT, true, joy2, Config.TANK_DRIVE_RIGHT, false);
-
-        tankDrive.initialize();
-
-        for (int i = 0; i < 4; i++) {
-            tankDrive.execute();
-        }
-
-        tankDrive.end();
+        curveDrive2.initialize();
 
         new Verifications() {{
-            DriveBase.getInstance().tankDrive(-1, 1, Config.TELEOP_SQUARE_JOYSTICK_INPUTS);
-            DriveBase.getInstance().tankDrive(1, -1, Config.TELEOP_SQUARE_JOYSTICK_INPUTS);
-            DriveBase.getInstance().tankDrive(-0.0, 0, Config.TELEOP_SQUARE_JOYSTICK_INPUTS);
-            DriveBase.getInstance().tankDrive(-0.1, 0.1, Config.TELEOP_SQUARE_JOYSTICK_INPUTS);
+            List<TrajectoryPoint[]> trajectories = new ArrayList<>();
+            bufferedTrajectoryPointStream.Write(withCapture(trajectories));
+
+            assertEquals(90.0, trajectories.get(0)[trajectories.get(0).length - 1].headingDeg, 0.5);
+            assertEquals(90.0, trajectories.get(1)[trajectories.get(1).length - 1].headingDeg, 0.5);
+
+            assertTrue(trajectories.get(0)[trajectories.get(0).length - 1].position > trajectories.get(1)[trajectories.get(1).length - 1].position);
         }};
     }
 }
+

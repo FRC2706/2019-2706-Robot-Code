@@ -10,8 +10,7 @@ import ca.team2706.frc.robot.subsystems.*;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.hal.NotifierJNI;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -112,10 +111,10 @@ public class Robot extends TimedRobot {
      */
     private void disableLoopOverrun() {
         try {
-            Field m_notifierField = TimedRobot.class.getDeclaredField("m_notifier");
-            m_notifierField.setAccessible(true);
-            int m_notifier = m_notifierField.getInt(this);
-            NotifierJNI.cancelNotifierAlarm(m_notifier);
+            Field m_watchdogField = IterativeRobotBase.class.getDeclaredField("m_watchdog");
+            m_watchdogField.setAccessible(true);
+            Watchdog m_watchdog = (Watchdog) m_watchdogField.get(this);
+            m_watchdog.setTimeout(Double.POSITIVE_INFINITY);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             Log.e("Could not disable loop overrun warning", e);
         }

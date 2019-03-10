@@ -131,6 +131,8 @@ public class Config {
             constant("driver-assist-vision-cargo-loading-binding", XboxValue.XBOX_X_BUTTON.getNTString()),
             DRIVER_ASSIST_VISION_ROCKET_BINDING =
                     constant("driver-assist-vision-rocket-binding", XboxValue.XBOX_B_BUTTON.getNTString()),
+            DRIVER_ASSIST_VISION_BALL_BINDING =
+                    constant("driver-assist-vision-ball-binding", XboxValue.XBOX_A_BUTTON.getNTString()),
             DRIVER_ASSIST_LASER_BINDING =
                     constant("driver-assist-laser-binding", XboxValue.XBOX_Y_BUTTON.getNTString()),
             FACE_FORWARD_BINDING = constant("face-forward-binding", XboxValue.XBOX_POV_UP.getNTString()),

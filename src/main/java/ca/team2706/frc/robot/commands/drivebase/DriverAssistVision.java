@@ -3,6 +3,7 @@ package ca.team2706.frc.robot.commands.drivebase;
 //import java.lang.FdLibm.Pow;
 
 import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.commands.drivebase.FollowTrajectory;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.networktables.NetworkTable;
@@ -215,7 +216,7 @@ public class DriverAssistVision extends Command {
 
     @Override
     public boolean isFinished() {
-        return (followTrajectory.motionProfileCompleted() || commandAborted);
+        return (followTrajectory.isFinished() || commandAborted);
     }
 
     @Override

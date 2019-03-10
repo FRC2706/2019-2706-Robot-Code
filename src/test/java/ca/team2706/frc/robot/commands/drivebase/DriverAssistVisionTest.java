@@ -85,13 +85,15 @@ public class DriverAssistVisionTest {
                     driverAssistCargoAndLoading, driverAssistRocket);
             Trajectory traj = driverAssistVision.getTraj();
 
+            
             assertEquals(driverAssistVision.getAngRobotHeadingFinal_Field(), expectedAngRobotHeadingFinal_Field[i], 0.1);
             assertEquals(traj.segments[0].x, 0.0, 0.3);
             assertEquals(traj.segments[0].y, 0.0, 0.3);
-            assertEquals(traj.segments[0].heading, Pathfinder.d2r(90.0), 0.3);
+            assertEquals(traj.segments[0].heading, 0.0, 0.3);
             assertEquals(traj.segments[traj.length() - 1].x, vRobotToTarget_CameraX, 0.3);
             assertEquals(traj.segments[traj.length() - 1].y, vRobotToTarget_CameraY - Config.TARGET_OFFSET_DISTANCE.value(), 0.3); // 6.5
-            assertEquals(traj.segments[traj.length() - 1].heading, Pathfinder.d2r(90.0), 0.3);
+            assertEquals(traj.segments[traj.length() - 1].heading, 0.0, 0.5);
+            
         }
     }
 
@@ -135,10 +137,10 @@ public class DriverAssistVisionTest {
             assertEquals(driverAssistVision.getAngRobotHeadingFinal_Field(), expectedAngRobotHeadingFinal_Field[i], 0.1);
             assertEquals(traj.segments[0].x, 0.0, 0.3);
             assertEquals(traj.segments[0].y, 0.0, 0.3);
-            assertEquals(traj.segments[0].heading, Pathfinder.d2r(90.0), 0.3);
+            assertEquals(traj.segments[0].heading, 0.0, 0.3);
             assertEquals(traj.segments[traj.length() - 1].x, vRobotToTarget_CameraX, 0.3);
             assertEquals(traj.segments[traj.length() - 1].y, vRobotToTarget_CameraY - Config.TARGET_OFFSET_DISTANCE.value(), 0.3);
-            assertEquals(traj.segments[traj.length() - 1].heading, Pathfinder.d2r(90.0), 0.3);
+            assertEquals(traj.segments[traj.length() - 1].heading, 0.0, 0.3);
         }
     }
 }

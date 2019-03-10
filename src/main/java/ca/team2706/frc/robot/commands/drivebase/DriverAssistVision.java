@@ -143,7 +143,7 @@ public class DriverAssistVision extends Command {
         // See method generateTrajectoryRobotToTarget(...) for an explanation of variable names and coodinate
         // frames
 
-        Log.d("DAV: initialize() called");
+        System.out.println("DAV: initialize() called");
 
         DriveBase.getInstance().setBrakeMode(true);
         DriveBase.getInstance().setPositionNoGyroMode();
@@ -159,8 +159,8 @@ public class DriverAssistVision extends Command {
         double angYawTargetWrtCameraLOSCWpos = vectorCameraToTarget_Camera[0];
         double distanceCameraToTarget_Camera = vectorCameraToTarget_Camera[1];
 
-        Log.d("DAV: angYawTargetWrtCameraLOSCWpos [deg]: " + angYawTargetWrtCameraLOSCWpos);
-        Log.d("DAV: distanceCameraToTarget_Camera [ft]: " + distanceCameraToTarget_Camera);
+        System.out.println("DAV: angYawTargetWrtCameraLOSCWpos [deg]: " + angYawTargetWrtCameraLOSCWpos);
+        System.out.println("DAV: distanceCameraToTarget_Camera [ft]: " + distanceCameraToTarget_Camera);
 
         /*
         Due to the inherent jitter of values computed by the vision system, it is next to impossible
@@ -169,19 +169,19 @@ public class DriverAssistVision extends Command {
         vision system offline. If they are different on successive commands, consider vision system
         online.
         */
-        visionOffline = (angYawTargetWrtCameraLOSCWpos == angYawTargetWrtCameraLOSCWposPrev) &&
-                (distanceCameraToTarget_Camera == distanceCameraToTarget_CameraPrev);
+        //visionOffline = (angYawTargetWrtCameraLOSCWpos == angYawTargetWrtCameraLOSCWposPrev) &&
+        //        (distanceCameraToTarget_Camera == distanceCameraToTarget_CameraPrev);
         angYawTargetWrtCameraLOSCWposPrev = angYawTargetWrtCameraLOSCWpos;
         distanceCameraToTarget_CameraPrev = distanceCameraToTarget_Camera;
 
         // Abort if vision is offline or vision system is giving an unreasonably low value 
         if (visionOffline || distanceCameraToTarget_Camera < Config.VISION_DISTANCE_MIN.value()) {
-            Log.d("DAV: Vision system offline. Driver assist command not performed.");
+            System.out.println("DAV: Vision system offline. Driver assist command not performed.");
             commandAborted = true;
             return;
         }
 
-        Log.d("DAV: Generating trajectory");
+        System.out.println("DAV: Generating trajectory");
 
         // Compute the trajectory
         generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, angYawTargetWrtCameraLOSCWpos,
@@ -199,12 +199,20 @@ public class DriverAssistVision extends Command {
 
     @Override
     public void end() {
+        
+        System.out.println("Commanding robot to stop");
+        
+        
         if(followTrajectory != null) {
             if(followTrajectory.isRunning()) {
                 followTrajectory.cancel();
             }
-            followCommand = null;
+            followTrajectory = null;
         }
+        
+        
+        System.out.println("Command done");
+        
     }
 
     /**
@@ -319,7 +327,7 @@ public class DriverAssistVision extends Command {
 
         // Get current robot heading relative to field frame from IMU
         double angRobotHeadingCurrent_Field = DriveBase.getInstance().getAbsoluteHeading();
-        Log.d("DAV: angRobotHeadingCurrent_Field: " + angRobotHeadingCurrent_Field);
+        System.out.println("DAV: angRobotHeadingCurrent_Field: " + angRobotHeadingCurrent_Field);
 
         // Compute final desired robot heading relative to field
         double angRobotHeadingFinal_Field =
@@ -353,27 +361,59 @@ public class DriverAssistVision extends Command {
         // vRobotToFinal_Robot = vRobotToCamera_Robot + vCameraToTarget_Robot + vTargetToFinal_Robot
         double vRobotToFinal_RobotX = vRobotToCamera_RobotX + vCameraToTarget_RobotX + vTargetToFinal_RobotX;
         double vRobotToFinal_RobotY = vRobotToCamera_RobotY + vCameraToTarget_RobotY + vTargetToFinal_RobotY;
-        Log.d("DAV: vRobotToFinal_RobotX: " + vRobotToFinal_RobotX + ", vRobotToFinal_RobotY: " + vRobotToFinal_RobotY);
+        System.out.println("DAV: vRobotToFinal_RobotX: " + vRobotToFinal_RobotX + ", vRobotToFinal_RobotY: " + vRobotToFinal_RobotY);
 
         // STEP 2: Compute final robot heading in robot frame
         double angRobotHeadingFinal_Robot = angRobotHeadingFinal_Field - angRobotCurrent_Field;
-        Log.d("DAV: angRobotHeadingFinal_Robot: " + angRobotHeadingFinal_Robot);
+        System.out.println("DAV: angRobotHeadingFinal_Robot: " + angRobotHeadingFinal_Robot);
 
         // STEP 3: Generate trajectory in robot frame with PathFinder library using two waypoints: one at initial position
         // and one at final position
-        Log.d("DAV: Generating trajectory");
+        System.out.println("DAV: Generating trajectory");
         Trajectory.Config config =
-                new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH,
+                new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_FAST,
                         Config.TRAJ_DELTA_TIME.value(), Config.VISION_ASSIST_MAX_VELOCITY.value(), Config.VISION_ASSIST_MAX_ACCELERATION.value(),
                         Config.VISION_ASSIST_MAX_JERK.value());
+
         Waypoint[] points = new Waypoint[]{
                 // Initial position/heading of robot: at origin with heading at 90 deg
-                new Waypoint(0, 0, Pathfinder.d2r(90)),
+                new Waypoint(0.0, 0.0, Pathfinder.d2r(90.0)),
+                //new Waypoint(5.0, 5.0, Pathfinder.d2r(90.0)),
+                // Intermediate waypoint
+                //new Waypoint(vRobotToFinal_RobotX/2.0, vRobotToFinal_RobotY/2.0, Pathfinder.d2r((90.0 - angRobotHeadingFinal_Robot)/2.0)),
                 // Final position/heading of robot: in front of target
-                new Waypoint(vRobotToFinal_RobotX, vRobotToFinal_RobotY, Pathfinder.d2r(angRobotHeadingFinal_Robot)),
+                new Waypoint(vRobotToFinal_RobotX, vRobotToFinal_RobotY, Pathfinder.d2r(angRobotHeadingFinal_Robot))
         };
         traj = Pathfinder.generate(points, config);
-        Log.d("DAV: Trajectory generated");
+        System.out.println("DAV: Trajectory generated");
+        
+        /*
+        * Headings in trajectory must be converted into the motion control system's frame. 
+        * Their frame has the y-axis at 0 degrees with positive heading clockwise.
+        * Our frame has robot's y-axis was at 90 degrees. Now we are converting it so the robot's 
+        * y-axis is 0 degrees.
+        */
+        
+        double pi_over_2 = Math.PI/2.0;
+        for (int i = 0; i < traj.length(); i++) {
+            traj.segments[i].heading = pi_over_2 - traj.segments[i].heading;
+        }
+        
+
+        /*
+        System.out.println("DAV: Trajectory length: " + traj.length());
+        for (int i = 0; i < traj.length(); i++)
+        {
+            String str = 
+                traj.segments[i].x + "," +
+                traj.segments[i].y + "," +
+                traj.segments[i].heading;
+
+            System.out.println(str);
+        }
+        */
+        
+
 
         followTrajectory = new FollowTrajectory(0.2, 100, traj);
         followTrajectory.start();

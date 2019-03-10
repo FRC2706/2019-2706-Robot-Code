@@ -1,6 +1,7 @@
 package ca.team2706.frc.robot;
 
 import ca.team2706.frc.robot.commands.drivebase.CurvatureDriveWithJoystick;
+import ca.team2706.frc.robot.commands.drivebase.DriverAssistLaser;
 import ca.team2706.frc.robot.commands.drivebase.DriverAssistVision;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.input.FluidButton;
@@ -69,10 +70,16 @@ public class OI {
         DriveBase.getInstance().setDefaultCommand(driveCommand);
 
         // Operator controls
+        // Operator controls
         new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING)
-                .whenPressed(new DriverAssistVision(true, false));
+                .whenPressed(new DriverAssistVision(DriverAssistVisionTarget.CARGO_AND_LOADING));
         new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_ROCKET_BINDING)
-                .whenPressed(new DriverAssistVision(false, true));
+                .whenPressed(new DriverAssistVision(DriverAssistVisionTarget.ROCKET));
+        new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_BALL_BINDING)
+                .whenPressed(new DriverAssistVision(DriverAssistVisionTarget.BALL));
+        new FluidButton(driverStick, Config.DRIVER_ASSIST_LASER_BINDING)
+                .whenPressed(new DriverAssistLaser());
+
     }
 
     /**

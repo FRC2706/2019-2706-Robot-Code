@@ -1,5 +1,7 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
+//import java.lang.FdLibm.Pow;
+
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.DriveBase;
@@ -31,34 +33,25 @@ import jaci.pathfinder.Waypoint;
  * NOTE: MOTION CONTROL FUNCTIONALITY IS CURRENTLY AWAITING COMPLETION
  */
 public class DriverAssistVision extends Command {
+    private boolean commandAborted;
+    private FollowTrajectory followTrajectory;
+    boolean tapeDetectedStageComplete = false;
+    boolean generateTrajectoryStageComplete = false;
+    double videoTimestampPrev = 0.0;
+    private NetworkTableEntry findTapeEntry;
+    private NetworkTableEntry findCargoEntry;
+    private NetworkTableEntry tapeDetectedEntry;
+    private DriverAssistVisionTarget target;
+
     /**
      * Angle of robot heading with respect to x axis of field frame
      */
     private double angRobotHeadingFinal_Field = 0.0;
 
     /**
-     * Value of angYawTargetWrtCameraLOSCWposAngle (yaw angle to target wrt camera line of sight in degrees)
-     * from the previous time the command was issued.
+     * Network table to get Chicken Vision data from vision subsystem
      */
-    private double angYawTargetWrtCameraLOSCWposPrev = 0.0;
-
-    private boolean commandAborted;
-
-    /**
-     * Value of distanceCameraToTarget_Camera (distance from camera frame origin to target in feet)
-     * from the previous time the command was issued.
-     */
-    private double distanceCameraToTarget_CameraPrev = 0.0;
-
-    /**
-     * True if target is cargo ship or loading bay
-     */
-    private boolean driverAssistCargoAndLoading = false;
-
-    /**
-     * True if target is rocket
-     */
-    private boolean driverAssistRocket = false;
+    private NetworkTable chickenVisionTable;
 
     /**
      * Network table instance to get data from vision subsystem
@@ -66,25 +59,19 @@ public class DriverAssistVision extends Command {
     private NetworkTableInstance inst;
 
     /**
-     * Network table to get data from vision subsystem
+     * Network table to get Pathfinder data from vision subsystem
      */
-    private NetworkTable table;
+    private NetworkTable pathfinderTable;
 
     /**
      * Trajectory generated to move robot to target
      */
-    private Trajectory traj;
+    private Trajectory trajectory;
 
     /**
      * True if trajectory has been generated for this command, false otherwise.
-     * (This will be removed when motion control functionality is implemented.)
      */
-    private boolean trajGenerated = false;
-
-    /**
-     * True if vision system has been assessed to be offline
-     */
-    boolean visionOffline = false;
+    private boolean trajectoryGenerated = false;
 
     /**
      * Creates empty driver assist command object (needed for unit testing framework only)
@@ -96,21 +83,16 @@ public class DriverAssistVision extends Command {
         setupNetworkTables();
 
         commandAborted = false;
-        trajGenerated = false;
-        visionOffline = false;
-        angYawTargetWrtCameraLOSCWposPrev = 0.0;
-        distanceCameraToTarget_CameraPrev = 0.0;
+        trajectoryGenerated = false;
     }
 
     /**
      * Creates the driver assist command
      *
-     * @param driverAssistCargoAndLoading: True if target is cargo ship or loading bay, false otherwise
-     * @param driverAssistRocket:          True if target is a rocket ship, false otherwise
+     * @param DriverAssistVisionTarget target: The type of the destination target (CARGO_AND_LOADING, ROCKET, BALL)
      */
-    public DriverAssistVision(boolean driverAssistCargoAndLoading, boolean driverAssistRocket) {
-        this.driverAssistCargoAndLoading = driverAssistCargoAndLoading;
-        this.driverAssistRocket = driverAssistRocket;
+    public DriverAssistVision(DriverAssistVisionTarget target) {
+        this.target = target;
 
         // Ensure that this command is the only one to run on the drive base
         requires(DriveBase.getInstance());
@@ -118,10 +100,9 @@ public class DriverAssistVision extends Command {
         setupNetworkTables();
 
         commandAborted = false;
-        trajGenerated = false;
-        visionOffline = false;
-        angYawTargetWrtCameraLOSCWposPrev = 0.0;
-        distanceCameraToTarget_CameraPrev = 0.0;
+        generateTrajectoryStageComplete = false;
+        tapeDetectedStageComplete = false;
+        trajectoryGenerated = false;
     }
 
     /**
@@ -130,7 +111,8 @@ public class DriverAssistVision extends Command {
     private void setupNetworkTables() {
         // Set up network table
         inst = NetworkTableInstance.getDefault();
-        table = inst.getTable("PathFinder");
+        pathfinderTable = inst.getTable("PathFinder");
+        chickenVisionTable = inst.getTable("ChickenVision");
     }
 
     /**
@@ -138,67 +120,112 @@ public class DriverAssistVision extends Command {
      */
     @Override
     public void initialize() {
-        // See method generateTrajectoryRobotToTarget(...) for an explanation of variable names and coodinate
-        // frames
+        System.out.println("DAV: initialize() called");
 
-        Log.d("DAV: initialize() called");
+        if (visionOffline()) {
+            Log.d("Vision offline, command aborted");
+            commandAborted = true;
+            return;
+        }
 
         DriveBase.getInstance().setBrakeMode(true);
         DriveBase.getInstance().setPositionNoGyroMode();
 
         commandAborted = false;
-        trajGenerated = false;
+        generateTrajectoryStageComplete = false;
+        tapeDetectedStageComplete = false;
+        trajectoryGenerated = false;
 
-        // Get angle and position of vision target in camera frame from network table
-        // (computed by vision subsystem)
-        NetworkTableEntry vectorCameraToTarget = table.getEntry("vectorCameraToTarget");
+        findTapeEntry = chickenVisionTable.getEntry("Tape");
+        findCargoEntry = chickenVisionTable.getEntry("Cargo");
+        findCargoEntry.setBoolean(false);
+        findTapeEntry.setBoolean(true);
 
-        double[] vectorCameraToTarget_Camera = vectorCameraToTarget.getDoubleArray(new double[]{0, 0});
-        double angYawTargetWrtCameraLOSCWpos = vectorCameraToTarget_Camera[0];
-        double distanceCameraToTarget_Camera = vectorCameraToTarget_Camera[1];
+        // Turn on green light
+        // (Fill in)
 
-        Log.d("DAV: angYawTargetWrtCameraLOSCWpos [deg]: " + angYawTargetWrtCameraLOSCWpos);
-        Log.d("DAV: distanceCameraToTarget_Camera [ft]: " + distanceCameraToTarget_Camera);
+        Log.d("DAV: Exiting initialize()");
+    }
 
-        /*
-        Due to the inherent jitter of values computed by the vision system, it is next to impossible
-        that values of yaw angle and distance to target will both be equal on successive commands unless
-        the vision system is not updating them for some reason. Therefore, is this occurs, consider
-        vision system offline. If they are different on successive commands, consider vision system
-        online.
-        */
-        visionOffline = (angYawTargetWrtCameraLOSCWpos == angYawTargetWrtCameraLOSCWposPrev) &&
-                (distanceCameraToTarget_Camera == distanceCameraToTarget_CameraPrev);
-        angYawTargetWrtCameraLOSCWposPrev = angYawTargetWrtCameraLOSCWpos;
-        distanceCameraToTarget_CameraPrev = distanceCameraToTarget_Camera;
+    @Override
+    public void execute() {
+        // See method generateTrajectoryRobotToTarget(...) for an explanation of variable names and coodinate
+        // frames
 
-        // Abort if vision is offline or vision system is giving an unreasonably low value 
-        if (visionOffline || distanceCameraToTarget_Camera < Config.VISION_DISTANCE_MIN.value()) {
-            Log.d("DAV: Vision system offline. Driver assist command not performed.");
+        if (visionOffline()) {
+            Log.d("Vision offline, command aborted");
             commandAborted = true;
             return;
         }
 
-        Log.d("DAV: Generating trajectory");
+        if (!tapeDetectedStageComplete) {
+            tapeDetectedEntry = pathfinderTable.getEntry("tapeDetected");
+            boolean tapeDetected = tapeDetectedEntry.getBoolean(false);
+            if(!tapeDetected)
+                return;
+            else
+                tapeDetectedStageComplete = true;
+        }
 
-        // Compute the trajectory
-        generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, angYawTargetWrtCameraLOSCWpos,
-                driverAssistCargoAndLoading, driverAssistRocket);
+        if (!generateTrajectoryStageComplete) {
+            // Get angle and position of vision target in camera frame from network table
+            // (computed by vision subsystem)
+            NetworkTableEntry vectorCameraToTarget = pathfinderTable.getEntry("vectorCameraToTarget");
 
-        Log.d("DAV: Exiting initialize()");
+            double[] vectorCameraToTarget_Camera = vectorCameraToTarget.getDoubleArray(new double[]{0, 0});
+            double angYawTargetWrtCameraLOSCWpos = vectorCameraToTarget_Camera[0];
+            double distanceCameraToTarget_Camera = vectorCameraToTarget_Camera[1];
 
-        trajGenerated = true;
+            System.out.println("DAV: angYawTargetWrtCameraLOSCWpos [deg]: " + angYawTargetWrtCameraLOSCWpos);
+            System.out.println("DAV: distanceCameraToTarget_Camera [ft]: " + distanceCameraToTarget_Camera);
+
+            // Abort if vision is offline or vision system is giving an unreasonably low value 
+            if (distanceCameraToTarget_Camera < Config.VISION_DISTANCE_MIN.value()) {
+                System.out.println("DAV: Vision system offline. Driver assist command not performed.");
+                commandAborted = true;
+                return;
+            }
+
+            System.out.println("DAV: Generating trajectory");
+
+            // Compute the trajectory as a separate task to avoid execute() overruns
+            Runnable task = new Runnable() {
+                public void run() {
+                    generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, angYawTargetWrtCameraLOSCWpos, target);
+                }
+            };
+            new Thread(task).start();
+
+            /*
+            // Compute the trajectory
+            generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, angYawTargetWrtCameraLOSCWpos, target);
+
+            generateTrajectoryStageComplete = true;
+            */
+
+            // Setting this flag will allow OI to provide indication to driver that trajectory is ready via
+            // the getTrajectoryGenerated() method
+            trajectoryGenerated = true;
+        }
+
+        // Command robot to move through trajectory
+        followTrajectory = new FollowTrajectory(0.2, 100, trajectory);
+        followTrajectory.start();
     }
 
     @Override
     public boolean isFinished() {
-        return (trajGenerated || commandAborted);
+        return (followTrajectory.motionProfileCompleted() || commandAborted);
     }
 
     @Override
     public void end() {
-        // Go back to disabled mode
-        DriveBase.getInstance().setDisabledMode();
+        if(followTrajectory != null) {
+            if(followTrajectory.isRunning()) {
+                followTrajectory.cancel();
+            }
+            followTrajectory = null;
+        }
     }
 
     /**
@@ -211,10 +238,17 @@ public class DriverAssistVision extends Command {
     }
 
     /**
-     * Gets the network table
+     * Gets the Pathfinder network table
      */
-    public NetworkTable getNetworkTable() {
-        return table;
+    public NetworkTable getPathfinderNetworkTable() {
+        return pathfinderTable;
+    }
+
+    /**
+     * Gets the ChickenVision network table
+     */
+    public NetworkTable getChickenVisionNetworkTable() {
+        return chickenVisionTable;
     }
 
     /**
@@ -223,11 +257,11 @@ public class DriverAssistVision extends Command {
      *
      * @param distanceCameraToTarget_Camera distance from camera to target [ft]
      * @param angYawTargetWrtCameraLOSCWpos yaw angle to target wrt camera line of sight, CW with increase angle [deg]
-     * @param driverAssistCargoAndLoading   true if driver assist on cargo ship of loading bay target is requested
+     * @param target                        destination target (cargo ship/loading bay, rocket, or cargo ball)
      * @param driverAssistRocket            true if drivers assist on rocket target is requested
      */
     public void generateTrajectoryRobotToTarget(double distanceCameraToTarget_Camera, double angYawTargetWrtCameraLOSCWpos,
-                                                boolean driverAssistCargoAndLoading, boolean driverAssistRocket) {
+                                                DriverAssistVisionTarget target) {
 
         /**
          * Explanation of vector and coordinate frame notation in a 2-d plane:
@@ -288,9 +322,7 @@ public class DriverAssistVision extends Command {
          *           from the front of the target.
          *
          */
-
-        Log.d("driverAssistCargoAndLoading: " + driverAssistCargoAndLoading);
-        Log.d("driverAssistRocket: " + driverAssistRocket);
+        Log.d("target" + target);
 
         // Step 1: Compute vector from current robot position to final robot position in robot frame, 
         // vRobotToFinal_Robot, where
@@ -311,68 +343,129 @@ public class DriverAssistVision extends Command {
         double vCameraToTarget_RobotY = distanceCameraToTarget_Camera * Math.cos(angYawTargetWrtCameraLOSRadCWpos);
         Log.d("DAV: vec_CameraToTargetX_Robot: " + vCameraToTarget_RobotX + ", vCameraToTarget_RobotY: " + vCameraToTarget_RobotY);
 
-        // Get current robot heading relative to field frame from IMU
-        double angRobotHeadingCurrent_Field = DriveBase.getInstance().getAbsoluteHeading();
-        Log.d("DAV: angRobotHeadingCurrent_Field: " + angRobotHeadingCurrent_Field);
-
-        // Compute final desired robot heading relative to field
-        double angRobotHeadingFinal_Field =
-                computeAngRobotHeadingFinal_Field(angRobotHeadingCurrent_Field, driverAssistCargoAndLoading, driverAssistRocket);
-
-        // Compute unit vector in direction facing target in field frame
-        double finalRobotAngleRad_Field = Pathfinder.d2r(angRobotHeadingFinal_Field);
-        double vUnitFacingTarget_FieldX = Math.cos(finalRobotAngleRad_Field);
-        double vUnitFacingTarget_FieldY = Math.sin(finalRobotAngleRad_Field);
-
-        // Compute vector from target to final robot position in field frame from unit vector in field frame
-        double d = Config.TARGET_OFFSET_DISTANCE.value();
-        double vTargetToFinal_FieldX = -d * vUnitFacingTarget_FieldX;
-        double vTargetToFinal_FieldY = -d * vUnitFacingTarget_FieldY;
-        Log.d("DAV: vec_TargetToFinalX_Field: " + vTargetToFinal_FieldX + ", vTargetToFinal_FieldY: " + vTargetToFinal_FieldY);
+        // Vector 1+2: vRobotToTarget_Robot: Vector from robot to target in robot frame
+        double vRobotToTarget_RobotX = vRobotToCamera_RobotX + vCameraToTarget_RobotX;
+        double vRobotToTarget_RobotY = vRobotToCamera_RobotY + vCameraToTarget_RobotY;
 
         // Vector 3: vTargetToFinal_Robot: Vector from target to final robot position in robot frame
-        //           (need to do a coordinate frame transformation on vTargetToFinal_Field)
-        // Note: angRobotCurrent_Field is the current angle from the x axis of robot frame with respect to the
-        //       x axis of the field frame, and the x axis of the robot frame is 90deg less than the robot heading
-        //       which points along the y axis by definition
-        double angRobotCurrent_Field = angRobotHeadingCurrent_Field - 90.0;
-        double angRobotCurrentRad_Field = Pathfinder.d2r(angRobotCurrent_Field);
-        double cosAngRobotCurrentRad_Field = Math.cos(angRobotCurrentRad_Field);
-        double sinAngRobotCurrentRad_Field = Math.sin(angRobotCurrentRad_Field);
-        double vTargetToFinal_RobotX = vTargetToFinal_FieldX * cosAngRobotCurrentRad_Field + vTargetToFinal_FieldY * sinAngRobotCurrentRad_Field;
-        double vTargetToFinal_RobotY = -vTargetToFinal_FieldX * sinAngRobotCurrentRad_Field + vTargetToFinal_FieldY * cosAngRobotCurrentRad_Field;
-        Log.d("DAV: vTargetToFinal_RobotX: " + vTargetToFinal_RobotX + ", vTargetToFinal_RobotY: " + vTargetToFinal_RobotY);
+        // (Depends on target type.)
+ 
+        double vTargetToFinal_RobotX = 0.0;
+        double vTargetToFinal_RobotY = 0.0;
+        double angRobotCurrent_Field = 0.0;
+        if ((target == DriverAssistVisionTarget.CARGO_AND_LOADING) || 
+            (target == DriverAssistVisionTarget.ROCKET                   )   ) {
 
-        // Compute vRobotToFinal_Robot as sum of Vectors 1, 2, and 3
+            // Vector 3 is aligned with and facing away from target
+
+            // Get current robot heading relative to field frame from IMU
+            double angRobotHeadingCurrent_Field = DriveBase.getInstance().getAbsoluteHeading();
+            Log.d("DAV: angRobotHeadingCurrent_Field: " + angRobotHeadingCurrent_Field);
+
+            // Compute final desired robot heading relative to field (for cargo ship/loading bay and rocket targets only)
+            double angRobotHeadingFinal_Field =
+                computeAngRobotHeadingFinal_Field(angRobotHeadingCurrent_Field, target);
+
+            // Compute unit vector in direction facing target in field frame
+            double finalRobotAngleRad_Field = Pathfinder.d2r(angRobotHeadingFinal_Field);
+            double vUnitFacingTarget_FieldX = Math.cos(finalRobotAngleRad_Field);
+            double vUnitFacingTarget_FieldY = Math.sin(finalRobotAngleRad_Field);
+
+            // Compute vector from target to final robot position in field frame from unit vector in field frame
+            double d = 0.0;
+            if (target == DriverAssistVisionTarget.CARGO_AND_LOADING) {
+                d = Config.TARGET_OFFSET_DISTANCE_CARGO_AND_LOADING.value();
+            }
+            else if (target == DriverAssistVisionTarget.ROCKET) {
+                d = Config.TARGET_OFFSET_DISTANCE_ROCKET.value();
+            }
+            double vTargetToFinal_FieldX = -d * vUnitFacingTarget_FieldX;
+            double vTargetToFinal_FieldY = -d * vUnitFacingTarget_FieldY;
+            Log.d("DAV: vec_TargetToFinalX_Field: " + vTargetToFinal_FieldX);
+            Log.d("DAV: vTargetToFinal_FieldY: " + vTargetToFinal_FieldY);
+
+            // Vector 3: vTargetToFinal_Robot: Vector from target to final robot position in robot frame
+            //           (need to do a coordinate frame transformation on vTargetToFinal_Field)
+            // Note: angRobotCurrent_Field is the current angle from the x axis of robot frame with respect to the
+            //       x axis of the field frame, and the x axis of the robot frame is 90deg less than the robot heading
+            //       which points along the y axis by definition
+            angRobotCurrent_Field = angRobotHeadingCurrent_Field - 90.0;
+            double angRobotCurrentRad_Field = Pathfinder.d2r(angRobotCurrent_Field);
+            double cosAngRobotCurrentRad_Field = Math.cos(angRobotCurrentRad_Field);
+            double sinAngRobotCurrentRad_Field = Math.sin(angRobotCurrentRad_Field);
+            vTargetToFinal_RobotX = vTargetToFinal_FieldX * cosAngRobotCurrentRad_Field + vTargetToFinal_FieldY * sinAngRobotCurrentRad_Field;
+            vTargetToFinal_RobotY = -vTargetToFinal_FieldX * sinAngRobotCurrentRad_Field + vTargetToFinal_FieldY * cosAngRobotCurrentRad_Field;
+            Log.d("DAV: vTargetToFinal_RobotX: " + vTargetToFinal_RobotX + ", vTargetToFinal_RobotY: " + vTargetToFinal_RobotY);
+
+        } else if (target == DriverAssistVisionTarget.BALL) {
+            // Vector 3 is oriented from cargo ball to origin of robot frame
+            double vRobotToTarget_magnitude = Math.sqrt(Math.pow(vRobotToTarget_RobotX,2) + Math.pow(vRobotToTarget_RobotY,2));
+            vTargetToFinal_RobotX = -Config.TARGET_OFFSET_DISTANCE_BALL.value() * (vRobotToTarget_RobotX/vRobotToTarget_magnitude);
+            vTargetToFinal_RobotY = -Config.TARGET_OFFSET_DISTANCE_BALL.value() * (vRobotToTarget_RobotY/vRobotToTarget_magnitude);
+        }
+
+        // Compute vRobotToFinal_Robot as sum of Vectors 1+2 and 3
         // vRobotToFinal_Robot = vRobotToCamera_Robot + vCameraToTarget_Robot + vTargetToFinal_Robot
-        double vRobotToFinal_RobotX = vRobotToCamera_RobotX + vCameraToTarget_RobotX + vTargetToFinal_RobotX;
-        double vRobotToFinal_RobotY = vRobotToCamera_RobotY + vCameraToTarget_RobotY + vTargetToFinal_RobotY;
-        Log.d("DAV: vRobotToFinal_RobotX: " + vRobotToFinal_RobotX + ", vRobotToFinal_RobotY: " + vRobotToFinal_RobotY);
+        double vRobotToFinal_RobotX = vRobotToTarget_RobotX + vTargetToFinal_RobotX;
+        double vRobotToFinal_RobotY = vRobotToTarget_RobotY + vTargetToFinal_RobotY;
+        System.out.println("DAV: vRobotToFinal_RobotX: " + vRobotToFinal_RobotX + ", vRobotToFinal_RobotY: " + vRobotToFinal_RobotY);
 
         // STEP 2: Compute final robot heading in robot frame
-        double angRobotHeadingFinal_Robot = angRobotHeadingFinal_Field - angRobotCurrent_Field;
-        Log.d("DAV: angRobotHeadingFinal_Robot: " + angRobotHeadingFinal_Robot);
+        double angRobotHeadingFinal_Robot = 0.0;
+        double angRobotHeadingFinalRad_Robot = 0.0;
+        if ((target == DriverAssistVisionTarget.CARGO_AND_LOADING) || 
+            (target == DriverAssistVisionTarget.ROCKET                   )   ) {
+            angRobotHeadingFinal_Robot = angRobotHeadingFinal_Field - angRobotCurrent_Field;
+            angRobotHeadingFinalRad_Robot = Pathfinder.d2r(angRobotHeadingFinal_Robot);
+        } else {
+            angRobotHeadingFinalRad_Robot = Math.atan2(vRobotToFinal_RobotY, vRobotToFinal_RobotX);
+            angRobotHeadingFinal_Robot = Pathfinder.r2d(angRobotHeadingFinalRad_Robot);
+        }
+        System.out.println("DAV: angRobotHeadingFinal_Robot: " + angRobotHeadingFinal_Robot);
+        System.out.println("DAV: angRobotHeadingFinalRad_Robot: " + angRobotHeadingFinalRad_Robot);
 
         // STEP 3: Generate trajectory in robot frame with PathFinder library using two waypoints: one at initial position
         // and one at final position
         Log.d("DAV: Generating trajectory");
         Trajectory.Config config =
-                new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH,
+                new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_FAST,
                         Config.TRAJ_DELTA_TIME.value(), Config.VISION_ASSIST_MAX_VELOCITY.value(), Config.VISION_ASSIST_MAX_ACCELERATION.value(),
                         Config.VISION_ASSIST_MAX_JERK.value());
         Waypoint[] points = new Waypoint[]{
                 // Initial position/heading of robot: at origin with heading at 90 deg
                 new Waypoint(0, 0, Pathfinder.d2r(90)),
                 // Final position/heading of robot: in front of target
-                new Waypoint(vRobotToFinal_RobotX, vRobotToFinal_RobotY, Pathfinder.d2r(angRobotHeadingFinal_Robot)),
+                new Waypoint(vRobotToFinal_RobotX, vRobotToFinal_RobotY, angRobotHeadingFinalRad_Robot),
         };
-        traj = Pathfinder.generate(points, config);
+        trajectory = Pathfinder.generate(points, config);
         Log.d("DAV: Trajectory generated");
 
-        /*
-        Send trajectory to motion control system
-        (Wait until integration with robot code) TODO
+       /*
+        * 
+        * Headings in trajectory must each be converted into the robot motion control system's frame 
+        * whose x-y axes are the same as our robot frame but whose heading along the y-axis
+        * is at 0 degrees with  positive heading clockwise compared to our robot frame whose
+        * heading along the y-axis is 90 degrees with positive heading counter-clockwise. The
+        * transformation to heading in the robot motion control system (given in radians) is 
+        * therefore PI/2 - trajectory.segment[i].heading.
         */
+        double PI_OVER_2 = Math.PI/2.0;
+        for (int i = 0; i < trajectory.length(); i++) {
+            trajectory.segments[i].heading = PI_OVER_2 - trajectory.segments[i].heading;
+        }
+
+        System.out.println("DAV: Trajectory length: " + trajectory.length());
+        for (int i = 0; i < trajectory.length(); i++)
+        {
+            String str = 
+                trajectory.segments[i].x + "," +
+                trajectory.segments[i].y + "," +
+                trajectory.segments[i].heading;
+
+            System.out.println(str);
+        }
+
+        trajectoryGenerated = true;
     }
 
     /**
@@ -380,20 +473,25 @@ public class DriverAssistVision extends Command {
      *
      * @return Trajectory generated to move robot to target
      */
-    public Trajectory getTraj() {
-        return traj;
+    public Trajectory getTrajectory() {
+        return trajectory;
+    }
+
+    /**
+     * Returns true if trajectory has been generated, false otherwise
+     */
+    public boolean getTrajectoryGenerated() {
+        return trajectoryGenerated;
     }
 
     /**
      * Computes and returns final desired angle of robot heading respect to field frame
      *
      * @param angRobotHeadingCurrent_Field Angle of robot heading with respect to field frame
-     * @param driverAssistCargoAndLoading  True if target is cargo ship or loading bay
-     * @param driverAssistRocket           True if target is rocket
+     * @param target                       Destination target
      * @return Final desired angle of robot heading respect to field frame in degrees
      */
-    public double computeAngRobotHeadingFinal_Field(double angRobotHeadingCurrent_Field, boolean driverAssistCargoAndLoading,
-                                                    boolean driverAssistRocket) {
+    public double computeAngRobotHeadingFinal_Field(double angRobotHeadingCurrent_Field, DriverAssistVisionTarget target) {
 
         /*
         Compute final robot angle relative to field based on current angle of robot relative to field.
@@ -401,9 +499,9 @@ public class DriverAssistVision extends Command {
         */
         angRobotHeadingFinal_Field = 0.0;
 
-        if (driverAssistCargoAndLoading) {
-            // Assist requested for cargo ship or loading dock targets
-            Log.d("DAV: Assist for cargo ship or loading dock requested");
+        if (target == DriverAssistVisionTarget.CARGO_AND_LOADING) {
+            // Assist requested for cargo ship or loading bay targets
+            Log.d("DAV: Assist for cargo ship or loading bay requested");
             if ((angRobotHeadingCurrent_Field >= 0.0 && angRobotHeadingCurrent_Field <= 45.0) || (angRobotHeadingCurrent_Field >= 315.0 && angRobotHeadingCurrent_Field < 360.0)) {
                 angRobotHeadingFinal_Field = 0.0;
             } else if (angRobotHeadingCurrent_Field >= 45.0 && angRobotHeadingCurrent_Field < 135.0) {
@@ -413,7 +511,7 @@ public class DriverAssistVision extends Command {
             } else if (angRobotHeadingCurrent_Field >= 225.0 && angRobotHeadingCurrent_Field < 315.0) {
                 angRobotHeadingFinal_Field = 270.0;
             }
-        } else if (driverAssistRocket) {
+        } else if (target == DriverAssistVisionTarget.ROCKET) {
             // Assist request for rocket ship targets
             Log.d("DAV: Assist for rocket requested");
 
@@ -440,6 +538,18 @@ public class DriverAssistVision extends Command {
     }
 
     /**
+     * Determines if vision system is offline by checking for a non-increasing timestamp
+     * @return True if vision system offline, false otherwise
+     */
+    public boolean visionOffline() {
+        NetworkTableEntry videoTimestampEntry = chickenVisionTable.getEntry("VideoTimestamp");
+        double videoTimestamp = videoTimestampEntry.getDouble(0.0);
+        boolean visionOffline = (videoTimestamp == videoTimestampPrev);
+        videoTimestampPrev = videoTimestamp;
+        return(visionOffline);
+    }
+
+    /**
      * Returns previously computed final desired angle of robot heading respect to field frame.
      * (For testing purposes.)
      *
@@ -448,4 +558,25 @@ public class DriverAssistVision extends Command {
     public double getAngRobotHeadingFinal_Field() {
         return angRobotHeadingFinal_Field;
     }
+
+    /**
+     * Enum for the various states that the robot may be in.
+     */
+    public enum DriverAssistVisionTarget {
+        /**
+         * Driver assist requested for cargo ship or loading bay target
+         */
+        CARGO_AND_LOADING,
+
+        /**
+         * Driver assist request for rocket target
+         */
+        ROCKET,
+
+        /**
+         * Driver assist request for ball target
+         */
+        BALL
+    }
 }
+

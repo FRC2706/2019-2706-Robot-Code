@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot.input;
 
+import ca.team2706.frc.robot.Robot;
 import ca.team2706.frc.robot.config.FluidConstant;
 import ca.team2706.frc.robot.config.XboxValue;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -72,6 +73,11 @@ public class FluidButton extends EButton {
             default:
                 pressed = false;
                 break;
+        }
+
+        // Interrupt the current command on any button press
+        if (pressed) {
+            Robot.interruptCurrentCommand();
         }
 
         return pressed;

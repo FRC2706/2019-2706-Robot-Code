@@ -76,6 +76,9 @@ public class Pneumatics extends Subsystem {
         this.intakeLiftSolenoid = intakeLiftSolenoid;
         this.hatchEjectorSolenoid = hatchEjectorSolenoid;
 
+        addChild("Intake", intakeLiftSolenoid);
+        addChild("Hatch", hatchEjectorSolenoid);
+
         // Need to make sure that the robot's state is known at the beginning.
         listener = this::onRobotStateChange;
         Robot.setOnStateChange(listener);

@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot.subsystems;
 
+import ca.team2706.frc.robot.Sendables;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import com.ctre.phoenix.motorcontrol.*;
@@ -63,6 +64,8 @@ public class Lift extends Subsystem {
      */
     private Lift() {
         liftMotor = new WPI_TalonSRX(Config.LIFT_MOTOR_ID);
+        addChild("Lift Motor", liftMotor);
+        addChild("Lift Position", Sendables.newTalonEncoderSendable(liftMotor));
         setupTalonConfig();
     }
 

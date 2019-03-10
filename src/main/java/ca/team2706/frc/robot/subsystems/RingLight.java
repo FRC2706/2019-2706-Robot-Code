@@ -42,6 +42,7 @@ public class RingLight extends Subsystem {
      */
     private RingLight(final Relay light) {
         this.relay = light;
+        addChild("Ring Light", relay);
     }
 
     /**

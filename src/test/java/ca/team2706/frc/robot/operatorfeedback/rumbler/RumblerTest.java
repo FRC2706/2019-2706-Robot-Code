@@ -1,6 +1,7 @@
 package ca.team2706.frc.robot.operatorfeedback.rumbler;
 
 import ca.team2706.frc.robot.subsystems.DriveBase;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import mockit.Expectations;
@@ -25,6 +26,9 @@ public class RumblerTest {
 
     @Mocked
     private DriveBase driveBase;
+
+    @Mocked
+    private DigitalInput digitalInput;
 
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {

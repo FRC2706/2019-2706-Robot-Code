@@ -48,6 +48,9 @@ public class RobotTest {
     private WPI_TalonSRX talon;
 
     @Mocked
+    private DigitalInput digitalInput;
+
+    @Mocked
     private PWM pwm;
 
     @Mocked

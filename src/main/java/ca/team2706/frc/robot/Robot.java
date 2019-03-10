@@ -11,12 +11,14 @@ import ca.team2706.frc.robot.subsystems.DriveBase;
 import ca.team2706.frc.robot.subsystems.SensorExtras;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.hal.NotifierJNI;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -92,6 +94,10 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledInit() {
+        if (Config.DISABLE_WARNING) {
+            disableLoopOverrun();
+        }
+
         // If test mode was run, disable live window, and start scheduler
         if (LiveWindow.isEnabled()) {
             LiveWindow.setEnabled(false);
@@ -99,6 +105,20 @@ public class Robot extends TimedRobot {
 
         // Iterate through each of the state-change listeners and call them.
         onStateChange(RobotState.DISABLED);
+    }
+
+    /**
+     * Disables the warning that prints if the loop is overrun
+     */
+    private void disableLoopOverrun() {
+        try {
+            Field m_notifierField = TimedRobot.class.getDeclaredField("m_notifier");
+            m_notifierField.setAccessible(true);
+            int m_notifier = m_notifierField.getInt(this);
+            NotifierJNI.cancelNotifierAlarm(m_notifier);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            Log.e("Could not disable loop overrun warning", e);
+        }
     }
 
     /**

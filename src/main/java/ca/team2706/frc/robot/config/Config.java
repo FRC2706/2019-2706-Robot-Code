@@ -97,6 +97,8 @@ public class Config {
 
     public static final double WHEELBASE_WIDTH = robotSpecific(2.0, 2.0, 2.0);
 
+    public static final boolean DISABLE_WARNING = robotSpecific(true, true, true);
+
     public static final Path DEPLOY_DIR = Paths.get(System.getProperty("user.home"), "deploy");
 
     // #### Fluid constants ####

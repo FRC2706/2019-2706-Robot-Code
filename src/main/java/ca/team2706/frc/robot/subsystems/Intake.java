@@ -3,7 +3,7 @@ package ca.team2706.frc.robot.subsystems;
 import ca.team2706.frc.robot.config.Config;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Intake extends Subsystem {
     private static Intake currentInstance;
 
-    private VictorSPX intakeMotor;
+    private WPI_VictorSPX intakeMotor;
     private AnalogInput irSensor;
 
     /**
@@ -41,18 +41,21 @@ public class Intake extends Subsystem {
      * @param intakeTalon The motor controller object for the intake motor.
      * @param irSensor    The ir sensor analog input object.
      */
-    private Intake(VictorSPX intakeTalon, AnalogInput irSensor) {
+    private Intake(WPI_VictorSPX intakeTalon, AnalogInput irSensor) {
         this.intakeMotor = intakeTalon;
         this.irSensor = irSensor;
 
         this.intakeMotor.setNeutralMode(NeutralMode.Brake);
+
+        addChild("IR Sensor", irSensor);
+        addChild("Intake Motor", intakeTalon);
     }
 
     /**
      * Constructs a new Intake.
      */
     private Intake() {
-        this(new VictorSPX(Config.INTAKE_MOTOR_ID),
+        this(new WPI_VictorSPX(Config.INTAKE_MOTOR_ID),
                 new AnalogInput(Config.CARGO_IR_SENSOR_ID));
     }
 

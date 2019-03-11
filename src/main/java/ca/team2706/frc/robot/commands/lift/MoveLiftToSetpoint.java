@@ -14,7 +14,7 @@ public class MoveLiftToSetpoint extends Command {
      * Moves the lift to the currently set setpoint, depending on the Intake mode (either cargo setpoints
      * or hatch setpoints).
      *
-     * @param setpoint      The setpoint number.
+     * @param setpoint The setpoint number.
      */
     public MoveLiftToSetpoint(final int setpoint) {
         requires(Lift.getInstance());

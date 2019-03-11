@@ -67,7 +67,7 @@ public class Config {
 
     public static final int
             INTAKE_MOTOR_ID = robotSpecific(6, 6, 6),
-            CARGO_IR_SENSOR_ID = robotSpecific(3, 3, 3),
+            CARGO_IR_SENSOR_ID = robotSpecific(1, 1, 1),
             INTAKE_LIFT_SOLENOID_FORWARD_ID = robotSpecific(2, 2, 2),
             INTAKE_LIFT_SOLENOID_BACKWARD_ID = robotSpecific(3, 3, 3),
             HATCH_EJECTOR_SOLENOID_FORWARD_ID = robotSpecific(0, 0, 0),
@@ -93,26 +93,26 @@ public class Config {
 
     public static boolean
             INVERT_LIFT_MOTOR = robotSpecific(false, false, false),
-            ENABLE_LIFT_CURRENT_LIMIT = robotSpecific(false, true, true);
+            ENABLE_LIFT_CURRENT_LIMIT = robotSpecific(true, true, true);
 
     public static int
             /**
              * Maximum lift current, in amps.
              */
-            MAX_LIFT_CURRENT = 16,
+            MAX_LIFT_CURRENT = 0,
     /**
      * How long the lift current has to be over the current limit before it is cut out.
      */
-    CURRENT_LIMIT_THRESHOLD_MS = 1000,
+    CURRENT_LIMIT_THRESHOLD_MS = 0,
     /**
      * Continuous current limit
      */
-    CONTINUOUS_CURRENT_LIMIT = 4;
+    CONTINUOUS_CURRENT_LIMIT = 15;
 
     /**
      * How long (in seconds) the lift ramp up on voltage should be.
      */
-    public static double LIF_RAMP_UP_PERIOD = 0.8;
+    public static double LIFT_VOLTAGE_RAMP_UP_PERIOD = 0.6;
 
     public static int MAX_LIFT_ENCODER_TICKS = 54_000;
 
@@ -120,7 +120,7 @@ public class Config {
     public static final boolean ENABLE_DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);
 
     // Talon ID for the Pigeon
-    public static final int GYRO_TALON_ID = robotSpecific(5, 3, 5);
+    public static final int GYRO_TALON_ID = robotSpecific(1, 3, 3);
 
     // Selector Channel
     public static final int SELECTOR_ID = robotSpecific(0, 0, 0);
@@ -183,6 +183,8 @@ public class Config {
     public static final double LOG_PERIOD = robotSpecific(0.02, 0.02, 0.02, Double.POSITIVE_INFINITY);
 
     public static final double WHEELBASE_WIDTH = robotSpecific(2.0, 2.0, 2.0);
+
+    public static final boolean DISABLE_WARNING = robotSpecific(true, true, true);
 
     public static final Path DEPLOY_DIR = Paths.get(System.getProperty("user.home"), "deploy");
 

@@ -12,8 +12,12 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class MoveLiftJoystickVelocity extends Command {
 
+    public static final double ALPHA = 0.1;
+
     private final Joystick controller;
     private int axisPort;
+
+    private double last;
 
     /**
      * Moves the lift on joystick input using velocity.
@@ -31,9 +35,16 @@ public class MoveLiftJoystickVelocity extends Command {
     }
 
     @Override
+    public void initialize() {
+        last = 0;
+    }
+
+    @Override
     public void execute() {
-        final double percentSpeed = -controller.getRawAxis(axisPort) * Config.MANUAL_LIFT_MAX_PERCENT.value();
+        final double percentSpeed = -controller.getRawAxis(axisPort) * ALPHA + (1 - ALPHA) * last;
         Lift.getInstance().setVelocity((int) (percentSpeed * Config.LIFT_MAX_SPEED.value()));
+
+        last = percentSpeed;
     }
 
     @Override

@@ -10,12 +10,15 @@ import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.*;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.IterativeRobotBase;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -72,13 +75,15 @@ public class Robot extends TimedRobot {
         }
 
         commands = new Command[]{
-                OI.getInstance().driveCommand,                               // 0
-                OI.getInstance().driveCommand,                               // 1
-                new StraightDrive(0.2, 2.0, 100),  // 2
-                new MotionMagic(0.2, 15.54, 100),  //3
-                new StraightDriveGyro(0.2, 2.0, 100),  // 4
-                new FollowTrajectoryFromFile(1.0, 100, "Test"),// 5
-                new PlaceHatchAuto() // 6
+
+                OI.getInstance().driveCommand,                                             // 0
+                null,                                                                      // 1
+                null,                                                                      // 2
+                OI.getInstance().driveCommand,                                             // 3
+                new StraightDrive(0.2, 2.0, 100),               // 4
+                new MotionMagic(0.2, 15.54, 100),               // 5
+                new StraightDriveGyro(0.2, 2.0, 100),           // 6
+                new FollowTrajectoryFromFile(1.0, 100, "Test") // 7
         };
     }
 
@@ -94,6 +99,10 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledInit() {
+        if (Config.DISABLE_WARNING) {
+            disableLoopOverrun();
+        }
+
         // If test mode was run, disable live window, and start scheduler
         if (LiveWindow.isEnabled()) {
             LiveWindow.setEnabled(false);
@@ -101,6 +110,20 @@ public class Robot extends TimedRobot {
 
         // Iterate through each of the state-change listeners and call them.
         onStateChange(RobotState.DISABLED);
+    }
+
+    /**
+     * Disables the warning that prints if the loop is overrun
+     */
+    private void disableLoopOverrun() {
+        try {
+            Field m_watchdogField = IterativeRobotBase.class.getDeclaredField("m_watchdog");
+            m_watchdogField.setAccessible(true);
+            Watchdog m_watchdog = (Watchdog) m_watchdogField.get(this);
+            m_watchdog.setTimeout(Double.POSITIVE_INFINITY);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            Log.e("Could not disable loop overrun warning", e);
+        }
     }
 
     /**
@@ -277,7 +300,9 @@ public class Robot extends TimedRobot {
      * Interrupt the current autonomous command and start teleop mode
      */
     public static void interruptCurrentCommand() {
-        currentCommand.cancel();
+        if (currentCommand != null) {
+            currentCommand.cancel();
+        }
     }
 
     /**

@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot.subsystems;
 
+import ca.team2706.frc.robot.Sendables;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import com.ctre.phoenix.motorcontrol.*;
@@ -31,8 +32,8 @@ public class Lift extends Subsystem {
      * Setpoints for hatches, in encoder ticks.
      */
     private static final int[] HATCH_SETPOINTS = {
-            0, // Loading station pickup
-            499, // lowest hatch deploy
+            0, // Bottom position
+            1000, // lowest hatch deploy
             27138, // middle hatch
             Config.MAX_LIFT_ENCODER_TICKS // highest hatch
     };
@@ -63,6 +64,8 @@ public class Lift extends Subsystem {
      */
     private Lift() {
         liftMotor = new WPI_TalonSRX(Config.LIFT_MOTOR_ID);
+        addChild("Lift Motor", liftMotor);
+        addChild("Lift Position", Sendables.newTalonEncoderSendable(liftMotor));
         setupTalonConfig();
     }
 
@@ -112,7 +115,7 @@ public class Lift extends Subsystem {
         liftMotor.configMotionCruiseVelocity((int) (Config.LIFT_MOTION_MAGIC_VELOCITY.value() / Config.LIFT_ENCODER_DPP / 10), Config.CAN_LONG);
         liftMotor.configMotionAcceleration((int) (Config.LIFT_MOTION_MAGIC_ACCELERATION.value() / Config.LIFT_ENCODER_DPP / 10), Config.CAN_LONG);
 
-        liftMotor.configClosedloopRamp(Config.LIF_RAMP_UP_PERIOD, Config.CAN_LONG);
+        liftMotor.configOpenloopRamp(Config.LIFT_VOLTAGE_RAMP_UP_PERIOD, Config.CAN_LONG);
     }
 
     private void enableLimitSwitch(final boolean enable) {

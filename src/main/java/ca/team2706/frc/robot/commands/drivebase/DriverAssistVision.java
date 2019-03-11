@@ -71,9 +71,14 @@ public class DriverAssistVision extends Command {
     private Trajectory trajectory;
 
     /**
-     * True if trajectory has been generated for this command, false otherwise.
+     * True of trajectory has been generated and ready to be passed to motion control system, false otherwise
      */
-    private boolean trajectoryGenerationStageComplete = false;
+    private boolean trajectoryGenerated;
+
+    /**
+     * True if trajectory generation stage in execute loop has been completed, false otherwise.
+     */
+    private boolean followTrajectoryCommandIssued = false;
 
     /**
      * Creates empty driver assist command object (needed for unit testing framework only)
@@ -85,7 +90,7 @@ public class DriverAssistVision extends Command {
         setupNetworkTables();
 
         commandAborted = false;
-        trajectoryGenerationStageComplete = false;
+        followTrajectoryCommandIssued = false;
     }
 
     /**
@@ -104,7 +109,7 @@ public class DriverAssistVision extends Command {
         commandAborted = false;
         issueGenerateTrajectoryCommandStageComplete = false;
         tapeDetectedStageComplete = false;
-        trajectoryGenerationStageComplete = false;
+        followTrajectoryCommandIssued = false;
     }
 
     /**
@@ -136,7 +141,7 @@ public class DriverAssistVision extends Command {
         commandAborted = false;
         issueGenerateTrajectoryCommandStageComplete = false;
         tapeDetectedStageComplete = false;
-        trajectoryGenerationStageComplete = false;
+        followTrajectoryCommandIssued = false;
 
         driverEntry = chickenVisionTable.getEntry("Driver");
         findTapeEntry = chickenVisionTable.getEntry("Tape");
@@ -209,12 +214,14 @@ public class DriverAssistVision extends Command {
             issueGenerateTrajectoryCommandStageComplete = true;
         }
 
-        //if (!trajectoryGenerationStageComplete) {  
-        if (trajectoryGenerationStageComplete) {
-            System.out.println("DAV: Commanding robot to follow trajectory");          
-            // Command robot to move through trajectory
-            followTrajectory = new FollowTrajectory(0.2, 100, trajectory);
-            followTrajectory.start();
+        if (!followTrajectoryCommandIssued) {
+            if (trajectoryGenerated) {
+                System.out.println("DAV: Commanding robot to follow trajectory");          
+                // Command robot to move through trajectory
+                followTrajectory = new FollowTrajectory(0.2, 100, trajectory);
+                followTrajectory.start();
+                followTrajectoryCommandIssued = true;
+            }
         }
     }
 
@@ -483,7 +490,7 @@ public class DriverAssistVision extends Command {
         */
         
 
-        trajectoryGenerationStageComplete = true;
+        trajectoryGenerated = true;
     }
 
     /**
@@ -499,7 +506,7 @@ public class DriverAssistVision extends Command {
      * Returns true if trajectory has been generated, false otherwise
      */
     public boolean getTrajectoryGenerated() {
-        return trajectoryGenerationStageComplete;
+        return trajectoryGenerated;
     }
 
     /**

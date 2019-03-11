@@ -8,6 +8,8 @@ import ca.team2706.frc.robot.subsystems.Lift;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.command.PrintCommand;
+import edu.wpi.first.wpilibj.command.WaitCommand;
 
 /**
  * Command for ejecting hatches from the mechanism.
@@ -31,5 +33,6 @@ public class EjectHatch extends CommandGroup {
         addSequential(new MovePlunger(MovePlunger.DesiredState.DEPLOYED)); // Put plunger out and wait (timed command).
         // Move lift down slightly
         addSequential(new MoveLiftToPosition(0.5, () -> Lift.getInstance().getLiftHeight() + Config.SUBTRACT_LIFT_HEIGHT));
+        addSequential(new PrintCommand("Ejected Hatch"));
     }
 }

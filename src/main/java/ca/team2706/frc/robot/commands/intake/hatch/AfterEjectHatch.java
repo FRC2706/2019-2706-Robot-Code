@@ -20,4 +20,9 @@ public class AfterEjectHatch extends CommandGroup {
         addSequential(new MovePlunger(MovePlunger.DesiredState.STOWED));
         addParallel(new MoveLiftToPosition(0.5, position));
     }
+
+    @Override
+    public void initialize(){
+        super.initialize();
+    }
 }

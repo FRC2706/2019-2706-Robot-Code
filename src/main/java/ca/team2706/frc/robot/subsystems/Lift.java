@@ -32,8 +32,8 @@ public class Lift extends Subsystem {
      * Setpoints for hatches, in encoder ticks.
      */
     private static final int[] HATCH_SETPOINTS = {
-            0, // Loading station pickup
-            499, // lowest hatch deploy
+            0, // Bottom position
+            1000, // lowest hatch deploy
             27138, // middle hatch
             Config.MAX_LIFT_ENCODER_TICKS // highest hatch
     };

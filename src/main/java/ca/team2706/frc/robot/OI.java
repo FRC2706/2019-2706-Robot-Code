@@ -14,7 +14,6 @@ import ca.team2706.frc.robot.commands.lift.*;
 import ca.team2706.frc.robot.commands.ringlight.ToggleRingLight;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.input.FluidButton;
-import ca.team2706.frc.robot.subsystems.DriveBase;
 import ca.team2706.frc.robot.subsystems.Lift;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
@@ -138,7 +137,7 @@ public class OI {
                 .whenHeld(new AbsoluteRotateWithGyro(0.6, 180, Integer.MAX_VALUE));
         new FluidButton(driverStick, Config.FACE_BACK_BINDING)
                 .whenHeld(new AbsoluteRotateWithGyro(0.6, 270, Integer.MAX_VALUE));
-        new FluidButton(driverStick, 0.02, Config.DRIVE_X_BINDING, Config.DRIVE_Y_BINDING)
+        new FluidButton(driverStick, 0.02, Config.DRIVE_X_ACTIVATION_BINDING, Config.DRIVE_Y_ACTIVATION_BINDING)
                 .whenHeld(new CurvatureDriveWithJoystick(driverStick, Config.CURVATURE_DRIVE_FORWARD, true,
                         Config.CURVATURE_CURVE_SPEED, false, Config.SLOW_MODE));
     }

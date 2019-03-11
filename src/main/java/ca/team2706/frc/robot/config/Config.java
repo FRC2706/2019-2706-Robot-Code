@@ -67,7 +67,7 @@ public class Config {
 
     public static final int
             INTAKE_MOTOR_ID = robotSpecific(6, 6, 6),
-            CARGO_IR_SENSOR_ID = robotSpecific(3, 3, 3),
+            CARGO_IR_SENSOR_ID = robotSpecific(1, 1, 1),
             INTAKE_LIFT_SOLENOID_FORWARD_ID = robotSpecific(2, 2, 2),
             INTAKE_LIFT_SOLENOID_BACKWARD_ID = robotSpecific(3, 3, 3),
             HATCH_EJECTOR_SOLENOID_FORWARD_ID = robotSpecific(0, 0, 0),
@@ -93,7 +93,7 @@ public class Config {
 
     public static boolean
             INVERT_LIFT_MOTOR = robotSpecific(false, false, false),
-            ENABLE_LIFT_CURRENT_LIMIT = robotSpecific(false, true, true);
+            ENABLE_LIFT_CURRENT_LIMIT = robotSpecific(true, true, true);
 
     public static int
             /**
@@ -120,7 +120,7 @@ public class Config {
     public static final boolean ENABLE_DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);
 
     // Talon ID for the Pigeon
-    public static final int GYRO_TALON_ID = robotSpecific(5, 3, 5);
+    public static final int GYRO_TALON_ID = robotSpecific(1, 3, 3);
 
     // Selector Channel
     public static final int SELECTOR_ID = robotSpecific(0, 0, 0);

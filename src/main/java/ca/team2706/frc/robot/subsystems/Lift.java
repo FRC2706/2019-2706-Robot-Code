@@ -115,7 +115,7 @@ public class Lift extends Subsystem {
         liftMotor.configMotionCruiseVelocity((int) (Config.LIFT_MOTION_MAGIC_VELOCITY.value() / Config.LIFT_ENCODER_DPP / 10), Config.CAN_LONG);
         liftMotor.configMotionAcceleration((int) (Config.LIFT_MOTION_MAGIC_ACCELERATION.value() / Config.LIFT_ENCODER_DPP / 10), Config.CAN_LONG);
 
-        liftMotor.configClosedloopRamp(Config.LIF_RAMP_UP_PERIOD, Config.CAN_LONG);
+        liftMotor.configOpenloopRamp(Config.LIFT_VOLTAGE_RAMP_UP_PERIOD, Config.CAN_LONG);
     }
 
     private void enableLimitSwitch(final boolean enable) {

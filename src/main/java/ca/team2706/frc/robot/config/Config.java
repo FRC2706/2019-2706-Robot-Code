@@ -99,20 +99,20 @@ public class Config {
             /**
              * Maximum lift current, in amps.
              */
-            MAX_LIFT_CURRENT = 16,
+            MAX_LIFT_CURRENT = 0,
     /**
      * How long the lift current has to be over the current limit before it is cut out.
      */
-    CURRENT_LIMIT_THRESHOLD_MS = 1000,
+    CURRENT_LIMIT_THRESHOLD_MS = 0,
     /**
      * Continuous current limit
      */
-    CONTINUOUS_CURRENT_LIMIT = 4;
+    CONTINUOUS_CURRENT_LIMIT = 15;
 
     /**
      * How long (in seconds) the lift ramp up on voltage should be.
      */
-    public static double LIF_RAMP_UP_PERIOD = 0.8;
+    public static double LIFT_VOLTAGE_RAMP_UP_PERIOD = 0.6;
 
     public static int MAX_LIFT_ENCODER_TICKS = 54_000;
 

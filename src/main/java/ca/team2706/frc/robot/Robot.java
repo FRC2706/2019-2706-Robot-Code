@@ -6,14 +6,13 @@ import ca.team2706.frc.robot.commands.drivebase.StraightDrive;
 import ca.team2706.frc.robot.commands.drivebase.StraightDriveGyro;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
-import ca.team2706.frc.robot.subsystems.Bling;
-import ca.team2706.frc.robot.subsystems.DriveBase;
-import ca.team2706.frc.robot.subsystems.SensorExtras;
+import ca.team2706.frc.robot.subsystems.*;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.hal.NotifierJNI;
+import edu.wpi.first.wpilibj.IterativeRobotBase;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -53,6 +52,11 @@ public class Robot extends TimedRobot {
         Bling.init();
         DriveBase.init();
 
+        Intake.init();
+        Pneumatics.init();
+        Lift.init();
+        RingLight.init();
+
         // Make sure that this is last initialized subsystem
         SensorExtras.init();
 
@@ -62,22 +66,22 @@ public class Robot extends TimedRobot {
         // The USB camera used on the Robot, not enabled during simulation mode
         if (Config.ENABLE_CAMERA) {
             UsbCamera camera0 = CameraServer.getInstance().startAutomaticCapture();
-            UsbCamera camera1 = CameraServer.getInstance().startAutomaticCapture();
 
             // Prevents crashing of simulation robot
             if (isReal()) {
                 camera0.setConnectVerbose(0);
-                camera1.setConnectVerbose(0);
             }
         }
 
         commands = new Command[]{
-                OI.getInstance().driveCommand,                               // 0
-                OI.getInstance().driveCommand,                               // 1
-                new StraightDrive(0.2, 2.0, 100),  // 2
-                new MotionMagic(0.2, 15.54, 100),  //3
-                new StraightDriveGyro(0.2, 2.0, 100),  // 4
-                new FollowTrajectoryFromFile(1.0, 100, "Test")//5
+                OI.getInstance().driveCommand,                                             // 0
+                null,                                                                      // 1
+                null,                                                                      // 2
+                OI.getInstance().driveCommand,                                             // 3
+                new StraightDrive(0.2, 2.0, 100),               // 4
+                new MotionMagic(0.2, 15.54, 100),               // 5
+                new StraightDriveGyro(0.2, 2.0, 100),           // 6
+                new FollowTrajectoryFromFile(1.0, 100, "Test") // 7
         };
     }
 
@@ -86,7 +90,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
-
     }
 
     /**
@@ -112,10 +115,10 @@ public class Robot extends TimedRobot {
      */
     private void disableLoopOverrun() {
         try {
-            Field m_notifierField = TimedRobot.class.getDeclaredField("m_notifier");
-            m_notifierField.setAccessible(true);
-            int m_notifier = m_notifierField.getInt(this);
-            NotifierJNI.cancelNotifierAlarm(m_notifier);
+            Field m_watchdogField = IterativeRobotBase.class.getDeclaredField("m_watchdog");
+            m_watchdogField.setAccessible(true);
+            Watchdog m_watchdog = (Watchdog) m_watchdogField.get(this);
+            m_watchdog.setTimeout(Double.POSITIVE_INFINITY);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             Log.e("Could not disable loop overrun warning", e);
         }

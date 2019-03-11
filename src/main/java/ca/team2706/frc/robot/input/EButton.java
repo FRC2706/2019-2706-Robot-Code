@@ -17,7 +17,7 @@ public abstract class EButton extends Button {
      *
      * @param command the command to start
      */
-    public void whenPressed(final Command command) {
+    public void whenHeld(final Command command) {
         new ButtonScheduler() {
             private boolean m_pressedLast = grab();
 

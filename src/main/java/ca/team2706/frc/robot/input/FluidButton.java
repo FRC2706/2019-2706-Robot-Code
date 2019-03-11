@@ -9,11 +9,12 @@ import edu.wpi.first.wpilibj.GenericHID;
  * JoystickButton set up for using a FluidConstant binding.
  */
 public class FluidButton extends EButton {
+    public static final double DEFAULT_MIN_AXIS_ACTIVATION = 0.8;
 
     /**
      * The minimum absolute input for the raw axis to be active
      */
-    public static final double MIN_AXIS_ACTIVATION = 0.8;
+    private final double minAxisActivation;
 
     /**
      * The POV of the POV button
@@ -31,7 +32,13 @@ public class FluidButton extends EButton {
      * @param actionBinding The action (such as "run motor") to which the joystick is bound.
      */
     public FluidButton(GenericHID genericHID, FluidConstant<String> actionBinding) {
+        this(genericHID, actionBinding, DEFAULT_MIN_AXIS_ACTIVATION);
+    }
+
+    public FluidButton(GenericHID genericHID, FluidConstant<String> actionBinding, final double minActivation) {
         m_joystick = genericHID;
+        this.minAxisActivation = minActivation;
+
         updatePortAndInputType(XboxValue.getXboxValueFromFluidConstant(actionBinding));
 
         actionBinding.addChangeListener((oldValue, newValue) -> {
@@ -49,40 +56,30 @@ public class FluidButton extends EButton {
         this.inputType = value.getInputType();
     }
 
-    /**
-     * Gets the port value currently set to the action's binding.
-     *
-     * @param fluidConstant The fluid constant action of which to find the port value.
-     * @return The port value for the binding.
-     */
-    private static XboxValue getPort(FluidConstant<String> fluidConstant) {
-        return XboxValue.getXboxValueFromNTKey(fluidConstant.value());
-    }
-
     @Override
     public boolean get() {
-        final boolean value;
+        final boolean pressed;
 
         switch (inputType) {
             case Axis:
-                value = Math.abs(m_joystick.getRawAxis(joystickPort)) >= MIN_AXIS_ACTIVATION;
+                pressed = Math.abs(m_joystick.getRawAxis(joystickPort)) >= minAxisActivation;
                 break;
             case Button:
-                value = m_joystick.getRawButton(joystickPort);
+                pressed = m_joystick.getRawButton(joystickPort);
                 break;
             case POV:
-                value = m_joystick.getPOV(POV_NUMBER) == joystickPort;
+                pressed = m_joystick.getPOV(POV_NUMBER) == joystickPort;
                 break;
             default:
-                value = false;
+                pressed = false;
                 break;
         }
 
         // Interrupt the current command on any button press
-        if (value) {
+        if (pressed) {
             Robot.interruptCurrentCommand();
         }
 
-        return value;
+        return pressed;
     }
 }

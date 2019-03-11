@@ -10,10 +10,7 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.PWM;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import jaci.pathfinder.Pathfinder;
@@ -62,6 +59,9 @@ public class ConfigTest {
     @Mocked
     private AnalogInput analogInput;
 
+    @Mocked
+    private Relay relays;
+
     @Mocked(stubOutClassInitialization = true)
     private PigeonIMU pigeon;
 
@@ -90,6 +90,12 @@ public class ConfigTest {
 
     @Injectable
     private SensorCollection sensorCollection;
+
+    @Mocked
+    private DoubleSolenoid solenoid;
+
+    @Mocked
+    private DigitalInput input;
 
     private boolean initialized = false;
 

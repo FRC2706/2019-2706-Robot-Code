@@ -1,8 +1,9 @@
 package ca.team2706.frc.robot.operatorfeedback.rumbler;
 
 import ca.team2706.frc.robot.subsystems.DriveBase;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.*;
 import mockit.Expectations;
 import mockit.Mocked;
 import mockit.Verifications;
@@ -25,6 +26,21 @@ public class RumblerTest {
 
     @Mocked
     private DriveBase driveBase;
+
+    @Mocked
+    private VictorSPX intakeMotor;
+
+    @Mocked
+    private WPI_TalonSRX talons;
+
+    @Mocked
+    private DoubleSolenoid solenoids;
+
+    @Mocked
+    private Relay relays;
+
+    @Mocked
+    private AnalogInput irSensor;
 
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {

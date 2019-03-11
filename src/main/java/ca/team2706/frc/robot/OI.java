@@ -2,7 +2,7 @@ package ca.team2706.frc.robot;
 
 import ca.team2706.frc.robot.commands.drivebase.AbsoluteRotateWithGyro;
 import ca.team2706.frc.robot.commands.drivebase.CurvatureDriveWithJoystick;
-import ca.team2706.frc.robot.commands.drivebase.DriverAssistLaser;
+//import ca.team2706.frc.robot.commands.drivebase.DriverAssistLaser;
 import ca.team2706.frc.robot.commands.drivebase.DriverAssistVision;
 import ca.team2706.frc.robot.commands.drivebase.DriverAssistVision.DriverAssistVisionTarget;
 import ca.team2706.frc.robot.config.Config;
@@ -83,8 +83,8 @@ public class OI {
                 .whenPressed(new DriverAssistVision(DriverAssistVisionTarget.ROCKET));
         new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_BALL_BINDING)
                 .whenPressed(new DriverAssistVision(DriverAssistVisionTarget.BALL));
-        new FluidButton(driverStick, Config.DRIVER_ASSIST_LASER_BINDING)
-                .whenPressed(new DriverAssistLaser());
+        //new FluidButton(driverStick, Config.DRIVER_ASSIST_LASER_BINDING)
+        //        .whenPressed(new DriverAssistLaser());
         new FluidButton(driverStick, Config.FACE_FORWARD_BINDING)
                 .whenPressed(new AbsoluteRotateWithGyro(0.6, 90, Integer.MAX_VALUE));
         new FluidButton(driverStick, Config.FACE_RIGHT_BINDING)

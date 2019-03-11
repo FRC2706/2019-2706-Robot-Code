@@ -69,20 +69,20 @@ public class DriverAssistLaser extends Command {
 
         double robotDistanceToTravel = robotFrontBumperDistanceToTarget - Config.TARGET_OFFSET_DISTANCE_LASER.value();
 
-        commandMotion();
+        //commandMotion();
 
-        motionMagic = new MotionMagic(1.0, robotDistanceToTravel, 3);
-        motionMagic.start();
+        //motionMagic = new MotionMagic(1.0, robotDistanceToTravel, 3);
+        //motionMagic.start();
     }
 
     @Override
     public boolean isFinished() {
-        return (commandAborted || motionMagic.isCompleted());
+        return (commandAborted /* || motionMagic.isCompleted()*/);
     }
 
     @Override
     public void end() {
-        motionMagic.close();
+        /*motionMagic.close();*/
 
         // Go back to disabled mode
         DriveBase.getInstance().setDisabledMode();

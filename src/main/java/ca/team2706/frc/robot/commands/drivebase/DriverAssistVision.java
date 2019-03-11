@@ -37,11 +37,12 @@ public class DriverAssistVision extends Command {
     private boolean commandAborted;
     private FollowTrajectory followTrajectory;
     boolean tapeDetectedStageComplete = false;
-    boolean generateTrajectoryStageComplete = false;
+    boolean issueGenerateTrajectoryCommandStageComplete = false;
     double videoTimestampPrev = 0.0;
     private NetworkTableEntry findTapeEntry;
     private NetworkTableEntry findCargoEntry;
     private NetworkTableEntry tapeDetectedEntry;
+    private NetworkTableEntry driverEntry;
     private DriverAssistVisionTarget target;
 
     /**
@@ -72,7 +73,7 @@ public class DriverAssistVision extends Command {
     /**
      * True if trajectory has been generated for this command, false otherwise.
      */
-    private boolean trajectoryGenerated = false;
+    private boolean trajectoryGenerationStageComplete = false;
 
     /**
      * Creates empty driver assist command object (needed for unit testing framework only)
@@ -84,7 +85,7 @@ public class DriverAssistVision extends Command {
         setupNetworkTables();
 
         commandAborted = false;
-        trajectoryGenerated = false;
+        trajectoryGenerationStageComplete = false;
     }
 
     /**
@@ -101,9 +102,9 @@ public class DriverAssistVision extends Command {
         setupNetworkTables();
 
         commandAborted = false;
-        generateTrajectoryStageComplete = false;
+        issueGenerateTrajectoryCommandStageComplete = false;
         tapeDetectedStageComplete = false;
-        trajectoryGenerated = false;
+        trajectoryGenerationStageComplete = false;
     }
 
     /**
@@ -124,7 +125,7 @@ public class DriverAssistVision extends Command {
         System.out.println("DAV: initialize() called");
 
         if (visionOffline()) {
-            Log.d("Vision offline, command aborted");
+            System.out.println("Vision offline, command aborted");
             commandAborted = true;
             return;
         }
@@ -133,12 +134,14 @@ public class DriverAssistVision extends Command {
         DriveBase.getInstance().setPositionNoGyroMode();
 
         commandAborted = false;
-        generateTrajectoryStageComplete = false;
+        issueGenerateTrajectoryCommandStageComplete = false;
         tapeDetectedStageComplete = false;
-        trajectoryGenerated = false;
+        trajectoryGenerationStageComplete = false;
 
+        driverEntry = chickenVisionTable.getEntry("Driver");
         findTapeEntry = chickenVisionTable.getEntry("Tape");
         findCargoEntry = chickenVisionTable.getEntry("Cargo");
+        driverEntry.setBoolean(false);
         findCargoEntry.setBoolean(false);
         findTapeEntry.setBoolean(true);
 
@@ -150,30 +153,36 @@ public class DriverAssistVision extends Command {
 
     @Override
     public void execute() {
+        System.out.println("DAV: execute() called");
         // See method generateTrajectoryRobotToTarget(...) for an explanation of variable names and coodinate
         // frames
 
         if (visionOffline()) {
-            Log.d("Vision offline, command aborted");
+            System.out.println("DAV: Vision offline, command aborted");
             commandAborted = true;
             return;
         }
 
         if (!tapeDetectedStageComplete) {
+            System.out.println("DAV: Waiting for tapeDetected");
+            //**PUT BACK
             tapeDetectedEntry = pathfinderTable.getEntry("tapeDetected");
             boolean tapeDetected = tapeDetectedEntry.getBoolean(false);
+            //boolean tapeDetected = true;
             if(!tapeDetected)
                 return;
             else
                 tapeDetectedStageComplete = true;
         }
 
-        if (!generateTrajectoryStageComplete) {
+        if (!issueGenerateTrajectoryCommandStageComplete) {
+            System.out.println("DAV: Waiting to issue generated trajectory command");
             // Get angle and position of vision target in camera frame from network table
             // (computed by vision subsystem)
             NetworkTableEntry vectorCameraToTarget = pathfinderTable.getEntry("vectorCameraToTarget");
 
             double[] vectorCameraToTarget_Camera = vectorCameraToTarget.getDoubleArray(new double[]{0, 0});
+            //**PUT BACK
             double angYawTargetWrtCameraLOSCWpos = vectorCameraToTarget_Camera[0];
             double distanceCameraToTarget_Camera = vectorCameraToTarget_Camera[1];
 
@@ -197,21 +206,16 @@ public class DriverAssistVision extends Command {
             };
             new Thread(task).start();
 
-            /*
-            // Compute the trajectory
-            generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, angYawTargetWrtCameraLOSCWpos, target);
-
-            generateTrajectoryStageComplete = true;
-            */
-
-            // Setting this flag will allow OI to provide indication to driver that trajectory is ready via
-            // the getTrajectoryGenerated() method
-            trajectoryGenerated = true;
+            issueGenerateTrajectoryCommandStageComplete = true;
         }
 
-        // Command robot to move through trajectory
-        followTrajectory = new FollowTrajectory(0.2, 100, trajectory);
-        followTrajectory.start();
+        //if (!trajectoryGenerationStageComplete) {  
+        if (trajectoryGenerationStageComplete) {
+            System.out.println("DAV: Commanding robot to follow trajectory");          
+            // Command robot to move through trajectory
+            followTrajectory = new FollowTrajectory(0.2, 100, trajectory);
+            followTrajectory.start();
+        }
     }
 
     @Override
@@ -221,12 +225,20 @@ public class DriverAssistVision extends Command {
 
     @Override
     public void end() {
+        
         if(followTrajectory != null) {
             if(followTrajectory.isRunning()) {
                 followTrajectory.cancel();
             }
             followTrajectory = null;
         }
+
+        driverEntry = chickenVisionTable.getEntry("Driver");
+        findTapeEntry = chickenVisionTable.getEntry("Tape");
+        findCargoEntry = chickenVisionTable.getEntry("Cargo");
+        driverEntry.setBoolean(true);
+        findCargoEntry.setBoolean(false);
+        findTapeEntry.setBoolean(false);
     }
 
     /**
@@ -361,11 +373,13 @@ public class DriverAssistVision extends Command {
 
             // Get current robot heading relative to field frame from IMU
             double angRobotHeadingCurrent_Field = DriveBase.getInstance().getAbsoluteHeading();
-            Log.d("DAV: angRobotHeadingCurrent_Field: " + angRobotHeadingCurrent_Field);
+            System.out.println("DAV: angRobotHeadingCurrent_Field: " + angRobotHeadingCurrent_Field);
 
             // Compute final desired robot heading relative to field (for cargo ship/loading bay and rocket targets only)
             double angRobotHeadingFinal_Field =
                 computeAngRobotHeadingFinal_Field(angRobotHeadingCurrent_Field, target);
+
+            System.out.println("DAV: angRobotHeadingFinal_Field: " + angRobotHeadingFinal_Field);
 
             // Compute unit vector in direction facing target in field frame
             double finalRobotAngleRad_Field = Pathfinder.d2r(angRobotHeadingFinal_Field);
@@ -455,6 +469,7 @@ public class DriverAssistVision extends Command {
             trajectory.segments[i].heading = PI_OVER_2 - trajectory.segments[i].heading;
         }
 
+        /*
         System.out.println("DAV: Trajectory length: " + trajectory.length());
         for (int i = 0; i < trajectory.length(); i++)
         {
@@ -465,8 +480,10 @@ public class DriverAssistVision extends Command {
 
             System.out.println(str);
         }
+        */
+        
 
-        trajectoryGenerated = true;
+        trajectoryGenerationStageComplete = true;
     }
 
     /**
@@ -482,7 +499,7 @@ public class DriverAssistVision extends Command {
      * Returns true if trajectory has been generated, false otherwise
      */
     public boolean getTrajectoryGenerated() {
-        return trajectoryGenerated;
+        return trajectoryGenerationStageComplete;
     }
 
     /**
@@ -543,11 +560,14 @@ public class DriverAssistVision extends Command {
      * @return True if vision system offline, false otherwise
      */
     public boolean visionOffline() {
+        /*
         NetworkTableEntry videoTimestampEntry = chickenVisionTable.getEntry("VideoTimestamp");
         double videoTimestamp = videoTimestampEntry.getDouble(0.0);
         boolean visionOffline = (videoTimestamp == videoTimestampPrev);
         videoTimestampPrev = videoTimestamp;
         return(visionOffline);
+        */
+        return(false);
     }
 
     /**

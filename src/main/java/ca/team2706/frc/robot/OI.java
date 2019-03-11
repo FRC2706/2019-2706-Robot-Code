@@ -40,7 +40,6 @@ public class OI {
      */
     private static OI currentInstance;
 
-    public final Command driveCommand;
     public final Command liftCommand;
 
     /**
@@ -82,20 +81,17 @@ public class OI {
         // The Joystick for controlling the mechanisms of the robot
         this.controlStick = controlStick;
 
-        driveCommand = new CurvatureDriveWithJoystick(driverStick, Config.CURVATURE_DRIVE_FORWARD, true,
-                Config.CURVATURE_CURVE_SPEED, false, Config.SLOW_MODE);
         liftCommand = new HoldLift();
 
         // Set subsystem default commands
-        DriveBase.getInstance().setDefaultCommand(driveCommand);
         Lift.getInstance().setDefaultCommand(liftCommand);
 
         // ---- Operator controls ----
-        new FluidButton(controlStick, Config.INTAKE_BACKWARD_BINDING, 0.05)
+        new FluidButton(controlStick, 0.05, Config.INTAKE_BACKWARD_BINDING)
                 .whenHeld(new RunIntakeOnJoystick(controlStick, Config.INTAKE_BACKWARD_BINDING, false));
-        new FluidButton(controlStick, Config.INTAKE_FORWARD_BINDING, 0.05)
+        new FluidButton(controlStick, 0.05, Config.INTAKE_FORWARD_BINDING)
                 .whenHeld(new RunIntakeOnJoystick(controlStick, Config.INTAKE_FORWARD_BINDING, true));
-        new FluidButton(controlStick, Config.MOVE_LIFT_BINDING, 0.05)
+        new FluidButton(controlStick, 0.05, Config.MOVE_LIFT_BINDING)
                 .whenHeld(new MoveLiftJoystickVelocity(controlStick, Config.MOVE_LIFT_BINDING));
         new FluidButton(controlStick, Config.LIFT_ARMS_BINDING)
                 .whenPressed(new RaiseArmsSafely());
@@ -142,6 +138,9 @@ public class OI {
                 .whenHeld(new AbsoluteRotateWithGyro(0.6, 180, Integer.MAX_VALUE));
         new FluidButton(driverStick, Config.FACE_BACK_BINDING)
                 .whenHeld(new AbsoluteRotateWithGyro(0.6, 270, Integer.MAX_VALUE));
+        new FluidButton(driverStick, 0.02, Config.DRIVE_X_BINDING, Config.DRIVE_Y_BINDING)
+                .whenHeld(new CurvatureDriveWithJoystick(driverStick, Config.CURVATURE_DRIVE_FORWARD, true,
+                        Config.CURVATURE_CURVE_SPEED, false, Config.SLOW_MODE));
     }
 
     /**

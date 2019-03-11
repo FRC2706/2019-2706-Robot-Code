@@ -22,8 +22,8 @@ public class FluidButton extends EButton {
     public static final int POV_NUMBER = 0;
 
     private final GenericHID m_joystick;
-    private int joystickPort;
-    private XboxValue.XboxInputType inputType;
+    private int[] joystickPorts;
+    private XboxValue.XboxInputType[] inputTypes;
 
     /**
      * Constructs a FluidButton with the given GenericHID interface and action binding.
@@ -32,18 +32,40 @@ public class FluidButton extends EButton {
      * @param actionBinding The action (such as "run motor") to which the joystick is bound.
      */
     public FluidButton(GenericHID genericHID, FluidConstant<String> actionBinding) {
-        this(genericHID, actionBinding, DEFAULT_MIN_AXIS_ACTIVATION);
+        this(genericHID, DEFAULT_MIN_AXIS_ACTIVATION, actionBinding);
     }
 
-    public FluidButton(GenericHID genericHID, FluidConstant<String> actionBinding, final double minActivation) {
+    /**
+     * Constructs a fluid button with the given arguments.
+     *
+     * @param genericHID    The joystick on which the button is bound.
+     * @param minActivation The minimum axis activation, if this is an axis.
+     *                      This equates to the minimum value (between 0 and 1)
+     *                      at which the axis will count as being pressed.
+     * @param actionBinding The binding(s) for the button. If multiple arguments are provided, only one of the buttons
+     *                      needs to be pressed to activate the button.
+     */
+    @SafeVarargs
+    public FluidButton(GenericHID genericHID, final double minActivation, FluidConstant<String>... actionBinding) {
+        if (actionBinding == null || actionBinding.length == 0) {
+            throw new IllegalArgumentException("actionBinding needs to contain at least one fluid constant.");
+        }
+
         m_joystick = genericHID;
         this.minAxisActivation = minActivation;
 
-        updatePortAndInputType(XboxValue.getXboxValueFromFluidConstant(actionBinding));
+        joystickPorts = new int[actionBinding.length];
+        inputTypes = new XboxValue.XboxInputType[actionBinding.length];
 
-        actionBinding.addChangeListener((oldValue, newValue) -> {
-            updatePortAndInputType(XboxValue.getXboxValueFromNTKey(newValue));
-        });
+        for (int i = 0; i < actionBinding.length; i++) {
+            final FluidConstant<String> fluidConstant = actionBinding[i];
+            final int index = i;
+            updatePortAndInputType(XboxValue.getXboxValueFromFluidConstant(fluidConstant), index);
+
+            fluidConstant.addChangeListener((oldValue, newValue) -> {
+                updatePortAndInputType(XboxValue.getXboxValueFromNTKey(newValue), index);
+            });
+        }
     }
 
     /**
@@ -51,28 +73,33 @@ public class FluidButton extends EButton {
      *
      * @param value The XboxValue button binding.
      */
-    private void updatePortAndInputType(XboxValue value) {
-        this.joystickPort = value.getPort();
-        this.inputType = value.getInputType();
+    private void updatePortAndInputType(XboxValue value, final int index) {
+        this.joystickPorts[index] = value.getPort();
+        this.inputTypes[index] = value.getInputType();
     }
 
     @Override
     public boolean get() {
-        final boolean pressed;
+        boolean pressed = false;
 
-        switch (inputType) {
-            case Axis:
-                pressed = Math.abs(m_joystick.getRawAxis(joystickPort)) >= minAxisActivation;
+        // Iterate through all the buttons to check if they are pressed.
+        for (int i = 0; i < inputTypes.length; i++) {
+            switch (inputTypes[i]) {
+                case Axis:
+                    pressed = Math.abs(m_joystick.getRawAxis(joystickPorts[i])) >= minAxisActivation;
+                    break;
+                case Button:
+                    pressed = m_joystick.getRawButton(joystickPorts[i]);
+                    break;
+                case POV:
+                    pressed = m_joystick.getPOV(POV_NUMBER) == joystickPorts[i];
+                    break;
+            }
+
+            // If one of the buttons is pressed, break the loop since we don't need to check anymore.
+            if (pressed) {
                 break;
-            case Button:
-                pressed = m_joystick.getRawButton(joystickPort);
-                break;
-            case POV:
-                pressed = m_joystick.getPOV(POV_NUMBER) == joystickPort;
-                break;
-            default:
-                pressed = false;
-                break;
+            }
         }
 
         // Interrupt the current command on any button press

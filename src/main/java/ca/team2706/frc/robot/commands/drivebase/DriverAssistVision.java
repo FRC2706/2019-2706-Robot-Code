@@ -91,7 +91,6 @@ public class DriverAssistVision extends Command {
 
         commandAborted = false;
         followTrajectoryCommandIssued = false;
-        trajectoryGenerated = false;
     }
 
     /**
@@ -111,7 +110,6 @@ public class DriverAssistVision extends Command {
         issueGenerateTrajectoryCommandStageComplete = false;
         tapeDetectedStageComplete = false;
         followTrajectoryCommandIssued = false;
-        trajectoryGenerated = false;
     }
 
     /**
@@ -144,7 +142,6 @@ public class DriverAssistVision extends Command {
         issueGenerateTrajectoryCommandStageComplete = false;
         tapeDetectedStageComplete = false;
         followTrajectoryCommandIssued = false;
-        trajectoryGenerated = false;
 
         driverEntry = chickenVisionTable.getEntry("Driver");
         findTapeEntry = chickenVisionTable.getEntry("Tape");
@@ -492,7 +489,7 @@ public class DriverAssistVision extends Command {
         }
         */
         
-        System.out.println("DAV: Trajectory generated");
+
         trajectoryGenerated = true;
     }
 

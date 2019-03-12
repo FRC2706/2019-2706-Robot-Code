@@ -51,7 +51,7 @@ public abstract class CurvatureDrive extends Command {
         boolean override = ((forwardVal.get() > -0.25 && forwardVal.get() < 0.25));
 
         if (buttonPress.get()) {
-            DriveBase.getInstance().curvatureDrive(forwardVal.get() * 0.25, (override ? rotation / 3.5 : rotation), override);
+            DriveBase.getInstance().curvatureDrive(forwardVal.get() * 0.6, (override ? rotation / 2.5 : rotation), override);
         } else {
             DriveBase.getInstance().curvatureDrive(forwardVal.get(), (override ? rotation / 2 : rotation), override);
         }

@@ -146,6 +146,7 @@ public class DriverAssistVision extends Command {
         driverEntry = chickenVisionTable.getEntry("Driver");
         findTapeEntry = chickenVisionTable.getEntry("Tape");
         findCargoEntry = chickenVisionTable.getEntry("Cargo");
+        tapeDetectedEntry = chickenVisionTable.getEntry("tapeDetected");
         driverEntry.setBoolean(false);
         findCargoEntry.setBoolean(false);
         findTapeEntry.setBoolean(true);
@@ -171,9 +172,8 @@ public class DriverAssistVision extends Command {
         if (!tapeDetectedStageComplete) {
             System.out.println("DAV: Waiting for tapeDetected");
             //**PUT BACK
-            //tapeDetectedEntry = pathfinderTable.getEntry("tapeDetected");
-            //boolean tapeDetected = tapeDetectedEntry.getBoolean(false);
-            boolean tapeDetected = true;
+            boolean tapeDetected = tapeDetectedEntry.getBoolean(false);
+            //boolean tapeDetected = true;
             if(!tapeDetected)
                 return;
             else
@@ -188,8 +188,8 @@ public class DriverAssistVision extends Command {
 
             double[] vectorCameraToTarget_Camera = vectorCameraToTarget.getDoubleArray(new double[]{0, 0});
             //**PUT BACK
-            double angYawTargetWrtCameraLOSCWpos = 2.0; //vectorCameraToTarget_Camera[0];
-            double distanceCameraToTarget_Camera = 10.0; //vectorCameraToTarget_Camera[1];
+            double angYawTargetWrtCameraLOSCWpos = vectorCameraToTarget_Camera[0];
+            double distanceCameraToTarget_Camera = vectorCameraToTarget_Camera[1];
 
             System.out.println("DAV: angYawTargetWrtCameraLOSCWpos [deg]: " + angYawTargetWrtCameraLOSCWpos);
             System.out.println("DAV: distanceCameraToTarget_Camera [ft]: " + distanceCameraToTarget_Camera);

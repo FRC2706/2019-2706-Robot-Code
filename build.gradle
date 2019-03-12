@@ -87,39 +87,60 @@ commit.modified=${isModified()}
 }
 
 def getGitHash() {
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'rev-parse', '--short', 'HEAD'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
+	try {
+		def stdout = new ByteArrayOutputStream()
+		exec {
+			commandLine 'git', 'rev-parse', '--short', 'HEAD'
+			standardOutput = stdout
+		}
+		return stdout.toString().trim() 
+	}
+	catch (Exception e) { 
+		return "unknown"
+	}
+    
 }
 
 def getGitCommit() {
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'show', '-s', '--format=%s'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
+	try {
+		def stdout = new ByteArrayOutputStream()
+		exec {
+			commandLine 'git', 'show', '-s', '--format=%s'
+			standardOutput = stdout
+		}
+		return stdout.toString().trim()
+	}
+	catch (Exception e) { 
+		return "unknown"
+	}
 }
 
 def getGitBranch() {
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'rev-parse', '--abbrev-ref', 'HEAD'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
+	try {
+		def stdout = new ByteArrayOutputStream()
+		exec {
+			commandLine 'git', 'rev-parse', '--abbrev-ref', 'HEAD'
+			standardOutput = stdout
+		}
+		return stdout.toString().trim()
+	}
+	catch (Exception e) { 
+		return "unknown"
+	}
 }
 
 def isModified() {
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'diff-index', '--quiet', 'HEAD', '--', ';', 'echo', '$?',
-        standardOutput = stdout
-    }
-    return !(stdout.toString().toLowerCase().trim())
+	try {
+		def stdout = new ByteArrayOutputStream()
+		exec {
+			commandLine 'git', 'diff-index', '--quiet', 'HEAD', '--', ';', 'echo', '$?',
+			standardOutput = stdout
+		}
+		return !(stdout.toString().toLowerCase().trim())
+	}
+	catch (Exception e) { 
+		return "unknown"
+	}
 
 }
 

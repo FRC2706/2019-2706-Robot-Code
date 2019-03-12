@@ -105,11 +105,14 @@ public class MotionMagicTest {
 
         new Verifications() {{
             talon.set(ControlMode.MotionMagic, position / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, 0);
-            times = 1;
-            talon.feed();
             times = 3;
+            talon.feed();
+            times = 0;
             talon.follow((IMotorController) any, FollowerType.AuxOutput1);
+            times = 3;
             talon.configClosedLoopPeakOutput(0, speed);
+            times = 6;
+            talon.configClosedLoopPeakOutput(1, speed);
             times = 6;
         }};
     }
@@ -122,9 +125,9 @@ public class MotionMagicTest {
      * @param minDoneCycles The min cycles to inject
      */
     @Test
-    public void testFinished(@Injectable("0.0") double speed, @Injectable("5") double position, @Injectable("3") int minDoneCycles) {
+    public void testFinished(@Injectable("0.0") double speed, @Injectable("0") double position, @Injectable("3") int minDoneCycles) {
         new Expectations() {{
-            talon.getClosedLoopError(0);
+            sensorCollection.getQuadraturePosition();
             returns(intFeetToTicks(5), intFeetToTicks(4), intFeetToTicks(1), intFeetToTicks(0.25), intFeetToTicks(1), intFeetToTicks(0.25),
                     intFeetToTicks(-0.4), intFeetToTicks(0), intFeetToTicks(0), intFeetToTicks(0), intFeetToTicks(0));
         }};

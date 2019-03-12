@@ -82,6 +82,12 @@ public class FluidConstantTest {
     @Injectable
     private SensorCollection sensorCollection;
 
+    @Mocked
+    private DoubleSolenoid solenoid;
+
+    @Mocked
+    private DigitalInput input;
+
     // Whether or not tests have been initialized.
     private static boolean isInitialized = false;
 

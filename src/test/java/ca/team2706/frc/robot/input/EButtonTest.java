@@ -4,6 +4,7 @@ import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motion.BuffTrajPointStreamJNI;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj.*;
@@ -33,6 +34,15 @@ public class EButtonTest {
 
     @Mocked
     private WPI_TalonSRX talon;
+
+    @Mocked
+    private Relay relay;
+
+    @Mocked
+    private VictorSPX intakeMotor;
+
+    @Mocked
+    private DoubleSolenoid solenoids;
 
     @Mocked
     private PWM pwm;
@@ -74,10 +84,11 @@ public class EButtonTest {
      * Tests that the command initializes when the button is first pressed, and releases ends when released
      */
     @Test
-    public void whenPressedTest() {
+    public void whenHeldTest() {
         new Expectations() {{
             driverStation.isDisabled();
             result = false;
+
             genericHID.getRawAxis(anyInt);
             result = 0;
             minTimes = 0;
@@ -96,7 +107,7 @@ public class EButtonTest {
 
         assertFalse(command.isRunning());
 
-        button.whenPressed(command);
+        button.whenHeld(command);
         Scheduler.getInstance().run();
         assertFalse(command.isRunning());
 

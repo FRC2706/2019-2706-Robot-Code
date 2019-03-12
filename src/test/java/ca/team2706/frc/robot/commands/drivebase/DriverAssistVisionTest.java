@@ -3,8 +3,9 @@ package ca.team2706.frc.robot.commands.drivebase;
 import ca.team2706.frc.robot.SendablesTest;
 import ca.team2706.frc.robot.commands.drivebase.DriverAssistVision.DriverAssistVisionTarget;
 import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.subsystems.DriveBase;
 import com.ctre.phoenix.CTREJNIWrapper;
+import com.ctre.phoenix.motion.BuffTrajPointStreamJNI;
+import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
@@ -14,17 +15,18 @@ import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import jaci.pathfinder.Trajectory;
 import mockit.Expectations;
+import mockit.Injectable;
 import mockit.Mocked;
 import mockit.Tested;
+import org.junit.Before;
 import org.junit.Test;
+import util.Util;
 
 import static org.junit.Assert.assertEquals;
 
 public class DriverAssistVisionTest {
     @Tested
     private DriverAssistVision driverAssistVision;
-
-    DriveBase driveBase = DriveBase.getInstance();
 
     @Mocked
     private WPI_TalonSRX talon;
@@ -48,6 +50,23 @@ public class DriverAssistVisionTest {
 
     @Mocked
     private Notifier notifier;
+
+    @Mocked(stubOutClassInitialization = true)
+    private BuffTrajPointStreamJNI jni2;
+
+    @Injectable
+    private SensorCollection sensorCollection;
+
+    @Before
+    public void setUp() throws NoSuchFieldException, IllegalAccessException {
+        new Expectations() {{
+            talon.getSensorCollection();
+            result = sensorCollection;
+            minTimes = 0;
+        }};
+
+        Util.resetSubsystems();
+    }
 
     /**
      * Runs various test for generating a trajectory to targets on the cargo ship or

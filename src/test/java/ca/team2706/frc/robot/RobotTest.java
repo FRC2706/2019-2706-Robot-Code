@@ -4,6 +4,7 @@ import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motion.BuffTrajPointStreamJNI;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.cameraserver.CameraServer;
@@ -48,10 +49,13 @@ public class RobotTest {
     private WPI_TalonSRX talon;
 
     @Mocked
-    private DigitalInput digitalInput;
+    private VictorSPX intakeMotor;
 
     @Mocked
     private PWM pwm;
+
+    @Mocked
+    private Relay relays;
 
     @Mocked
     private AnalogInput analogInput;
@@ -93,6 +97,15 @@ public class RobotTest {
 
     @Injectable
     private SensorCollection sensorCollection;
+
+
+    @Mocked
+    private DoubleSolenoid solenoid;
+
+    @Mocked
+    private DigitalInput input;
+
+    @SuppressWarnings("unchecked")
 
     @Before
     public void setUp() throws IOException, NoSuchFieldException, IllegalAccessException {

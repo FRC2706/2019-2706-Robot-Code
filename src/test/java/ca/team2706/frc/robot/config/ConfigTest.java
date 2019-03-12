@@ -62,6 +62,9 @@ public class ConfigTest {
     @Mocked
     private AnalogInput analogInput;
 
+    @Mocked
+    private Relay relays;
+
     @Mocked(stubOutClassInitialization = true)
     private PigeonIMU pigeon;
 
@@ -90,6 +93,12 @@ public class ConfigTest {
 
     @Injectable
     private SensorCollection sensorCollection;
+
+    @Mocked
+    private DoubleSolenoid solenoid;
+
+    @Mocked
+    private DigitalInput input;
 
     private boolean initialized = false;
 

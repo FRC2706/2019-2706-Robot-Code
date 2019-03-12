@@ -127,6 +127,8 @@ public class Config {
     public static final FluidConstant<String> DRIVER_ASSIST_LASER_BINDING =
             constant("driver-assist-laser-binding", XboxValue.XBOX_Y_BUTTON.getNTString());
 
+    
+
     public static final FluidConstant<Double> TRAJ_DELTA_TIME = constant("traj-delta-time", 0.1);
     public static final FluidConstant<Double> VISION_ASSIST_MAX_VELOCITY = constant("robot-max-vel", 3.0);
     public static final FluidConstant<Double> VISION_ASSIST_MAX_ACCELERATION = constant("robot-max-acc", 6.0);
@@ -137,8 +139,17 @@ public class Config {
 
     public static final FluidConstant<Double> VISION_DISTANCE_MIN = constant("target-offset_distance", 0.5);
     public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE = constant("target-offset_distance", 0.5);
+    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_LASER = constant("target-offset-distance-laser", 0.25);
 
     public static final FluidConstant<Double> ROBOT_START_ANGLE = constant("robot-start-angle-deg", 90.0);
+
+    public static final FluidConstant<Double> ROBOT_LENGTH = constant("robot_length", 2.5);
+    
+    public static final FluidConstant<Double> ROBOTTOLASER_ROBOTX = constant("robottolaser-robotx", -0.3);
+    public static final FluidConstant<Double> ROBOTTOLASER_ROBOTY = constant("robottolaser-roboty", -0.3);
+
+    public static final FluidConstant<Double> LASER_DISTANCE_MAX = constant("laster-distance-min", 10.0);
+
 
     // ### Methods, fields and Constructors ###
     /**

@@ -4,6 +4,7 @@ import ca.team2706.frc.robot.Sendables;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.sensors.AnalogSelector;
+import ca.team2706.frc.robot.sensors.LidarLitePWM;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -61,6 +62,16 @@ public class DriveBase extends Subsystem {
      */
     private final AnalogSelector selector;
 
+    /**
+     * Digital IO 0
+     */
+    private final DigitalIO dio0;
+
+    /**
+     * LidarLitePWM
+     */
+    private final LidarLitePWM lidarLitePWM;
+
     /*
      * Purple light that goes on the robot
      */
@@ -103,6 +114,10 @@ public class DriveBase extends Subsystem {
         gyro = new PigeonIMU(new TalonSRX(Config.GYRO_TALON_ID));
 
         selector = new AnalogSelector(Config.SELECTOR_ID);
+
+        dio0 = 
+
+        lidarLitePWM = new LidarLitePWM(source);
 
         light = new PWM(Config.PURPLE_LIGHT);
 

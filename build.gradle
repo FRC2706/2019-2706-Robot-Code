@@ -74,6 +74,7 @@ ext.genOutputDir = file("$buildDir/generated-resources")
 task generatePropInfo {
     ext.outputFile = file("$genOutputDir/build-info.properties")
     outputs.file(outputFile)
+	delete outputFile
     doLast {
         outputFile.text = """name=${project.name}
 timestamp=${getTimestamp()}

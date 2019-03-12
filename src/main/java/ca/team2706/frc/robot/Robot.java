@@ -79,7 +79,7 @@ public class Robot extends TimedRobot {
                 null,                                                                      // 2
                 OI.getInstance().driveCommand,                                             // 3
                 new StraightDrive(0.2, 2.0, 100),               // 4
-                new MotionMagic(0.2, 15.54, 100),               // 5
+                new MotionMagic(1.0, 10.0, 10),                 // 5
                 new StraightDriveGyro(0.2, 2.0, 100),           // 6
                 new FollowTrajectoryFromFile(1.0, 100, "Test") // 7
         };

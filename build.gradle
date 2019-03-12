@@ -133,10 +133,10 @@ def isModified() {
 	try {
 		def stdout = new ByteArrayOutputStream()
 		exec {
-			commandLine 'git', 'diff-index', '--quiet', 'HEAD', '--', ';', 'echo', '$?',
+			commandLine 'git', 'status', '-suno',
 			standardOutput = stdout
 		}
-		return !(stdout.toString().toLowerCase().trim())
+		return !(stdout.toString().trim().isEmpty())
 	}
 	catch (Exception e) { 
 		return "unknown"

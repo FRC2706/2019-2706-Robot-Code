@@ -115,8 +115,8 @@ public class CurvatureDriveWithJoystickTest {
         curveDrive.end();
 
         new Verifications() {{
-            DriveBase.getInstance().curvatureDrive(0.25, 0, false);
-            DriveBase.getInstance().curvatureDrive(0.25, 0, false);
+            DriveBase.getInstance().curvatureDrive(0.5, 0, false);
+            DriveBase.getInstance().curvatureDrive(0.5, 0, false);
         }};
     }
 }

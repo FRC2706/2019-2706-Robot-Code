@@ -158,7 +158,7 @@ public class DriverAssistVision extends Command {
 
     @Override
     public void execute() {
-        System.out.println("DAV: execute() called");
+        //System.out.println("DAV: execute() called");
         // See method generateTrajectoryRobotToTarget(...) for an explanation of variable names and coodinate
         // frames
 
@@ -171,9 +171,9 @@ public class DriverAssistVision extends Command {
         if (!tapeDetectedStageComplete) {
             System.out.println("DAV: Waiting for tapeDetected");
             //**PUT BACK
-            tapeDetectedEntry = pathfinderTable.getEntry("tapeDetected");
-            boolean tapeDetected = tapeDetectedEntry.getBoolean(false);
-            //boolean tapeDetected = true;
+            //tapeDetectedEntry = pathfinderTable.getEntry("tapeDetected");
+            //boolean tapeDetected = tapeDetectedEntry.getBoolean(false);
+            boolean tapeDetected = true;
             if(!tapeDetected)
                 return;
             else
@@ -188,8 +188,8 @@ public class DriverAssistVision extends Command {
 
             double[] vectorCameraToTarget_Camera = vectorCameraToTarget.getDoubleArray(new double[]{0, 0});
             //**PUT BACK
-            double angYawTargetWrtCameraLOSCWpos = vectorCameraToTarget_Camera[0];
-            double distanceCameraToTarget_Camera = vectorCameraToTarget_Camera[1];
+            double angYawTargetWrtCameraLOSCWpos = 2.0; //vectorCameraToTarget_Camera[0];
+            double distanceCameraToTarget_Camera = 10.0; //vectorCameraToTarget_Camera[1];
 
             System.out.println("DAV: angYawTargetWrtCameraLOSCWpos [deg]: " + angYawTargetWrtCameraLOSCWpos);
             System.out.println("DAV: distanceCameraToTarget_Camera [ft]: " + distanceCameraToTarget_Camera);
@@ -215,6 +215,7 @@ public class DriverAssistVision extends Command {
         }
 
         if (!followTrajectoryCommandIssued) {
+            System.out.println("DAV: Checking if trajectory generated");
             if (trajectoryGenerated) {
                 System.out.println("DAV: Commanding robot to follow trajectory");          
                 // Command robot to move through trajectory
@@ -227,7 +228,7 @@ public class DriverAssistVision extends Command {
 
     @Override
     public boolean isFinished() {
-        return (followTrajectory.isFinished() || commandAborted);
+        return ( (trajectoryGenerated && followTrajectory.isFinished()) || commandAborted);
     }
 
     @Override
@@ -239,6 +240,7 @@ public class DriverAssistVision extends Command {
             }
             followTrajectory = null;
         }
+        
 
         driverEntry = chickenVisionTable.getEntry("Driver");
         findTapeEntry = chickenVisionTable.getEntry("Tape");
@@ -460,7 +462,6 @@ public class DriverAssistVision extends Command {
                 new Waypoint(vRobotToFinal_RobotX, vRobotToFinal_RobotY, angRobotHeadingFinalRad_Robot),
         };
         trajectory = Pathfinder.generate(points, config);
-        Log.d("DAV: Trajectory generated");
 
        /*
         * 
@@ -489,8 +490,8 @@ public class DriverAssistVision extends Command {
         }
         */
         
-
         trajectoryGenerated = true;
+        System.out.println("DAV: Trajectory generated");
     }
 
     /**

@@ -35,7 +35,7 @@ public class Lift extends Subsystem {
             0, // Bottom position
             1000, // lowest hatch deploy
             27138, // middle hatch
-            Config.MAX_LIFT_ENCODER_TICKS // highest hatch
+            53500 // highest hatch
     };
 
     private static Lift currentInstance;

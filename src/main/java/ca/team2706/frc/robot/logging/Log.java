@@ -8,7 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
 
-import java.io.IOException;
 import java.util.Properties;
 
 /**
@@ -51,6 +50,10 @@ public class Log {
         Log.i("Commit name: " + properties.getProperty("commit.name", "unknown"));
         Log.i("Commit branch: " + properties.getProperty("commit.branch", "unknown"));
         Log.i("Modified since commit: " + properties.getProperty("commit.modified", "unknown"));
+
+        if (!properties.getProperty("commit.modified", "unknown").equalsIgnoreCase("false")) {
+            DriverStation.reportWarning("Code may have been modified since last commit", false);
+        }
     }
 
     /**

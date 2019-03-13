@@ -22,7 +22,7 @@ public class AfterEjectHatch extends CommandGroup {
     }
 
     @Override
-    public void initialize(){
+    public void initialize() {
         super.initialize();
     }
 }

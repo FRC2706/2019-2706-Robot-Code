@@ -1,6 +1,5 @@
 package ca.team2706.frc.robot;
 
-import ca.team2706.frc.robot.commands.auto.PlaceHatchAuto;
 import ca.team2706.frc.robot.commands.drivebase.AbsoluteRotateWithGyro;
 import ca.team2706.frc.robot.commands.drivebase.CurvatureDriveWithJoystick;
 import ca.team2706.frc.robot.commands.drivebase.DriverAssistVision;
@@ -14,13 +13,10 @@ import ca.team2706.frc.robot.commands.intake.cargo.RunIntakeOnJoystick;
 import ca.team2706.frc.robot.commands.lift.*;
 import ca.team2706.frc.robot.commands.ringlight.ToggleRingLight;
 import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.config.XboxValue;
-import ca.team2706.frc.robot.input.EJoystickButton;
 import ca.team2706.frc.robot.input.FluidButton;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import ca.team2706.frc.robot.subsystems.Lift;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
@@ -146,9 +142,6 @@ public class OI {
                 .whenHeld(new AbsoluteRotateWithGyro(0.6, 180, Integer.MAX_VALUE));
         new FluidButton(driverStick, Config.FACE_BACK_BINDING)
                 .whenHeld(new AbsoluteRotateWithGyro(0.6, 270, Integer.MAX_VALUE));
-
-        // Test Button
-        new JoystickButton(driverStick, XboxValue.XBOX_RB_BUTTON.getPort()).whenPressed(new PlaceHatchAuto());
     }
 
     /**

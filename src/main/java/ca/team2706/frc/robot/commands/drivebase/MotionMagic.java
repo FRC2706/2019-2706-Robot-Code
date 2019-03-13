@@ -1,7 +1,6 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
 import ca.team2706.frc.robot.subsystems.DriveBase;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 import java.util.function.Supplier;
 
@@ -31,6 +30,7 @@ public class MotionMagic extends DriveBaseCloseLoop {
      * @param position      The position to go to in feet
      * @param minDoneCycles The minimum number of cycles for the robot to be within
      *                      the target zone before the command ends
+     * @param heading       The heading for the robot to follow (in degrees)
      */
     public MotionMagic(double speed, double position, int minDoneCycles, double heading) {
         this(() -> speed, () -> position, () -> minDoneCycles, () -> heading);
@@ -43,6 +43,7 @@ public class MotionMagic extends DriveBaseCloseLoop {
      * @param position      The position to go to in feet
      * @param minDoneCycles The minimum number of cycles for the robot to be within
      *                      the target zone before the command ends
+     * @param heading       The heading for the robot to follow (in degrees)
      */
     public MotionMagic(Supplier<Double> speed, Supplier<Double> position, Supplier<Integer> minDoneCycles, Supplier<Double> heading) {
         super(minDoneCycles, TARGET_RANGE);

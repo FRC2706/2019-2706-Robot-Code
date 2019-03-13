@@ -74,6 +74,7 @@ public class MotionMagicTest {
      * @param speed         The speed to create the command with
      * @param position      The position to create the command with
      * @param minDoneCycles The minimum cycles to use
+     * @param heading       The heading to use
      */
     @Test
     public void testCorrectState(@Injectable("0.0") double speed, @Injectable("0.0") double position, @Injectable("1") int minDoneCycles, @Injectable("0.0") double heading) {
@@ -92,6 +93,8 @@ public class MotionMagicTest {
      * @param speed         The speed to inject
      * @param position      The position to inject
      * @param minDoneCycles The min cycles to inject
+     * @param heading       The heading to use
+     * @param heading       The heading to use
      */
     @Test
     public void testSetting(@Injectable("0.0") double speed, @Injectable("0.5") double position, @Injectable("1") int minDoneCycles, @Injectable("0.0") double heading) {
@@ -123,6 +126,8 @@ public class MotionMagicTest {
      * @param speed         The speed to inject
      * @param position      The position to inject
      * @param minDoneCycles The min cycles to inject
+     * @param heading       The heading to use
+     * @param heading       The heading to use
      */
     @Test
     public void testFinished(@Injectable("0.0") double speed, @Injectable("0") double position, @Injectable("3") int minDoneCycles, @Injectable("0.0") double heading) {

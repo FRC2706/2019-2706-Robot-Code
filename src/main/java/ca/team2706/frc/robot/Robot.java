@@ -2,8 +2,6 @@ package ca.team2706.frc.robot;
 
 import ca.team2706.frc.robot.commands.auto.DriveOffHab;
 import ca.team2706.frc.robot.commands.auto.LevelOneCentreHatch;
-import ca.team2706.frc.robot.commands.auto.PlaceHatchAuto;
-import ca.team2706.frc.robot.commands.drivebase.*;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.*;
@@ -162,6 +160,9 @@ public class Robot extends TimedRobot {
 
         if (currentCommand != null) {
             currentCommand.start();
+            Log.i("Running autonomous command: " + currentCommand);
+        } else {
+            Log.w("Not running autonomous command");
         }
     }
 

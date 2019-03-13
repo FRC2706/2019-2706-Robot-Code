@@ -8,8 +8,6 @@ import ca.team2706.frc.robot.subsystems.Lift;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
 import edu.wpi.first.wpilibj.command.InstantCommand;
-import edu.wpi.first.wpilibj.command.PrintCommand;
-import edu.wpi.first.wpilibj.command.WaitCommand;
 
 /**
  * Command for ejecting hatches from the mechanism.

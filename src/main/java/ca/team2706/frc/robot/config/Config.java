@@ -157,7 +157,7 @@ public class Config {
     /**
      * Amount of time (in seconds) that it takes for the plunger to be stowed.
      */
-    public static final double PLUNGER_TIMEOUT = 0.65;
+    public static final double PLUNGER_TIMEOUT = 0.25;
     /**
      * How long the intake motors should be running before the plunger deploys, in seconds.
      */
@@ -209,7 +209,6 @@ public class Config {
 
     public static final FluidConstant<Double> DRIVEBASE_MOTION_MAGIC_CRUISE_VELOCITY = constant("mm-drivebase-cruise-velocity", 8.0);
     public static final FluidConstant<Double> DRIVEBASE_MOTION_MAGIC_ACCELERATION = constant("mm-drivebase-acceleration", 8.0);
-
 
     public static final FluidConstant<Double> LIFT_MOTION_MAGIC_ACCELERATION = constant("mm-lift-acceleration", 4.0);
     public static final FluidConstant<Double> LIFT_MOTION_MAGIC_VELOCITY = constant("mm-lift-velocity", 4.0);

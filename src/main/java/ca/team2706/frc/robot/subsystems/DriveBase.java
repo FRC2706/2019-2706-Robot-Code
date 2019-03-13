@@ -259,7 +259,7 @@ public class DriveBase extends Subsystem {
     /**
      * Selects local encoders, the current sensor and the pigeon
      */
-    private void selectEncodersSumWithPigeon() {
+    private void selectEncodersSumWithPigeon(boolean motionProfile) {
         resetTalonConfiguration();
 
         leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_SHORT);
@@ -288,9 +288,16 @@ public class DriveBase extends Subsystem {
         rightFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value(), Config.CAN_SHORT);
         leftFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value(), Config.CAN_SHORT);
 
-        rightFrontMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
-        rightFrontMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
-        rightFrontMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value());
+        if (motionProfile) {
+            rightFrontMotor.config_kP(0, Config.DRIVE_MOTION_MAGIC_P.value());
+            rightFrontMotor.config_kI(0, Config.DRIVE_MOTION_MAGIC_I.value());
+            rightFrontMotor.config_kD(0, Config.DRIVE_MOTION_MAGIC_D.value());
+            rightFrontMotor.config_kF(0, Config.DRIVE_MOTION_MAGIC_F.value());
+        } else {
+            rightFrontMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
+            rightFrontMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
+            rightFrontMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value());
+        }
 
         rightFrontMotor.config_kP(1, Config.PIGEON_KP.value());
         rightFrontMotor.config_kI(1, Config.PIGEON_KI.value());
@@ -475,7 +482,7 @@ public class DriveBase extends Subsystem {
     public void setMotionMagicWithGyroMode() {
         if (driveMode != DriveMode.MotionMagicWithGyro) {
             stop();
-            selectEncodersSumWithPigeon();
+            selectEncodersSumWithPigeon(true);
             configMotionMagic();
             reset();
 
@@ -489,7 +496,7 @@ public class DriveBase extends Subsystem {
     public void setMotionProfile() {
         if (driveMode != DriveMode.MotionProfile) {
             stop();
-            selectEncodersSumWithPigeon();
+            selectEncodersSumWithPigeon(true);
             configMotionProfile();
             reset();
             rightFrontMotor.startMotionProfile(motionProfilePointStreamRight, 20, ControlMode.MotionProfileArc);
@@ -542,7 +549,7 @@ public class DriveBase extends Subsystem {
     public void setPositionGyroMode() {
         if (driveMode != DriveMode.PositionGyro) {
             stop();
-            selectEncodersSumWithPigeon();
+            selectEncodersSumWithPigeon(false);
             reset();
 
             driveMode = DriveMode.PositionGyro;
@@ -660,27 +667,24 @@ public class DriveBase extends Subsystem {
     }
 
     /**
-     * Follows a pre-set motion magic path. {@link DriveBase#runMotionMagic(double, double)} should be called first.
+     * Follows motion magic profile
      *
-     * @param speed The speed from 0 to 1
+     * @param speed          The speed from 0 to 1
+     * @param setpoint       The setpoint in feet
+     * @param targetRotation The target to rotate to
      */
-    public void setMotionMagicPositionGyro(double speed) {
+    public void setMotionMagicPositionGyro(double speed, double setpoint, double targetRotation) {
         setMotionMagicWithGyroMode();
-        configTalons(speed);
-        follow();
-    }
 
-    /**
-     * Creates a motion magic profile to follow
-     *
-     * @param setpoint       The setpoint to go to in feet
-     * @param targetRotation The desired rotation
-     *                       , double setpoint, double targetRotation
-     */
-    public void runMotionMagic(double setpoint, double targetRotation) {
-        setMotionMagicWithGyroMode();
+        leftFrontMotor.configClosedLoopPeakOutput(0, speed);
+        rightFrontMotor.configClosedLoopPeakOutput(0, speed);
+        leftFrontMotor.configClosedLoopPeakOutput(1, speed);
+        rightFrontMotor.configClosedLoopPeakOutput(1, speed);
 
         rightFrontMotor.set(ControlMode.MotionMagic, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation);
+        leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
+
+        follow();
     }
 
     /**

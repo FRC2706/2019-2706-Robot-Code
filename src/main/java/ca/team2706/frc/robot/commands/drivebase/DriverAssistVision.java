@@ -529,16 +529,20 @@ public class DriverAssistVision extends Command {
     }
 
     /**
-     * Returns true if trajectory has been generated, false otherwise
+     * Determines if a trajectory to the current target has been generated.
+     *
+     * @return True if the trajectory has been generated, false otherwise.
      */
-    public boolean getTrajectoryGenerated() {
+    public boolean isTrajectoryGenerated() {
         return trajectoryGenerated;
     }
 
     /**
-     * Returns true if vision target has been detected, false otherwise
+     * Determines if a vision target is currently in view and detected.
+     *
+     * @return True if vision target has been detected, false otherwise
      */
-    public boolean getVisionTargetsDetected() {
+    public boolean isVisionTargetDetected() {
         return tapeDetectedStageComplete;
     }
 

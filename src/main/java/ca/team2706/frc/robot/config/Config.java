@@ -278,24 +278,13 @@ public class Config {
     public static final FluidConstant<Double> VISION_ASSIST_MAX_VELOCITY = constant("robot-max-vel", 3.0);
     public static final FluidConstant<Double> VISION_ASSIST_MAX_ACCELERATION = constant("robot-max-acc", 6.0);
     public static final FluidConstant<Double> VISION_ASSIST_MAX_JERK = constant("robot-max-jerk", 60.0);
-
-    public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTX = constant("robottocamera-robotx", -0.5); // -0.25
-    public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTY = constant("robottocamera-roboty", 0.6); // 0.25
-
+    public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTX = constant("robottocamera-robotx", -0.25); // -0.5 for plyboy
+    public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTY = constant("robottocamera-roboty", 0.25); // 0.6 for plyboy
     public static final FluidConstant<Double> VISION_DISTANCE_MIN = constant("target-offset_distance", 0.5);
-    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_CARGO_AND_LOADING = constant("target-offset-distance-cargo-and-loading", 2.0); // 0.5
-    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_ROCKET = constant("target-offset-distance-rocket", 1.16);
-    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_BALL = constant("target-offset-distance-ball", 0.25);
-    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_LASER = constant("target-offset-distance-laser", 0.25);
-
+    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_CARGO_AND_LOADING = constant("target-offset-distance-cargo-and-loading", 2.0);
+    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_ROCKET = constant("target-offset-distance-rocket", 2.7);
+    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_BALL = constant("target-offset-distance-ball", 2.0);
     public static final FluidConstant<Double> ROBOT_START_ANGLE = constant("robot-angle-deg", 90.0);
-
-    public static final FluidConstant<Double> ROBOT_LENGTH = constant("robot_length", 2.5);
-    
-    public static final FluidConstant<Double> ROBOTTOLASER_ROBOTX = constant("robottolaser-robotx", -0.3);
-    public static final FluidConstant<Double> ROBOTTOLASER_ROBOTY = constant("robottolaser-roboty", -0.3);
-
-    public static final FluidConstant<Double> LASER_DISTANCE_MAX = constant("laster-distance-min", 10.0);
 
     // ### Methods, fields and Constructors ###
     /**

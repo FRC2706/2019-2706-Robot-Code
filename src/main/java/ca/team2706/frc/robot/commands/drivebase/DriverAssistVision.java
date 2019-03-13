@@ -1,11 +1,10 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
-//import java.lang.FdLibm.Pow;
-
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.commands.drivebase.FollowTrajectory;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.DriveBase;
+import ca.team2706.frc.robot.subsystems.RingLight;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -17,11 +16,14 @@ import jaci.pathfinder.Waypoint;
 /**
  * Command for 2-D driver assist using vision
  * <p>
- * This will drive the robot from its current position and heading to a position
- * at a specific distance in front of and aligned with the nearest target (either on
- * the cargo ship, rocket, or loading bay) using data provided by the vision system.
- * The distance in front of the target or loading bay is specified in the TARGET_OFFSET_DISTANCE
- * attribute of the Config class.
+ * This will drive the robot from its current position/heading to one of the following 
+ * positon/headings based on location data provided by the vision system:
+ * 1) in front of and aligned with the nearest target either on the cargo ship, rocket,
+ *    or loading bay, offset by a distance in the Config class given by 
+ *    TARGET_OFFSET_DISTANCE_<TARGET>, where <TARGET> is one of CARGO_AND_LOADING or
+ *    ROCKET depending on the type of target
+ * 2) in front of a ball, offset by a distance in the Config class given by
+ *    TARGET_OFFSET_DISTANCE_BALL
  * <p>
  * For the feature to work properly, the following must hold
  * i.  the robot must have a heading that is "most facing" the desired target compared
@@ -30,21 +32,8 @@ import jaci.pathfinder.Waypoint;
  * in degrees by the ROBOT_START_ANGLE attribute of the Config class, where
  * this heading is relative to a horizontal line extending across the field and
  * positive heading is measured CCW
- * <p>
- * NOTE: MOTION CONTROL FUNCTIONALITY IS CURRENTLY AWAITING COMPLETION
  */
 public class DriverAssistVision extends Command {
-    private boolean commandAborted;
-    private FollowTrajectory followTrajectory;
-    boolean tapeDetectedStageComplete = false;
-    boolean issueGenerateTrajectoryCommandStageComplete = false;
-    double videoTimestampPrev = 0.0;
-    private NetworkTableEntry findTapeEntry;
-    private NetworkTableEntry findCargoEntry;
-    private NetworkTableEntry tapeDetectedEntry;
-    private NetworkTableEntry driverEntry;
-    private DriverAssistVisionTarget target;
-
     /**
      * Angle of robot heading with respect to x axis of field frame
      */
@@ -56,6 +45,46 @@ public class DriverAssistVision extends Command {
     private NetworkTable chickenVisionTable;
 
     /**
+     * True if command has been aborted, false otherwise
+     */
+    private boolean commandAborted;
+
+    /*
+     * Network table entry named Driver, a boolean set to true to request to the vision system
+     * to enter Driver mode (and not detect tape or ball targets), false otherwise
+     */
+    private NetworkTableEntry driverEntry;
+
+    /*
+     * Network table entry named Cargo, a boolean set to true to request to the vision
+     * to detect ball targets, false otherwise
+     */
+    private NetworkTableEntry findCargoEntry;
+
+    /*
+     * Network table entry named Tape, a boolean set to true to request to the vision
+     * to detect tape targets, false otherwise
+     */
+    private NetworkTableEntry findTapeEntry;
+
+    /*
+     * Motion control system object providing functionality to follow a Pathfinder trajectory
+     */
+    private FollowTrajectory followTrajectory;
+
+    /*
+     * True if the issueGenerateTrajectoryCommand stage of the execute() method has completed, 
+     * indicating that a command has been issued to generate a trajectory, false otherwise
+     */
+    boolean issueGenerateTrajectoryCommandStageComplete = false;
+
+    /**
+     * True if a command has been issued in the execute loop for to the motion control system 
+     * to follow a Pathfinder trajectory, false otherwise.
+     */
+    private boolean followTrajectoryCommandIssued = false;
+
+    /**
      * Network table instance to get data from vision subsystem
      */
     private NetworkTableInstance inst;
@@ -65,8 +94,25 @@ public class DriverAssistVision extends Command {
      */
     private NetworkTable pathfinderTable;
 
+    /*
+     * Network table entry named TapeDetected, a boolean set to true if the tape target has been
+     * detected by the vision system, false otherwise
+     */
+    private NetworkTableEntry tapeDetectedEntry;
+
+    /*
+     * True if the tapeDetectedStage of the execute() method has completed, indicating that
+     * the vision system has detected the tape
+     */
+    boolean tapeDetectedStageComplete = false;
+
+    /* 
+     * The type of target to move to (CARGO_AND_LOADING, ROCKET, or BALL)
+     */
+    private DriverAssistVisionTarget target;
+
     /**
-     * Trajectory generated to move robot to target
+     * Trajectory generated by Pathfinder to move robot to target
      */
     private Trajectory trajectory;
 
@@ -75,10 +121,11 @@ public class DriverAssistVision extends Command {
      */
     private boolean trajectoryGenerated;
 
-    /**
-     * True if trajectory generation stage in execute loop has been completed, false otherwise.
+    /*
+     * Timestamp from the vision system on the previous call to the command, used to assess if
+     * the vison system is offline
      */
-    private boolean followTrajectoryCommandIssued = false;
+    double videoTimestampPrev = 0.0;
 
     /**
      * Creates empty driver assist command object (needed for unit testing framework only)
@@ -91,6 +138,8 @@ public class DriverAssistVision extends Command {
 
         commandAborted = false;
         followTrajectoryCommandIssued = false;
+        issueGenerateTrajectoryCommandStageComplete = false;
+        tapeDetectedStageComplete = false;
     }
 
     /**
@@ -107,9 +156,9 @@ public class DriverAssistVision extends Command {
         setupNetworkTables();
 
         commandAborted = false;
+        followTrajectoryCommandIssued = false;
         issueGenerateTrajectoryCommandStageComplete = false;
         tapeDetectedStageComplete = false;
-        followTrajectoryCommandIssued = false;
     }
 
     /**
@@ -123,87 +172,81 @@ public class DriverAssistVision extends Command {
     }
 
     /**
-     * initialize() method does all the work of the command up to and including generating the trajectory
+     * initialize() method turns on green ring light and issues request to vision system to find target
      */
     @Override
     public void initialize() {
-        System.out.println("DAV: initialize() called");
-
-        if (visionOffline()) {
-            System.out.println("Vision offline, command aborted");
-            commandAborted = true;
-            return;
-        }
+        Log.d("DAV: initialize() called");
 
         DriveBase.getInstance().setBrakeMode(true);
         DriveBase.getInstance().setPositionNoGyroMode();
 
+        // Turn on green ring light
+        RingLight.getInstance().toggleLight();
+
         commandAborted = false;
+        followTrajectoryCommandIssued = false;
         issueGenerateTrajectoryCommandStageComplete = false;
         tapeDetectedStageComplete = false;
-        followTrajectoryCommandIssued = false;
 
         driverEntry = chickenVisionTable.getEntry("Driver");
         findTapeEntry = chickenVisionTable.getEntry("Tape");
         findCargoEntry = chickenVisionTable.getEntry("Cargo");
         tapeDetectedEntry = chickenVisionTable.getEntry("tapeDetected");
-        driverEntry.setBoolean(false);
-        findCargoEntry.setBoolean(false);
-        findTapeEntry.setBoolean(true);
 
-        // Turn on green light
-        // (Fill in)
+        if ((target == DriverAssistVisionTarget.CARGO_AND_LOADING) || (target == DriverAssistVisionTarget.ROCKET)) {
+            driverEntry.setBoolean(false);
+            findCargoEntry.setBoolean(false);
+            findTapeEntry.setBoolean(true);
+        } else if (target == DriverAssistVisionTarget.BALL) {
+            driverEntry.setBoolean(false);
+            findCargoEntry.setBoolean(true);
+            findTapeEntry.setBoolean(false);
+        } else {
+            // target has unexpected value so abort command
+            commandAborted = true;
+        }
 
         Log.d("DAV: Exiting initialize()");
     }
 
+    /**
+     * execute() method waits for vision system to find target, prepares inputs to Pathfinder, 
+     * calls Pathfinder in a separate thread to generate the trajectory, waits for trajectory
+     * to be generated, then calls motion control subsystem to move to the target
+     */
     @Override
     public void execute() {
-        //System.out.println("DAV: execute() called");
-        // See method generateTrajectoryRobotToTarget(...) for an explanation of variable names and coodinate
-        // frames
-
-        if (visionOffline()) {
-            System.out.println("DAV: Vision offline, command aborted");
-            commandAborted = true;
-            return;
-        }
-
         if (!tapeDetectedStageComplete) {
-            System.out.println("DAV: Waiting for tapeDetected");
-            //**PUT BACK
             boolean tapeDetected = tapeDetectedEntry.getBoolean(false);
-            //boolean tapeDetected = true;
             if(!tapeDetected)
                 return;
-            else
+            else {
+                Log.d("DAV: Tape detected");
                 tapeDetectedStageComplete = true;
+            }
         }
 
         if (!issueGenerateTrajectoryCommandStageComplete) {
-            System.out.println("DAV: Waiting to issue generated trajectory command");
-            // Get angle and position of vision target in camera frame from network table
-            // (computed by vision subsystem)
+            // Get angle and position of vision target in camera frame from network table from
+            // vision system
             NetworkTableEntry vectorCameraToTarget = pathfinderTable.getEntry("vectorCameraToTarget");
-
             double[] vectorCameraToTarget_Camera = vectorCameraToTarget.getDoubleArray(new double[]{0, 0});
-            //**PUT BACK
             double angYawTargetWrtCameraLOSCWpos = vectorCameraToTarget_Camera[0];
             double distanceCameraToTarget_Camera = vectorCameraToTarget_Camera[1];
 
-            System.out.println("DAV: angYawTargetWrtCameraLOSCWpos [deg]: " + angYawTargetWrtCameraLOSCWpos);
-            System.out.println("DAV: distanceCameraToTarget_Camera [ft]: " + distanceCameraToTarget_Camera);
+            Log.d("DAV: angYawTargetWrtCameraLOSCWpos [deg]: " + angYawTargetWrtCameraLOSCWpos);
+            Log.d("DAV: distanceCameraToTarget_Camera [ft]: " + distanceCameraToTarget_Camera);
 
-            // Abort if vision is offline or vision system is giving an unreasonably low value 
+            // Abort if vision is giving an unreasonably low value 
             if (distanceCameraToTarget_Camera < Config.VISION_DISTANCE_MIN.value()) {
-                System.out.println("DAV: Vision system offline. Driver assist command not performed.");
+                Log.d("DAV: Distance to target too low. Driver assist command not performed.");
                 commandAborted = true;
                 return;
             }
 
-            System.out.println("DAV: Generating trajectory");
-
             // Compute the trajectory as a separate task to avoid execute() overruns
+            Log.d("DAV: Generating trajectory");
             Runnable task = new Runnable() {
                 public void run() {
                     generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, angYawTargetWrtCameraLOSCWpos, target);
@@ -215,9 +258,8 @@ public class DriverAssistVision extends Command {
         }
 
         if (!followTrajectoryCommandIssued) {
-            System.out.println("DAV: Checking if trajectory generated");
             if (trajectoryGenerated) {
-                System.out.println("DAV: Commanding robot to follow trajectory");          
+                Log.d("DAV: Commanding robot to follow trajectory");          
                 // Command robot to move through trajectory
                 followTrajectory = new FollowTrajectory(0.2, 100, trajectory);
                 followTrajectory.start();
@@ -233,7 +275,6 @@ public class DriverAssistVision extends Command {
 
     @Override
     public void end() {
-        
         if(followTrajectory != null) {
             if(followTrajectory.isRunning()) {
                 followTrajectory.cancel();
@@ -241,13 +282,15 @@ public class DriverAssistVision extends Command {
             followTrajectory = null;
         }
         
-
         driverEntry = chickenVisionTable.getEntry("Driver");
         findTapeEntry = chickenVisionTable.getEntry("Tape");
         findCargoEntry = chickenVisionTable.getEntry("Cargo");
         driverEntry.setBoolean(true);
         findCargoEntry.setBoolean(false);
         findTapeEntry.setBoolean(false);
+
+        // Turn off green ring light
+        RingLight.getInstance().toggleLight();
     }
 
     /**
@@ -279,12 +322,10 @@ public class DriverAssistVision extends Command {
      *
      * @param distanceCameraToTarget_Camera distance from camera to target [ft]
      * @param angYawTargetWrtCameraLOSCWpos yaw angle to target wrt camera line of sight, CW with increase angle [deg]
-     * @param target                        destination target (cargo ship/loading bay, rocket, or cargo ball)
-     * @param driverAssistRocket            true if drivers assist on rocket target is requested
+     * @param target                        destination target (CARGO_AND_LOADING, ROCKET, or BALL)
      */
     public void generateTrajectoryRobotToTarget(double distanceCameraToTarget_Camera, double angYawTargetWrtCameraLOSCWpos,
                                                 DriverAssistVisionTarget target) {
-
         /**
          * Explanation of vector and coordinate frame notation in a 2-d plane:
          *
@@ -336,23 +377,24 @@ public class DriverAssistVision extends Command {
          *
          * Two point of interest are
          *
-         *   Target: The vision target. If the target is actually two pieces of reflective tape, then
-         *           the target is at the centre of the tape.
+         *   Target: The vision target. If the "target" field is CARGO_AND_LOADING or ROCKET, then it is
+         *           at the centre of two relective pieces of tape. If the "target" is BALL, then it is
+         *           at the centre of the ball.
          *
          *   Final:  Final position of robot as represented by the location of the origin of the robot
-         *           frame. This is offset by a user-specified distance Config.TARGET_OFFSET_DISTANCE
-         *           from the front of the target.
-         *
+         *           frame. This is offset by a user-specified distance distance in the Config class 
+         *           given by TARGET_OFFSET_DISTANCE_<TARGET>, where <TARGET> is one of CARGO_AND_LOADING,
+         *           ROCKET, or BALL.
          */
-        Log.d("target" + target);
+        Log.d("target: " + target);
 
-        // Step 1: Compute vector from current robot position to final robot position in robot frame, 
+        // STEP 1: Compute vector from current robot position to final robot position in robot frame, 
         // vRobotToFinal_Robot, where
         //  
         // vRobotToFinal_Robot = vRobotToCamera_Robot + vCameraToTarget_Robot + vTargetToFinal_Robot
         //
         // The three vectors on the right hand side will be denoted by Vector 1, Vector 2, and 
-        // Vector 3 in the comments below
+        // Vector 3 in the comments below, and Vector 1+2 represents the sum Vector 1 and Vector 2
 
         // Vector 1: vRobotToCamera_Robot: Vector from robot to camera in robot frame
         double vRobotToCamera_RobotX = Config.ROBOTTOCAMERA_ROBOTX.value();
@@ -371,24 +413,21 @@ public class DriverAssistVision extends Command {
 
         // Vector 3: vTargetToFinal_Robot: Vector from target to final robot position in robot frame
         // (Depends on target type.)
- 
         double vTargetToFinal_RobotX = 0.0;
         double vTargetToFinal_RobotY = 0.0;
         double angRobotCurrent_Field = 0.0;
         if ((target == DriverAssistVisionTarget.CARGO_AND_LOADING) || 
-            (target == DriverAssistVisionTarget.ROCKET                   )   ) {
-
+            (target == DriverAssistVisionTarget.ROCKET           )   ) {
             // Vector 3 is aligned with and facing away from target
 
             // Get current robot heading relative to field frame from IMU
             double angRobotHeadingCurrent_Field = DriveBase.getInstance().getAbsoluteHeading();
-            System.out.println("DAV: angRobotHeadingCurrent_Field: " + angRobotHeadingCurrent_Field);
+            Log.d("DAV: angRobotHeadingCurrent_Field: " + angRobotHeadingCurrent_Field);
 
-            // Compute final desired robot heading relative to field (for cargo ship/loading bay and rocket targets only)
+            // Compute final desired robot heading relative to field
             double angRobotHeadingFinal_Field =
                 computeAngRobotHeadingFinal_Field(angRobotHeadingCurrent_Field, target);
-
-            System.out.println("DAV: angRobotHeadingFinal_Field: " + angRobotHeadingFinal_Field);
+            Log.d("DAV: angRobotHeadingFinal_Field: " + angRobotHeadingFinal_Field);
 
             // Compute unit vector in direction facing target in field frame
             double finalRobotAngleRad_Field = Pathfinder.d2r(angRobotHeadingFinal_Field);
@@ -429,10 +468,11 @@ public class DriverAssistVision extends Command {
         }
 
         // Compute vRobotToFinal_Robot as sum of Vectors 1+2 and 3
-        // vRobotToFinal_Robot = vRobotToCamera_Robot + vCameraToTarget_Robot + vTargetToFinal_Robot
+        // vRobotToFinal_Robot = (vRobotToCamera_Robot + vCameraToTarget_Robot) + vTargetToFinal_Robot
+        //                        vRobotToTarget_Robot                          + vTargetToFinal_Robert
         double vRobotToFinal_RobotX = vRobotToTarget_RobotX + vTargetToFinal_RobotX;
         double vRobotToFinal_RobotY = vRobotToTarget_RobotY + vTargetToFinal_RobotY;
-        System.out.println("DAV: vRobotToFinal_RobotX: " + vRobotToFinal_RobotX + ", vRobotToFinal_RobotY: " + vRobotToFinal_RobotY);
+        Log.d("DAV: vRobotToFinal_RobotX: " + vRobotToFinal_RobotX + ", vRobotToFinal_RobotY: " + vRobotToFinal_RobotY);
 
         // STEP 2: Compute final robot heading in robot frame
         double angRobotHeadingFinal_Robot = 0.0;
@@ -442,11 +482,12 @@ public class DriverAssistVision extends Command {
             angRobotHeadingFinal_Robot = angRobotHeadingFinal_Field - angRobotCurrent_Field;
             angRobotHeadingFinalRad_Robot = Pathfinder.d2r(angRobotHeadingFinal_Robot);
         } else {
+            // For ball target, heading is just current heading in robot frame
             angRobotHeadingFinalRad_Robot = Math.atan2(vRobotToFinal_RobotY, vRobotToFinal_RobotX);
             angRobotHeadingFinal_Robot = Pathfinder.r2d(angRobotHeadingFinalRad_Robot);
         }
-        System.out.println("DAV: angRobotHeadingFinal_Robot: " + angRobotHeadingFinal_Robot);
-        System.out.println("DAV: angRobotHeadingFinalRad_Robot: " + angRobotHeadingFinalRad_Robot);
+        Log.d("DAV: angRobotHeadingFinal_Robot: " + angRobotHeadingFinal_Robot);
+        Log.d("DAV: angRobotHeadingFinalRad_Robot: " + angRobotHeadingFinalRad_Robot);
 
         // STEP 3: Generate trajectory in robot frame with PathFinder library using two waypoints: one at initial position
         // and one at final position
@@ -464,34 +505,18 @@ public class DriverAssistVision extends Command {
         trajectory = Pathfinder.generate(points, config);
 
        /*
-        * 
         * Headings in trajectory must each be converted into the robot motion control system's frame 
         * whose x-y axes are the same as our robot frame but whose heading along the y-axis
-        * is at 0 degrees with  positive heading clockwise compared to our robot frame whose
-        * heading along the y-axis is 90 degrees with positive heading counter-clockwise. The
-        * transformation to heading in the robot motion control system (given in radians) is 
-        * therefore PI/2 - trajectory.segment[i].heading.
+        * is at 0 degrees with  positive heading clockwise (as compared to our robot frame whose
+        * heading along the y-axis is 90 degrees with positive heading counter-clockwise). 
         */
         double PI_OVER_2 = Math.PI/2.0;
         for (int i = 0; i < trajectory.length(); i++) {
             trajectory.segments[i].heading = PI_OVER_2 - trajectory.segments[i].heading;
         }
 
-        /*
-        System.out.println("DAV: Trajectory length: " + trajectory.length());
-        for (int i = 0; i < trajectory.length(); i++)
-        {
-            String str = 
-                trajectory.segments[i].x + "," +
-                trajectory.segments[i].y + "," +
-                trajectory.segments[i].heading;
-
-            System.out.println(str);
-        }
-        */
-        
         trajectoryGenerated = true;
-        System.out.println("DAV: Trajectory generated");
+        Log.d("DAV: Trajectory generated");
     }
 
     /**
@@ -508,6 +533,13 @@ public class DriverAssistVision extends Command {
      */
     public boolean getTrajectoryGenerated() {
         return trajectoryGenerated;
+    }
+
+    /**
+     * Returns true if vision target has been detected, false otherwise
+     */
+    public boolean getVisionTargetsDetected() {
+        return tapeDetectedStageComplete;
     }
 
     /**
@@ -561,21 +593,6 @@ public class DriverAssistVision extends Command {
         Log.d("DAV: angRobotHeadingFinal_Field: " + angRobotHeadingFinal_Field);
 
         return angRobotHeadingFinal_Field;
-    }
-
-    /**
-     * Determines if vision system is offline by checking for a non-increasing timestamp
-     * @return True if vision system offline, false otherwise
-     */
-    public boolean visionOffline() {
-        /*
-        NetworkTableEntry videoTimestampEntry = chickenVisionTable.getEntry("VideoTimestamp");
-        double videoTimestamp = videoTimestampEntry.getDouble(0.0);
-        boolean visionOffline = (videoTimestamp == videoTimestampPrev);
-        videoTimestampPrev = videoTimestamp;
-        return(visionOffline);
-        */
-        return(false);
     }
 
     /**

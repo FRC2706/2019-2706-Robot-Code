@@ -89,7 +89,6 @@ public class DriverAssistVisionTest {
         double vRobotToTarget_CameraY = 7.0;
         double vCameraToTarget_CameraX = vRobotToTarget_CameraX - Config.ROBOTTOCAMERA_ROBOTX.value();
         double vCameraToTarget_CameraY = vRobotToTarget_CameraY - Config.ROBOTTOCAMERA_ROBOTY.value();
-
         double distanceCameraToTarget_Camera = Math.sqrt(Math.pow(vCameraToTarget_CameraX, 2) + Math.pow(vCameraToTarget_CameraY, 2));
         double yawAngleCameraToTarget_Camera = Math.toDegrees(Math.atan2(vCameraToTarget_CameraX, vCameraToTarget_CameraY));
         DriverAssistVisionTarget target = DriverAssistVisionTarget.CARGO_AND_LOADING;
@@ -135,7 +134,6 @@ public class DriverAssistVisionTest {
         double vRobotToTarget_CameraY = 7.0;
         double vCameraToTarget_CameraX = vRobotToTarget_CameraX - Config.ROBOTTOCAMERA_ROBOTX.value();
         double vCameraToTarget_CameraY = vRobotToTarget_CameraY - Config.ROBOTTOCAMERA_ROBOTY.value();
-
         double distanceCameraToTarget_Camera = Math.sqrt(Math.pow(vCameraToTarget_CameraX, 2) + Math.pow(vCameraToTarget_CameraY, 2));
         double yawAngleCameraToTarget_Camera = Math.toDegrees(Math.atan2(vCameraToTarget_CameraX, vCameraToTarget_CameraY));
         DriverAssistVisionTarget target = DriverAssistVisionTarget.ROCKET;
@@ -183,15 +181,12 @@ public class DriverAssistVisionTest {
         double PI_OVER_2 = Math.PI/2.0;
         double angRobotHeadingFinalExpectedRad_Robot = Math.atan2(vRobotToTarget_RobotY, vRobotToTarget_RobotX);
         double angRobotHeadingFinalExpectedRad_Motion = PI_OVER_2 - angRobotHeadingFinalExpectedRad_Robot;
-        System.out.println("angRobotHeadingFinalExpectedRad_Robot:" + angRobotHeadingFinalExpectedRad_Robot);
         double mag = Math.sqrt(Math.pow(vRobotToTarget_RobotX, 2.0) + Math.pow(vRobotToTarget_RobotY, 2.0));
         double vUnitRobotToTarget_RobotX = vRobotToTarget_RobotX/mag;
         double vUnitRobotToTarget_RobotY = vRobotToTarget_RobotY/mag;
         double vRobotToFinalExpected_RobotX = vRobotToTarget_RobotX - Config.TARGET_OFFSET_DISTANCE_BALL.value() * vUnitRobotToTarget_RobotX;
         double vRobotToFinalExpected_RobotY = vRobotToTarget_RobotY - Config.TARGET_OFFSET_DISTANCE_BALL.value() * vUnitRobotToTarget_RobotY;
         
-        System.out.println("angRobotHeadingFinalExpectedRad_Robot: " + angRobotHeadingFinalExpectedRad_Robot);
-        System.out.println("angRobotHeadingFinalExpectedRad_Motion: " + angRobotHeadingFinalExpectedRad_Motion);
         driverAssistVision.generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, yawAngleCameraToTarget_Camera, target);
         Trajectory traj = driverAssistVision.getTrajectory();
         assertEquals(traj.segments[0].x, 0.0, 0.3);

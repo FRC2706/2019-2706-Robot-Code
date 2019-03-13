@@ -1,6 +1,7 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
 import ca.team2706.frc.robot.subsystems.DriveBase;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 import java.util.function.Supplier;
 
@@ -17,7 +18,7 @@ public class MotionMagic extends DriveBaseCloseLoop {
     /**
      * References to the speed and position that the robot should be travelling at
      */
-    private final Supplier<Double> speed, position;
+    private final Supplier<Double> speed, position, heading;
 
     private final Supplier<Integer> minDoneCycles;
 
@@ -31,8 +32,8 @@ public class MotionMagic extends DriveBaseCloseLoop {
      * @param minDoneCycles The minimum number of cycles for the robot to be within
      *                      the target zone before the command ends
      */
-    public MotionMagic(double speed, double position, int minDoneCycles) {
-        this(() -> speed, () -> position, () -> minDoneCycles);
+    public MotionMagic(double speed, double position, int minDoneCycles, double heading) {
+        this(() -> speed, () -> position, () -> minDoneCycles, () -> heading);
     }
 
     /**
@@ -43,11 +44,12 @@ public class MotionMagic extends DriveBaseCloseLoop {
      * @param minDoneCycles The minimum number of cycles for the robot to be within
      *                      the target zone before the command ends
      */
-    public MotionMagic(Supplier<Double> speed, Supplier<Double> position, Supplier<Integer> minDoneCycles) {
+    public MotionMagic(Supplier<Double> speed, Supplier<Double> position, Supplier<Integer> minDoneCycles, Supplier<Double> heading) {
         super(minDoneCycles, TARGET_RANGE);
         this.speed = speed;
         this.position = position;
         this.minDoneCycles = minDoneCycles;
+        this.heading = heading;
     }
 
     @Override
@@ -59,12 +61,7 @@ public class MotionMagic extends DriveBaseCloseLoop {
 
     @Override
     public void execute() {
-        DriveBase.getInstance().setMotionMagicPositionGyro(speed.get(), position.get(), 0);
-    }
-
-    @Override
-    public void end() {
-        System.out.println(DriveBase.getInstance().getRightDistance());
+        DriveBase.getInstance().setMotionMagicPositionGyro(speed.get(), position.get(), heading.get());
     }
 
     @Override

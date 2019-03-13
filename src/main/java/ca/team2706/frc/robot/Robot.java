@@ -1,11 +1,9 @@
 package ca.team2706.frc.robot;
 
+import ca.team2706.frc.robot.commands.auto.DriveOffHab;
 import ca.team2706.frc.robot.commands.auto.LevelOneCentreHatch;
 import ca.team2706.frc.robot.commands.auto.PlaceHatchAuto;
-import ca.team2706.frc.robot.commands.drivebase.FollowTrajectoryFromFile;
-import ca.team2706.frc.robot.commands.drivebase.MotionMagic;
-import ca.team2706.frc.robot.commands.drivebase.StraightDrive;
-import ca.team2706.frc.robot.commands.drivebase.StraightDriveGyro;
+import ca.team2706.frc.robot.commands.drivebase.*;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.*;
@@ -76,15 +74,12 @@ public class Robot extends TimedRobot {
         }
 
         commands = new Command[]{
-
                 OI.getInstance().driveCommand,                                             // 0
                 null,                                                                      // 1
                 null,                                                                      // 2
                 OI.getInstance().driveCommand,                                             // 3
-                new LevelOneCentreHatch(),               // 4
-                new MotionMagic(0.2, 15.54, 100),               // 5
-                new StraightDriveGyro(0.2, 2.0, 100),           // 6
-                new FollowTrajectoryFromFile(1.0, 100, "Test") // 7
+                new DriveOffHab(),                                                         // 4
+                new LevelOneCentreHatch(),                                                 // 5
         };
     }
 

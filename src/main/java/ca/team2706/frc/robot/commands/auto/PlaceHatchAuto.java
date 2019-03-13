@@ -14,8 +14,7 @@ public class PlaceHatchAuto extends CommandGroup {
     PlaceHatchAuto() {
         addSequential(new ApproachHatchPlacement());
         LiftPosition position = new LiftPosition();
-        addSequential(new EjectHatch(position), 1.5);
-      //  addSequential(new WaitCommand(.5));
+        addSequential(new EjectHatch(position));
         addSequential(new AfterEjectHatch(position::getPosition));
     }
 }

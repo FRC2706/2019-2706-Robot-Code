@@ -76,7 +76,7 @@ public class MotionMagicTest {
      * @param minDoneCycles The minimum cycles to use
      */
     @Test
-    public void testCorrectState(@Injectable("0.0") double speed, @Injectable("0.0") double position, @Injectable("1") int minDoneCycles) {
+    public void testCorrectState(@Injectable("0.0") double speed, @Injectable("0.0") double position, @Injectable("1") int minDoneCycles, @Injectable("0.0") double heading) {
         assertEquals(DriveBase.DriveMode.Disabled, DriveBase.getInstance().getDriveMode());
         motionMagic.initialize();
         assertEquals(DriveBase.DriveMode.MotionMagicWithGyro, DriveBase.getInstance().getDriveMode());
@@ -94,7 +94,7 @@ public class MotionMagicTest {
      * @param minDoneCycles The min cycles to inject
      */
     @Test
-    public void testSetting(@Injectable("0.0") double speed, @Injectable("0.5") double position, @Injectable("1") int minDoneCycles) {
+    public void testSetting(@Injectable("0.0") double speed, @Injectable("0.5") double position, @Injectable("1") int minDoneCycles, @Injectable("0.0") double heading) {
         motionMagic.initialize();
 
         for (int i = 0; i < 3; i++) {
@@ -125,7 +125,7 @@ public class MotionMagicTest {
      * @param minDoneCycles The min cycles to inject
      */
     @Test
-    public void testFinished(@Injectable("0.0") double speed, @Injectable("0") double position, @Injectable("3") int minDoneCycles) {
+    public void testFinished(@Injectable("0.0") double speed, @Injectable("0") double position, @Injectable("3") int minDoneCycles, @Injectable("0.0") double heading) {
         new Expectations() {{
             sensorCollection.getQuadraturePosition();
             returns(intFeetToTicks(5), intFeetToTicks(4), intFeetToTicks(1), intFeetToTicks(0.25), intFeetToTicks(1), intFeetToTicks(0.25),

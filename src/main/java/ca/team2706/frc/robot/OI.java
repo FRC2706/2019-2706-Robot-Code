@@ -124,7 +124,7 @@ public class OI {
         new FluidButton(controlStick, Config.TOGGLE_RING_LIGHT_BINDING)
                 .whenPressed(new ToggleRingLight());
         new FluidButton(controlStick, Config.SLIGHTLY_LIFT_LIFT_BINDING)
-                .whenPressed(new MoveLiftToPosition(0.5, () -> Lift.getInstance().getLiftHeight() + 1.1));
+                .whenPressed(new MoveLiftToPosition(0.7, () -> Lift.getInstance().getLiftHeight() + 1.1));
 
         // ---- Driver controls ----
 

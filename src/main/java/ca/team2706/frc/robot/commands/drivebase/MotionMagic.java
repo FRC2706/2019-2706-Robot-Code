@@ -63,6 +63,11 @@ public class MotionMagic extends DriveBaseCloseLoop {
     }
 
     @Override
+    public void end() {
+        System.out.println(DriveBase.getInstance().getRightDistance());
+    }
+
+    @Override
     public boolean isFinished() {
         if (Math.abs((DriveBase.getInstance().getRightDistance() - position.get())) <= TARGET_RANGE) {
             doneCycles++;

@@ -111,8 +111,6 @@ public class MotionMagicVisionTest {
      */
     @Test
     public void testNetworkTablesSetup(@Injectable("0.0") double speed, @Injectable("0") double position, @Injectable("3") int minDoneCycles) {
-        assertEquals(driver, NetworkTableInstance.getDefault().getTable("ChickenVision").getEntry("Driver"));
-
         motionMagicVision.initialize();
         motionMagicVision.end();
 

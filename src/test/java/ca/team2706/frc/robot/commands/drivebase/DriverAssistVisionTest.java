@@ -178,15 +178,15 @@ public class DriverAssistVisionTest {
         // Verify the values produced with expected values. Note that the generated trajectory
         // is compared against the expected trajectory by comparing the expected x, y, and heading
         // against those of the generated trajectory for the first and last segments.
-        double PI_OVER_2 = Math.PI/2.0;
+        double PI_OVER_2 = Math.PI / 2.0;
         double angRobotHeadingFinalExpectedRad_Robot = Math.atan2(vRobotToTarget_RobotY, vRobotToTarget_RobotX);
         double angRobotHeadingFinalExpectedRad_Motion = PI_OVER_2 - angRobotHeadingFinalExpectedRad_Robot;
         double mag = Math.sqrt(Math.pow(vRobotToTarget_RobotX, 2.0) + Math.pow(vRobotToTarget_RobotY, 2.0));
-        double vUnitRobotToTarget_RobotX = vRobotToTarget_RobotX/mag;
-        double vUnitRobotToTarget_RobotY = vRobotToTarget_RobotY/mag;
+        double vUnitRobotToTarget_RobotX = vRobotToTarget_RobotX / mag;
+        double vUnitRobotToTarget_RobotY = vRobotToTarget_RobotY / mag;
         double vRobotToFinalExpected_RobotX = vRobotToTarget_RobotX - Config.TARGET_OFFSET_DISTANCE_BALL.value() * vUnitRobotToTarget_RobotX;
         double vRobotToFinalExpected_RobotY = vRobotToTarget_RobotY - Config.TARGET_OFFSET_DISTANCE_BALL.value() * vUnitRobotToTarget_RobotY;
-        
+
         driverAssistVision.generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, yawAngleCameraToTarget_Camera, target);
         Trajectory traj = driverAssistVision.getTrajectory();
         assertEquals(traj.segments[0].x, 0.0, 0.3);

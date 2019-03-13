@@ -1,7 +1,6 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
 import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.commands.drivebase.FollowTrajectory;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import ca.team2706.frc.robot.subsystems.RingLight;
@@ -16,14 +15,14 @@ import jaci.pathfinder.Waypoint;
 /**
  * Command for 2-D driver assist using vision
  * <p>
- * This will drive the robot from its current position/heading to one of the following 
+ * This will drive the robot from its current position/heading to one of the following
  * positon/headings based on location data provided by the vision system:
  * 1) in front of and aligned with the nearest target either on the cargo ship, rocket,
- *    or loading bay, offset by a distance in the Config class given by 
- *    TARGET_OFFSET_DISTANCE_<TARGET>, where <TARGET> is one of CARGO_AND_LOADING or
- *    ROCKET depending on the type of target
+ * or loading bay, offset by a distance in the Config class given by
+ * TARGET_OFFSET_DISTANCE_<TARGET>, where <TARGET> is one of CARGO_AND_LOADING or
+ * ROCKET depending on the type of target
  * 2) in front of a ball, offset by a distance in the Config class given by
- *    TARGET_OFFSET_DISTANCE_BALL
+ * TARGET_OFFSET_DISTANCE_BALL
  * <p>
  * For the feature to work properly, the following must hold
  * i.  the robot must have a heading that is "most facing" the desired target compared
@@ -73,13 +72,13 @@ public class DriverAssistVision extends Command {
     private FollowTrajectory followTrajectory;
 
     /*
-     * True if the issueGenerateTrajectoryCommand stage of the execute() method has completed, 
+     * True if the issueGenerateTrajectoryCommand stage of the execute() method has completed,
      * indicating that a command has been issued to generate a trajectory, false otherwise
      */
     boolean issueGenerateTrajectoryCommandStageComplete = false;
 
     /**
-     * True if a command has been issued in the execute loop for to the motion control system 
+     * True if a command has been issued in the execute loop for to the motion control system
      * to follow a Pathfinder trajectory, false otherwise.
      */
     private boolean followTrajectoryCommandIssued = false;
@@ -106,7 +105,7 @@ public class DriverAssistVision extends Command {
      */
     boolean tapeDetectedStageComplete = false;
 
-    /* 
+    /*
      * The type of target to move to (CARGO_AND_LOADING, ROCKET, or BALL)
      */
     private DriverAssistVisionTarget target;
@@ -211,7 +210,7 @@ public class DriverAssistVision extends Command {
     }
 
     /**
-     * execute() method waits for vision system to find target, prepares inputs to Pathfinder, 
+     * execute() method waits for vision system to find target, prepares inputs to Pathfinder,
      * calls Pathfinder in a separate thread to generate the trajectory, waits for trajectory
      * to be generated, then calls motion control subsystem to move to the target
      */
@@ -219,7 +218,7 @@ public class DriverAssistVision extends Command {
     public void execute() {
         if (!tapeDetectedStageComplete) {
             boolean tapeDetected = tapeDetectedEntry.getBoolean(false);
-            if(!tapeDetected)
+            if (!tapeDetected)
                 return;
             else {
                 Log.d("DAV: Tape detected");
@@ -259,7 +258,7 @@ public class DriverAssistVision extends Command {
 
         if (!followTrajectoryCommandIssued) {
             if (trajectoryGenerated) {
-                Log.d("DAV: Commanding robot to follow trajectory");          
+                Log.d("DAV: Commanding robot to follow trajectory");
                 // Command robot to move through trajectory
                 followTrajectory = new FollowTrajectory(0.2, 100, trajectory);
                 followTrajectory.start();
@@ -270,18 +269,18 @@ public class DriverAssistVision extends Command {
 
     @Override
     public boolean isFinished() {
-        return ( (trajectoryGenerated && followTrajectory.isFinished()) || commandAborted);
+        return ((trajectoryGenerated && followTrajectory.isFinished()) || commandAborted);
     }
 
     @Override
     public void end() {
-        if(followTrajectory != null) {
-            if(followTrajectory.isRunning()) {
+        if (followTrajectory != null) {
+            if (followTrajectory.isRunning()) {
                 followTrajectory.cancel();
             }
             followTrajectory = null;
         }
-        
+
         driverEntry = chickenVisionTable.getEntry("Driver");
         findTapeEntry = chickenVisionTable.getEntry("Tape");
         findCargoEntry = chickenVisionTable.getEntry("Cargo");
@@ -416,8 +415,8 @@ public class DriverAssistVision extends Command {
         double vTargetToFinal_RobotX = 0.0;
         double vTargetToFinal_RobotY = 0.0;
         double angRobotCurrent_Field = 0.0;
-        if ((target == DriverAssistVisionTarget.CARGO_AND_LOADING) || 
-            (target == DriverAssistVisionTarget.ROCKET           )   ) {
+        if ((target == DriverAssistVisionTarget.CARGO_AND_LOADING) ||
+                (target == DriverAssistVisionTarget.ROCKET)) {
             // Vector 3 is aligned with and facing away from target
 
             // Get current robot heading relative to field frame from IMU
@@ -426,7 +425,7 @@ public class DriverAssistVision extends Command {
 
             // Compute final desired robot heading relative to field
             double angRobotHeadingFinal_Field =
-                computeAngRobotHeadingFinal_Field(angRobotHeadingCurrent_Field, target);
+                    computeAngRobotHeadingFinal_Field(angRobotHeadingCurrent_Field, target);
             Log.d("DAV: angRobotHeadingFinal_Field: " + angRobotHeadingFinal_Field);
 
             // Compute unit vector in direction facing target in field frame
@@ -438,8 +437,7 @@ public class DriverAssistVision extends Command {
             double d = 0.0;
             if (target == DriverAssistVisionTarget.CARGO_AND_LOADING) {
                 d = Config.TARGET_OFFSET_DISTANCE_CARGO_AND_LOADING.value();
-            }
-            else if (target == DriverAssistVisionTarget.ROCKET) {
+            } else if (target == DriverAssistVisionTarget.ROCKET) {
                 d = Config.TARGET_OFFSET_DISTANCE_ROCKET.value();
             }
             double vTargetToFinal_FieldX = -d * vUnitFacingTarget_FieldX;
@@ -462,9 +460,9 @@ public class DriverAssistVision extends Command {
 
         } else if (target == DriverAssistVisionTarget.BALL) {
             // Vector 3 is oriented from cargo ball to origin of robot frame
-            double vRobotToTarget_magnitude = Math.sqrt(Math.pow(vRobotToTarget_RobotX,2) + Math.pow(vRobotToTarget_RobotY,2));
-            vTargetToFinal_RobotX = -Config.TARGET_OFFSET_DISTANCE_BALL.value() * (vRobotToTarget_RobotX/vRobotToTarget_magnitude);
-            vTargetToFinal_RobotY = -Config.TARGET_OFFSET_DISTANCE_BALL.value() * (vRobotToTarget_RobotY/vRobotToTarget_magnitude);
+            double vRobotToTarget_magnitude = Math.sqrt(Math.pow(vRobotToTarget_RobotX, 2) + Math.pow(vRobotToTarget_RobotY, 2));
+            vTargetToFinal_RobotX = -Config.TARGET_OFFSET_DISTANCE_BALL.value() * (vRobotToTarget_RobotX / vRobotToTarget_magnitude);
+            vTargetToFinal_RobotY = -Config.TARGET_OFFSET_DISTANCE_BALL.value() * (vRobotToTarget_RobotY / vRobotToTarget_magnitude);
         }
 
         // Compute vRobotToFinal_Robot as sum of Vectors 1+2 and 3
@@ -477,8 +475,8 @@ public class DriverAssistVision extends Command {
         // STEP 2: Compute final robot heading in robot frame
         double angRobotHeadingFinal_Robot = 0.0;
         double angRobotHeadingFinalRad_Robot = 0.0;
-        if ((target == DriverAssistVisionTarget.CARGO_AND_LOADING) || 
-            (target == DriverAssistVisionTarget.ROCKET                   )   ) {
+        if ((target == DriverAssistVisionTarget.CARGO_AND_LOADING) ||
+                (target == DriverAssistVisionTarget.ROCKET)) {
             angRobotHeadingFinal_Robot = angRobotHeadingFinal_Field - angRobotCurrent_Field;
             angRobotHeadingFinalRad_Robot = Pathfinder.d2r(angRobotHeadingFinal_Robot);
         } else {
@@ -504,13 +502,13 @@ public class DriverAssistVision extends Command {
         };
         trajectory = Pathfinder.generate(points, config);
 
-       /*
-        * Headings in trajectory must each be converted into the robot motion control system's frame 
-        * whose x-y axes are the same as our robot frame but whose heading along the y-axis
-        * is at 0 degrees with  positive heading clockwise (as compared to our robot frame whose
-        * heading along the y-axis is 90 degrees with positive heading counter-clockwise). 
-        */
-        double PI_OVER_2 = Math.PI/2.0;
+        /*
+         * Headings in trajectory must each be converted into the robot motion control system's frame
+         * whose x-y axes are the same as our robot frame but whose heading along the y-axis
+         * is at 0 degrees with  positive heading clockwise (as compared to our robot frame whose
+         * heading along the y-axis is 90 degrees with positive heading counter-clockwise).
+         */
+        double PI_OVER_2 = Math.PI / 2.0;
         for (int i = 0; i < trajectory.length(); i++) {
             trajectory.segments[i].heading = PI_OVER_2 - trajectory.segments[i].heading;
         }

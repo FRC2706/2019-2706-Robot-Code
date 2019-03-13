@@ -45,6 +45,11 @@ public class MotionMagicVision extends MotionMagic {
         table.getEntry("Driver").setBoolean(false);
     }
 
+    /**
+     * Gets the heading that the robot should point to make it point at the target
+     *
+     * @return The heading in degrees
+     */
     private static double getTargetHeading() {
         if (table.getEntry("tapeDetected").getBoolean(false)) {
             return -table.getEntry("tapeYaw").getDouble(0.0);

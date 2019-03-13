@@ -22,17 +22,16 @@ public class EjectHatch extends CommandGroup {
      */
     public EjectHatch(LiftPosition elevatorPosition) {
         addSequential(new InstantCommand(() -> elevatorPosition.setPosition(Lift.getInstance().getLiftHeight())));
-        // Make sure lift is high enough.
+        // Make sure lift is high enough. Timeout after 0.75 seconds in case it's blocked.
         addSequential(new ConditionalCommand(new MoveLiftToPosition(0.7, () -> 0.05 - Config.SUBTRACT_LIFT_HEIGHT)) {
             @Override
             protected boolean condition() {
                 // Make sure that we're above the minimum hatch eject height before going.
                 return Lift.getInstance().getLiftHeight() < -Config.SUBTRACT_LIFT_HEIGHT + 0.05;
             }
-        });
+        }, 0.75);
         addSequential(new MovePlunger(MovePlunger.DesiredState.DEPLOYED)); // Put plunger out and wait (timed command).
         // Move lift down slightly
         addSequential(new MoveLiftToPosition(0.5, () -> Lift.getInstance().getLiftHeight() + Config.SUBTRACT_LIFT_HEIGHT));
-        addSequential(new PrintCommand("Ejected Hatch"));
     }
 }

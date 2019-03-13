@@ -43,6 +43,8 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
+        setOnStateChange((state) -> Log.i("Robot State: " + state.name()));
+
         onStateChange(RobotState.ROBOT_INIT);
         isInitialized = true;
 

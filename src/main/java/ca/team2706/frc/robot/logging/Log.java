@@ -23,7 +23,6 @@ public class Log {
      */
     public static void init() {
         Log.i("Starting to log");
-        Log.i("Robot Entering teleop mode");
 
         Log.i("Robot Free Memory: " + ((double) Runtime.getRuntime().freeMemory()) / (1024 * 1024) + "MB");
         Log.i("Allocated: " + ((double) Runtime.getRuntime().totalMemory()) / (1024 * 1024) + "MB");
@@ -31,12 +30,13 @@ public class Log {
 
         logBuildInfo();
 
-        Log.i("Teleop game specific message: " + DriverStation.getInstance().getGameSpecificMessage());
-        Robot.setOnStateChange(Log::printRobotState);
+        Log.i("Game specific message: " + DriverStation.getInstance().getGameSpecificMessage());
     }
 
+    /**
+     * Logs program information
+     */
     private static void logBuildInfo() {
-
         Properties properties = new Properties();
         try {
             properties.load(Log.class.getResourceAsStream(BUILD_INFO_NAME));
@@ -51,20 +51,11 @@ public class Log {
         Log.i("Commit branch: " + properties.getProperty("commit.branch", "unknown"));
         Log.i("Modified since commit: " + properties.getProperty("commit.modified", "unknown"));
 
+        // Print warning unless we are sure that there are no modifications
         if (!properties.getProperty("commit.modified", "unknown").equalsIgnoreCase("false")) {
             DriverStation.reportWarning("Code may have been modified since last commit", false);
         }
     }
-
-    /**
-     * Logs the robot state
-     *
-     * @param state the state the robot is in
-     */
-    private static void printRobotState(RobotState state) {
-        Log.i("Robot State: " + state.name());
-    }
-
 
     /**
      * Debug log

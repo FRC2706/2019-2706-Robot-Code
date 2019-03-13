@@ -76,7 +76,8 @@ task generatePropInfo {
     outputs.file(outputFile)
 	delete outputFile
     doLast {
-        outputFile.text = """name=${project.name}
+        outputFile.text = 
+"""name=${project.name}
 timestamp=${getTimestamp()}
 commit.hash=${getGitHash()}
 commit.name=${getGitCommit()}

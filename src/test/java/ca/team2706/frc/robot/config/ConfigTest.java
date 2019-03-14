@@ -2,6 +2,7 @@ package ca.team2706.frc.robot.config;
 
 import ca.team2706.frc.robot.Robot;
 import com.ctre.phoenix.CTREJNIWrapper;
+import com.ctre.phoenix.motion.BuffTrajPointStreamJNI;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -9,12 +10,11 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.PWM;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import jaci.pathfinder.Pathfinder;
+import jaci.pathfinder.Trajectory;
 import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Mocked;
@@ -25,6 +25,7 @@ import util.Util;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -58,6 +59,9 @@ public class ConfigTest {
     @Mocked
     private AnalogInput analogInput;
 
+    @Mocked
+    private Relay relays;
+
     @Mocked(stubOutClassInitialization = true)
     private PigeonIMU pigeon;
 
@@ -72,6 +76,9 @@ public class ConfigTest {
     @Mocked
     private Notifier notifier;
 
+    @Mocked(stubOutClassInitialization = true)
+    private BuffTrajPointStreamJNI jni2;
+
     @Mocked
     private CameraServer cameraServer;
 
@@ -83,6 +90,12 @@ public class ConfigTest {
 
     @Injectable
     private SensorCollection sensorCollection;
+
+    @Mocked
+    private DoubleSolenoid solenoid;
+
+    @Mocked
+    private DigitalInput input;
 
     private boolean initialized = false;
 
@@ -107,6 +120,12 @@ public class ConfigTest {
 
                 talon.getSensorCollection();
                 result = sensorCollection;
+                minTimes = 0;
+            }};
+
+            new Expectations(Pathfinder.class) {{
+                Pathfinder.readFromCSV((File) any);
+                result = new Trajectory(0);
                 minTimes = 0;
             }};
 

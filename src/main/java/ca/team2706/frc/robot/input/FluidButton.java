@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot.input;
 
+import ca.team2706.frc.robot.Robot;
 import ca.team2706.frc.robot.config.FluidConstant;
 import ca.team2706.frc.robot.config.XboxValue;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -8,11 +9,12 @@ import edu.wpi.first.wpilibj.GenericHID;
  * JoystickButton set up for using a FluidConstant binding.
  */
 public class FluidButton extends EButton {
+    public static final double DEFAULT_MIN_AXIS_ACTIVATION = 0.8;
 
     /**
      * The minimum absolute input for the raw axis to be active
      */
-    public static final double MIN_AXIS_ACTIVATION = 0.8;
+    private final double minAxisActivation;
 
     /**
      * The POV of the POV button
@@ -20,7 +22,8 @@ public class FluidButton extends EButton {
     public static final int POV_NUMBER = 0;
 
     private final GenericHID m_joystick;
-    private final FluidConstant<String> joystickPort;
+    private int joystickPort;
+    private XboxValue.XboxInputType inputType;
 
     /**
      * Constructs a FluidButton with the given GenericHID interface and action binding.
@@ -29,38 +32,54 @@ public class FluidButton extends EButton {
      * @param actionBinding The action (such as "run motor") to which the joystick is bound.
      */
     public FluidButton(GenericHID genericHID, FluidConstant<String> actionBinding) {
+        this(genericHID, actionBinding, DEFAULT_MIN_AXIS_ACTIVATION);
+    }
+
+    public FluidButton(GenericHID genericHID, FluidConstant<String> actionBinding, final double minActivation) {
         m_joystick = genericHID;
-        this.joystickPort = actionBinding;
+        this.minAxisActivation = minActivation;
+
+        updatePortAndInputType(XboxValue.getXboxValueFromFluidConstant(actionBinding));
+
+        actionBinding.addChangeListener((oldValue, newValue) -> {
+            updatePortAndInputType(XboxValue.getXboxValueFromNTKey(newValue));
+        });
     }
 
     /**
-     * Gets the port value currently set to the action's binding.
+     * Updates the port and input type for this button.
      *
-     * @param fluidConstant The fluid constant action of which to find the port value.
-     * @return The port value for the binding.
+     * @param value The XboxValue button binding.
      */
-    private static XboxValue getPort(FluidConstant<String> fluidConstant) {
-        return XboxValue.getXboxValueFromNTKey(fluidConstant.value());
+    private void updatePortAndInputType(XboxValue value) {
+        this.joystickPort = value.getPort();
+        this.inputType = value.getInputType();
     }
 
     @Override
     public boolean get() {
-        XboxValue port = XboxValue.getXboxValueFromNTKey(joystickPort.value());
+        final boolean pressed;
 
-        boolean value = false;
-
-        switch (port.getInputType()) {
+        switch (inputType) {
             case Axis:
-                value = Math.abs(m_joystick.getRawAxis(port.getPort())) >= MIN_AXIS_ACTIVATION;
+                pressed = Math.abs(m_joystick.getRawAxis(joystickPort)) >= minAxisActivation;
                 break;
             case Button:
-                value = m_joystick.getRawButton(port.getPort());
+                pressed = m_joystick.getRawButton(joystickPort);
                 break;
             case POV:
-                value = m_joystick.getPOV(POV_NUMBER) == port.getPort();
+                pressed = m_joystick.getPOV(POV_NUMBER) == joystickPort;
+                break;
+            default:
+                pressed = false;
                 break;
         }
 
-        return value;
+        // Interrupt the current command on any button press
+        if (pressed) {
+            Robot.interruptCurrentCommand();
+        }
+
+        return pressed;
     }
 }

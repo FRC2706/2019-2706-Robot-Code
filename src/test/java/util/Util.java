@@ -1,9 +1,7 @@
 package util;
 
 import ca.team2706.frc.robot.OI;
-import ca.team2706.frc.robot.subsystems.Bling;
-import ca.team2706.frc.robot.subsystems.DriveBase;
-import ca.team2706.frc.robot.subsystems.SensorExtras;
+import ca.team2706.frc.robot.subsystems.*;
 
 import java.lang.reflect.Field;
 
@@ -19,6 +17,10 @@ public class Util {
         setCurrentInstanceFieldNull(OI.class);
         setCurrentInstanceFieldNull(SensorExtras.class);
         setCurrentInstanceFieldNull(DriveBase.class);
+        setCurrentInstanceFieldNull(Intake.class);
+        setCurrentInstanceFieldNull(Lift.class);
+        setCurrentInstanceFieldNull(Pneumatics.class);
+        setCurrentInstanceFieldNull(RingLight.class);
     }
 
     /**
@@ -33,5 +35,4 @@ public class Util {
         field.setAccessible(true);
         field.set(null, null);
     }
-
 }

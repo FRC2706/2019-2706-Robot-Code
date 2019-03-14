@@ -1,19 +1,21 @@
 package ca.team2706.frc.robot;
 
 import com.ctre.phoenix.CTREJNIWrapper;
+import com.ctre.phoenix.motion.BuffTrajPointStreamJNI;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.PWM;
+import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import jaci.pathfinder.Pathfinder;
+import jaci.pathfinder.Trajectory;
 import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Mocked;
@@ -22,6 +24,9 @@ import org.junit.Before;
 import org.junit.Test;
 import util.Util;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
@@ -44,7 +49,13 @@ public class RobotTest {
     private WPI_TalonSRX talon;
 
     @Mocked
+    private VictorSPX intakeMotor;
+
+    @Mocked
     private PWM pwm;
+
+    @Mocked
+    private Relay relays;
 
     @Mocked
     private AnalogInput analogInput;
@@ -63,6 +74,9 @@ public class RobotTest {
     @Mocked
     private Notifier notifier;
 
+    @Mocked(stubOutClassInitialization = true)
+    private BuffTrajPointStreamJNI jni2;
+
     @Mocked
     private NetworkTableInstance networkTableInstance;
 
@@ -76,18 +90,42 @@ public class RobotTest {
     private LiveWindow liveWindow;
 
     @Mocked
+    private DriverStation driverStation;
+
+    @Mocked
     private GenericHID genericHID;
 
     @Injectable
     private SensorCollection sensorCollection;
 
+
+    @Mocked
+    private DoubleSolenoid solenoid;
+
+    @Mocked
+    private DigitalInput input;
+
+    @SuppressWarnings("unchecked")
+
     @Before
-    public void setUp() throws NoSuchFieldException, IllegalAccessException {
+    public void setUp() throws IOException, NoSuchFieldException, IllegalAccessException {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
             minTimes = 0;
+
+            genericHID.getRawAxis(0);
+            result = 0;
+            minTimes = 0;
         }};
+
+        new Expectations(Pathfinder.class) {{
+            Pathfinder.readFromCSV((File) any);
+            result = new Trajectory(0);
+            minTimes = 0;
+        }};
+
+        Util.resetSubsystems();
     }
 
     /**
@@ -189,5 +227,184 @@ public class RobotTest {
             LiveWindow.setEnabled(anyBoolean);
             times = 2;
         }};
+    }
+
+    /**
+     * Tests whether the absolute gyro is reset when in a match
+     */
+    @Test
+    public void testAbsoluteResetOn() {
+        new Expectations() {{
+            DriverStation.getInstance();
+            result = driverStation;
+
+            driverStation.isFMSAttached();
+            result = true;
+        }};
+
+        robot.robotInit();
+
+        robot.autonomousInit();
+
+        new Verifications() {{
+            pigeon.setYaw(0, anyInt);
+            times = 3;
+        }};
+    }
+
+    /**
+     * Tests whether the absolute gyro is reset when not in a match
+     */
+    @Test
+    public void testAbsoluteResetOff() {
+        new Expectations() {{
+            DriverStation.getInstance();
+            result = driverStation;
+
+            driverStation.isFMSAttached();
+            result = false;
+        }};
+
+        robot.robotInit();
+
+        robot.autonomousInit();
+
+        new Verifications() {{
+            pigeon.setYaw(0, anyInt);
+            times = 2;
+        }};
+    }
+
+    /**
+     * Tests that the commands are correctly set and run
+     *
+     * @throws NoSuchFieldException   Reflection exception
+     * @throws IllegalAccessException Relfection exception
+     */
+    @Test
+    public void testCommandSelector() throws NoSuchFieldException, IllegalAccessException {
+        new Expectations() {{
+            analogInput.getAverageVoltage();
+            returns(0.0, 3.0, 3.3, 4.45, 4.45);
+        }};
+
+        EmptyCommand a = new EmptyCommand();
+        EmptyCommand b = new EmptyCommand();
+        EmptyCommand c = new EmptyCommand();
+        EmptyCommand d = new EmptyCommand();
+
+        setCommands(robot, a, b, null, c, d);
+
+        robot.autonomousInit();
+
+        assertEquals(a, getCurrentCommand(robot));
+        assertTrue(a.inProgress());
+
+        robot.autonomousInit();
+
+        assertEquals(a, getCurrentCommand(robot));
+        assertTrue(a.inProgress());
+
+        robot.autonomousInit();
+
+        assertEquals(c, getCurrentCommand(robot));
+        assertTrue(c.inProgress());
+
+        robot.autonomousInit();
+
+        assertEquals(a, getCurrentCommand(robot));
+        assertTrue(a.inProgress());
+
+        setCommands(robot, null, b, null, c, d);
+
+        robot.autonomousInit();
+
+        assertNull(getCurrentCommand(robot));
+    }
+
+    /**
+     * Tests that the autonomous commands can be interrupted
+     *
+     * @throws NoSuchFieldException   Reflection exception
+     * @throws IllegalAccessException Relfection exception
+     */
+    @Test
+    public void testInterrupt() throws NoSuchFieldException, IllegalAccessException {
+        new Expectations() {{
+            analogInput.getAverageVoltage();
+            result = 0.0;
+        }};
+
+        EmptyCommand a = new EmptyCommand();
+
+        setCommands(robot, a);
+
+        robot.autonomousInit();
+
+        assertTrue(a.inProgress());
+
+        Robot.interruptCurrentCommand();
+
+        assertFalse(a.inProgress());
+    }
+
+    /**
+     * Sets the list of commands to run
+     *
+     * @param robot    The robot with the commands
+     * @param commands The commands to set
+     * @throws NoSuchFieldException   Reflection exception
+     * @throws IllegalAccessException Reflection exception
+     */
+    public static void setCommands(Robot robot, Command... commands) throws NoSuchFieldException, IllegalAccessException {
+        Field commandsField = Robot.class.getDeclaredField("commands");
+        commandsField.setAccessible(true);
+        commandsField.set(robot, commands);
+    }
+
+    /**
+     * Gets the current autonomous command
+     *
+     * @param robot The robot with the commands
+     * @return The current command that should be running
+     * @throws NoSuchFieldException   Reflection exception
+     * @throws IllegalAccessException Reflection exception
+     */
+    public static Command getCurrentCommand(Robot robot) throws NoSuchFieldException, IllegalAccessException {
+        Field currentCommandField = Robot.class.getDeclaredField("currentCommand");
+        currentCommandField.setAccessible(true);
+        return (Command) currentCommandField.get(robot);
+    }
+
+    /**
+     * Empty command that keeps track of when it's run
+     */
+    public static class EmptyCommand extends Command {
+
+        private boolean isRunning;
+
+        @Override
+        public void start() {
+            isRunning = true;
+        }
+
+        @Override
+        protected boolean isFinished() {
+            return false;
+        }
+
+        @Override
+        public void cancel() {
+            isRunning = false;
+        }
+
+        /**
+         * Whether the command is running
+         *
+         * @return True after calling {@code start()} and false after calling {@code cancel()}
+         */
+        public boolean inProgress() {
+            return isRunning;
+        }
     }
 }

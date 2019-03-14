@@ -1,10 +1,15 @@
 package ca.team2706.frc.robot.subsystems;
 
+import ca.team2706.frc.robot.Robot;
+import ca.team2706.frc.robot.RobotState;
 import ca.team2706.frc.robot.Sendables;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.sensors.AnalogSelector;
 import ca.team2706.frc.robot.sensors.LidarLitePWM;
+import com.ctre.phoenix.motion.BufferedTrajectoryPointStream;
+import com.ctre.phoenix.motion.MotionProfileStatus;
+import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -15,6 +20,8 @@ import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import java.util.Arrays;
 
 /**
  * Subsystem that controls the driving of the robot as well as certain sensors that are used for driving
@@ -87,10 +94,25 @@ public class DriveBase extends Subsystem {
      */
     private double savedAngle;
 
-    /*
+    /**
      * Logs data to SmartDashboard and files periodically
      */
     private Notifier loggingNotifier;
+
+    /**
+     * Holds the status for the motion profile
+     */
+    private MotionProfileStatus motionProfileStatus;
+
+    /**
+     * Holds the points to stream for the right motion profile
+     */
+    private BufferedTrajectoryPointStream motionProfilePointStreamRight;
+
+    /**
+     * Holds the points to stream for the left motion profile
+     */
+    private BufferedTrajectoryPointStream motionProfilePointStreamLeft;
 
     /**
      * Creates a drive base, and initializes all required sensors and motors
@@ -105,7 +127,7 @@ public class DriveBase extends Subsystem {
 
         follow();
 
-        enableCurrentLimit(Config.DRIVEBASE_CURRENT_LIMIT);
+        enableCurrentLimit(Config.ENABLE_DRIVEBASE_CURRENT_LIMIT);
 
         robotDriveBase = new DifferentialDrive(leftFrontMotor, rightFrontMotor);
         robotDriveBase.setRightSideInverted(false);
@@ -144,7 +166,19 @@ public class DriveBase extends Subsystem {
         loggingNotifier = new Notifier(this::log);
         loggingNotifier.startPeriodic(Config.LOG_PERIOD);
 
+        motionProfileStatus = new MotionProfileStatus();
+
+        motionProfilePointStreamLeft = new BufferedTrajectoryPointStream();
+        motionProfilePointStreamRight = new BufferedTrajectoryPointStream();
+
         resetAbsoluteGyro();
+
+        // Reset absolute gyro when robot goes into autonomous for the first time in a real match
+        Robot.setOnStateChange(robotState -> {
+            if (robotState == RobotState.AUTONOMOUS && DriverStation.getInstance().isFMSAttached()) {
+                resetAbsoluteGyro();
+            }
+        });
     }
 
     /**
@@ -240,7 +274,7 @@ public class DriveBase extends Subsystem {
     /**
      * Selects local encoders, the current sensor and the pigeon
      */
-    private void selectEncodersSumWithPigeon() {
+    private void selectEncodersSumWithPigeon(boolean motionProfile) {
         resetTalonConfiguration();
 
         leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_SHORT);
@@ -269,9 +303,16 @@ public class DriveBase extends Subsystem {
         rightFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value(), Config.CAN_SHORT);
         leftFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value(), Config.CAN_SHORT);
 
-        rightFrontMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
-        rightFrontMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
-        rightFrontMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value());
+        if (motionProfile) {
+            rightFrontMotor.config_kP(0, Config.DRIVE_MOTION_MAGIC_P.value());
+            rightFrontMotor.config_kI(0, Config.DRIVE_MOTION_MAGIC_I.value());
+            rightFrontMotor.config_kD(0, Config.DRIVE_MOTION_MAGIC_D.value());
+            rightFrontMotor.config_kF(0, Config.DRIVE_MOTION_MAGIC_F.value());
+        } else {
+            rightFrontMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
+            rightFrontMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
+            rightFrontMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value());
+        }
 
         rightFrontMotor.config_kP(1, Config.PIGEON_KP.value());
         rightFrontMotor.config_kI(1, Config.PIGEON_KI.value());
@@ -285,6 +326,74 @@ public class DriveBase extends Subsystem {
 
         rightFrontMotor.selectProfileSlot(0, 0);
         rightFrontMotor.selectProfileSlot(1, 1);
+    }
+
+    /**
+     * Selects encoders for each wheel and configures the gyro as an auxiliary sensor for each wheel
+     */
+    private void selectEncodersGyro() {
+        resetTalonConfiguration();
+
+        leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_SHORT);
+        rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_SHORT);
+
+        rightFrontMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, 1, Config.CAN_SHORT);
+        leftFrontMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, 1, Config.CAN_SHORT);
+
+        rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, 1, Config.CAN_SHORT);
+        leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, 1, Config.CAN_SHORT);
+
+        rightFrontMotor.configSelectedFeedbackCoefficient(1, 1, Config.CAN_SHORT);
+        rightFrontMotor.configSelectedFeedbackCoefficient(1, 0, Config.CAN_SHORT);
+        leftFrontMotor.configSelectedFeedbackCoefficient(1, 1, Config.CAN_SHORT);
+        leftFrontMotor.configSelectedFeedbackCoefficient(1, 0, Config.CAN_SHORT);
+
+        leftFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_LEFT.value());
+        rightFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_RIGHT.value());
+
+        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Config.CAN_SHORT);
+        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Config.CAN_SHORT);
+        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Config.CAN_SHORT);
+        leftFrontMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Config.CAN_SHORT);
+        leftFrontMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Config.CAN_SHORT);
+        leftFrontMotor.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Config.CAN_SHORT);
+
+        /* Configure neutral deadband */
+        rightFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value(), Config.CAN_SHORT);
+        leftFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value(), Config.CAN_SHORT);
+
+        rightFrontMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
+        rightFrontMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
+        rightFrontMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value());
+
+        rightFrontMotor.config_kP(1, Config.PIGEON_KP.value());
+        rightFrontMotor.config_kI(1, Config.PIGEON_KI.value());
+        rightFrontMotor.config_kD(1, Config.PIGEON_KD.value());
+        rightFrontMotor.config_kF(1, Config.PIGEON_KF.value());
+
+        leftFrontMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
+        leftFrontMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
+        leftFrontMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value());
+
+        leftFrontMotor.config_kP(1, Config.PIGEON_KP.value());
+        leftFrontMotor.config_kI(1, Config.PIGEON_KI.value());
+        leftFrontMotor.config_kD(1, Config.PIGEON_KD.value());
+        leftFrontMotor.config_kF(1, Config.PIGEON_KF.value());
+
+        rightFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
+        leftFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
+
+        leftFrontMotor.configClosedLoopPeriod(1, 1, Config.CAN_SHORT);
+        leftFrontMotor.configAuxPIDPolarity(true, Config.CAN_SHORT);
+
+        rightFrontMotor.configClosedLoopPeriod(1, 1, Config.CAN_SHORT);
+        rightFrontMotor.configAuxPIDPolarity(false, Config.CAN_SHORT);
+
+        rightFrontMotor.selectProfileSlot(0, 0);
+        rightFrontMotor.selectProfileSlot(1, 1);
+
+        leftFrontMotor.selectProfileSlot(0, 0);
+        leftFrontMotor.selectProfileSlot(1, 1);
     }
 
     /**
@@ -388,7 +497,7 @@ public class DriveBase extends Subsystem {
     public void setMotionMagicWithGyroMode() {
         if (driveMode != DriveMode.MotionMagicWithGyro) {
             stop();
-            selectEncodersSumWithPigeon();
+            selectEncodersSumWithPigeon(true);
             configMotionMagic();
             reset();
 
@@ -397,12 +506,57 @@ public class DriveBase extends Subsystem {
     }
 
     /**
+     * Sets the drive mode to motion profile
+     */
+    public void setMotionProfile() {
+        if (driveMode != DriveMode.MotionProfile) {
+            stop();
+            selectEncodersSumWithPigeon(true);
+            configMotionProfile();
+            reset();
+            rightFrontMotor.startMotionProfile(motionProfilePointStreamRight, 20, ControlMode.MotionProfileArc);
+
+            driveMode = DriveMode.MotionProfile;
+        }
+    }
+
+    /**
+     * Sets the drive mode to 2 wheel motion profile
+     */
+    public void setMotionProfile2Wheel() {
+        if (driveMode != DriveMode.MotionProfile2Wheel) {
+            stop();
+            selectEncodersGyro();
+            configMotionProfile();
+            reset();
+            rightFrontMotor.startMotionProfile(motionProfilePointStreamRight, 20, ControlMode.MotionProfileArc);
+            leftFrontMotor.startMotionProfile(motionProfilePointStreamLeft, 20, ControlMode.MotionProfileArc);
+
+            driveMode = DriveMode.MotionProfile2Wheel;
+        }
+    }
+
+    /**
      * Configures motion magic
      */
     private void configMotionMagic() {
-        rightFrontMotor.configMotionCruiseVelocity((int) (Config.MOTION_MAGIC_CRUISE_VELOCITY.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
-        rightFrontMotor.configMotionAcceleration((int) (Config.MOTION_MAGIC_ACCELERATION.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
+        rightFrontMotor.configMotionSCurveStrength(Config.MOTION_MAGIC_SMOOTHING.value(), Config.CAN_SHORT);
+        rightFrontMotor.configMotionCruiseVelocity((int) (Config.DRIVEBASE_MOTION_MAGIC_CRUISE_VELOCITY.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
+        rightFrontMotor.configMotionAcceleration((int) (Config.DRIVEBASE_MOTION_MAGIC_ACCELERATION.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
     }
+
+    /**
+     * Configures motion profile
+     */
+    private void configMotionProfile() {
+        rightFrontMotor.configMotionSCurveStrength(Config.MOTION_MAGIC_SMOOTHING.value(), Config.CAN_SHORT);
+        rightFrontMotor.configMotionCruiseVelocity((int) (Config.DRIVEBASE_MOTION_MAGIC_CRUISE_VELOCITY.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
+        rightFrontMotor.configMotionAcceleration((int) (Config.DRIVEBASE_MOTION_MAGIC_ACCELERATION.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
+        leftFrontMotor.configMotionSCurveStrength(Config.MOTION_MAGIC_SMOOTHING.value(), Config.CAN_SHORT);
+        leftFrontMotor.configMotionCruiseVelocity((int) (Config.DRIVEBASE_MOTION_MAGIC_CRUISE_VELOCITY.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
+        leftFrontMotor.configMotionAcceleration((int) (Config.DRIVEBASE_MOTION_MAGIC_ACCELERATION.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
+    }
+
 
     /**
      * Gets the encoder sum using the pigeon
@@ -410,7 +564,7 @@ public class DriveBase extends Subsystem {
     public void setPositionGyroMode() {
         if (driveMode != DriveMode.PositionGyro) {
             stop();
-            selectEncodersSumWithPigeon();
+            selectEncodersSumWithPigeon(false);
             reset();
 
             driveMode = DriveMode.PositionGyro;
@@ -528,11 +682,13 @@ public class DriveBase extends Subsystem {
     }
 
     /**
-     * Follows a pre-set motion magic path. {@link DriveBase#runMotionMagic(double, double)} should be called first.
+     * Follows motion magic profile
      *
-     * @param speed The speed from 0 to 1
+     * @param speed          The speed from 0 to 1
+     * @param setpoint       The setpoint in feet
+     * @param targetRotation The target to rotate to
      */
-    public void setMotionMagicPositionGyro(double speed) {
+    public void setMotionMagicPositionGyro(double speed, double setpoint, double targetRotation) {
         setMotionMagicWithGyroMode();
 
         leftFrontMotor.configClosedLoopPeakOutput(0, speed);
@@ -540,23 +696,136 @@ public class DriveBase extends Subsystem {
         leftFrontMotor.configClosedLoopPeakOutput(1, speed);
         rightFrontMotor.configClosedLoopPeakOutput(1, speed);
 
-        rightFrontMotor.feed();
+        rightFrontMotor.set(ControlMode.MotionMagic, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation / Config.PIGEON_DPP);
         leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
 
         follow();
     }
 
     /**
-     * Creates a motion magic profile to follow
+     * Runs the motion profile
      *
-     * @param setpoint       The setpoint to go to in feet
-     * @param targetRotation The desired rotation
-     *                       , double setpoint, double targetRotation
+     * @param speed The speed from 0 to 1
      */
-    public void runMotionMagic(double setpoint, double targetRotation) {
-        setMotionMagicWithGyroMode();
+    public void runMotionProfile(final double speed) {
+        setMotionProfile();
 
-        rightFrontMotor.set(ControlMode.MotionMagic, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation);
+        configTalons(speed);
+    }
+
+    /**
+     * Configures the talons for motion profiling.
+     *
+     * @param speed The speed, from 0 to 1.
+     */
+    private void configTalons(final double speed) {
+        leftFrontMotor.configClosedLoopPeakOutput(0, speed);
+        rightFrontMotor.configClosedLoopPeakOutput(0, speed);
+        leftFrontMotor.configClosedLoopPeakOutput(1, speed);
+        rightFrontMotor.configClosedLoopPeakOutput(1, speed);
+
+        //Doing it automatically so don't disable
+        rightFrontMotor.feed();
+        leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
+    }
+
+    /**
+     * Runs the motion profile for each wheel
+     *
+     * @param speed The speed from 0 to 1
+     */
+    public void runMotionProfile2Wheel(final double speed) {
+        setMotionProfile2Wheel();
+
+        configTalons(speed);
+        leftFrontMotor.feed();
+    }
+
+    /**
+     * Applies the motion profile
+     *
+     * @param pos         The position of the robot at a trajectory point
+     * @param vel         The velocity of the robot at a trajectory point
+     * @param heading     The heading of the robot at a trajectory point
+     * @param time        The time for each trajectory point
+     * @param size        How many trajectories there are
+     * @param talon       The talon
+     * @param pointStream The point stream
+     */
+    private void pushMotionProfile(double[] pos, double[] vel, double[] heading, int[] time, int size, WPI_TalonSRX talon, BufferedTrajectoryPointStream pointStream) {
+        /* create an empty point */
+        TrajectoryPoint[] points = new TrajectoryPoint[size];
+
+        /*
+         * just in case we are interrupting another MP and there is still buffer
+         * points in memory, clear it.
+         */
+        talon.clearMotionProfileTrajectories();
+
+        /* set the base trajectory period to zero, use the individual trajectory period below */
+        talon.configMotionProfileTrajectoryPeriod(0, Config.CAN_SHORT);
+
+        /* This is fast since it's just into our TOP buffer */
+        for (int i = 0; i < size; ++i) {
+            points[i] = new TrajectoryPoint();
+            /* for each point, fill our structure and pass it to API */
+            points[i].position = pos[i] / Config.DRIVE_ENCODER_DPP;
+            points[i].velocity = vel[i] / Config.DRIVE_ENCODER_DPP / 10;
+            points[i].auxiliaryPos = heading[i] / Config.PIGEON_DPP; /* scaled such that 3600 => 360 deg */
+            points[i].headingDeg = heading[i];
+            points[i].profileSlotSelect0 = 0;
+            points[i].profileSlotSelect1 = 1;
+            points[i].timeDur = time[i];
+            points[i].zeroPos = i == 0;
+            points[i].useAuxPID = true;
+
+            points[i].isLastPoint = (i + 1) == size;
+        }
+
+        pointStream.Write(points);
+    }
+
+    /**
+     * Applies the motion profile for 1 wheel
+     *
+     * @param forwards Whether the robot is going forwards or not
+     * @param pos      The position of the robot at a trajectory point
+     * @param vel      The velocity of the robot at a trajectory point
+     * @param heading  The heading of the robot at a trajectory point
+     * @param time     The time for each trajectory point
+     * @param size     How many trajectory points there are
+     */
+    public void pushMotionProfile1Wheel(boolean forwards, double[] pos, double[] vel, double[] heading, int[] time, int size) {
+        pushMotionProfile(forwards ? pos : negateDoubleArray(pos), forwards ? vel : negateDoubleArray(vel), heading, time, size, rightFrontMotor, motionProfilePointStreamRight);
+    }
+
+    /**
+     * Applies the motion profile for 2 wheels
+     *
+     * @param forwards Whether the robot is going forwards or not
+     * @param posLeft  The position of the robot at a trajectory point for the left wheel
+     * @param velLeft  The velocity of the robot at a trajectory point for the left wheel
+     * @param heading  The heading of the robot at a trajectory point
+     * @param time     The time for each trajectory point
+     * @param size     How many trajectory points there are
+     * @param posRight The position of the robot at a trajectory point for the right wheel
+     * @param velRight The velocity of the robot at a trajectory point for the right wheel
+     */
+    public void pushMotionProfile2Wheel(boolean forwards, double[] posLeft, double[] velLeft, double[] heading, int[] time, int size, double[] posRight, double[] velRight) {
+        pushMotionProfile(forwards ? posLeft : negateDoubleArray(posLeft), forwards ? velLeft : negateDoubleArray(velLeft), heading, time, size, leftFrontMotor, motionProfilePointStreamLeft);
+        pushMotionProfile(forwards ? posRight : negateDoubleArray(posRight), forwards ? velRight : negateDoubleArray(velRight), heading, time, size, rightFrontMotor, motionProfilePointStreamRight);
+    }
+
+    /**
+     * Makes all the elements in the double array negative
+     *
+     * @param array The array that is negated
+     * @return The array
+     */
+    public static double[] negateDoubleArray(final double[] array) {
+        return Arrays.stream(array)
+                .map(operand -> -operand)
+                .toArray();
     }
 
     /*
@@ -684,6 +953,9 @@ public class DriveBase extends Subsystem {
      * Resets the encoders and gyro
      */
     public void reset() {
+        lastEncoderAv = 0;
+        lastGyro = 0;
+
         resetEncoders();
         resetGyro();
     }
@@ -706,25 +978,44 @@ public class DriveBase extends Subsystem {
         return rightFrontMotor.getClosedLoopError(0) * Config.DRIVE_ENCODER_DPP;
     }
 
+    /**
+     * Gets the current error on the pigeon (how far off target it is).
+     *
+     * @return Pigeon error in degrees.
+     */
+    public double getPigeonError() {
+        return rightFrontMotor.getClosedLoopError(0) * Config.PIGEON_DPP;
+    }
+
+
+    /**
+     * Returns if the motion profile for 1 wheel is finished
+     */
+    public boolean isFinishedMotionProfile() {
+        return rightFrontMotor.isMotionProfileFinished();
+    }
+
+    /**
+     * Returns if the motion profile for 2 wheels is finished
+     *
+     * @return If its finished or not
+     */
+    public boolean isFinishedMotionProfile2Wheel() {
+        return (rightFrontMotor.isMotionProfileFinished() || leftFrontMotor.isMotionProfileFinished());
+    }
+
+    /**
+     * Logs
+     */
     public void log() {
         if (DriverStation.getInstance().isEnabled()) {
             Log.d("Relative Gyro: " + getHeading());
             Log.d("Absolute Gyro: " + getAbsoluteHeading());
 
-            Log.d("Left front motor current: " + leftFrontMotor.getOutputCurrent());
-            Log.d("Right front motor current: " + rightFrontMotor.getOutputCurrent());
-            Log.d("Left back motor current: " + leftBackMotor.getOutputCurrent());
-            Log.d("Right back motor current: " + rightBackMotor.getOutputCurrent());
-
             Log.d("Left front motor temperature: " + leftFrontMotor.getTemperature());
             Log.d("Right front motor temperature: " + rightFrontMotor.getTemperature());
             Log.d("Left back motor temperature: " + leftBackMotor.getTemperature());
             Log.d("Right back motor temperature: " + rightBackMotor.getTemperature());
-
-            Log.d("Left front motor output percent: " + leftFrontMotor.getMotorOutputPercent());
-            Log.d("Right front motor output percent: " + rightFrontMotor.getMotorOutputPercent());
-            Log.d("Left back motor output percent: " + leftBackMotor.getMotorOutputPercent());
-            Log.d("Right back motor output percent: " + rightBackMotor.getMotorOutputPercent());
 
             Log.d("Left front motor distance: " + leftFrontMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP);
             Log.d("Right front motor distance: " + rightFrontMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP);
@@ -740,20 +1031,10 @@ public class DriveBase extends Subsystem {
         SmartDashboard.putNumber("Relative Gyro", getHeading());
         SmartDashboard.putNumber("Absolute Gyro", getAbsoluteHeading());
 
-        SmartDashboard.putNumber("Left front motor current", leftFrontMotor.getOutputCurrent());
-        SmartDashboard.putNumber("Right front motor current", rightFrontMotor.getOutputCurrent());
-        SmartDashboard.putNumber("Left back motor current", leftBackMotor.getOutputCurrent());
-        SmartDashboard.putNumber("Right back motor current", rightBackMotor.getOutputCurrent());
-
         SmartDashboard.putNumber("Left front motor temp", leftFrontMotor.getTemperature());
         SmartDashboard.putNumber("Right front motor temp", rightFrontMotor.getTemperature());
         SmartDashboard.putNumber("Left back motor temp", leftBackMotor.getTemperature());
         SmartDashboard.putNumber("Right back motor temp", rightBackMotor.getTemperature());
-
-        SmartDashboard.putNumber("Left front motor output", leftFrontMotor.getMotorOutputPercent());
-        SmartDashboard.putNumber("Right front motor output", rightFrontMotor.getMotorOutputPercent());
-        SmartDashboard.putNumber("Left back motor output", leftBackMotor.getMotorOutputPercent());
-        SmartDashboard.putNumber("Right back motor output", rightBackMotor.getMotorOutputPercent());
 
         SmartDashboard.putNumber("Left front motor distance: ", leftFrontMotor.getSensorCollection().getQuadraturePosition() * Config.DRIVE_ENCODER_DPP);
         SmartDashboard.putNumber("Right front motor distance: ", rightFrontMotor.getSensorCollection().getQuadraturePosition() * Config.DRIVE_ENCODER_DPP);
@@ -802,6 +1083,9 @@ public class DriveBase extends Subsystem {
         }
     }
 
+    private double lastEncoderAv = 0;
+    private double lastGyro = 0;
+
     /**
      * The drive mode of the robot
      */
@@ -828,6 +1112,16 @@ public class DriveBase extends Subsystem {
         MotionMagicWithGyro,
 
         /**
+         * Motion profile
+         */
+        MotionProfile,
+
+        /**
+         * Motion profile with 2 wheels
+         */
+        MotionProfile2Wheel,
+
+        /**
          * Closed loop control with Auxiliary Pigeon Support
          */
         PositionGyro,
@@ -838,3 +1132,4 @@ public class DriveBase extends Subsystem {
         Rotate
     }
 }
+

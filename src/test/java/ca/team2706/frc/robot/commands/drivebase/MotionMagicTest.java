@@ -3,6 +3,7 @@ package ca.team2706.frc.robot.commands.drivebase;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import com.ctre.phoenix.CTREJNIWrapper;
+import com.ctre.phoenix.motion.BuffTrajPointStreamJNI;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -51,6 +52,9 @@ public class MotionMagicTest {
     @Mocked
     private Notifier notifier;
 
+    @Mocked(stubOutClassInitialization = true)
+    private BuffTrajPointStreamJNI jni2;
+
     @Injectable
     private SensorCollection sensorCollection;
 
@@ -70,9 +74,10 @@ public class MotionMagicTest {
      * @param speed         The speed to create the command with
      * @param position      The position to create the command with
      * @param minDoneCycles The minimum cycles to use
+     * @param heading       The heading to use
      */
     @Test
-    public void testCorrectState(@Injectable("0.0") double speed, @Injectable("0.0") double position, @Injectable("1") int minDoneCycles) {
+    public void testCorrectState(@Injectable("0.0") double speed, @Injectable("0.0") double position, @Injectable("1") int minDoneCycles, @Injectable("0.0") double heading) {
         assertEquals(DriveBase.DriveMode.Disabled, DriveBase.getInstance().getDriveMode());
         motionMagic.initialize();
         assertEquals(DriveBase.DriveMode.MotionMagicWithGyro, DriveBase.getInstance().getDriveMode());
@@ -88,9 +93,11 @@ public class MotionMagicTest {
      * @param speed         The speed to inject
      * @param position      The position to inject
      * @param minDoneCycles The min cycles to inject
+     * @param heading       The heading to use
+     * @param heading       The heading to use
      */
     @Test
-    public void testSetting(@Injectable("0.0") double speed, @Injectable("0.5") double position, @Injectable("1") int minDoneCycles) {
+    public void testSetting(@Injectable("0.0") double speed, @Injectable("0.5") double position, @Injectable("1") int minDoneCycles, @Injectable("0.0") double heading) {
         motionMagic.initialize();
 
         for (int i = 0; i < 3; i++) {
@@ -101,11 +108,14 @@ public class MotionMagicTest {
 
         new Verifications() {{
             talon.set(ControlMode.MotionMagic, position / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, 0);
-            times = 1;
-            talon.feed();
             times = 3;
+            talon.feed();
+            times = 0;
             talon.follow((IMotorController) any, FollowerType.AuxOutput1);
+            times = 3;
             talon.configClosedLoopPeakOutput(0, speed);
+            times = 6;
+            talon.configClosedLoopPeakOutput(1, speed);
             times = 6;
         }};
     }
@@ -116,11 +126,13 @@ public class MotionMagicTest {
      * @param speed         The speed to inject
      * @param position      The position to inject
      * @param minDoneCycles The min cycles to inject
+     * @param heading       The heading to use
+     * @param heading       The heading to use
      */
     @Test
-    public void testFinished(@Injectable("0.0") double speed, @Injectable("5") double position, @Injectable("3") int minDoneCycles) {
+    public void testFinished(@Injectable("0.0") double speed, @Injectable("0") double position, @Injectable("3") int minDoneCycles, @Injectable("0.0") double heading) {
         new Expectations() {{
-            talon.getClosedLoopError(0);
+            sensorCollection.getQuadraturePosition();
             returns(intFeetToTicks(5), intFeetToTicks(4), intFeetToTicks(1), intFeetToTicks(0.25), intFeetToTicks(1), intFeetToTicks(0.25),
                     intFeetToTicks(-0.4), intFeetToTicks(0), intFeetToTicks(0), intFeetToTicks(0), intFeetToTicks(0));
         }};

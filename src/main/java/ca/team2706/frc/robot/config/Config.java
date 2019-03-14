@@ -65,17 +65,78 @@ public class Config {
             INVERT_FRONT_RIGHT_DRIVE = robotSpecific(true, true, true),
             INVERT_BACK_RIGHT_DRIVE = robotSpecific(true, true, true);
 
-    public static final boolean DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);
+    public static final int
+            INTAKE_MOTOR_ID = robotSpecific(6, 6, 6),
+            CARGO_IR_SENSOR_ID = robotSpecific(1, 1, 1),
+            INTAKE_LIFT_SOLENOID_FORWARD_ID = robotSpecific(2, 2, 2),
+            INTAKE_LIFT_SOLENOID_BACKWARD_ID = robotSpecific(3, 3, 3),
+            HATCH_EJECTOR_SOLENOID_FORWARD_ID = robotSpecific(0, 0, 0),
+            HATCH_EJECTOR_SOLENOID_BACKWARD_ID = robotSpecific(1, 1, 1);
+
+    public static final int
+            LIFT_MOTOR_ID = robotSpecific(5, 5, 5);
+
+    public static final double
+            // Max speed of the lift going up in override (between 0 and 1).
+            LIFT_OVERRIDE_UP_SPEED = 0.4,
+    /**
+     * Speed for automatically ejecting cargo from the intake, from 0 to 1.
+     */
+    AUTO_EJECT_CARGO_INTAKE_SPEED = 1.0,
+    // Max speed of the lift going down in override (between -1 and 0).
+    LIFT_OVERRIDE_DOWN_SPEED = -0.2,
+    /**
+     * Speed (from 0 to 1) for automatically intaking cargo.
+     */
+    AUTO_INTAKE_CARGO_SPEED = 0.8;
+
+
+    public static boolean
+            INVERT_LIFT_MOTOR = robotSpecific(false, false, false),
+            ENABLE_LIFT_CURRENT_LIMIT = robotSpecific(true, true, true);
+
+    public static int
+            /**
+             * Maximum lift current, in amps.
+             */
+            MAX_LIFT_CURRENT = 0,
+    /**
+     * How long the lift current has to be over the current limit before it is cut out.
+     */
+    CURRENT_LIMIT_THRESHOLD_MS = 0,
+    /**
+     * Continuous current limit
+     */
+    CONTINUOUS_CURRENT_LIMIT = 15;
+
+    /**
+     * How long (in seconds) the lift ramp up on voltage should be.
+     */
+    public static double LIFT_VOLTAGE_RAMP_UP_PERIOD = 0.6;
+
+    public static int MAX_LIFT_ENCODER_TICKS = 58_000;
+
+
+    public static final boolean ENABLE_DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);
 
     // Talon ID for the Pigeon
-    public static final int GYRO_TALON_ID = robotSpecific(5, 3, 5);
+    public static final int GYRO_TALON_ID = robotSpecific(1, 3, 3);
 
     // Selector Channel
     public static final int SELECTOR_ID = robotSpecific(0, 0, 0);
 
+    // Ring light
+    public static final int RING_LIGHT_ID = robotSpecific(0, 0, 0);
+
     // The amount of encoder ticks that the robot must drive to go one foot
     public static final double DRIVE_ENCODER_DPP
             = robotSpecific(Math.PI / 8192.0, Math.PI / 8192.0, Math.PI / 8192.0);
+
+    /**
+     * The amount of encoder ticks that the robot must move the lift to travel one foot
+     */
+    public static final double LIFT_ENCODER_DPP
+            = robotSpecific(0.7 * Math.PI / 16_384.0, 0.7 * Math.PI / 16_384.0, 0.7 * Math.PI / 16_384.0);
 
     public static final double PIGEON_DPP = robotSpecific(360.0 / 8192.0, 360.0 / 8192.0, 360.0 / 8192.0);
 
@@ -93,39 +154,128 @@ public class Config {
     public static final int TANK_DRIVE_RIGHT = XboxValue.XBOX_RIGHT_STICK_Y.getPort();
     public static final int TANK_DRIVE_LEFT = XboxValue.XBOX_LEFT_STICK_Y.getPort();
 
+    /**
+     * Amount of time (in seconds) that it takes for the plunger to be stowed.
+     */
+    public static final double PLUNGER_TIMEOUT = 0.25;
+    /**
+     * How long the intake motors should be running before the plunger deploys, in seconds.
+     */
+    public static final double EXHALE_CARGO_WAIT_UNTIL_PLUNGER = 0.2;
+
+    /**
+     * How long to wait to ensure the intake arms have fully moved.
+     */
+    public static final double INTAKE_ARMS_DELAY = 1.0;
+
+    /**
+     * How much height (in feet) to subtract from the lift's height for ejecting hatches.
+     */
+    public static final double SUBTRACT_LIFT_HEIGHT = -0.2;
+    /**
+     * How far from the top and the bottom of the lift that the lift should begin to slow down, in manual control.
+     */
+    public static final double LIFT_SLOWDOWN_RANGE_UP = 0.5;
+    public static final double LIFT_SLOWDOWN_RANGE_DOWN = 1.0;
+
+    public static final double MAX_INTAKE_SPEED = 1.0;
+
     public static final double LOG_PERIOD = robotSpecific(0.02, 0.02, 0.02, Double.POSITIVE_INFINITY);
+
+    public static final double WHEELBASE_WIDTH = robotSpecific(2.0, 2.0, 2.0);
+
+    public static final boolean DISABLE_WARNING = robotSpecific(true, true, true);
+
+    public static final Path DEPLOY_DIR = Paths.get(System.getProperty("user.home"), "deploy");
 
     // #### Fluid constants ####
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_DEADBAND = constant("closed-loop-drive-deadband", 0.001);
     public static final FluidConstant<Double> DRIVE_OPEN_LOOP_DEADBAND = constant("open-loop-drive-deadband", 0.04);
+    public static final FluidConstant<Double> LIFT_CLOSED_LOOP_DEADBAND = constant("lift-deadband", 0.001);
 
     public static final FluidConstant<Boolean> DRIVE_SUM_PHASE_LEFT = constant("drive-sum-phase-left", true);
     public static final FluidConstant<Boolean> DRIVE_SUM_PHASE_RIGHT = constant("drive-sum-phase-right", true);
+
+    public static final FluidConstant<Boolean> ENABLE_LIFT_SUM_PHASE = constant("lift-sum-phase", true);
 
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_P = constant("drive-P", 0.1);
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_I = constant("drive-I", 0.0);
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_D = constant("drive-D", 0.0);
 
-    public static final FluidConstant<Double> MOTION_MAGIC_CRUISE_VELOCITY = constant("mm-cruise-velocity", 7.77);
-    public static final FluidConstant<Double> MOTION_MAGIC_ACCELERATION = constant("mm-acceleration", 7.77);
+    public static final FluidConstant<Double> DRIVE_MOTION_MAGIC_P = constant("drive-mm-P", 0.4096);
+    public static final FluidConstant<Double> DRIVE_MOTION_MAGIC_I = constant("drive-mm-I", 0.0);
+    public static final FluidConstant<Double> DRIVE_MOTION_MAGIC_D = constant("drive-mm-D", 6.5);
+    public static final FluidConstant<Double> DRIVE_MOTION_MAGIC_F = constant("drive-mm-F", 0.397);
+
+    public static final FluidConstant<Double> DRIVEBASE_MOTION_MAGIC_CRUISE_VELOCITY = constant("mm-drivebase-cruise-velocity", 8.0);
+    public static final FluidConstant<Double> DRIVEBASE_MOTION_MAGIC_ACCELERATION = constant("mm-drivebase-acceleration", 8.0);
+
+    public static final FluidConstant<Double> LIFT_MOTION_MAGIC_ACCELERATION = constant("mm-lift-acceleration", 4.0);
+    public static final FluidConstant<Double> LIFT_MOTION_MAGIC_VELOCITY = constant("mm-lift-velocity", 4.0);
+    /**
+     * Max speed of the lift in encoder ticks.
+     */
+    public static final FluidConstant<Integer> LIFT_MAX_SPEED = constant("max-lift-velocity", 3000);
+    public static final FluidConstant<Double> MANUAL_LIFT_MAX_PERCENT = constant("max-manual-lift-percent-velocity", 0.7);
+    public static final FluidConstant<Integer> MOTION_MAGIC_SMOOTHING = constant("mm-smoothing", 0);
+    public static final FluidConstant<Double> PATHFINDING_JERK = constant("pf-jerk", 197.0);
+    public static final FluidConstant<Double> PATHFINDING_VELOCITY = constant("pf-velocity", 2.0);
+    public static final FluidConstant<Double> PATHFINDING_ACCELERATION = constant("pf-acceleration", 6.56);
 
     public static final FluidConstant<Double> TURN_P = constant("turn-P", 0.5);
     public static final FluidConstant<Double> TURN_I = constant("turn-I", 0.0);
     public static final FluidConstant<Double> TURN_D = constant("turn-D", 0.0);
 
+    public static final FluidConstant<Double>
+            LIFT_P = constant("lift-P", 0.5),
+            LIFT_I = constant("lift-I", 0.0),
+            LIFT_D = constant("lift-D", 0.0),
+            LIFT_F = constant("lift-F", 0.0);
+
     public static final FluidConstant<Double> PIGEON_KP = constant("pigeon-kp", 2.0);
     public static final FluidConstant<Double> PIGEON_KI = constant("pigeon-ki", 0.0);
-    public static final FluidConstant<Double> PIGEON_KD = constant("pigeon-ki", 4.0);
+    public static final FluidConstant<Double> PIGEON_KD = constant("pigeon-kd", 4.0);
     public static final FluidConstant<Double> PIGEON_KF = constant("pigeon-kf", 0.0);
 
-    public static final FluidConstant<String> DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING =
-            constant("driver-assist-vision-cargo-loading-binding", XboxValue.XBOX_X_BUTTON.getNTString());
+    // All controller bindings.
+    public static final FluidConstant<String> INTAKE_BACKWARD_BINDING = constant("intake-backward-binding", XboxValue.XBOX_BACK_LEFT_TRIGGER.getNTString()),
+            INTAKE_FORWARD_BINDING = constant("intake-forward-binding", XboxValue.XBOX_BACK_RIGHT_TRIGGER.getNTString()),
+            MOVE_LIFT_BINDING = constant("move-lift-binding", XboxValue.XBOX_LEFT_STICK_Y.getNTString()),
+            LIFT_ARMS_BINDING = constant("lift-arms-binding", XboxValue.XBOX_A_BUTTON.getNTString()),
+            LOWER_ARMS_BINDING = constant("lower-arms-binding", XboxValue.XBOX_Y_BUTTON.getNTString()),
+            OVERRIDE_LIFT_DOWN_BINDING = constant("override-lift-down-binding", XboxValue.XBOX_B_BUTTON.getNTString()),
+            OVERRIDE_LIFT_UP_BINDING = constant("override-lift-up-binding", XboxValue.XBOX_X_BUTTON.getNTString()),
+            LIFT_FIRST_SETPOINT_BINDING = constant("lift-bottom-setpoint-binding", XboxValue.XBOX_POV_DOWN.getNTString()),
+            LIFT_SECOND_SETPOINT_BINDING = constant("lift-second-setpoint-binding", XboxValue.XBOX_POV_LEFT.getNTString()),
+            LIFT_THIRD_SETPOINT_BINDING = constant("lift-third-setpoint-binding", XboxValue.XBOX_POV_UP.getNTString()),
+            LIFT_FOURTH_SETPOINT_BINDING = constant("lift-top-setpoint-binding", XboxValue.XBOX_POV_RIGHT.getNTString()),
+            MANUAL_PISTON_BINDING = constant("manual-plunger-toggle", XboxValue.XBOX_RIGHT_AXIS_BUTTON.getNTString()),
+            EJECT_BINDING = constant("eject-multi-purpose-binding", XboxValue.XBOX_RB_BUTTON.getNTString()),
+            AUTO_INTAKE_CARGO_BINDING = constant("auto-intake-cargo-binding", XboxValue.XBOX_LB_BUTTON.getNTString()),
+            TOGGLE_RING_LIGHT_BINDING = constant("toggle-ring-light-binding", XboxValue.XBOX_START_BUTTON.getNTString()),
+            DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING =
+                    constant("driver-assist-vision-cargo-loading-binding", XboxValue.XBOX_X_BUTTON.getNTString()),
+            DRIVER_ASSIST_VISION_ROCKET_BINDING =
+                    constant("driver-assist-vision-rocket-binding", XboxValue.XBOX_B_BUTTON.getNTString()),
+            DRIVER_ASSIST_LASER_BINDING =
+                    constant("driver-assist-laser-binding", XboxValue.XBOX_Y_BUTTON.getNTString()),
+            FACE_FORWARD_BINDING = constant("face-forward-binding", XboxValue.XBOX_POV_UP.getNTString()),
+            FACE_RIGHT_BINDING = constant("face-right-binding", XboxValue.XBOX_POV_RIGHT.getNTString()),
+            FACE_LEFT_BINDING = constant("face-left-binding", XboxValue.XBOX_POV_LEFT.getNTString()),
+            FACE_BACK_BINDING = constant("face-back-binding", XboxValue.XBOX_POV_DOWN.getNTString()),
+            INTERRUPT_BUTTON = constant("interrupt-button", XboxValue.XBOX_A_BUTTON.getNTString()),
+            SLIGHTLY_LIFT_LIFT_BINDING = constant("lift-lift-slightly-binding", XboxValue.XBOX_SELECT_BUTTON.getNTString());
 
-    public static final FluidConstant<String> DRIVER_ASSIST_VISION_ROCKET_BINDING =
-            constant("driver-assist-vision-rocket-binding", XboxValue.XBOX_B_BUTTON.getNTString());
 
-    public static final FluidConstant<String> DRIVER_ASSIST_LASER_BINDING =
-            constant("driver-assist-laser-binding", XboxValue.XBOX_Y_BUTTON.getNTString());
+    /**
+     * The minimum reading on the cargo IR sensor to assert that we have cargo in the mechanism.
+     */
+    public static final FluidConstant<Double> CARGO_CAPTURED_IR_MIN_VOLTAGE = constant("cargo-min-ir-voltage", 0.27);
+
+    /**
+     * The idea voltage for captured cargo.
+     */
+    public static final FluidConstant<Double> CARGO_CAPTURED_IDEAL_IR_VOLTAGE = constant("cargo-ideal-ir-voltage", 0.29);
 
     
 
@@ -200,7 +350,7 @@ public class Config {
      */
     private void initializeFluidConstantNetworktables() {
         ArrayList<FluidConstant<?>> constants = new ArrayList<>(CONSTANTS);
-        constants.forEach(fluidConstant -> fluidConstant.addNTEntry(configTable));
+        constants.forEach(fluidConstant -> fluidConstant.addNTEntry(getNetworkTable()));
     }
 
     /**

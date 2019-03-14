@@ -32,7 +32,9 @@
             "libName": "pathfinder_frc",
             "configuration": "native_pathfinder_old",
             "headerClassifier": "headers",
-            "binaryPlatforms": []
+            "binaryPlatforms": [
+                
+            ]
         }
     ],
     "javaDependencies": [

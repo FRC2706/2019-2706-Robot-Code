@@ -219,7 +219,7 @@ public class Config {
     public static final FluidConstant<Double> MANUAL_LIFT_MAX_PERCENT = constant("max-manual-lift-percent-velocity", 0.7);
     public static final FluidConstant<Integer> MOTION_MAGIC_SMOOTHING = constant("mm-smoothing", 0);
     public static final FluidConstant<Double> PATHFINDING_JERK = constant("pf-jerk", 197.0);
-    public static final FluidConstant<Double> PATHFINDING_VELOCITY = constant("pf-velocity", 2.0);
+    public static final FluidConstant<Double> PATHFINDING_VELOCITY = constant("pf-velocity", 6.56);
     public static final FluidConstant<Double> PATHFINDING_ACCELERATION = constant("pf-acceleration", 6.56);
 
     public static final FluidConstant<Double> TURN_P = constant("turn-P", 0.5);

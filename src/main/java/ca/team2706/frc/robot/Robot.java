@@ -1,7 +1,6 @@
 package ca.team2706.frc.robot;
 
-import ca.team2706.frc.robot.commands.auto.DriveOffHab;
-import ca.team2706.frc.robot.commands.auto.LevelOneCentreHatch;
+import ca.team2706.frc.robot.commands.auto.*;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.*;
@@ -75,11 +74,17 @@ public class Robot extends TimedRobot {
 
         commands = new Command[]{
                 OI.getInstance().driveCommand,                                             // 0
-                null,                                                                      // 1
-                null,                                                                      // 2
+                new ApproachSecondSideCargoRight().mirror(),                               // 1
+                new ApproachSecondSideCargoRight(),                                        // 2                                                                   // 2
                 OI.getInstance().driveCommand,                                             // 3
                 new DriveOffHab(),                                                         // 4
                 new LevelOneCentreHatch(),                                                 // 5
+                new ApproachCloseRocketRight().mirror(),                                   // 6
+                new ApproachCloseRocketRight(),                                            // 7
+                new ApproachMiddleRocketRight().mirror(),                                  // 8
+                new ApproachMiddleRocketRight(),                                           // 9
+                new ApproachFirstSideCargoRight().mirror(),                                // 10
+                new ApproachFirstSideCargoRight()                                          // 11
         };
     }
 

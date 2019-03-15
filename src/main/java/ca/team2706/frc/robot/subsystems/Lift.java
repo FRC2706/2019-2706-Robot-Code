@@ -86,7 +86,8 @@ public class Lift extends Subsystem {
         liftMotor.configPeakCurrentDuration(Config.CURRENT_LIMIT_THRESHOLD_MS);
         liftMotor.enableCurrentLimit(Config.ENABLE_LIFT_CURRENT_LIMIT);
 
-        liftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_LONG);
+        liftMotor.configRemoteFeedbackFilter(Config.RIGHT_BACK_DRIVE_MOTOR_ID, RemoteSensorSource.CANifier_Quadrature, 0, Config.CAN_LONG);
+        liftMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 0, Config.CAN_LONG);
         liftMotor.configSelectedFeedbackCoefficient(0.5, 0, Config.CAN_LONG);
         liftMotor.setSensorPhase(Config.ENABLE_LIFT_SUM_PHASE.value());
         liftMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Config.CAN_LONG);
@@ -100,7 +101,7 @@ public class Lift extends Subsystem {
 
         liftMotor.configClosedLoopPeriod(0, 1, Config.CAN_LONG);
 
-        liftMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, Config.CAN_LONG);
+        liftMotor.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX, LimitSwitchNormal.NormallyOpen, Config.RIGHT_BACK_DRIVE_MOTOR_ID, Config.CAN_LONG);
         enableLimitSwitch(true);
 
         enableLimit(true);

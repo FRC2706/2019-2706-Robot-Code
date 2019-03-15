@@ -70,12 +70,7 @@ public class DriveBase extends Subsystem {
     private final AnalogSelector selector;
 
     /**
-     * Digital IO 0
-     */
-    private final DigitalIO dio0;
-
-    /**
-     * LidarLitePWM
+     * Lidar Lite laser range finder using Pulse Width Modulation (PWM)
      */
     private final LidarLitePWM lidarLitePWM;
 
@@ -137,9 +132,7 @@ public class DriveBase extends Subsystem {
 
         selector = new AnalogSelector(Config.SELECTOR_ID);
 
-        dio0 = 
-
-        lidarLitePWM = new LidarLitePWM(source);
+        lidarLitePWM = new LidarLitePWM();
 
         light = new PWM(Config.PURPLE_LIGHT);
 
@@ -154,6 +147,7 @@ public class DriveBase extends Subsystem {
 
         addChild("Gyroscope", Sendables.newPigeonSendable(gyro));
         addChild("Selector", selector);
+        addChild("LidarLite", lidarLitePWM);
 
         addChild("Left Encoder", Sendables.newTalonEncoderSendable(leftFrontMotor));
         addChild("Right Encoder", Sendables.newTalonEncoderSendable(rightFrontMotor));
@@ -209,6 +203,15 @@ public class DriveBase extends Subsystem {
      */
     public int getAnalogSelectorIndex() {
         return selector.getIndex();
+    }
+
+    /**
+     * Gets the LidarLite distance reading
+     *
+     * @return LidarLite distance reading in cm
+     */
+    public double getLidarLiteDistanceCm() {
+        return lidarLitePWM.getDistanceCm();
     }
 
     /**

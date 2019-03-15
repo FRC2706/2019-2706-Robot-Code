@@ -13,6 +13,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.Relay;
@@ -41,6 +42,9 @@ public class MotionMagicVisionTest {
 
     @Mocked
     private AnalogInput analogInput;
+
+    @Mocked
+    private DigitalInput digitalInput;
 
     @Mocked(stubOutClassInitialization = true)
     private PigeonIMU pigeon;

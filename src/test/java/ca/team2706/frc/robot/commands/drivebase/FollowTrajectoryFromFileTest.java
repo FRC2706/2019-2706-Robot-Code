@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -40,6 +41,9 @@ public class FollowTrajectoryFromFileTest {
 
     @Mocked
     private AnalogInput analogInput;
+
+    @Mocked
+    private DigitalInput digitalInput;
 
     @Mocked(stubOutClassInitialization = true)
     private PigeonIMU pigeon;

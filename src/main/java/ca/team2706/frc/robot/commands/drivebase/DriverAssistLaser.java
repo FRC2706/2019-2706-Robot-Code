@@ -33,10 +33,7 @@ public class DriverAssistLaser extends Command {
         // Ensure that this command is the only one to run on the drive base
         requires(DriveBase.getInstance());
 
-        DigitalSource ds = new DigitalInput(0);
-        lidarLitePWM = new LidarLitePWM(ds);
-
-        laserDistanceToTarget = lidarLitePWM.getDistancePWMCm() * CENTIMETRES_TO_FEET;
+        laserDistanceToTarget = lidarLitePWM.getDistanceCm() * CENTIMETRES_TO_FEET;
         System.out.println("laserDistanceToTarget:" + laserDistanceToTarget);
     }
 
@@ -52,7 +49,7 @@ public class DriverAssistLaser extends Command {
         DriveBase.getInstance().setPositionNoGyroMode();
 
         // Get distance of robot from target using laster rangefinder
-        laserDistanceToTarget = lidarLitePWM.getDistancePWMCm() * CENTIMETRES_TO_FEET;
+        laserDistanceToTarget = lidarLitePWM.getDistanceCm() * CENTIMETRES_TO_FEET;
         System.out.println("laserDistanceToTarget:" + laserDistanceToTarget);
         
         if (laserDistanceToTarget < LASER_DISTANCE_MIN) {

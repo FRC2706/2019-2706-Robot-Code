@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Subsystem that controls the elevator on the robot
@@ -146,6 +147,9 @@ public class Lift extends Subsystem {
             Log.d("Lift Current " + liftMotor.getOutputCurrent());
             Log.d("Lift Voltage " + liftMotor.getMotorOutputVoltage());
         }
+
+        SmartDashboard.putBoolean("Limit Switch", liftMotor.getSensorCollection().isRevLimitSwitchClosed());
+        SmartDashboard.putNumber("Lift Position", getLiftHeightEncoderTicks());
     }
 
     /**

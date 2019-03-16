@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot.commands.lift;
 
+import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.Lift;
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -29,6 +30,7 @@ public class MoveLiftToPosition extends Command {
     @Override
     protected void initialize() {
         currentTarget = position.get();
+        Log.d("Moving lift to " + currentTarget + " ticks");
     }
 
     @Override
@@ -43,6 +45,13 @@ public class MoveLiftToPosition extends Command {
 
     @Override
     protected void end() {
+        Log.d("Ended lift moving");
         Lift.getInstance().stop();
+    }
+
+    @Override
+    protected void interrupted() {
+        Log.d("Cancelled moving lift after " + this.timeSinceInitialized() + " seconds");
+        super.interrupted();
     }
 }

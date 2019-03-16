@@ -7,10 +7,7 @@ import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.*;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.IterativeRobotBase;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Watchdog;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -138,6 +135,8 @@ public class Robot extends TimedRobot {
         // Iterate through each of the state-change listeners and call them.
         onStateChange(RobotState.AUTONOMOUS);
 
+        logFMSData();
+
         selectorInit();
     }
 
@@ -150,6 +149,8 @@ public class Robot extends TimedRobot {
     private void selectorInit() {
         // The index based the voltage of the selector
         final int index = DriveBase.getInstance().getAnalogSelectorIndex();
+
+        Log.d("Selector switch set to " + index);
 
         // Check to see if the command exists in the desired index
         if (index < commands.length && commands[index] != null) {
@@ -183,6 +184,8 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         // Iterate through each of the state-change listeners and call them.
         onStateChange(RobotState.TELEOP);
+
+        logFMSData();
     }
 
     /**
@@ -299,7 +302,9 @@ public class Robot extends TimedRobot {
      * Interrupt the current autonomous command and start teleop mode
      */
     public static void interruptCurrentCommand() {
-        if (currentCommand != null) {
+        if (currentCommand != null && currentCommand.isRunning() && DriverStation.getInstance().isAutonomous() && currentCommand != OI.getInstance().driveCommand && currentCommand != OI.getInstance().liftCommand) {
+            DriverStation.reportWarning("Interupting auto", false);
+            Log.w("Interrupting auto");
             currentCommand.cancel();
         }
     }
@@ -310,5 +315,11 @@ public class Robot extends TimedRobot {
     private static void shutdown() {
         // Iterate through each of the state-change listeners and call them.
         latestInstance.onStateChange(RobotState.SHUTDOWN);
+    }
+
+    private void logFMSData() {
+        if(DriverStation.getInstance().isFMSAttached()) {
+            Log.d("FMS: " + DriverStation.getInstance().getMatchType().name() + " " + DriverStation.getInstance().getMatchNumber() + " at " + DriverStation.getInstance().getMatchTime());
+        }
     }
 }

@@ -1,9 +1,7 @@
 package ca.team2706.frc.robot;
 
-import ca.team2706.frc.robot.commands.drivebase.FollowTrajectoryFromFile;
-import ca.team2706.frc.robot.commands.drivebase.MotionMagic;
-import ca.team2706.frc.robot.commands.drivebase.StraightDrive;
-import ca.team2706.frc.robot.commands.drivebase.StraightDriveGyro;
+import ca.team2706.frc.robot.commands.auto.DriveOffHab;
+import ca.team2706.frc.robot.commands.auto.LevelOneCentreHatch;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.*;
@@ -43,6 +41,8 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
+        setOnStateChange((state) -> Log.i("Robot State: " + state.name()));
+
         onStateChange(RobotState.ROBOT_INIT);
         isInitialized = true;
 
@@ -78,10 +78,8 @@ public class Robot extends TimedRobot {
                 null,                                                                      // 1
                 null,                                                                      // 2
                 OI.getInstance().driveCommand,                                             // 3
-                new StraightDrive(0.2, 2.0, 100),               // 4
-                new MotionMagic(1.0, 10.0, 10),                 // 5
-                new StraightDriveGyro(0.2, 2.0, 100),           // 6
-                new FollowTrajectoryFromFile(1.0, 100, "Test") // 7
+                new DriveOffHab(),                                                         // 4
+                new LevelOneCentreHatch(),                                                 // 5
         };
     }
 
@@ -164,6 +162,9 @@ public class Robot extends TimedRobot {
 
         if (currentCommand != null) {
             currentCommand.start();
+            Log.i("Running autonomous command: " + currentCommand);
+        } else {
+            Log.w("Not running autonomous command");
         }
     }
 

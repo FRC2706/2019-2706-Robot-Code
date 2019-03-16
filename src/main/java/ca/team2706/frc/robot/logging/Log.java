@@ -8,37 +8,54 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
 
+import java.util.Properties;
+
 /**
  * Logs to USB and console at levels debug, info, warning, error
  */
 public class Log {
 
     private static final Logger LOGGER = LogManager.getLogger(Robot.class.getName());
+    private static final String BUILD_INFO_NAME = "/build-info.properties";
 
     /**
      * Starts logging
      */
     public static void init() {
         Log.i("Starting to log");
-        Log.i("Robot Entering teleop mode");
 
         Log.i("Robot Free Memory: " + ((double) Runtime.getRuntime().freeMemory()) / (1024 * 1024) + "MB");
         Log.i("Allocated: " + ((double) Runtime.getRuntime().totalMemory()) / (1024 * 1024) + "MB");
         Log.i("Available: " + ((double) Runtime.getRuntime().maxMemory()) / (1024 * 1024) + "MB");
 
-        Log.i("Teleop game specific message: " + DriverStation.getInstance().getGameSpecificMessage());
-        Robot.setOnStateChange(Log::printRobotState);
+        logBuildInfo();
+
+        Log.i("Game specific message: " + DriverStation.getInstance().getGameSpecificMessage());
     }
 
     /**
-     * Logs the robot state
-     *
-     * @param state the state the robot is in
+     * Logs program information
      */
-    private static void printRobotState(RobotState state) {
-        Log.i("Robot State: " + state.name());
-    }
+    private static void logBuildInfo() {
+        Properties properties = new Properties();
+        try {
+            properties.load(Log.class.getResourceAsStream(BUILD_INFO_NAME));
+        } catch (Exception e) {
+            Log.w("Could not load build info");
+        }
 
+        Log.i("Project name: " + properties.getProperty("name", "unknown"));
+        Log.i("Build timestamp: " + properties.getProperty("timestamp", "unknown"));
+        Log.i("Commit hash: " + properties.getProperty("commit.hash", "unknown"));
+        Log.i("Commit name: " + properties.getProperty("commit.name", "unknown"));
+        Log.i("Commit branch: " + properties.getProperty("commit.branch", "unknown"));
+        Log.i("Modified since commit: " + properties.getProperty("commit.modified", "unknown"));
+
+        // Print warning unless we are sure that there are no modifications
+        if (!properties.getProperty("commit.modified", "unknown").equalsIgnoreCase("false")) {
+            DriverStation.reportWarning("Code may have been modified since last commit", false);
+        }
+    }
 
     /**
      * Debug log

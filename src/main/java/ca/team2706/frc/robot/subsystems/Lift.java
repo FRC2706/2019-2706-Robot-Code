@@ -149,7 +149,7 @@ public class Lift extends Subsystem {
         }
 
         SmartDashboard.putBoolean("Limit Switch", liftMotor.getSensorCollection().isRevLimitSwitchClosed());
-        SmartDashboard.putNumber("Limit Position", getLiftHeightEncoderTicks());
+        SmartDashboard.putNumber("Lift Position", getLiftHeightEncoderTicks());
     }
 
     /**

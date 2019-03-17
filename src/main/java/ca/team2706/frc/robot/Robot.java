@@ -318,7 +318,7 @@ public class Robot extends TimedRobot {
     }
 
     private void logFMSData() {
-        if(DriverStation.getInstance().isFMSAttached()) {
+        if (DriverStation.getInstance().isFMSAttached()) {
             Log.d("FMS: " + DriverStation.getInstance().getMatchType().name() + " " + DriverStation.getInstance().getMatchNumber() + " at " + DriverStation.getInstance().getMatchTime());
         }
     }

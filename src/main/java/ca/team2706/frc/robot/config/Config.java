@@ -114,7 +114,7 @@ public class Config {
      */
     public static double LIFT_VOLTAGE_RAMP_UP_PERIOD = 0.6;
 
-    public static int MAX_LIFT_ENCODER_TICKS = 61_000;
+    public static int MAX_LIFT_ENCODER_TICKS = robotSpecific(61_000, 58_000, 61_000);
 
 
     public static final boolean ENABLE_DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);

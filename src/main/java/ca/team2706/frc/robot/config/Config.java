@@ -54,10 +54,10 @@ public class Config {
 
     // DriveBase motor CAN IDs
     public static final int
-            LEFT_FRONT_DRIVE_MOTOR_ID = robotSpecific(1, 1, 1),
-            LEFT_BACK_DRIVE_MOTOR_ID = robotSpecific(3, 3, 3),
-            RIGHT_FRONT_DRIVE_MOTOR_ID = robotSpecific(2, 2, 2),
-            RIGHT_BACK_DRIVE_MOTOR_ID = robotSpecific(4, 4, 4);
+            LEFT_FRONT_DRIVE_MOTOR_ID = robotSpecific(3, 1, 1),
+            LEFT_BACK_DRIVE_MOTOR_ID = robotSpecific(1, 3, 3),
+            RIGHT_FRONT_DRIVE_MOTOR_ID = robotSpecific(4, 2, 2),
+            RIGHT_BACK_DRIVE_MOTOR_ID = robotSpecific(2, 4, 4);
 
     public static final boolean
             INVERT_FRONT_LEFT_DRIVE = robotSpecific(false, false, false),

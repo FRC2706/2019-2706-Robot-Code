@@ -303,7 +303,7 @@ public class Robot extends TimedRobot {
      */
     public static void interruptCurrentCommand() {
         if (currentCommand != null && currentCommand.isRunning() && DriverStation.getInstance().isAutonomous() && currentCommand != OI.getInstance().driveCommand && currentCommand != OI.getInstance().liftCommand) {
-            DriverStation.reportWarning("Interupting auto", false);
+            DriverStation.reportWarning("Interrupting auto", false);
             Log.w("Interrupting auto");
             currentCommand.cancel();
         }

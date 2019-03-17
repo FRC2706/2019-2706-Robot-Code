@@ -32,8 +32,7 @@ jobs:
     steps:
       - task: Gradle@2
         inputs:
-          dockerVersion: 18.09.3-ce
-          releaseType: stable
+          dockerVersion: 17.09.0-ce
           workingDirectory: ''
           gradleWrapperFile: 'gradlew'
           gradleOptions: '-Xmx3072m'

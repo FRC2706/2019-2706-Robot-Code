@@ -14,12 +14,12 @@ import ca.team2706.frc.robot.commands.lift.*;
 import ca.team2706.frc.robot.commands.ringlight.ToggleRingLight;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.config.XboxValue;
+import ca.team2706.frc.robot.input.ETrigger;
 import ca.team2706.frc.robot.input.FluidButton;
 import ca.team2706.frc.robot.input.FluidTrigger;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import ca.team2706.frc.robot.subsystems.Lift;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
@@ -108,7 +108,7 @@ public class OI {
                 .whenHeld(new MoveLiftOnOverride(false));
         new FluidButton(controlStick, Config.OVERRIDE_LIFT_UP_BINDING)
                 .whenHeld(new MoveLiftOnOverride(true));
-        new Trigger() {
+        new ETrigger() {
             @Override
             public boolean get() {
                 return FluidTrigger.areAnyActive(controlStick,
@@ -121,7 +121,7 @@ public class OI {
                         XboxValue.XBOX_POV_UP_LEFT,
                         XboxValue.XBOX_POV_UP_RIGHT);
             }
-        }.whenActive(new MoveLiftToSetpointOnPOV(controlStick));
+        }.runWhileActive(new MoveLiftToSetpointOnPOV(controlStick));
         new FluidButton(controlStick, Config.MANUAL_PISTON_BINDING)
                 .whenPressed(new MovePlunger());
         FluidButton button = new FluidButton(controlStick, Config.EJECT_BINDING);

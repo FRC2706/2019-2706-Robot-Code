@@ -1,7 +1,6 @@
 package ca.team2706.frc.robot.logging;
 
 import ca.team2706.frc.robot.Robot;
-import ca.team2706.frc.robot.RobotState;
 import edu.wpi.first.wpilibj.DriverStation;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;

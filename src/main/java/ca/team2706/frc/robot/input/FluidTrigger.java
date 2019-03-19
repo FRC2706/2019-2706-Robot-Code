@@ -3,7 +3,6 @@ package ca.team2706.frc.robot.input;
 import ca.team2706.frc.robot.config.FluidConstant;
 import ca.team2706.frc.robot.config.XboxValue;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.buttons.Trigger;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,7 +12,7 @@ import java.util.Map;
  * Trigger which uses fluid bindings as part of its conditions.
  * This allows for very specific conditions which trigger actions.
  */
-public abstract class FluidTrigger extends Trigger {
+public abstract class FluidTrigger extends ETrigger {
     private final Map<FluidConstant<String>, XboxValue> bindings = new HashMap<>();
 
     /**

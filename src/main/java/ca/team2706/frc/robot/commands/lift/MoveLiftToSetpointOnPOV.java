@@ -55,6 +55,7 @@ public class MoveLiftToSetpointOnPOV extends Command {
             lastPressedBound = pressedPOV;
         }
 
+        // Decide what to do based on the real good POV being pressed.
         switch (boundPOV) {
             case XBOX_POV_DOWN:
                 currentSetpoint = 0;

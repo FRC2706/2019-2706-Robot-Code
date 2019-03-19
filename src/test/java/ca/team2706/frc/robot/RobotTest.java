@@ -117,6 +117,10 @@ public class RobotTest {
             genericHID.getRawAxis(0);
             result = 0;
             minTimes = 0;
+
+            DriverStation.getInstance();
+            result = driverStation;
+            minTimes = 0;
         }};
 
         new Expectations(Pathfinder.class) {{
@@ -235,9 +239,6 @@ public class RobotTest {
     @Test
     public void testAbsoluteResetOn() {
         new Expectations() {{
-            DriverStation.getInstance();
-            result = driverStation;
-
             driverStation.isFMSAttached();
             result = true;
         }};
@@ -258,9 +259,6 @@ public class RobotTest {
     @Test
     public void testAbsoluteResetOff() {
         new Expectations() {{
-            DriverStation.getInstance();
-            result = driverStation;
-
             driverStation.isFMSAttached();
             result = false;
         }};
@@ -298,22 +296,22 @@ public class RobotTest {
         robot.autonomousInit();
 
         assertEquals(a, getCurrentCommand(robot));
-        assertTrue(a.inProgress());
+        assertTrue(a.isRunning());
 
         robot.autonomousInit();
 
         assertEquals(a, getCurrentCommand(robot));
-        assertTrue(a.inProgress());
+        assertTrue(a.isRunning());
 
         robot.autonomousInit();
 
         assertEquals(c, getCurrentCommand(robot));
-        assertTrue(c.inProgress());
+        assertTrue(c.isRunning());
 
         robot.autonomousInit();
 
         assertEquals(a, getCurrentCommand(robot));
-        assertTrue(a.inProgress());
+        assertTrue(a.isRunning());
 
         setCommands(robot, null, b, null, c, d);
 
@@ -333,7 +331,13 @@ public class RobotTest {
         new Expectations() {{
             analogInput.getAverageVoltage();
             result = 0.0;
+
+            driverStation.isAutonomous();
+            result = true;
         }};
+
+        // Will result in
+        OI.init();
 
         EmptyCommand a = new EmptyCommand();
 
@@ -341,11 +345,11 @@ public class RobotTest {
 
         robot.autonomousInit();
 
-        assertTrue(a.inProgress());
+        assertTrue(a.isRunning());
 
         Robot.interruptCurrentCommand();
 
-        assertFalse(a.inProgress());
+        assertFalse(a.isRunning());
     }
 
     /**
@@ -403,7 +407,8 @@ public class RobotTest {
          *
          * @return True after calling {@code start()} and false after calling {@code cancel()}
          */
-        public boolean inProgress() {
+        @Override
+        public boolean isRunning() {
             return isRunning;
         }
     }

@@ -303,7 +303,7 @@ public class Robot extends TimedRobot {
      */
     public static void interruptCurrentCommand() {
         if (currentCommand != null && currentCommand.isRunning() && DriverStation.getInstance().isAutonomous() && currentCommand != OI.getInstance().driveCommand && currentCommand != OI.getInstance().liftCommand) {
-            DriverStation.reportWarning("Interupting auto", false);
+            DriverStation.reportWarning("Interrupting auto", false);
             Log.w("Interrupting auto");
             currentCommand.cancel();
         }
@@ -318,7 +318,7 @@ public class Robot extends TimedRobot {
     }
 
     private void logFMSData() {
-        if(DriverStation.getInstance().isFMSAttached()) {
+        if (DriverStation.getInstance().isFMSAttached()) {
             Log.d("FMS: " + DriverStation.getInstance().getMatchType().name() + " " + DriverStation.getInstance().getMatchNumber() + " at " + DriverStation.getInstance().getMatchTime());
         }
     }

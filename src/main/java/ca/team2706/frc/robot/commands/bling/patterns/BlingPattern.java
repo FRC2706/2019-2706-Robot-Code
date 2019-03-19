@@ -112,8 +112,7 @@ public abstract class BlingPattern {
      * If the command would like to run something while it is being displayed,
      * it should be run here.
      */
-    public void runCommand() {
-    }
+    public abstract void runCommand();
 
     /**
      * Should be run at the beginning of the command to help initialize it.

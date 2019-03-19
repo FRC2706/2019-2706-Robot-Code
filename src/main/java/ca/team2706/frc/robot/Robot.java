@@ -317,6 +317,9 @@ public class Robot extends TimedRobot {
         latestInstance.onStateChange(RobotState.SHUTDOWN);
     }
 
+    /**
+     * Logs the current data in the FMS.
+     */
     private void logFMSData() {
         if (DriverStation.getInstance().isFMSAttached()) {
             Log.d("FMS: " + DriverStation.getInstance().getMatchType().name() + " " + DriverStation.getInstance().getMatchNumber() + " at " + DriverStation.getInstance().getMatchTime());

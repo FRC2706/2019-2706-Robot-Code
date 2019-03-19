@@ -45,7 +45,7 @@ public class MoveLiftToPosition extends Command {
 
     @Override
     protected void end() {
-        Log.d("Ended lift moving");
+        Log.d("Ended lift moving. Position: " + Lift.getInstance().getLiftHeight());
         Lift.getInstance().stop();
     }
 

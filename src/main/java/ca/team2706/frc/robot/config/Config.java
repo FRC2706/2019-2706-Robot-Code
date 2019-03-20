@@ -76,6 +76,9 @@ public class Config {
     public static final int
             LIFT_MOTOR_ID = robotSpecific(5, 5, 5);
 
+    public static final int
+            CLIMBER_MOTOR_ID = robotSpecific(7, 7, 7);
+
     public static final double
             // Max speed of the lift going up in override (between 0 and 1).
             LIFT_OVERRIDE_UP_SPEED = 0.4,
@@ -95,6 +98,10 @@ public class Config {
             INVERT_LIFT_MOTOR = robotSpecific(false, false, false),
             ENABLE_LIFT_CURRENT_LIMIT = robotSpecific(true, true, true);
 
+    public static boolean
+            INVERT_CLIMBER_MOTOR = robotSpecific(false, false, false),
+            ENABLE_CLIMBER_CURRENT_LIMIT = robotSpecific(true, true, true);
+
     public static int
             /**
              * Maximum lift current, in amps.
@@ -103,11 +110,17 @@ public class Config {
     /**
      * How long the lift current has to be over the current limit before it is cut out.
      */
-    CURRENT_LIMIT_THRESHOLD_MS = 0,
+    LIFT_CURRENT_LIMIT_THRESHOLD_MS = 0,
     /**
      * Continuous current limit
      */
-    CONTINUOUS_CURRENT_LIMIT = 15;
+    LIFT_CONTINUOUS_CURRENT_LIMIT = 15;
+
+    // Climber current limits.
+    public static int
+            CLIMBER_PEAK_CURRENT_LIMIT = 0,
+            CLIMBER_CURRENT_LIMIT_THRESHOLD_MS = 0,
+            CLIMBER_CONTINUOUS_CURRENT_LIMIT = 15;
 
     /**
      * How long (in seconds) the lift ramp up on voltage should be.
@@ -212,12 +225,13 @@ public class Config {
 
     public static final FluidConstant<Double> LIFT_MOTION_MAGIC_ACCELERATION = constant("mm-lift-acceleration", 4.0);
     public static final FluidConstant<Double> LIFT_MOTION_MAGIC_VELOCITY = constant("mm-lift-velocity", 4.0);
+
     /**
      * Max speed of the lift in encoder ticks.
      */
     public static final FluidConstant<Integer> LIFT_MAX_SPEED = constant("max-lift-velocity", 3000);
     public static final FluidConstant<Double> MANUAL_LIFT_MAX_PERCENT = constant("max-manual-lift-percent-velocity", 0.7);
-    public static final FluidConstant<Integer> MOTION_MAGIC_SMOOTHING = constant("mm-smoothing", 0);
+    public static final FluidConstant<Integer> DRIVEBASE_MOTION_MAGIC_SMOOTHING = constant("mm-smoothing", 0);
     public static final FluidConstant<Double> PATHFINDING_JERK = constant("pf-jerk", 197.0);
     public static final FluidConstant<Double> PATHFINDING_VELOCITY = constant("pf-velocity", 2.0);
     public static final FluidConstant<Double> PATHFINDING_ACCELERATION = constant("pf-acceleration", 6.56);

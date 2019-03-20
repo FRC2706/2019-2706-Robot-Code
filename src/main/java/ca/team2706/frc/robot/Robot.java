@@ -53,6 +53,7 @@ public class Robot extends TimedRobot {
         Pneumatics.init();
         Lift.init();
         RingLight.init();
+        Climber.init();
 
         // Make sure that this is last initialized subsystem
         SensorExtras.init();

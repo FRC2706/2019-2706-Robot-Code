@@ -284,12 +284,13 @@ public class Config {
     public static final FluidConstant<Double> VISION_ASSIST_MAX_ACCELERATION = constant("robot-max-acc", 6.0);
     public static final FluidConstant<Double> VISION_ASSIST_MAX_JERK = constant("robot-max-jerk", 60.0);
     public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTX = constant("robottocamera-robotx", -0.25); // -0.5 for plyboy
-    public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTY = constant("robottocamera-roboty", 0.25); // 0.6 for plyboy
+    public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTY = constant("robottocamera-roboty", 0.33); // 0.25 for comp, 0.6 for plyboy
     public static final FluidConstant<Double> VISION_DISTANCE_MIN = constant("target-offset_distance", 0.5);
-    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_CARGO_AND_LOADING = constant("target-offset-distance-cargo-and-loading", 2.0);
-    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_ROCKET = constant("target-offset-distance-rocket", 2.7);
-    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_BALL = constant("target-offset-distance-ball", 2.0);
+    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_CARGO_AND_LOADING = constant("target-offset-distance-cargo-and-loading", 0.75);
+    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_ROCKET = constant("target-offset-distance-rocket", 1.45);
+    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_BALL = constant("target-offset-distance-ball", 0.75);
     public static final FluidConstant<Double> ROBOT_START_ANGLE = constant("robot-angle-deg", 90.0);
+    public static final FluidConstant<Double> ROBOT_HALF_LENGTH = constant("robot_length", 1.25);
 
     // ### Methods, fields and Constructors ###
     /**

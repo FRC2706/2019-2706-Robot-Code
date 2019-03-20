@@ -97,6 +97,7 @@ public class DriverAssistVisionTest {
         // is compared against the expected trajectory by comparing the expected x, y, and heading
         // against those of the generated trajectory for the first and last segments.
         double[] expectedAngRobotHeadingFinal_Field = {0.0, 90.0, 180.0, 270.0};
+        double offsetDistance_Robot = Config.ROBOT_HALF_LENGTH.value() + Config.TARGET_OFFSET_DISTANCE_CARGO_AND_LOADING.value();
         for (int i = 0; i < 4; i++) {
             driverAssistVision.generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, yawAngleCameraToTarget_Camera,
                     target);
@@ -107,7 +108,7 @@ public class DriverAssistVisionTest {
             assertEquals(traj.segments[0].y, 0.0, 0.3);
             assertEquals(traj.segments[0].heading, 0.0, 0.3);
             assertEquals(traj.segments[traj.length() - 1].x, vRobotToTarget_CameraX, 0.3);
-            assertEquals(traj.segments[traj.length() - 1].y, vRobotToTarget_CameraY - Config.TARGET_OFFSET_DISTANCE_CARGO_AND_LOADING.value(), 0.3); // 6.5
+            assertEquals(traj.segments[traj.length() - 1].y, vRobotToTarget_CameraY - offsetDistance_Robot, 0.3); // 6.5
             assertEquals(traj.segments[traj.length() - 1].heading, 0.0, 0.3);
         }
     }
@@ -142,6 +143,7 @@ public class DriverAssistVisionTest {
         // is compared against the expected trajectory by comparing the expected x, y, and heading
         // against those of the generated trajectory for the first and last segments.
         double[] expectedAngRobotHeadingFinal_Field = {60.0, 0.0, 300.0, 120.0, 180.0, 240.0};
+        double offsetDistance_Robot = Config.ROBOT_HALF_LENGTH.value() + Config.TARGET_OFFSET_DISTANCE_ROCKET.value();
         for (int i = 0; i < 6; i++) {
             driverAssistVision.generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, yawAngleCameraToTarget_Camera,
                     target);
@@ -152,7 +154,7 @@ public class DriverAssistVisionTest {
             assertEquals(traj.segments[0].y, 0.0, 0.3);
             assertEquals(traj.segments[0].heading, 0.0, 0.3);
             assertEquals(traj.segments[traj.length() - 1].x, vRobotToTarget_CameraX, 0.3);
-            assertEquals(traj.segments[traj.length() - 1].y, vRobotToTarget_CameraY - Config.TARGET_OFFSET_DISTANCE_ROCKET.value(), 0.3);
+            assertEquals(traj.segments[traj.length() - 1].y, vRobotToTarget_CameraY - offsetDistance_Robot, 0.3);
             assertEquals(traj.segments[traj.length() - 1].heading, 0.0, 0.3);
         }
     }

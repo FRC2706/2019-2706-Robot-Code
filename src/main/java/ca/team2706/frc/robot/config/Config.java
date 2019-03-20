@@ -306,6 +306,16 @@ public class Config {
 
     public static final FluidConstant<Double> ROBOT_START_ANGLE = constant("robot-start-angle-deg", 90.0);
 
+    /**
+     * Speed at which the climber motor should run when climbing.
+     */
+    public static final FluidConstant<Double> CLIMBER_FORWARD_SPEED = constant("climber-forward-percent-speed", 0.7);
+
+    /**
+     * Speed at which the climber motor should run when retracting.
+     */
+    public static final FluidConstant<Double> CLIMBER_REVERSE_SPEED = constant("climber-reverse-percent-speed", 0.7);
+
     // ### Methods, fields and Constructors ###
     /**
      * The network table for fluid constants.

@@ -76,14 +76,14 @@ public class Climber extends Subsystem {
      * Runs the climber motor forward, making the robot climb.
      */
     public void runClimberUp() {
-        climberMotor.set(ControlMode.PercentOutput, 1.0);
+        climberMotor.set(ControlMode.PercentOutput, Config.CLIMBER_FORWARD_SPEED.value());
     }
 
     /**
      * Retracts the climber mechanisms by running the motor backwards.
      */
     public void retractClimber() {
-        climberMotor.set(ControlMode.PercentOutput, -1.0);
+        climberMotor.set(ControlMode.PercentOutput, -Config.CLIMBER_REVERSE_SPEED.value());
     }
 
     @Override

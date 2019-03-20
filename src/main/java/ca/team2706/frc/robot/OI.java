@@ -1,5 +1,7 @@
 package ca.team2706.frc.robot;
 
+import ca.team2706.frc.robot.commands.climber.Climb;
+import ca.team2706.frc.robot.commands.climber.RetractClimber;
 import ca.team2706.frc.robot.commands.drivebase.AbsoluteRotateWithGyro;
 import ca.team2706.frc.robot.commands.drivebase.CurvatureDriveWithJoystick;
 import ca.team2706.frc.robot.commands.drivebase.DriverAssistVision;
@@ -14,6 +16,7 @@ import ca.team2706.frc.robot.commands.lift.*;
 import ca.team2706.frc.robot.commands.ringlight.ToggleRingLight;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.input.FluidButton;
+import ca.team2706.frc.robot.subsystems.Climber;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import ca.team2706.frc.robot.subsystems.Lift;
 import edu.wpi.first.wpilibj.Joystick;
@@ -101,10 +104,10 @@ public class OI {
                 .whenPressed(new RaiseArmsSafely());
         new FluidButton(controlStick, Config.LOWER_ARMS_BINDING)
                 .whenPressed(new LowerArmsSafely());
-        new FluidButton(controlStick, Config.OVERRIDE_LIFT_DOWN_BINDING)
-                .whenHeld(new MoveLiftOnOverride(false));
-        new FluidButton(controlStick, Config.OVERRIDE_LIFT_UP_BINDING)
-                .whenHeld(new MoveLiftOnOverride(true));
+        new FluidButton(controlStick, Config.CLIMBER_BINDING)
+                .whenHeld(new Climb());
+        new FluidButton(controlStick, Config.RETRACT_CLIMBER_BINDING)
+                .whenHeld(new RetractClimber());
         new FluidButton(controlStick, Config.LIFT_FIRST_SETPOINT_BINDING)
                 .whenHeld(new MoveLiftToSetpoint(0));
         new FluidButton(controlStick, Config.LIFT_SECOND_SETPOINT_BINDING)

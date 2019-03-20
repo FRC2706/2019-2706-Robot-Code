@@ -278,7 +278,9 @@ public class Config {
             FACE_LEFT_BINDING = constant("face-left-binding", XboxValue.XBOX_POV_LEFT.getNTString()),
             FACE_BACK_BINDING = constant("face-back-binding", XboxValue.XBOX_POV_DOWN.getNTString()),
             INTERRUPT_BUTTON = constant("interrupt-button", XboxValue.XBOX_A_BUTTON.getNTString()),
-            SLIGHTLY_LIFT_LIFT_BINDING = constant("lift-lift-slightly-binding", XboxValue.XBOX_SELECT_BUTTON.getNTString());
+            SLIGHTLY_LIFT_LIFT_BINDING = constant("lift-lift-slightly-binding", XboxValue.XBOX_SELECT_BUTTON.getNTString()),
+            CLIMBER_BINDING = constant("climber-binding", XboxValue.XBOX_X_BUTTON.getNTString()),
+            RETRACT_CLIMBER_BINDING = constant("retract-climber-binding", XboxValue.XBOX_B_BUTTON.getNTString());
 
 
     /**

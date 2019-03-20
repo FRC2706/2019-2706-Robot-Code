@@ -5,6 +5,9 @@ import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
+/**
+ * Climber subsystem for controlling the climber motors.
+ */
 public class Climber extends Subsystem {
 
     private static Climber currentInstance;

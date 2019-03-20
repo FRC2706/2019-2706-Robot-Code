@@ -54,10 +54,10 @@ public class Config {
 
     // DriveBase motor CAN IDs
     public static final int
-            LEFT_FRONT_DRIVE_MOTOR_ID = robotSpecific(1, 1, 1),
-            LEFT_BACK_DRIVE_MOTOR_ID = robotSpecific(3, 3, 3),
-            RIGHT_FRONT_DRIVE_MOTOR_ID = robotSpecific(2, 2, 2),
-            RIGHT_BACK_DRIVE_MOTOR_ID = robotSpecific(4, 4, 4);
+            LEFT_FRONT_DRIVE_MOTOR_ID = robotSpecific(3, 1, 1),
+            LEFT_BACK_DRIVE_MOTOR_ID = robotSpecific(1, 3, 3),
+            RIGHT_FRONT_DRIVE_MOTOR_ID = robotSpecific(4, 2, 2),
+            RIGHT_BACK_DRIVE_MOTOR_ID = robotSpecific(2, 4, 4);
 
     public static final boolean
             INVERT_FRONT_LEFT_DRIVE = robotSpecific(false, false, false),
@@ -114,13 +114,13 @@ public class Config {
      */
     public static double LIFT_VOLTAGE_RAMP_UP_PERIOD = 0.6;
 
-    public static int MAX_LIFT_ENCODER_TICKS = 58_000;
+    public static int MAX_LIFT_ENCODER_TICKS = robotSpecific(61_000, 58_000, 61_000);
 
 
     public static final boolean ENABLE_DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);
 
     // Talon ID for the Pigeon
-    public static final int GYRO_TALON_ID = robotSpecific(1, 3, 3);
+    public static final int GYRO_TALON_ID = robotSpecific(LEFT_BACK_DRIVE_MOTOR_ID, LEFT_BACK_DRIVE_MOTOR_ID, LEFT_BACK_DRIVE_MOTOR_ID);
 
     // Selector Channel
     public static final int SELECTOR_ID = robotSpecific(0, 0, 0);

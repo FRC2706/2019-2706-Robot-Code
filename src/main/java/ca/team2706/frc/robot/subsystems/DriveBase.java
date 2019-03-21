@@ -180,6 +180,10 @@ public class DriveBase extends Subsystem {
         return status;
     }
 
+    /**
+     * Whether there are errors in initialization that should disable autonomous
+     * @return Whether autonomous can run
+     */
     private boolean canRunAuto() {
         return status == SubsystemStatus.OK || status == SubsystemStatus.WORKABLE;
     }
@@ -512,6 +516,11 @@ public class DriveBase extends Subsystem {
      * Sets the talons to a disabled mode
      */
     public void setPositionNoGyroMode() {
+        if(!canRunAuto()) {
+            setDisabledMode();
+            return;
+        }
+
         if (driveMode != DriveMode.PositionNoGyro) {
             stop();
             selectEncodersSum();
@@ -525,6 +534,11 @@ public class DriveBase extends Subsystem {
      * Sets the robot up for rotation.
      */
     public void setRotateMode() {
+        if(!canRunAuto()) {
+            setDisabledMode();
+            return;
+        }
+
         if (driveMode != DriveMode.Rotate) {
             stop();
             selectGyroSensor();
@@ -538,6 +552,11 @@ public class DriveBase extends Subsystem {
      * Sets motion magic
      */
     public void setMotionMagicWithGyroMode() {
+        if(!canRunAuto()) {
+            setDisabledMode();
+            return;
+        }
+
         if (driveMode != DriveMode.MotionMagicWithGyro) {
             stop();
             selectEncodersSumWithPigeon(true);
@@ -552,6 +571,11 @@ public class DriveBase extends Subsystem {
      * Sets the drive mode to motion profile
      */
     public void setMotionProfile() {
+        if(!canRunAuto()) {
+            setDisabledMode();
+            return;
+        }
+
         if (driveMode != DriveMode.MotionProfile) {
             stop();
             selectEncodersSumWithPigeon(true);
@@ -567,6 +591,11 @@ public class DriveBase extends Subsystem {
      * Sets the drive mode to 2 wheel motion profile
      */
     public void setMotionProfile2Wheel() {
+        if(!canRunAuto()) {
+            setDisabledMode();
+            return;
+        }
+
         if (driveMode != DriveMode.MotionProfile2Wheel) {
             stop();
             selectEncodersGyro();
@@ -605,6 +634,11 @@ public class DriveBase extends Subsystem {
      * Gets the encoder sum using the pigeon
      */
     public void setPositionGyroMode() {
+        if(!canRunAuto()) {
+            setDisabledMode();
+            return;
+        }
+
         if (driveMode != DriveMode.PositionGyro) {
             stop();
             selectEncodersSumWithPigeon(false);

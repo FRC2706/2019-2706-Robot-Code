@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -83,7 +82,7 @@ public class Robot extends TimedRobot {
                 new LevelOneCentreHatch(),                                                 // 6
         };
 
-        selectorOrientation = Map.of(4,  270);
+        selectorOrientation = Map.of(4, 270);
     }
 
     /**
@@ -158,7 +157,7 @@ public class Robot extends TimedRobot {
 
         Log.d("Selector switch set to " + index);
 
-        DriveBase.getInstance().resetAbsoluteGyro(selectorOrientation.getOrDefault(index, (int)(double)Config.ROBOT_START_ANGLE.value()));
+        DriveBase.getInstance().resetAbsoluteGyro(selectorOrientation.getOrDefault(index, (int) (double) Config.ROBOT_START_ANGLE.value()));
 
         // Check to see if the command exists in the desired index
         if (index < commands.length && commands[index] != null) {

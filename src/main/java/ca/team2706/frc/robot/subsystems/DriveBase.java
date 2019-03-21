@@ -838,6 +838,7 @@ public class DriveBase extends Subsystem {
          * points in memory, clear it.
          */
         talon.clearMotionProfileTrajectories();
+        pointStream.Clear();
 
         /* set the base trajectory period to zero, use the individual trajectory period below */
         talon.configMotionProfileTrajectoryPeriod(0, Config.CAN_SHORT);

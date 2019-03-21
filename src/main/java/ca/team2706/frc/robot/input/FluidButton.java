@@ -92,7 +92,7 @@ public class FluidButton extends EButton {
      * @param inputType         The input type of the button/trigger to check.
      * @param minAxisActivation The minimum axis activation (minimum value for which the axis is considered
      *                          active).
-     * @return True if the axis/button/trigger is considered as pressed, false otheriwse.
+     * @return True if the axis/button/trigger is considered as pressed, false otherwise.
      */
     public static boolean determineIfActivated(GenericHID m_joystick,
                                                final int joystickPort,

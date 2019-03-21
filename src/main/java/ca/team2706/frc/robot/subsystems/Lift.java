@@ -248,6 +248,10 @@ public class Lift extends Subsystem {
      * @param position The number of encoder ticks.
      */
     public void setPositionMotionMagicEncoderTicks(final double maxSpeed, final double position) {
+        if(getStatus() == SubsystemStatus.DISABLE_AUTO || getStatus() == SubsystemStatus.ERROR) {
+            return;
+        }
+
         enableLimit(true);
         enableLimitSwitch(getLiftHeight() > 0);
 
@@ -261,6 +265,10 @@ public class Lift extends Subsystem {
      * @param velocity Velocity in encoder ticks.
      */
     public void setVelocity(int velocity) {
+        if(getStatus() == SubsystemStatus.DISABLE_AUTO || getStatus() == SubsystemStatus.ERROR) {
+            return;
+        }
+
         enableLimit(true);
         enableLimitSwitch(true);
 

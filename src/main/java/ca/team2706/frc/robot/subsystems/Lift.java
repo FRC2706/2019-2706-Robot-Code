@@ -90,7 +90,7 @@ public class Lift extends Subsystem {
     private SubsystemStatus setupTalonConfig() {
         SubsystemStatus status1 = SubsystemStatus.OK, status2 = SubsystemStatus.OK, status3 = SubsystemStatus.OK;
 
-        if(liftMotor.configFactoryDefault(Config.CAN_LONG) != ErrorCode.OK) {
+        if (liftMotor.configFactoryDefault(Config.CAN_LONG) != ErrorCode.OK) {
             Log.e("Lift motor not working");
             status1 = SubsystemStatus.ERROR;
         }
@@ -103,7 +103,7 @@ public class Lift extends Subsystem {
         liftMotor.configPeakCurrentDuration(Config.CURRENT_LIMIT_THRESHOLD_MS);
         liftMotor.enableCurrentLimit(Config.ENABLE_LIFT_CURRENT_LIMIT);
 
-        if(liftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_LONG) != ErrorCode.OK) {
+        if (liftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_LONG) != ErrorCode.OK) {
             Log.e("Lift encoder not functioning");
             status2 = SubsystemStatus.DISABLE_AUTO;
         }
@@ -121,7 +121,7 @@ public class Lift extends Subsystem {
 
         liftMotor.configClosedLoopPeriod(0, 1, Config.CAN_LONG);
 
-        if(liftMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, Config.CAN_LONG) != ErrorCode.OK) {
+        if (liftMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, Config.CAN_LONG) != ErrorCode.OK) {
             Log.e("Lift limit switch not functioning");
             status3 = SubsystemStatus.WORKABLE;
         }

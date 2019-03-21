@@ -54,7 +54,7 @@ public class Intake extends Subsystem {
 
         SubsystemStatus status = SubsystemStatus.OK;
 
-        if(this.intakeMotor.configFactoryDefault(Config.CAN_LONG) != ErrorCode.OK) {
+        if (this.intakeMotor.configFactoryDefault(Config.CAN_LONG) != ErrorCode.OK) {
             Log.e("Intake Victor not functioning");
             status = SubsystemStatus.ERROR;
         }

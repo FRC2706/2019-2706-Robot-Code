@@ -83,19 +83,18 @@ public class Robot extends TimedRobot {
 
     /**
      * Logs the initialization of a subsystem
+     *
      * @param subsystemStatus The status that the subsystem initialized with
-     * @param subsystem The subsystem
+     * @param subsystem       The subsystem
      */
     private void logInitialization(SubsystemStatus subsystemStatus, Subsystem subsystem) {
         String message = subsystem.getName() + " had initialized with status " + subsystemStatus.name();
 
-        if(subsystemStatus == SubsystemStatus.ERROR) {
+        if (subsystemStatus == SubsystemStatus.ERROR) {
             Log.e(message);
-        }
-        else if(subsystemStatus == SubsystemStatus.DISABLE_AUTO || subsystemStatus == SubsystemStatus.WORKABLE) {
+        } else if (subsystemStatus == SubsystemStatus.DISABLE_AUTO || subsystemStatus == SubsystemStatus.WORKABLE) {
             Log.w(message);
-        }
-        else {
+        } else {
             Log.i(message);
         }
     }

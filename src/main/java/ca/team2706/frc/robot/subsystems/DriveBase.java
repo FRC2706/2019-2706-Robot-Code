@@ -187,17 +187,17 @@ public class DriveBase extends Subsystem {
     private SubsystemStatus testSensors() {
         SubsystemStatus subsystemStatus = SubsystemStatus.OK;
 
-        if(leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative) != ErrorCode.OK) {
+        if (leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative) != ErrorCode.OK) {
             Log.e("Left encoder not working");
             subsystemStatus = SubsystemStatus.DISABLE_AUTO;
         }
 
-        if(rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative) != ErrorCode.OK) {
+        if (rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative) != ErrorCode.OK) {
             Log.e("Right encoder not working");
             subsystemStatus = SubsystemStatus.DISABLE_AUTO;
         }
 
-        if(gyro.getYawPitchRoll(new double[3]) != ErrorCode.OK) {
+        if (gyro.getYawPitchRoll(new double[3]) != ErrorCode.OK) {
             Log.e("Gyro not working");
             subsystemStatus = SubsystemStatus.DISABLE_AUTO;
         }
@@ -209,27 +209,26 @@ public class DriveBase extends Subsystem {
      * Resets the talon configuration back to the initial config.
      */
     private SubsystemStatus resetTalonConfiguration() {
-        // CCC Flashbacks
-        SubsystemStatus s1 = SubsystemStatus.OK, s2 = SubsystemStatus.OK, s3 = SubsystemStatus.OK, s4 = SubsystemStatus.OK;
+        SubsystemStatus status1 = SubsystemStatus.OK, status2 = SubsystemStatus.OK, status3 = SubsystemStatus.OK, status4 = SubsystemStatus.OK;
 
-        if(leftFrontMotor.configFactoryDefault(Config.CAN_LONG) != ErrorCode.OK) {
+        if (leftFrontMotor.configFactoryDefault(Config.CAN_LONG) != ErrorCode.OK) {
             Log.e("Can't reset left front motor to factory default");
-            s1 = SubsystemStatus.ERROR;
+            status1 = SubsystemStatus.ERROR;
         }
 
-        if(leftBackMotor.configFactoryDefault(Config.CAN_LONG) != ErrorCode.OK) {
+        if (leftBackMotor.configFactoryDefault(Config.CAN_LONG) != ErrorCode.OK) {
             Log.e("Can't reset left back motor to factory default");
-            s2 = SubsystemStatus.DISABLE_AUTO;
+            status2 = SubsystemStatus.DISABLE_AUTO;
         }
 
-        if(rightFrontMotor.configFactoryDefault(Config.CAN_LONG) != ErrorCode.OK) {
+        if (rightFrontMotor.configFactoryDefault(Config.CAN_LONG) != ErrorCode.OK) {
             Log.e("Can't reset right front motor to factory default");
-            s3 = SubsystemStatus.ERROR;
+            status3 = SubsystemStatus.ERROR;
         }
 
-        if(rightBackMotor.configFactoryDefault(Config.CAN_LONG) != ErrorCode.OK) {
+        if (rightBackMotor.configFactoryDefault(Config.CAN_LONG) != ErrorCode.OK) {
             Log.e("Can't reset right back motor to factory default");
-            s4 = SubsystemStatus.DISABLE_AUTO;
+            status4 = SubsystemStatus.DISABLE_AUTO;
         }
 
         leftFrontMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
@@ -243,7 +242,7 @@ public class DriveBase extends Subsystem {
         setTalonInversion(InvertType.FollowMaster, leftBackMotor, Config.INVERT_FRONT_LEFT_DRIVE, Config.INVERT_BACK_LEFT_DRIVE);
         setTalonInversion(InvertType.FollowMaster, rightBackMotor, Config.INVERT_FRONT_RIGHT_DRIVE, Config.INVERT_BACK_RIGHT_DRIVE);
 
-        return SubsystemStatus.maxError(s1, s2, s3, s4);
+        return SubsystemStatus.maxError(status1, status2, status3, status4);
     }
 
     /**

@@ -10,6 +10,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import java.lang.reflect.Field;
@@ -46,16 +47,16 @@ public class Robot extends TimedRobot {
         Config.init();
 
         // Initialize subsystems
-        Bling.init();
-        DriveBase.init();
+        logInitialization(Bling.init(), Bling.getInstance());
+        logInitialization(DriveBase.init(), DriveBase.getInstance());
 
-        Intake.init();
-        Pneumatics.init();
-        Lift.init();
-        RingLight.init();
+        logInitialization(Intake.init(), Intake.getInstance());
+        logInitialization(Pneumatics.init(), Pneumatics.getInstance());
+        logInitialization(Lift.init(), Lift.getInstance());
+        logInitialization(RingLight.init(), RingLight.getInstance());
 
         // Make sure that this is last initialized subsystem
-        SensorExtras.init();
+        logInitialization(SensorExtras.init(), SensorExtras.getInstance());
 
         // OI depends on subsystems, so initialize it after
         OI.init();
@@ -78,6 +79,25 @@ public class Robot extends TimedRobot {
                 new DriveOffHab(),                                                         // 4
                 new LevelOneCentreHatch(),                                                 // 5
         };
+    }
+
+    /**
+     * Logs the initialization of a subsystem
+     * @param subsystemStatus The status that the subsystem initialized with
+     * @param subsystem The subsystem
+     */
+    private void logInitialization(SubsystemStatus subsystemStatus, Subsystem subsystem) {
+        String message = subsystem.getName() + " had initialized with status " + subsystemStatus.name();
+
+        if(subsystemStatus == SubsystemStatus.ERROR) {
+            Log.e(message);
+        }
+        else if(subsystemStatus == SubsystemStatus.DISABLE_AUTO || subsystemStatus == SubsystemStatus.WORKABLE) {
+            Log.w(message);
+        }
+        else {
+            Log.i(message);
+        }
     }
 
     /**

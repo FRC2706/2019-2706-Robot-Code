@@ -34,10 +34,12 @@ public class Intake extends Subsystem {
     /**
      * Initializes a new instance of this subsystem, if it hasn't been initialized.
      */
-    public static void init() {
+    public static SubsystemStatus init() {
         if (currentInstance == null) {
             currentInstance = new Intake();
         }
+
+        return currentInstance.getStatus();
     }
 
     /**

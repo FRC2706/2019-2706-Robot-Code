@@ -1,8 +1,10 @@
 package ca.team2706.frc.robot.subsystems;
 
 import ca.team2706.frc.robot.Sendables;
+import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -18,6 +20,8 @@ public class Lift extends Subsystem {
      * The lift motor controller.
      */
     public WPI_TalonSRX liftMotor;
+
+    private final SubsystemStatus status;
 
     /**
      * Setpoints for cargo, in encoder ticks.
@@ -54,10 +58,12 @@ public class Lift extends Subsystem {
     /**
      * Initializes a new Lift instance, if there isn't an instance already.
      */
-    public static void init() {
+    public static SubsystemStatus init() {
         if (currentInstance == null) {
             currentInstance = new Lift();
         }
+
+        return currentInstance.getStatus();
     }
 
     /**
@@ -67,7 +73,11 @@ public class Lift extends Subsystem {
         liftMotor = new WPI_TalonSRX(Config.LIFT_MOTOR_ID);
         addChild("Lift Motor", liftMotor);
         addChild("Lift Position", Sendables.newTalonEncoderSendable(liftMotor));
-        setupTalonConfig();
+        status = setupTalonConfig();
+    }
+
+    private SubsystemStatus getStatus() {
+        return status;
     }
 
     @Override
@@ -77,9 +87,15 @@ public class Lift extends Subsystem {
     /**
      * Sets up the talon configuration.
      */
-    private void setupTalonConfig() {
+    private SubsystemStatus setupTalonConfig() {
+        SubsystemStatus status1 = SubsystemStatus.OK, status2 = SubsystemStatus.OK, status3 = SubsystemStatus.OK;
+
+        if(liftMotor.configFactoryDefault(Config.CAN_LONG) != ErrorCode.OK) {
+            Log.e("Lift motor not working");
+            status1 = SubsystemStatus.ERROR;
+        }
+
         liftMotor.setNeutralMode(NeutralMode.Brake);
-        liftMotor.configFactoryDefault(Config.CAN_LONG);
         liftMotor.setInverted(Config.INVERT_LIFT_MOTOR);
 
         liftMotor.configPeakCurrentLimit(Config.MAX_LIFT_CURRENT, Config.CAN_LONG);
@@ -87,7 +103,11 @@ public class Lift extends Subsystem {
         liftMotor.configPeakCurrentDuration(Config.CURRENT_LIMIT_THRESHOLD_MS);
         liftMotor.enableCurrentLimit(Config.ENABLE_LIFT_CURRENT_LIMIT);
 
-        liftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_LONG);
+        if(liftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_LONG) != ErrorCode.OK) {
+            Log.e("Lift encoder not functioning");
+            status2 = SubsystemStatus.DISABLE_AUTO;
+        }
+
         liftMotor.configSelectedFeedbackCoefficient(0.5, 0, Config.CAN_LONG);
         liftMotor.setSensorPhase(Config.ENABLE_LIFT_SUM_PHASE.value());
         liftMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Config.CAN_LONG);
@@ -101,7 +121,10 @@ public class Lift extends Subsystem {
 
         liftMotor.configClosedLoopPeriod(0, 1, Config.CAN_LONG);
 
-        liftMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, Config.CAN_LONG);
+        if(liftMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, Config.CAN_LONG) != ErrorCode.OK) {
+            Log.e("Lift limit switch not functioning");
+            status3 = SubsystemStatus.WORKABLE;
+        }
         enableLimitSwitch(true);
 
         enableLimit(true);
@@ -117,6 +140,8 @@ public class Lift extends Subsystem {
         liftMotor.configMotionAcceleration((int) (Config.LIFT_MOTION_MAGIC_ACCELERATION.value() / Config.LIFT_ENCODER_DPP / 10), Config.CAN_LONG);
 
         liftMotor.configOpenloopRamp(Config.LIFT_VOLTAGE_RAMP_UP_PERIOD, Config.CAN_LONG);
+
+        return SubsystemStatus.maxError(status1, status2, status3);
     }
 
     private void enableLimitSwitch(final boolean enable) {

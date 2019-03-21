@@ -1,6 +1,9 @@
 package ca.team2706.frc.robot.subsystems;
 
+import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.logging.Log;
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -15,6 +18,8 @@ public class Intake extends Subsystem {
 
     private WPI_VictorSPX intakeMotor;
     private AnalogInput irSensor;
+
+    private final SubsystemStatus status;
 
     /**
      * Gets the current instance of this subsystem, creating it if it doesn't exist.
@@ -45,6 +50,15 @@ public class Intake extends Subsystem {
         this.intakeMotor = intakeTalon;
         this.irSensor = irSensor;
 
+        SubsystemStatus status = SubsystemStatus.OK;
+
+        if(this.intakeMotor.configFactoryDefault(Config.CAN_LONG) != ErrorCode.OK) {
+            Log.e("Intake Victor not functioning");
+            status = SubsystemStatus.ERROR;
+        }
+
+        this.status = status;
+
         this.intakeMotor.setNeutralMode(NeutralMode.Brake);
 
         addChild("IR Sensor", irSensor);
@@ -59,6 +73,9 @@ public class Intake extends Subsystem {
                 new AnalogInput(Config.CARGO_IR_SENSOR_ID));
     }
 
+    public SubsystemStatus getStatus() {
+        return status;
+    }
 
     @Override
     public void initDefaultCommand() {

@@ -3,9 +3,11 @@ package ca.team2706.frc.robot.subsystems;
 import ca.team2706.frc.robot.Robot;
 import ca.team2706.frc.robot.RobotState;
 import ca.team2706.frc.robot.Sendables;
+import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.sensors.AnalogSelector;
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motion.BufferedTrajectoryPointStream;
 import com.ctre.phoenix.motion.MotionProfileStatus;
 import com.ctre.phoenix.motion.TrajectoryPoint;
@@ -37,10 +39,12 @@ public class DriveBase extends Subsystem {
     /**
      * Initializes a new drive base object.
      */
-    public static void init() {
+    public static SubsystemStatus init() {
         if (currentInstance == null) {
             currentInstance = new DriveBase();
         }
+
+        return currentInstance.getStatus();
     }
 
     /**
@@ -103,6 +107,8 @@ public class DriveBase extends Subsystem {
      */
     private BufferedTrajectoryPointStream motionProfilePointStreamLeft;
 
+    private final SubsystemStatus status;
+
     /**
      * Creates a drive base, and initializes all required sensors and motors
      */
@@ -112,7 +118,7 @@ public class DriveBase extends Subsystem {
         rightFrontMotor = new WPI_TalonSRX(Config.RIGHT_FRONT_DRIVE_MOTOR_ID);
         rightBackMotor = new WPI_TalonSRX(Config.RIGHT_BACK_DRIVE_MOTOR_ID);
 
-        resetTalonConfiguration();
+        SubsystemStatus status1 = resetTalonConfiguration();
 
         follow();
 
@@ -145,6 +151,8 @@ public class DriveBase extends Subsystem {
 
         addChild("Merge Light", light);
 
+        SubsystemStatus status2 = testSensors();
+
         setDisabledMode();
         setBrakeMode(false);
 
@@ -164,16 +172,65 @@ public class DriveBase extends Subsystem {
                 resetAbsoluteGyro();
             }
         });
+
+        status = SubsystemStatus.maxError(status1, status2);
+    }
+
+    private SubsystemStatus getStatus() {
+        return status;
+    }
+
+    private boolean canRunAuto() {
+        return status == SubsystemStatus.OK || status == SubsystemStatus.WORKABLE;
+    }
+
+    private SubsystemStatus testSensors() {
+        SubsystemStatus subsystemStatus = SubsystemStatus.OK;
+
+        if(leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative) != ErrorCode.OK) {
+            Log.e("Left encoder not working");
+            subsystemStatus = SubsystemStatus.DISABLE_AUTO;
+        }
+
+        if(rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative) != ErrorCode.OK) {
+            Log.e("Right encoder not working");
+            subsystemStatus = SubsystemStatus.DISABLE_AUTO;
+        }
+
+        if(gyro.getYawPitchRoll(new double[3]) != ErrorCode.OK) {
+            Log.e("Gyro not working");
+            subsystemStatus = SubsystemStatus.DISABLE_AUTO;
+        }
+
+        return subsystemStatus;
     }
 
     /**
      * Resets the talon configuration back to the initial config.
      */
-    private void resetTalonConfiguration() {
-        leftFrontMotor.configFactoryDefault(Config.CAN_LONG);
-        leftBackMotor.configFactoryDefault(Config.CAN_LONG);
-        rightFrontMotor.configFactoryDefault(Config.CAN_LONG);
-        rightBackMotor.configFactoryDefault(Config.CAN_LONG);
+    private SubsystemStatus resetTalonConfiguration() {
+        // CCC Flashbacks
+        SubsystemStatus s1 = SubsystemStatus.OK, s2 = SubsystemStatus.OK, s3 = SubsystemStatus.OK, s4 = SubsystemStatus.OK;
+
+        if(leftFrontMotor.configFactoryDefault(Config.CAN_LONG) != ErrorCode.OK) {
+            Log.e("Can't reset left front motor to factory default");
+            s1 = SubsystemStatus.ERROR;
+        }
+
+        if(leftBackMotor.configFactoryDefault(Config.CAN_LONG) != ErrorCode.OK) {
+            Log.e("Can't reset left back motor to factory default");
+            s2 = SubsystemStatus.DISABLE_AUTO;
+        }
+
+        if(rightFrontMotor.configFactoryDefault(Config.CAN_LONG) != ErrorCode.OK) {
+            Log.e("Can't reset right front motor to factory default");
+            s3 = SubsystemStatus.ERROR;
+        }
+
+        if(rightBackMotor.configFactoryDefault(Config.CAN_LONG) != ErrorCode.OK) {
+            Log.e("Can't reset right back motor to factory default");
+            s4 = SubsystemStatus.DISABLE_AUTO;
+        }
 
         leftFrontMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
         leftBackMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
@@ -185,6 +242,8 @@ public class DriveBase extends Subsystem {
 
         setTalonInversion(InvertType.FollowMaster, leftBackMotor, Config.INVERT_FRONT_LEFT_DRIVE, Config.INVERT_BACK_LEFT_DRIVE);
         setTalonInversion(InvertType.FollowMaster, rightBackMotor, Config.INVERT_FRONT_RIGHT_DRIVE, Config.INVERT_BACK_RIGHT_DRIVE);
+
+        return SubsystemStatus.maxError(s1, s2, s3, s4);
     }
 
     /**
@@ -839,7 +898,6 @@ public class DriveBase extends Subsystem {
      * @param targetRotation The desired rotation
      */
     public void setPositionGyro(double speed, double setpoint, double targetRotation) {
-
         setPositionGyroMode();
 
         leftFrontMotor.configClosedLoopPeakOutput(0, speed);

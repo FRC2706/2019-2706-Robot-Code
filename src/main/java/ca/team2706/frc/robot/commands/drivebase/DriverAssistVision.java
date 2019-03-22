@@ -125,7 +125,7 @@ public class DriverAssistVision extends Command {
      */
     public DriverAssistVision() {
         // Ensure that this command is the only one to run on the drive base
-        requires(DriveBase.getInstance());
+        requires(RingLight.getInstance());
 
         setupNetworkTables();
 
@@ -143,7 +143,7 @@ public class DriverAssistVision extends Command {
         this.target = target;
 
         // Ensure that this command is the only one to run on the drive base
-        requires(DriveBase.getInstance());
+        requires(RingLight.getInstance());
 
         setupNetworkTables();
 
@@ -174,12 +174,9 @@ public class DriverAssistVision extends Command {
             return;
         }
 
-        DriveBase.getInstance().setBrakeMode(true);
-        DriveBase.getInstance().setPositionNoGyroMode();
-
         // Turn on green ring light
         System.out.println("DAV: Turning on light");
-        RingLight.getInstance().toggleLight();
+        RingLight.getInstance().enableLight();
         System.out.println("DAV: Light turned on");
     
         commandAborted = false;
@@ -230,6 +227,7 @@ public class DriverAssistVision extends Command {
             else {
                 System.out.println("DAV: Tape detected");
                 tapeDetectedStageComplete = true;
+                RingLight.getInstance().disableLight();
             }
         }
 
@@ -281,7 +279,7 @@ public class DriverAssistVision extends Command {
                 System.out.println(str);
             }
             */
-            followTrajectory = new FollowTrajectory(0.2, 100, trajectory);
+            followTrajectory = new FollowTrajectory(1.0, 100, trajectory);
             followTrajectory.start();
         }
     }
@@ -302,7 +300,7 @@ public class DriverAssistVision extends Command {
         }
 
         // Turn off green ring light
-        RingLight.getInstance().toggleLight();
+        RingLight.getInstance().disableLight();
 
         driverEntry = chickenVisionTable.getEntry("Driver");
         findTapeEntry = chickenVisionTable.getEntry("Tape");
@@ -314,9 +312,6 @@ public class DriverAssistVision extends Command {
         System.out.println("DAV: Setting tapeDetected to false");
         tapeDetectedEntry.setBoolean(false);
         System.out.println("DAV: Set tapeDetected to false");
-
-        // Go back to disabled mode
-        DriveBase.getInstance().setDisabledMode();
     }
 
     /**
@@ -447,7 +442,11 @@ public class DriverAssistVision extends Command {
             // Vector 3 is aligned with and facing away from target
 
             // Get current robot heading relative to field frame from IMU
-            double angRobotHeadingCurrent_Field = DriveBase.getInstance().getAbsoluteHeading();
+            double angRobotHeadingCurrent_Field = DriveBase.getInstance().getAbsoluteHeading() % 360;
+            if(angRobotCurrent_Field < 0) {
+                angRobotCurrent_Field += 360;
+            }
+
             System.out.println("DAV: angRobotHeadingCurrent_Field: " + angRobotHeadingCurrent_Field);
 
             // Compute final desired robot heading relative to field

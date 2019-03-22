@@ -1,5 +1,7 @@
 package ca.team2706.frc.robot;
 
+import com.ctre.phoenix.ErrorCode;
+
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -35,5 +37,16 @@ public enum SubsystemStatus {
      */
     public static SubsystemStatus maxError(SubsystemStatus... subsystemStatuses) {
         return Collections.max(Arrays.asList(subsystemStatuses));
+    }
+
+    /**
+     * Checks whether an ErrorCode results in an error
+     *
+     * @param errorCode The error code to check
+     * @return True when the error code means there was an error
+     */
+    public static boolean checkError(ErrorCode errorCode) {
+        return errorCode != null && ErrorCode.valueOf(errorCode.value) != ErrorCode.OK;
+
     }
 }

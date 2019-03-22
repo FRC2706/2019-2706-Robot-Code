@@ -191,17 +191,17 @@ public class DriveBase extends Subsystem {
     private SubsystemStatus testSensors() {
         SubsystemStatus subsystemStatus = SubsystemStatus.OK;
 
-        if (leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative) != ErrorCode.OK) {
+        if (SubsystemStatus.checkError(leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative))) {
             Log.e("Left encoder not working");
             subsystemStatus = SubsystemStatus.DISABLE_AUTO;
         }
 
-        if (rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative) != ErrorCode.OK) {
+        if (SubsystemStatus.checkError(rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative))) {
             Log.e("Right encoder not working");
             subsystemStatus = SubsystemStatus.DISABLE_AUTO;
         }
 
-        if (gyro.getYawPitchRoll(new double[3]) != ErrorCode.OK) {
+        if (SubsystemStatus.checkError(gyro.getYawPitchRoll(new double[3]))) {
             Log.e("Gyro not working");
             subsystemStatus = SubsystemStatus.DISABLE_AUTO;
         }
@@ -215,22 +215,22 @@ public class DriveBase extends Subsystem {
     private SubsystemStatus resetTalonConfiguration() {
         SubsystemStatus status1 = SubsystemStatus.OK, status2 = SubsystemStatus.OK, status3 = SubsystemStatus.OK, status4 = SubsystemStatus.OK;
 
-        if (leftFrontMotor.configFactoryDefault(Config.CAN_LONG) != ErrorCode.OK) {
+        if (SubsystemStatus.checkError(leftFrontMotor.configFactoryDefault(Config.CAN_LONG))) {
             Log.e("Can't reset left front motor to factory default");
             status1 = SubsystemStatus.ERROR;
         }
 
-        if (leftBackMotor.configFactoryDefault(Config.CAN_LONG) != ErrorCode.OK) {
+        if (SubsystemStatus.checkError(leftBackMotor.configFactoryDefault(Config.CAN_LONG))) {
             Log.e("Can't reset left back motor to factory default");
             status2 = SubsystemStatus.DISABLE_AUTO;
         }
 
-        if (rightFrontMotor.configFactoryDefault(Config.CAN_LONG) != ErrorCode.OK) {
+        if(SubsystemStatus.checkError(rightFrontMotor.configFactoryDefault(Config.CAN_LONG))) {
             Log.e("Can't reset right front motor to factory default");
             status3 = SubsystemStatus.ERROR;
         }
 
-        if (rightBackMotor.configFactoryDefault(Config.CAN_LONG) != ErrorCode.OK) {
+        if (SubsystemStatus.checkError(rightBackMotor.configFactoryDefault(Config.CAN_LONG))) {
             Log.e("Can't reset right back motor to factory default");
             status4 = SubsystemStatus.DISABLE_AUTO;
         }

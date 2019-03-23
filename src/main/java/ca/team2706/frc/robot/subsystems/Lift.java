@@ -80,6 +80,8 @@ public class Lift extends Subsystem {
      *
      * @return The subsystem's status
      */
+    s
+
     private SubsystemStatus getStatus() {
         return status;
     }
@@ -269,37 +271,35 @@ public class Lift extends Subsystem {
      * @param velocity Velocity in encoder ticks.
      */
     public void setVelocity(int velocity) {
-        if (getStatus() == SubsystemStatus.DISABLE_AUTO || getStatus() == SubsystemStatus.ERROR) {
-            return;
-        }
+        if (!(getStatus() == SubsystemStatus.DISABLE_AUTO || getStatus() == SubsystemStatus.ERROR)) {
+            enableLimit(true);
+            enableLimitSwitch(true);
 
-        enableLimit(true);
-        enableLimitSwitch(true);
+            // If we're approaching either the top of the bottom of the lift, begin to slow down.
+            final double liftHeight = getLiftHeight(); // Get lift height above bottom.
+            // Get lift distance from top
+            final double liftDistanceFromTop = Config.MAX_LIFT_ENCODER_TICKS * Config.LIFT_ENCODER_DPP - liftHeight;
 
-        // If we're approaching either the top of the bottom of the lift, begin to slow down.
-        final double liftHeight = getLiftHeight(); // Get lift height above bottom.
-        // Get lift distance from top
-        final double liftDistanceFromTop = Config.MAX_LIFT_ENCODER_TICKS * Config.LIFT_ENCODER_DPP - liftHeight;
-
-        final boolean needToSlowDown = (liftDistanceFromTop < Config.LIFT_SLOWDOWN_RANGE_UP && velocity > 0) || (liftHeight < Config.LIFT_SLOWDOWN_RANGE_DOWN && velocity < 0);
-        if (needToSlowDown) {
-            int maxLiftSpeedAtThisHeight;
-            // If we're going down.
-            if (velocity < 0) {
-                maxLiftSpeedAtThisHeight = -(int) (Config.LIFT_MAX_SPEED.value() * (liftHeight
-                        / Config.LIFT_SLOWDOWN_RANGE_UP + 0.25));
-                velocity = Math.max(velocity, maxLiftSpeedAtThisHeight);
+            final boolean needToSlowDown = (liftDistanceFromTop < Config.LIFT_SLOWDOWN_RANGE_UP && velocity > 0) || (liftHeight < Config.LIFT_SLOWDOWN_RANGE_DOWN && velocity < 0);
+            if (needToSlowDown) {
+                int maxLiftSpeedAtThisHeight;
+                // If we're going down.
+                if (velocity < 0) {
+                    maxLiftSpeedAtThisHeight = -(int) (Config.LIFT_MAX_SPEED.value() * (liftHeight
+                            / Config.LIFT_SLOWDOWN_RANGE_UP + 0.25));
+                    velocity = Math.max(velocity, maxLiftSpeedAtThisHeight);
+                }
+                // If we're going up.
+                else {
+                    maxLiftSpeedAtThisHeight = (int) (Config.LIFT_MAX_SPEED.value() * (liftDistanceFromTop
+                            / Config.LIFT_SLOWDOWN_RANGE_DOWN + 0.25));
+                    velocity = Math.min(velocity, maxLiftSpeedAtThisHeight);
+                }
             }
-            // If we're going up.
-            else {
-                maxLiftSpeedAtThisHeight = (int) (Config.LIFT_MAX_SPEED.value() * (liftDistanceFromTop
-                        / Config.LIFT_SLOWDOWN_RANGE_DOWN + 0.25));
-                velocity = Math.min(velocity, maxLiftSpeedAtThisHeight);
-            }
-        }
 
-        liftMotor.configClosedLoopPeakOutput(0, 1.0); // Peak output to max (1.0).
-        liftMotor.set(ControlMode.Velocity, velocity);
+            liftMotor.configClosedLoopPeakOutput(0, 1.0); // Peak output to max (1.0).
+            liftMotor.set(ControlMode.Velocity, velocity);
+        }
     }
 
     /**

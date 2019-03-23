@@ -193,6 +193,11 @@ public class DriveBase extends Subsystem {
         return status == SubsystemStatus.OK || status == SubsystemStatus.WORKABLE;
     }
 
+    /**
+     * Tests the drive base sensors to determine if the subsystem is working as expected.
+     *
+     * @return The subsystem's status based on the sensor test results.
+     */
     private SubsystemStatus testSensors() {
         SubsystemStatus subsystemStatus = SubsystemStatus.OK;
 

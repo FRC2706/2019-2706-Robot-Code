@@ -4,7 +4,6 @@ import ca.team2706.frc.robot.Sendables;
 import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
-import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -76,6 +75,11 @@ public class Lift extends Subsystem {
         status = setupTalonConfig();
     }
 
+    /**
+     * Gets the subsystem's initialization status (status of sensors and systems).
+     *
+     * @return The subsystem's status
+     */
     private SubsystemStatus getStatus() {
         return status;
     }
@@ -248,7 +252,7 @@ public class Lift extends Subsystem {
      * @param position The number of encoder ticks.
      */
     public void setPositionMotionMagicEncoderTicks(final double maxSpeed, final double position) {
-        if(getStatus() == SubsystemStatus.DISABLE_AUTO || getStatus() == SubsystemStatus.ERROR) {
+        if (getStatus() == SubsystemStatus.DISABLE_AUTO || getStatus() == SubsystemStatus.ERROR) {
             return;
         }
 
@@ -265,7 +269,7 @@ public class Lift extends Subsystem {
      * @param velocity Velocity in encoder ticks.
      */
     public void setVelocity(int velocity) {
-        if(getStatus() == SubsystemStatus.DISABLE_AUTO || getStatus() == SubsystemStatus.ERROR) {
+        if (getStatus() == SubsystemStatus.DISABLE_AUTO || getStatus() == SubsystemStatus.ERROR) {
             return;
         }
 

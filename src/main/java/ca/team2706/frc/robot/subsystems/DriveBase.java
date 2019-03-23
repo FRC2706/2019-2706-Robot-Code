@@ -7,7 +7,6 @@ import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.sensors.AnalogSelector;
-import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motion.BufferedTrajectoryPointStream;
 import com.ctre.phoenix.motion.MotionProfileStatus;
 import com.ctre.phoenix.motion.TrajectoryPoint;
@@ -182,6 +181,7 @@ public class DriveBase extends Subsystem {
 
     /**
      * Whether there are errors in initialization that should disable autonomous
+     *
      * @return Whether autonomous can run
      */
     private boolean canRunAuto() {
@@ -225,7 +225,7 @@ public class DriveBase extends Subsystem {
             status2 = SubsystemStatus.DISABLE_AUTO;
         }
 
-        if(SubsystemStatus.checkError(rightFrontMotor.configFactoryDefault(Config.CAN_LONG))) {
+        if (SubsystemStatus.checkError(rightFrontMotor.configFactoryDefault(Config.CAN_LONG))) {
             Log.e("Can't reset right front motor to factory default");
             status3 = SubsystemStatus.ERROR;
         }
@@ -516,12 +516,9 @@ public class DriveBase extends Subsystem {
      * Sets the talons to a disabled mode
      */
     public void setPositionNoGyroMode() {
-        if(!canRunAuto()) {
+        if (!canRunAuto()) {
             setDisabledMode();
-            return;
-        }
-
-        if (driveMode != DriveMode.PositionNoGyro) {
+        } else if (driveMode != DriveMode.PositionNoGyro) {
             stop();
             selectEncodersSum();
             reset();
@@ -534,12 +531,9 @@ public class DriveBase extends Subsystem {
      * Sets the robot up for rotation.
      */
     public void setRotateMode() {
-        if(!canRunAuto()) {
+        if (!canRunAuto()) {
             setDisabledMode();
-            return;
-        }
-
-        if (driveMode != DriveMode.Rotate) {
+        } else if (driveMode != DriveMode.Rotate) {
             stop();
             selectGyroSensor();
             reset();
@@ -552,12 +546,9 @@ public class DriveBase extends Subsystem {
      * Sets motion magic
      */
     public void setMotionMagicWithGyroMode() {
-        if(!canRunAuto()) {
+        if (!canRunAuto()) {
             setDisabledMode();
-            return;
-        }
-
-        if (driveMode != DriveMode.MotionMagicWithGyro) {
+        } else if (driveMode != DriveMode.MotionMagicWithGyro) {
             stop();
             selectEncodersSumWithPigeon(true);
             configMotionMagic();
@@ -571,12 +562,9 @@ public class DriveBase extends Subsystem {
      * Sets the drive mode to motion profile
      */
     public void setMotionProfile() {
-        if(!canRunAuto()) {
+        if (!canRunAuto()) {
             setDisabledMode();
-            return;
-        }
-
-        if (driveMode != DriveMode.MotionProfile) {
+        } else if (driveMode != DriveMode.MotionProfile) {
             stop();
             selectEncodersSumWithPigeon(true);
             configMotionProfile();
@@ -591,12 +579,9 @@ public class DriveBase extends Subsystem {
      * Sets the drive mode to 2 wheel motion profile
      */
     public void setMotionProfile2Wheel() {
-        if(!canRunAuto()) {
+        if (!canRunAuto()) {
             setDisabledMode();
-            return;
-        }
-
-        if (driveMode != DriveMode.MotionProfile2Wheel) {
+        } else if (driveMode != DriveMode.MotionProfile2Wheel) {
             stop();
             selectEncodersGyro();
             configMotionProfile();
@@ -634,12 +619,9 @@ public class DriveBase extends Subsystem {
      * Gets the encoder sum using the pigeon
      */
     public void setPositionGyroMode() {
-        if(!canRunAuto()) {
+        if (!canRunAuto()) {
             setDisabledMode();
-            return;
-        }
-
-        if (driveMode != DriveMode.PositionGyro) {
+        } else if (driveMode != DriveMode.PositionGyro) {
             stop();
             selectEncodersSumWithPigeon(false);
             reset();

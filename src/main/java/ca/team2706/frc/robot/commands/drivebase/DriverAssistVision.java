@@ -250,7 +250,6 @@ public class DriverAssistVision extends Command {
             }
 
             // Compute the trajectory as a separate task to avoid execute() overruns
-            /*
             System.out.println("DAV: Generating trajectory");
             Runnable task = new Runnable() {
                 public void run() {
@@ -258,8 +257,7 @@ public class DriverAssistVision extends Command {
                 }
             };
             new Thread(task).start();
-            */
-            generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, angYawTargetWrtCameraLOSCWpos, target);
+            //generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, angYawTargetWrtCameraLOSCWpos, target);
 
             issueGenerateTrajectoryCommandStageComplete = true;
         }
@@ -525,7 +523,8 @@ public class DriverAssistVision extends Command {
                 // Initial position/heading of robot: at origin with heading at 90 deg
                 new Waypoint(0, 0, Pathfinder.d2r(90)),
                 // Final position/heading of robot: in front of target
-                new Waypoint(vRobotToFinal_RobotX, vRobotToFinal_RobotY, angRobotHeadingFinalRad_Robot),
+                //new Waypoint(vRobotToFinal_RobotX, vRobotToFinal_RobotY, angRobotHeadingFinalRad_Robot),
+                new Waypoint(1, 4, 90),
         };
         trajectory = Pathfinder.generate(points, config);
 

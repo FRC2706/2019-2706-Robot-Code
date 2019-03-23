@@ -16,7 +16,6 @@ import ca.team2706.frc.robot.commands.lift.*;
 import ca.team2706.frc.robot.commands.ringlight.ToggleRingLight;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.input.FluidButton;
-import ca.team2706.frc.robot.subsystems.Climber;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import ca.team2706.frc.robot.subsystems.Lift;
 import edu.wpi.first.wpilibj.Joystick;

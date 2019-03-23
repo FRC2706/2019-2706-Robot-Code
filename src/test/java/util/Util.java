@@ -21,7 +21,8 @@ public class Util {
         setCurrentInstanceFieldNull(Lift.class);
         setCurrentInstanceFieldNull(Pneumatics.class);
         setCurrentInstanceFieldNull(RingLight.class);
-        setCurrentInstanceFieldNull(Climber.class);
+        setCurrentInstanceFieldNull(ClimberPneumatics.class);
+        setCurrentInstanceFieldNull(ClimberMotor.class);
     }
 
     /**

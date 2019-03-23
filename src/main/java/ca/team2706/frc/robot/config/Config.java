@@ -74,6 +74,12 @@ public class Config {
             HATCH_EJECTOR_SOLENOID_BACKWARD_ID = robotSpecific(1, 1, 1);
 
     public static final int
+            CLIMBER_LEFT_PUSHER_FORWARD_ID = robotSpecific(4, 4, 4),
+            CLIMBER_LEFT_PUSHER_BACKWARD_ID = robotSpecific(5, 5, 5),
+            CLIMBER_RIGHT_PUSHER_FORWARD_ID = robotSpecific(6, 6, 6),
+            CLIMBER_RIGHT_PUSHER_BACKWARD_ID = robotSpecific(7, 7, 7);
+
+    public static final int
             LIFT_MOTOR_ID = robotSpecific(5, 5, 5);
 
     public static final int
@@ -120,7 +126,10 @@ public class Config {
     public static int
             CLIMBER_PEAK_CURRENT_LIMIT = 0,
             CLIMBER_CURRENT_LIMIT_THRESHOLD_MS = 0,
-            CLIMBER_CONTINUOUS_CURRENT_LIMIT = 15;
+            CLIMBER_CONTINUOUS_CURRENT_LIMIT = 15,
+            MAX_CLIMBER_ENCODER_TICKS = 55_000, // TODO need actual value
+            // Amount of encoder ticks at which the climber pistons push out and climb the robot.
+            CLIMBER_SUFFICIENT_HEIGHT_ENCODER_TICKS = 35_000; // TODO need actual value here.
 
     /**
      * How long (in seconds) the lift ramp up on voltage should be.
@@ -206,10 +215,14 @@ public class Config {
     public static final FluidConstant<Double> DRIVE_OPEN_LOOP_DEADBAND = constant("open-loop-drive-deadband", 0.04);
     public static final FluidConstant<Double> LIFT_CLOSED_LOOP_DEADBAND = constant("lift-deadband", 0.001);
 
+    public static final FluidConstant<Double> CLIMBER_CLOSED_LOOP_DEADBAND = constant("climber-deadband", 0.001);
+
     public static final FluidConstant<Boolean> DRIVE_SUM_PHASE_LEFT = constant("drive-sum-phase-left", true);
     public static final FluidConstant<Boolean> DRIVE_SUM_PHASE_RIGHT = constant("drive-sum-phase-right", true);
 
     public static final FluidConstant<Boolean> ENABLE_LIFT_SUM_PHASE = constant("lift-sum-phase", true);
+
+    public static final FluidConstant<Boolean> ENABLE_CLIMBER_SUM_PHASE = constant("climber-sum-phase", true);
 
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_P = constant("drive-P", 0.1);
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_I = constant("drive-I", 0.0);

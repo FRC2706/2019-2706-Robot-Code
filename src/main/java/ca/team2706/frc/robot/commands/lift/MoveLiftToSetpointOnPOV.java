@@ -42,6 +42,7 @@ public class MoveLiftToSetpointOnPOV extends Command {
         final XboxValue boundPOV;
 
         final XboxValue pressedPOV = getPressedPOV();
+
         // If none of the bound POVs are being pressed, run the last pressed bound POV.
         if (!(pressedPOV == XboxValue.XBOX_POV_DOWN ||
                 pressedPOV == XboxValue.XBOX_POV_LEFT ||
@@ -56,23 +57,25 @@ public class MoveLiftToSetpointOnPOV extends Command {
         }
 
         // Decide what to do based on the real good POV being pressed.
-        switch (boundPOV) {
-            case XBOX_POV_DOWN:
-                currentSetpoint = 0;
-                break;
-            case XBOX_POV_LEFT:
-                currentSetpoint = 1;
-                break;
-            case XBOX_POV_UP:
-                currentSetpoint = 2;
-                break;
-            case XBOX_POV_RIGHT:
-                currentSetpoint = 3;
-                break;
-            default:
-                // If nothing is right, make the setpoint an invalid -1 so nothing happens.
-                currentSetpoint = -1;
-                break;
+        if (boundPOV != null) {
+            switch (boundPOV) {
+                case XBOX_POV_DOWN:
+                    currentSetpoint = 0;
+                    break;
+                case XBOX_POV_LEFT:
+                    currentSetpoint = 1;
+                    break;
+                case XBOX_POV_UP:
+                    currentSetpoint = 2;
+                    break;
+                case XBOX_POV_RIGHT:
+                    currentSetpoint = 3;
+                    break;
+                default:
+                    // If nothing is right, make the setpoint an invalid -1 so nothing happens.
+                    currentSetpoint = -1;
+                    break;
+            }
         }
 
         // Only set a new setpoint if it has changed.

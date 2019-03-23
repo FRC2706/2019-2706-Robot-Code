@@ -198,6 +198,7 @@ public class Config {
 
     public static final FluidConstant<Boolean> ENABLE_LIFT_SUM_PHASE = constant("lift-sum-phase", true);
 
+    public static final FluidConstant<Double> DRIVE_VOLTAGE_COMPENSATION = constant("drive-voltage-compensation", 12.0);
     public static final FluidConstant<Double> VOLTAGE_INTERCEPT = constant("voltage-intercept", 0.0);
     public static final FluidConstant<Double> K_A = constant("kA", 0.0);
 

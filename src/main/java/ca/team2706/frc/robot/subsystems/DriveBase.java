@@ -247,15 +247,10 @@ public class DriveBase extends Subsystem {
         setTalonInversion(InvertType.FollowMaster, leftBackMotor, Config.INVERT_FRONT_LEFT_DRIVE, Config.INVERT_BACK_LEFT_DRIVE);
         setTalonInversion(InvertType.FollowMaster, rightBackMotor, Config.INVERT_FRONT_RIGHT_DRIVE, Config.INVERT_BACK_RIGHT_DRIVE);
 
-        leftFrontMotor.configVoltageCompSaturation(12.0, Config.CAN_LONG);
-        leftBackMotor.configVoltageCompSaturation(12.0, Config.CAN_LONG);
-        rightFrontMotor.configVoltageCompSaturation(12.0, Config.CAN_LONG);
-        rightBackMotor.configVoltageCompSaturation(12.0, Config.CAN_LONG);
-
-        leftFrontMotor.enableVoltageCompensation(true);
-        leftBackMotor.enableVoltageCompensation(true);
-        rightFrontMotor.enableVoltageCompensation(true);
-        rightBackMotor.enableVoltageCompensation(true);
+        leftFrontMotor.configVoltageCompSaturation(Config.DRIVE_VOLTAGE_COMPENSATION.value(), Config.CAN_LONG);
+        leftBackMotor.configVoltageCompSaturation(Config.DRIVE_VOLTAGE_COMPENSATION.value(), Config.CAN_LONG);
+        rightFrontMotor.configVoltageCompSaturation(Config.DRIVE_VOLTAGE_COMPENSATION.value(), Config.CAN_LONG);
+        rightBackMotor.configVoltageCompSaturation(Config.DRIVE_VOLTAGE_COMPENSATION.value(), Config.CAN_LONG);
 
         return SubsystemStatus.maxError(status1, status2, status3, status4);
     }
@@ -516,6 +511,7 @@ public class DriveBase extends Subsystem {
     public void setOpenLoopVoltageMode() {
         if (driveMode != DriveMode.OpenLoopVoltage) {
             stop();
+            setVoltageCompensation(false);
             selectEncodersStandard();
             reset();
 
@@ -531,6 +527,7 @@ public class DriveBase extends Subsystem {
             setDisabledMode();
         } else if (driveMode != DriveMode.PositionNoGyro) {
             stop();
+            setVoltageCompensation(true);
             selectEncodersSum();
             reset();
 
@@ -546,6 +543,7 @@ public class DriveBase extends Subsystem {
             setDisabledMode();
         } else if (driveMode != DriveMode.Rotate) {
             stop();
+            setVoltageCompensation(true);
             selectGyroSensor();
             reset();
 
@@ -561,6 +559,7 @@ public class DriveBase extends Subsystem {
             setDisabledMode();
         } else if (driveMode != DriveMode.MotionMagicWithGyro) {
             stop();
+            setVoltageCompensation(true);
             selectEncodersSumWithPigeon(true);
             configMotionMagic();
             reset();
@@ -577,6 +576,7 @@ public class DriveBase extends Subsystem {
             setDisabledMode();
         } else if (driveMode != DriveMode.MotionProfile) {
             stop();
+            setVoltageCompensation(true);
             selectEncodersSumWithPigeon(true);
             configMotionProfile();
             reset();
@@ -594,6 +594,7 @@ public class DriveBase extends Subsystem {
             setDisabledMode();
         } else if (driveMode != DriveMode.MotionProfile2Wheel) {
             stop();
+            setVoltageCompensation(true);
             selectEncodersGyro();
             configMotionProfile();
             reset();
@@ -634,6 +635,7 @@ public class DriveBase extends Subsystem {
             setDisabledMode();
         } else if (driveMode != DriveMode.PositionGyro) {
             stop();
+            setVoltageCompensation(true);
             selectEncodersSumWithPigeon(false);
             reset();
 
@@ -689,6 +691,13 @@ public class DriveBase extends Subsystem {
         rightBackMotor.setNeutralMode(mode);
 
         brakeMode = brake;
+    }
+
+    public void setVoltageCompensation(boolean voltageCompensation) {
+        leftFrontMotor.enableVoltageCompensation(voltageCompensation);
+        leftBackMotor.enableVoltageCompensation(voltageCompensation);
+        rightFrontMotor.enableVoltageCompensation(voltageCompensation);
+        rightBackMotor.enableVoltageCompensation(voltageCompensation);
     }
 
     /**
@@ -1129,6 +1138,17 @@ public class DriveBase extends Subsystem {
         SmartDashboard.putNumber("Right front motor speed", rightFrontMotor.getSensorCollection().getQuadratureVelocity() * Config.DRIVE_ENCODER_DPP * 10);
         SmartDashboard.putNumber("Left back motor speed", leftBackMotor.getSensorCollection().getQuadratureVelocity() * Config.DRIVE_ENCODER_DPP * 10);
         SmartDashboard.putNumber("Right back motor speed", rightBackMotor.getSensorCollection().getQuadratureVelocity() * Config.DRIVE_ENCODER_DPP * 10);
+
+        SmartDashboard.putNumber("Left front motor voltage", leftFrontMotor.getMotorOutputVoltage());
+        SmartDashboard.putNumber("Right front motor voltage", rightFrontMotor.getMotorOutputVoltage());
+        SmartDashboard.putNumber("Left back motor voltage", leftBackMotor.getMotorOutputVoltage());
+        SmartDashboard.putNumber("Right back motor voltage", rightBackMotor.getMotorOutputVoltage());
+
+        SmartDashboard.putNumber("Left front motor output", leftFrontMotor.getMotorOutputPercent());
+        SmartDashboard.putNumber("Right front motor output", rightFrontMotor.getMotorOutputPercent());
+        SmartDashboard.putNumber("Left back motor output", leftBackMotor.getMotorOutputPercent());
+        SmartDashboard.putNumber("Right back motor output", rightBackMotor.getMotorOutputPercent());
+
     }
 
     /**

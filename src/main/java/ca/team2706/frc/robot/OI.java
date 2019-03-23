@@ -99,15 +99,11 @@ public class OI {
         new FluidButton(controlStick, Config.INTAKE_FORWARD_BINDING, 0.05)
                 .whenHeld(new RunIntakeOnJoystick(controlStick, Config.INTAKE_FORWARD_BINDING, true));
         new FluidButton(controlStick, Config.MOVE_LIFT_BINDING, 0.05)
-                .whenHeld(new MoveLiftJoystickVelocity(controlStick, Config.MOVE_LIFT_BINDING));
+                .whenHeld(new MoveLiftJoystickVelocity(controlStick, Config.MOVE_LIFT_BINDING, Config.OVERRIDE_LIFT_BINDING));
         new FluidButton(controlStick, Config.LIFT_ARMS_BINDING)
                 .whenPressed(new RaiseArmsSafely());
         new FluidButton(controlStick, Config.LOWER_ARMS_BINDING)
                 .whenPressed(new LowerArmsSafely());
-        new FluidButton(controlStick, Config.OVERRIDE_LIFT_DOWN_BINDING)
-                .whenHeld(new MoveLiftOnOverride(false));
-        new FluidButton(controlStick, Config.OVERRIDE_LIFT_UP_BINDING)
-                .whenHeld(new MoveLiftOnOverride(true));
         new ETrigger() {
             @Override
             public boolean get() {

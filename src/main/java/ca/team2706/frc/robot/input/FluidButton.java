@@ -61,10 +61,6 @@ public class FluidButton extends EButton {
     @Override
     public boolean get() {
         final boolean pressed = determineIfActivated(m_joystick, joystickPort, inputType, minAxisActivation);
-        // Interrupt the current command on any button press
-        if (pressed) {
-            Robot.interruptCurrentCommand();
-        }
 
         /*
          * The first call happens when the button is initialized in OI.init().

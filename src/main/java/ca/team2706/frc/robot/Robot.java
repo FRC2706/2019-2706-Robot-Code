@@ -23,6 +23,11 @@ import java.util.function.Consumer;
  */
 public class Robot extends TimedRobot {
     private boolean isInitialized;
+    /*
+    This keeps track of whether or not all subsystems are good for running auto. If one subsystem is not,
+    this will be set to false and auto won't run.
+    */
+    private boolean canRunAuto = true;
 
     private Command[] commands;
 
@@ -90,12 +95,20 @@ public class Robot extends TimedRobot {
     private void logInitialization(SubsystemStatus subsystemStatus, Subsystem subsystem) {
         String message = subsystem.getName() + " had initialized with status " + subsystemStatus.name();
 
-        if (subsystemStatus == SubsystemStatus.ERROR) {
-            Log.e(message);
-        } else if (subsystemStatus == SubsystemStatus.DISABLE_AUTO || subsystemStatus == SubsystemStatus.WORKABLE) {
-            Log.w(message);
-        } else {
-            Log.i(message);
+        switch (subsystemStatus) {
+            case ERROR:
+                Log.e(message);
+                break;
+            case DISABLE_AUTO:
+                Log.w(message);
+                canRunAuto = false;
+                break;
+            case WORKABLE:
+                Log.w(message);
+                break;
+            default:
+                Log.i(message);
+                break;
         }
     }
 
@@ -156,7 +169,9 @@ public class Robot extends TimedRobot {
 
         logFMSData();
 
-        selectorInit();
+        if (canRunAuto) {
+            selectorInit();
+        }
     }
 
     // The command currently being run on the robot

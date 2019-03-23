@@ -1,5 +1,8 @@
-package ca.team2706.frc.robot.commands.climber;
+package ca.team2706.frc.robot.commands.climber.sequences;
 
+import ca.team2706.frc.robot.commands.climber.WaitUntilReadyForPistons;
+import ca.team2706.frc.robot.commands.climber.actions.PushClimberPistons;
+import ca.team2706.frc.robot.commands.climber.actions.RunClimberMotor;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 /**

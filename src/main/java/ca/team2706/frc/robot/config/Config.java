@@ -248,14 +248,11 @@ public class Config {
             LOWER_ARMS_BINDING = constant("lower-arms-binding", XboxValue.XBOX_Y_BUTTON.getNTString()),
             OVERRIDE_LIFT_DOWN_BINDING = constant("override-lift-down-binding", XboxValue.XBOX_B_BUTTON.getNTString()),
             OVERRIDE_LIFT_UP_BINDING = constant("override-lift-up-binding", XboxValue.XBOX_X_BUTTON.getNTString()),
-            LIFT_FIRST_SETPOINT_BINDING = constant("lift-bottom-setpoint-binding", XboxValue.XBOX_POV_DOWN.getNTString()),
-            LIFT_SECOND_SETPOINT_BINDING = constant("lift-second-setpoint-binding", XboxValue.XBOX_POV_LEFT.getNTString()),
-            LIFT_THIRD_SETPOINT_BINDING = constant("lift-third-setpoint-binding", XboxValue.XBOX_POV_UP.getNTString()),
-            LIFT_FOURTH_SETPOINT_BINDING = constant("lift-top-setpoint-binding", XboxValue.XBOX_POV_RIGHT.getNTString()),
             MANUAL_PISTON_BINDING = constant("manual-plunger-toggle", XboxValue.XBOX_RIGHT_AXIS_BUTTON.getNTString()),
             EJECT_BINDING = constant("eject-multi-purpose-binding", XboxValue.XBOX_RB_BUTTON.getNTString()),
             AUTO_INTAKE_CARGO_BINDING = constant("auto-intake-cargo-binding", XboxValue.XBOX_LB_BUTTON.getNTString()),
             TOGGLE_RING_LIGHT_BINDING = constant("toggle-ring-light-binding", XboxValue.XBOX_START_BUTTON.getNTString()),
+            OVERRIDE_LIFT_BINDING = constant("override-lift-binding", XboxValue.XBOX_LEFT_AXIS_BUTTON.getNTString()),
             DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING =
                     constant("driver-assist-vision-cargo-loading-binding", XboxValue.XBOX_X_BUTTON.getNTString()),
             DRIVER_ASSIST_VISION_ROCKET_BINDING =

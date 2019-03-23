@@ -17,7 +17,7 @@ public class Lift extends Subsystem {
     /**
      * The lift motor controller.
      */
-    public WPI_TalonSRX liftMotor;
+    private final WPI_TalonSRX liftMotor;
 
     /**
      * Setpoints for cargo, in encoder ticks.
@@ -59,6 +59,8 @@ public class Lift extends Subsystem {
             currentInstance = new Lift();
         }
     }
+
+    private boolean isLimitSwitchEnabled = false;
 
     /**
      * Initializes a new lift object.
@@ -119,8 +121,16 @@ public class Lift extends Subsystem {
         liftMotor.configOpenloopRamp(Config.LIFT_VOLTAGE_RAMP_UP_PERIOD, Config.CAN_LONG);
     }
 
+    /**
+     * Enables or disables the limit switch on the lift.
+     *
+     * @param enable True to enable the limit switch, false otherwise.
+     */
     private void enableLimitSwitch(final boolean enable) {
-        liftMotor.configClearPositionOnLimitR(enable, Config.CAN_SHORT);
+        if (enable != isLimitSwitchEnabled) {
+            liftMotor.configClearPositionOnLimitR(enable, Config.CAN_SHORT);
+            isLimitSwitchEnabled = enable;
+        }
     }
 
     /**

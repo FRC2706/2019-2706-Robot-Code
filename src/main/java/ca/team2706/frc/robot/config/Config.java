@@ -122,21 +122,26 @@ public class Config {
      */
     LIFT_CONTINUOUS_CURRENT_LIMIT = 15;
 
-    // Climber current limits.
-    public static int
-            CLIMBER_PEAK_CURRENT_LIMIT = 0,
-            CLIMBER_CURRENT_LIMIT_THRESHOLD_MS = 0,
-            CLIMBER_CONTINUOUS_CURRENT_LIMIT = 15,
-            MAX_CLIMBER_ENCODER_TICKS = 55_000, // TODO need actual value
-    // Amount of encoder ticks at which the climber pistons push out and climb the robot.
-    CLIMBER_SUFFICIENT_HEIGHT_ENCODER_TICKS = 35_000; // TODO need actual value here.
-
     /**
      * How long (in seconds) the lift ramp up on voltage should be.
      */
     public static double LIFT_VOLTAGE_RAMP_UP_PERIOD = 0.6;
 
     public static int MAX_LIFT_ENCODER_TICKS = robotSpecific(61_000, 58_000, 61_000);
+
+    // Climber values.
+    public static int
+            CLIMBER_PEAK_CURRENT_LIMIT = 0,
+            CLIMBER_CURRENT_LIMIT_THRESHOLD_MS = 0,
+            CLIMBER_CONTINUOUS_CURRENT_LIMIT = 15,
+            MAX_CLIMBER_ENCODER_TICKS = 55_000, // TODO need actual value
+            CLIMBER_SUFFICIENT_HEIGHT_ENCODER_TICKS = 35_000; // TODO need actual value here. // Amount of encoder ticks at which the climber pistons push out and climb the robot.
+
+    /**
+     * How long the climber pistons should be left on before we assume that they are fully extended and can
+     * turn the solenoid off.
+     */
+    public static final double CLIMBER_PNEUMATICS_ON_TIME = 4.0;
 
 
     public static final boolean ENABLE_DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);

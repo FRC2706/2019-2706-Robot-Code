@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot.commands.climber.actions;
 
+import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.ClimberPneumatics;
 import edu.wpi.first.wpilibj.command.TimedCommand;
 
@@ -12,7 +13,7 @@ public class PushClimberPistons extends TimedCommand {
      * Constructs a new command to push out the climber pneumatics.
      */
     public PushClimberPistons() {
-        super(1.0);
+        super(Config.CLIMBER_PNEUMATICS_ON_TIME);
         requires(ClimberPneumatics.getInstance());
     }
 

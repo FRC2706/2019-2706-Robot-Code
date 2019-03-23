@@ -183,11 +183,15 @@ public class DriverAssistVisionTest {
         double PI_OVER_2 = Math.PI / 2.0;
         double angRobotHeadingFinalExpectedRad_Robot = Math.atan2(vRobotToTarget_RobotY, vRobotToTarget_RobotX);
         double angRobotHeadingFinalExpectedRad_Motion = PI_OVER_2 - angRobotHeadingFinalExpectedRad_Robot;
+        System.out.println("angRobotHeadingFinalExpectedRad_Motion = " + angRobotHeadingFinalExpectedRad_Motion);
         double mag = Math.sqrt(Math.pow(vRobotToTarget_RobotX, 2.0) + Math.pow(vRobotToTarget_RobotY, 2.0));
         double vUnitRobotToTarget_RobotX = vRobotToTarget_RobotX / mag;
         double vUnitRobotToTarget_RobotY = vRobotToTarget_RobotY / mag;
-        double vRobotToFinalExpected_RobotX = vRobotToTarget_RobotX - Config.TARGET_OFFSET_DISTANCE_BALL.value() * vUnitRobotToTarget_RobotX;
-        double vRobotToFinalExpected_RobotY = vRobotToTarget_RobotY - Config.TARGET_OFFSET_DISTANCE_BALL.value() * vUnitRobotToTarget_RobotY;
+        double d = Config.ROBOT_HALF_LENGTH.value() + Config.TARGET_OFFSET_DISTANCE_BALL.value();
+        double vRobotToFinalExpected_RobotX = vRobotToTarget_RobotX - d * vUnitRobotToTarget_RobotX;
+        double vRobotToFinalExpected_RobotY = vRobotToTarget_RobotY - d * vUnitRobotToTarget_RobotY;
+        System.out.println("vRobotToFinalExpected_RobotX: " + vRobotToFinalExpected_RobotX);
+        System.out.println("vRobotToFinalExpected_RobotY: " + vRobotToFinalExpected_RobotY);
 
         driverAssistVision.generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, yawAngleCameraToTarget_Camera, target);
         Trajectory traj = driverAssistVision.getTrajectory();

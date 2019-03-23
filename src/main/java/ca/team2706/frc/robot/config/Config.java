@@ -180,6 +180,8 @@ public class Config {
 
     public static final double MAX_INTAKE_SPEED = 1.0;
 
+    public static final double EXECUTE_PERIOD = 0.07;
+
     public static final double LOG_PERIOD = robotSpecific(0.02, 0.02, 0.02, Double.POSITIVE_INFINITY);
 
     public static final double WHEELBASE_WIDTH = robotSpecific(2.0, 2.0, 2.0);
@@ -286,11 +288,13 @@ public class Config {
     public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTX = constant("robottocamera-robotx", -0.25); // -0.5 for plyboy
     public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTY = constant("robottocamera-roboty", 0.15); // changed to .15 after reevaluating; 0.25 for comp, 0.6 for plyboy
     public static final FluidConstant<Double> VISION_DISTANCE_MIN = constant("target-offset_distance", 0.5);
+    public static final FluidConstant<Double> VISION_DISTANCE_MAX = constant("target-offset_distance", 20.0);
     public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_CARGO_AND_LOADING = constant("target-offset-distance-cargo-and-loading", 0.75);
     public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_ROCKET = constant("target-offset-distance-rocket", 1.45);
     public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_BALL = constant("target-offset-distance-ball", 0.75);
     public static final FluidConstant<Double> ROBOT_START_ANGLE = constant("robot-angle-deg", 90.0);
     public static final FluidConstant<Double> ROBOT_HALF_LENGTH = constant("robot_length", 1.35);
+    public static final FluidConstant<Double> RING_LIGHT_ON_DELAY = constant("ringlight_on_delay", 3.0);
 
     // ### Methods, fields and Constructors ###
     /**

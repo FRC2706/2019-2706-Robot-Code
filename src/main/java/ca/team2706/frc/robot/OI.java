@@ -1,8 +1,6 @@
 package ca.team2706.frc.robot;
 
-import ca.team2706.frc.robot.commands.drivebase.AbsoluteRotateWithGyro;
-import ca.team2706.frc.robot.commands.drivebase.CurvatureDriveWithJoystick;
-import ca.team2706.frc.robot.commands.drivebase.DriverAssistVision;
+import ca.team2706.frc.robot.commands.drivebase.*;
 import ca.team2706.frc.robot.commands.drivebase.DriverAssistVision.DriverAssistVisionTarget;
 import ca.team2706.frc.robot.commands.intake.AfterEjectConditional;
 import ca.team2706.frc.robot.commands.intake.EjectConditional;
@@ -132,9 +130,11 @@ public class OI {
         // The button to use to interrupt the robots current command
         new FluidButton(driverStick, Config.INTERRUPT_BUTTON).whenPressed(new InstantCommand(Robot::interruptCurrentCommand));
         new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING)
-                .whenHeld(new DriverAssistVision(DriverAssistVisionTarget.CARGO_AND_LOADING));
+               // .whenHeld(new DriverAssistVision(DriverAssistVisionTarget.CARGO_AND_LOADING));
+        .whenHeld(new VisionFollowTrajectory(1.0, 100, true));
         new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_ROCKET_BINDING)
-                .whenHeld(new DriverAssistVision(DriverAssistVisionTarget.ROCKET));
+                .whenHeld(new VisionFollowTrajectory(1.0, 100, false));
+              //  .whenHeld(new DriverAssistVision(DriverAssistVisionTarget.ROCKET));
         new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_BALL_BINDING)
                 .whenHeld(new DriverAssistVision(DriverAssistVisionTarget.BALL));
         new FluidButton(driverStick, Config.FACE_FORWARD_BINDING)

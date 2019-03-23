@@ -148,6 +148,11 @@ public class Lift extends Subsystem {
         return SubsystemStatus.maxError(status1, status2, status3);
     }
 
+    /**
+     * Enables or disables the limit switch on the lift.
+     *
+     * @param enable True to enable the limit switch, false otherwise.
+     */
     private void enableLimitSwitch(final boolean enable) {
         liftMotor.configClearPositionOnLimitR(enable, Config.CAN_SHORT);
     }

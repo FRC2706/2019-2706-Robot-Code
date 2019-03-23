@@ -256,6 +256,16 @@ public class DriveBase extends Subsystem {
         setTalonInversion(InvertType.FollowMaster, leftBackMotor, Config.INVERT_FRONT_LEFT_DRIVE, Config.INVERT_BACK_LEFT_DRIVE);
         setTalonInversion(InvertType.FollowMaster, rightBackMotor, Config.INVERT_FRONT_RIGHT_DRIVE, Config.INVERT_BACK_RIGHT_DRIVE);
 
+        leftFrontMotor.configVoltageCompSaturation(12.0, Config.CAN_LONG);
+        leftBackMotor.configVoltageCompSaturation(12.0, Config.CAN_LONG);
+        rightFrontMotor.configVoltageCompSaturation(12.0, Config.CAN_LONG);
+        rightBackMotor.configVoltageCompSaturation(12.0, Config.CAN_LONG);
+
+        leftFrontMotor.enableVoltageCompensation(true);
+        leftBackMotor.enableVoltageCompensation(true);
+        rightFrontMotor.enableVoltageCompensation(true);
+        rightBackMotor.enableVoltageCompensation(true);
+
         return SubsystemStatus.maxError(status1, status2, status3, status4);
     }
 

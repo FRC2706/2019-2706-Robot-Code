@@ -1,6 +1,8 @@
 package ca.team2706.frc.robot.subsystems;
 
+import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.logging.Log;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -23,14 +25,20 @@ public class ClimberMotor extends Subsystem {
 
     /**
      * Initializes a new instance of the ClimberMotor subsystem.
+     *
+     * @return The status after initialization of the subsystem.
      */
-    public static void init() {
+    public static SubsystemStatus init() {
         if (currentInstance == null) {
             currentInstance = new ClimberMotor();
         }
+
+        return currentInstance.getStatus();
     }
 
     private WPI_TalonSRX climberMotor;
+
+    private SubsystemStatus status;
 
     /**
      * Constructs a new climber motor instance with default motor id.
@@ -51,9 +59,18 @@ public class ClimberMotor extends Subsystem {
 
     /**
      * Configures the talon motor.
+     *
+     * @return The status after initializing talons.
      */
-    private void configTalonMotor() {
-        climberMotor.configFactoryDefault(Config.CAN_LONG);
+    private SubsystemStatus configTalonMotor() {
+        SubsystemStatus status = SubsystemStatus.OK;
+
+        if (SubsystemStatus.checkError(climberMotor.configFactoryDefault(Config.CAN_LONG))) {
+            Log.e("Climber motor not working.");
+            status = SubsystemStatus.maxError(SubsystemStatus.ERROR, status);
+        }
+
+
         climberMotor.setNeutralMode(NeutralMode.Brake);
         climberMotor.setInverted(Config.INVERT_CLIMBER_MOTOR);
 
@@ -62,15 +79,25 @@ public class ClimberMotor extends Subsystem {
         climberMotor.configPeakCurrentDuration(Config.CLIMBER_CURRENT_LIMIT_THRESHOLD_MS);
         climberMotor.enableCurrentLimit(Config.ENABLE_CLIMBER_CURRENT_LIMIT);
 
-        climberMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_LONG);
+        if (SubsystemStatus.checkError(climberMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_LONG))) {
+            Log.e("Climber encoders unreachable.");
+            status = SubsystemStatus.maxError(status, SubsystemStatus.ERROR);
+        }
+
         climberMotor.configSelectedFeedbackCoefficient(0.5, 0, Config.CAN_LONG);
         climberMotor.setSensorPhase(Config.ENABLE_CLIMBER_SUM_PHASE.value());
         climberMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Config.CAN_LONG);
         climberMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Config.CAN_LONG);
         climberMotor.configNeutralDeadband(Config.CLIMBER_CLOSED_LOOP_DEADBAND.value());
 
-        climberMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, Config.CAN_LONG);
-        climberMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, Config.CAN_LONG);
+        if (SubsystemStatus.checkError(climberMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, Config.CAN_LONG))) {
+            Log.e("Reverse climber limit switch unreachable.");
+            status = SubsystemStatus.maxError(status, SubsystemStatus.WORKABLE);
+        }
+        if (SubsystemStatus.checkError(climberMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, Config.CAN_LONG))) {
+            Log.e("Forward climber limit switch unreachable.");
+            status = SubsystemStatus.maxError(status, SubsystemStatus.WORKABLE);
+        }
 
         climberMotor.configVoltageCompSaturation(12, Config.CAN_LONG);
         climberMotor.enableVoltageCompensation(true);
@@ -79,20 +106,36 @@ public class ClimberMotor extends Subsystem {
         climberMotor.configReverseSoftLimitThreshold(0, Config.CAN_LONG);
 
         climberMotor.configOpenloopRamp(Config.LIFT_VOLTAGE_RAMP_UP_PERIOD, Config.CAN_LONG);
+
+        return status;
+    }
+
+    /**
+     * Gets the subsystem's status after initialization. This should indicate whether or not there
+     * were any errors or problems that could affect robot operation.
+     *
+     * @return The subsystem status.
+     */
+    private SubsystemStatus getStatus() {
+        return status;
     }
 
     /**
      * Runs the climber motor forward, making the robot climb.
      */
     public void runMotorForward() {
-        climberMotor.set(ControlMode.PercentOutput, Config.CLIMBER_FORWARD_SPEED.value());
+        if (getStatus() != SubsystemStatus.ERROR) {
+            climberMotor.set(ControlMode.PercentOutput, Config.CLIMBER_FORWARD_SPEED.value());
+        }
     }
 
     /**
      * Retracts the climber mechanisms by running the motor backwards.
      */
     public void runMotorBackward() {
-        climberMotor.set(ControlMode.PercentOutput, -Config.CLIMBER_REVERSE_SPEED.value());
+        if (getStatus() != SubsystemStatus.ERROR) {
+            climberMotor.set(ControlMode.PercentOutput, -Config.CLIMBER_REVERSE_SPEED.value());
+        }
     }
 
     /**

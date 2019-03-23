@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot.subsystems;
 
+import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.config.Config;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -27,11 +28,14 @@ public class ClimberPneumatics extends Subsystem {
 
     /**
      * Initializes a new instance of the climber subsystem, if it has not been not been initialized.
+     * @return The subsystem's status after initialization.
      */
-    public static void init() {
+    public static SubsystemStatus init() {
         if (currentInstance == null) {
             currentInstance = new ClimberPneumatics();
         }
+
+        return SubsystemStatus.OK;
     }
 
     /**

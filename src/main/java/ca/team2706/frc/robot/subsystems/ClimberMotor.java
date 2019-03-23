@@ -13,6 +13,7 @@ public class ClimberMotor extends Subsystem {
 
     /**
      * Gets or creates the current ClimberMotor instance.
+     *
      * @return The current instance of the ClimberMotor class.
      */
     public static ClimberMotor getInstance() {
@@ -40,6 +41,7 @@ public class ClimberMotor extends Subsystem {
 
     /**
      * Constructs a new climber motor with the given talon motor controller.
+     *
      * @param motor The motor controller object.
      */
     private ClimberMotor(final WPI_TalonSRX motor) {

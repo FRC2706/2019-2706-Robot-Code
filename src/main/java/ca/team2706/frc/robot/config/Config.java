@@ -128,8 +128,8 @@ public class Config {
             CLIMBER_CURRENT_LIMIT_THRESHOLD_MS = 0,
             CLIMBER_CONTINUOUS_CURRENT_LIMIT = 15,
             MAX_CLIMBER_ENCODER_TICKS = 55_000, // TODO need actual value
-            // Amount of encoder ticks at which the climber pistons push out and climb the robot.
-            CLIMBER_SUFFICIENT_HEIGHT_ENCODER_TICKS = 35_000; // TODO need actual value here.
+    // Amount of encoder ticks at which the climber pistons push out and climb the robot.
+    CLIMBER_SUFFICIENT_HEIGHT_ENCODER_TICKS = 35_000; // TODO need actual value here.
 
     /**
      * How long (in seconds) the lift ramp up on voltage should be.

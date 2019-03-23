@@ -206,7 +206,7 @@ public class Config {
 
     public static final FluidConstant<Double> DRIVE_MOTION_MAGIC_P = constant("drive-mm-P", 0.4096);
     public static final FluidConstant<Double> DRIVE_MOTION_MAGIC_I = constant("drive-mm-I", 0.0);
-    public static final FluidConstant<Double> DRIVE_MOTION_MAGIC_D = constant("drive-mm-D", 6.5);
+    public static final FluidConstant<Double> DRIVE_MOTION_MAGIC_D = constant("drive-mm-D", 1.0);
     public static final FluidConstant<Double> DRIVE_MOTION_MAGIC_F = constant("drive-mm-F", 0.397);
 
     public static final FluidConstant<Double> DRIVEBASE_MOTION_MAGIC_CRUISE_VELOCITY = constant("mm-drivebase-cruise-velocity", 8.0);
@@ -234,7 +234,7 @@ public class Config {
             LIFT_D = constant("lift-D", 0.0),
             LIFT_F = constant("lift-F", 0.0);
 
-    public static final FluidConstant<Double> PIGEON_KP = constant("pigeon-kp", 2.0);
+    public static final FluidConstant<Double> PIGEON_KP = constant("pigeon-kp", 0.8);
     public static final FluidConstant<Double> PIGEON_KI = constant("pigeon-ki", 0.0);
     public static final FluidConstant<Double> PIGEON_KD = constant("pigeon-kd", 4.0);
     public static final FluidConstant<Double> PIGEON_KF = constant("pigeon-kf", 0.0);
@@ -281,15 +281,15 @@ public class Config {
      */
     public static final FluidConstant<Double> CARGO_CAPTURED_IDEAL_IR_VOLTAGE = constant("cargo-ideal-ir-voltage", 0.29);
 
-    public static final FluidConstant<Double> TRAJ_DELTA_TIME = constant("traj-delta-time", 0.1);
-    public static final FluidConstant<Double> VISION_ASSIST_MAX_VELOCITY = constant("robot-max-vel", 3.0);
-    public static final FluidConstant<Double> VISION_ASSIST_MAX_ACCELERATION = constant("robot-max-acc", 6.0);
+    public static final FluidConstant<Double> TRAJ_DELTA_TIME = constant("traj-delta-time", 0.05);
+    public static final FluidConstant<Double> VISION_ASSIST_MAX_VELOCITY = constant("robot-max-vel", 6.0);
+    public static final FluidConstant<Double> VISION_ASSIST_MAX_ACCELERATION = constant("robot-max-acc", 12.0);
     public static final FluidConstant<Double> VISION_ASSIST_MAX_JERK = constant("robot-max-jerk", 60.0);
     public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTX = constant("robottocamera-robotx", -0.25); // -0.5 for plyboy
     public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTY = constant("robottocamera-roboty", 0.15); // changed to .15 after reevaluating; 0.25 for comp, 0.6 for plyboy
-    public static final FluidConstant<Double> VISION_DISTANCE_MIN = constant("target-offset_distance", 0.5);
-    public static final FluidConstant<Double> VISION_DISTANCE_MAX = constant("target-offset_distance", 20.0);
-    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_CARGO_AND_LOADING = constant("target-offset-distance-cargo-and-loading", 0.75);
+    public static final FluidConstant<Double> VISION_DISTANCE_MIN = constant("vision-distance-min", 0.5);
+    public static final FluidConstant<Double> VISION_DISTANCE_MAX = constant("vision-distance-max", 20.0);
+    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_CARGO_AND_LOADING = constant("target-offset-distance-cargo-and-loading", 0.25);
     public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_ROCKET = constant("target-offset-distance-rocket", 1.45);
     public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_BALL = constant("target-offset-distance-ball", 0.75);
     public static final FluidConstant<Double> ROBOT_START_ANGLE = constant("robot-angle-deg", 90.0);

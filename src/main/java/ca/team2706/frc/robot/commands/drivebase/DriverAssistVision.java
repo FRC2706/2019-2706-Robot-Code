@@ -130,7 +130,7 @@ public class DriverAssistVision extends Command {
      */
     public DriverAssistVision() {
         // Ensure that this command is the only one to run on the drive base
-        requires(DriveBase.getInstance());
+        requires(RingLight.getInstance());
 
         setupNetworkTables();
 
@@ -149,7 +149,7 @@ public class DriverAssistVision extends Command {
         this.target = target;
 
         // Ensure that this command is the only one to run on the drive base
-        requires(DriveBase.getInstance());
+        requires(RingLight.getInstance());
 
         commandAborted = false;
         ringLightOnDelayTime = 0.0;
@@ -191,6 +191,11 @@ public class DriverAssistVision extends Command {
         DriveBase.getInstance().setBrakeMode(true);
         DriveBase.getInstance().setPositionNoGyroMode();
 
+        // Turn on green ring light
+        System.out.println("DAV: Turning on light");
+        RingLight.getInstance().enableLight();
+        System.out.println("DAV: Light turned on");
+    
         commandAborted = false;
         ringLightOnDelayTime = 0.0;
         ringLightOnDelayStageComplete = false;
@@ -263,6 +268,7 @@ public class DriverAssistVision extends Command {
                 return;
             else {
                 System.out.println("DAV: Tape detected");
+                
                 // Read angle and position of target (wrt camera coordinate frame) computed by vision
                 // system from network table 
                 NetworkTableEntry vectorCameraToTarget = pathfinderTable.getEntry("vectorCameraToTarget");
@@ -315,7 +321,7 @@ public class DriverAssistVision extends Command {
         // Stage 3: Command Robot to Follow Trajectory
         if ((followTrajectory == null) && (trajectory != null)) {
             System.out.println("DAV: Commanding robot to follow trajectory");
-            followTrajectory = new FollowTrajectory(0.2, 100, trajectory);
+            followTrajectory = new FollowTrajectory(1.0, 100, trajectory);
             followTrajectory.start();
         }
     }
@@ -335,12 +341,8 @@ public class DriverAssistVision extends Command {
             followTrajectory = null;
         }
 
-        // Turn off ring light(if not already done)
-        if (ringLightOn) {
-            System.out.println("DAV: Turning ring light off");
-            RingLight.getInstance().toggleLight();
-            ringLightOn = false;
-        }
+        // Turn off green ring light
+        RingLight.getInstance().disableLight();
 
         // Put vision back into driver mode
         driverEntry = chickenVisionTable.getEntry("Driver");
@@ -486,7 +488,11 @@ public class DriverAssistVision extends Command {
             // Vector 3 is aligned with and facing away from target
 
             // Get current robot heading relative to field frame from IMU
-            double angRobotHeadingCurrent_Field = DriveBase.getInstance().getAbsoluteHeading();
+            double angRobotHeadingCurrent_Field = DriveBase.getInstance().getAbsoluteHeading() % 360;
+            if(angRobotCurrent_Field < 0) {
+                angRobotCurrent_Field += 360;
+            }
+
             System.out.println("DAV: angRobotHeadingCurrent_Field: " + angRobotHeadingCurrent_Field);
 
             // Compute final desired robot heading relative to field

@@ -80,8 +80,6 @@ public class Lift extends Subsystem {
      *
      * @return The subsystem's status
      */
-    s
-
     private SubsystemStatus getStatus() {
         return status;
     }

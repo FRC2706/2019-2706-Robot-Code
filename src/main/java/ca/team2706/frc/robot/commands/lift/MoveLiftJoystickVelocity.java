@@ -5,7 +5,6 @@ import ca.team2706.frc.robot.config.FluidConstant;
 import ca.team2706.frc.robot.config.XboxValue;
 import ca.team2706.frc.robot.subsystems.Lift;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
@@ -23,8 +22,9 @@ public class MoveLiftJoystickVelocity extends Command {
 
     /**
      * Moves the lift on joystick input using velocity.
-     *  @param joystick    The joystick to be looking at for percent speed.
-     * @param portBinding The port binding at which to look at.
+     *
+     * @param joystick            The joystick to be looking at for percent speed.
+     * @param portBinding         The port binding at which to look at.
      * @param overrideLiftBinding The binding to the override button used to put the lift in override mode.
      */
     public MoveLiftJoystickVelocity(GenericHID joystick, final FluidConstant<String> portBinding, final FluidConstant<String> overrideLiftBinding) {
@@ -49,8 +49,6 @@ public class MoveLiftJoystickVelocity extends Command {
         if (!shouldUseOverride()) {
             Lift.getInstance().setVelocity((int) (percentSpeed * Config.LIFT_MAX_SPEED.value()));
             last = percentSpeed;
-        } else if (percentSpeed < 0) {
-            Lift.getInstance().overrideDown();
         } else if (percentSpeed > 0) {
             Lift.getInstance().overrideUp();
         }
@@ -58,6 +56,7 @@ public class MoveLiftJoystickVelocity extends Command {
 
     /**
      * Determines if the operator is attempting to use override lift, false otherwise.
+     *
      * @return True to override, false otherwise.
      */
     private boolean shouldUseOverride() {

@@ -53,13 +53,14 @@ public abstract class CurvatureDrive extends Command {
         double curve = curveSpeed.get();
 
         if(squareInputs) {
-            forward *= forward < 0 ? -forward : forward;
+            // Uncomment for forward input squaring
+            //forward *= forward < 0 ? -forward : forward;
             curve *= curve < 0 ? -curve : curve;
         }
 
         double rotation = (curve > -0.05 && curve < 0.05) ? 0 : curve;
 
-        // Uncomment for forward deadband
+        // Uncomment for forward input deadband
         //forward = (forward > -0.05 && forward < 0.05) ? 0 : forward;
         boolean override = ((forward > -0.25 && forward < 0.25));
 

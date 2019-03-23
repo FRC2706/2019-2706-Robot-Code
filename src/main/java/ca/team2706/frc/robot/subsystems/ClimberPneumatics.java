@@ -28,6 +28,7 @@ public class ClimberPneumatics extends Subsystem {
 
     /**
      * Initializes a new instance of the climber subsystem, if it has not been not been initialized.
+     *
      * @return The subsystem's status after initialization.
      */
     public static SubsystemStatus init() {

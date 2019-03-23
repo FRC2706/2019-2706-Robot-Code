@@ -176,6 +176,7 @@ public class Pneumatics extends Subsystem {
 
     /**
      * Turns the pneumatics compressor on or off as desired.
+     *
      * @param state The desired state, true for on or false for off.
      */
     public void setCompressorState(final boolean state) {

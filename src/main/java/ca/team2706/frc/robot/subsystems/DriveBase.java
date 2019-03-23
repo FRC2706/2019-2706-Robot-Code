@@ -175,6 +175,11 @@ public class DriveBase extends Subsystem {
         status = SubsystemStatus.maxError(status1, status2);
     }
 
+    /**
+     * Gets the subsystem's initialization status (status of sensors and systems).
+     *
+     * @return The subsystem's status
+     */
     private SubsystemStatus getStatus() {
         return status;
     }

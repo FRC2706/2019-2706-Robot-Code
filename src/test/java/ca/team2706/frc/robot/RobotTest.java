@@ -237,7 +237,7 @@ public class RobotTest {
      * Tests whether the absolute gyro is reset when in a match
      */
     @Test
-    public void testAbsoluteResetOn() {
+    public void testAbsoluteReset() {
         new Expectations() {{
             driverStation.isFMSAttached();
             result = true;
@@ -253,25 +253,6 @@ public class RobotTest {
         }};
     }
 
-    /**
-     * Tests whether the absolute gyro is reset when not in a match
-     */
-    @Test
-    public void testAbsoluteResetOff() {
-        new Expectations() {{
-            driverStation.isFMSAttached();
-            result = false;
-        }};
-
-        robot.robotInit();
-
-        robot.autonomousInit();
-
-        new Verifications() {{
-            pigeon.setYaw(0, anyInt);
-            times = 2;
-        }};
-    }
 
     /**
      * Tests that the commands are correctly set and run
@@ -290,6 +271,8 @@ public class RobotTest {
         EmptyCommand b = new EmptyCommand();
         EmptyCommand c = new EmptyCommand();
         EmptyCommand d = new EmptyCommand();
+
+        robot.robotInit();
 
         setCommands(robot, a, b, null, c, d);
 
@@ -336,8 +319,7 @@ public class RobotTest {
             result = true;
         }};
 
-        // Will result in
-        OI.init();
+        robot.robotInit();
 
         EmptyCommand a = new EmptyCommand();
 

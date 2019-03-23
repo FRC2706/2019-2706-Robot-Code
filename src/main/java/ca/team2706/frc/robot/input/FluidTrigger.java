@@ -17,6 +17,7 @@ public abstract class FluidTrigger extends ETrigger {
 
     /**
      * Constructs a fluid trigger with the following bindings that will be updated and usable in the conditions.
+     *
      * @param bindings The fluid constant bindings.
      */
     public FluidTrigger(FluidConstant<String>... bindings) {
@@ -33,6 +34,7 @@ public abstract class FluidTrigger extends ETrigger {
     /**
      * Gets the XboxValue binding associated with the provided fluid constant. This binding
      * must have been included in the constructor arguments for this object.
+     *
      * @param fluidConstant The fluid constant with which the XboxValue is associated with.
      * @return The XboxValue binding.
      */
@@ -42,9 +44,10 @@ public abstract class FluidTrigger extends ETrigger {
 
     /**
      * Determines if any of the provided buttons/triggers/axis are active (being pressed).
-     * @param controller The controller to be checked.
+     *
+     * @param controller        The controller to be checked.
      * @param minAxisActivation The minimum required activation for the button/trigger to be considered pressed.
-     * @param values The XboxValues to be checked.
+     * @param values            The XboxValues to be checked.
      * @return True if any of the buttons/triggers/axis are considered pressed, false otherwise.
      */
     public static boolean areAnyActive(GenericHID controller, final double minAxisActivation, XboxValue... values) {
@@ -54,8 +57,9 @@ public abstract class FluidTrigger extends ETrigger {
     /**
      * Determines if any of the provided buttons/triggers/axis are active (being pressed) with default minimum
      * axis activation.
+     *
      * @param controller The controller to be checked.
-     * @param values The XboxValues to be checked.
+     * @param values     The XboxValues to be checked.
      * @return True if any of the buttons/triggers/axis are considered pressed, false otherwise.
      * @see #areAnyActive(GenericHID, double, XboxValue...)
      */
@@ -65,9 +69,10 @@ public abstract class FluidTrigger extends ETrigger {
 
     /**
      * Determines if all of the provided buttons/triggers/axis are active (being pressed).
-     * @param controller The controller to be checked.
+     *
+     * @param controller        The controller to be checked.
      * @param minAxisActivation The minimum required activation for the button/trigger to be considered pressed.
-     * @param values The XboxValues to be checked.
+     * @param values            The XboxValues to be checked.
      * @return True if any of the buttons/triggers/axis are considered pressed, false otherwise.
      */
     public static boolean areAllActive(GenericHID controller, final double minAxisActivation, XboxValue... values) {
@@ -77,8 +82,9 @@ public abstract class FluidTrigger extends ETrigger {
     /**
      * Determines if any of the provided buttons/triggers/axis are active (being pressed) with default minimum
      * axis activation.
+     *
      * @param controller The controller to be checked.
-     * @param values The XboxValues to be checked.
+     * @param values     The XboxValues to be checked.
      * @return True if any of the buttons/triggers/axis are considered pressed, false otherwise.
      * @see #areAllActive(GenericHID, double, XboxValue...)
      */

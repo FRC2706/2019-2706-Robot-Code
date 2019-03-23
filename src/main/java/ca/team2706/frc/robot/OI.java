@@ -13,7 +13,10 @@ import ca.team2706.frc.robot.commands.intake.cargo.RunIntakeOnJoystick;
 import ca.team2706.frc.robot.commands.lift.*;
 import ca.team2706.frc.robot.commands.ringlight.ToggleRingLight;
 import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.config.XboxValue;
+import ca.team2706.frc.robot.input.ETrigger;
 import ca.team2706.frc.robot.input.FluidButton;
+import ca.team2706.frc.robot.input.FluidTrigger;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import ca.team2706.frc.robot.subsystems.Lift;
 import edu.wpi.first.wpilibj.Joystick;
@@ -101,14 +104,20 @@ public class OI {
                 .whenPressed(new RaiseArmsSafely());
         new FluidButton(controlStick, Config.LOWER_ARMS_BINDING)
                 .whenPressed(new LowerArmsSafely());
-        new FluidButton(controlStick, Config.LIFT_FIRST_SETPOINT_BINDING)
-                .whenHeld(new MoveLiftToSetpoint(0));
-        new FluidButton(controlStick, Config.LIFT_SECOND_SETPOINT_BINDING)
-                .whenHeld(new MoveLiftToSetpoint(1));
-        new FluidButton(controlStick, Config.LIFT_THIRD_SETPOINT_BINDING)
-                .whenHeld(new MoveLiftToSetpoint(2));
-        new FluidButton(controlStick, Config.LIFT_FOURTH_SETPOINT_BINDING)
-                .whenHeld(new MoveLiftToSetpoint(3));
+        new ETrigger() {
+            @Override
+            public boolean get() {
+                return FluidTrigger.areAnyActive(controlStick,
+                        XboxValue.XBOX_POV_DOWN,
+                        XboxValue.XBOX_POV_DOWN_LEFT,
+                        XboxValue.XBOX_POV_DOWN_RIGHT,
+                        XboxValue.XBOX_POV_LEFT,
+                        XboxValue.XBOX_POV_RIGHT,
+                        XboxValue.XBOX_POV_UP,
+                        XboxValue.XBOX_POV_UP_LEFT,
+                        XboxValue.XBOX_POV_UP_RIGHT);
+            }
+        }.runWhileActive(new MoveLiftToSetpointOnPOV(controlStick));
         new FluidButton(controlStick, Config.MANUAL_PISTON_BINDING)
                 .whenPressed(new MovePlunger());
         FluidButton button = new FluidButton(controlStick, Config.EJECT_BINDING);

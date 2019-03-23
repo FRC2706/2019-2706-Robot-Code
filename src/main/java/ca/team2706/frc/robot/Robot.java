@@ -10,6 +10,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import java.lang.reflect.Field;
@@ -23,6 +24,11 @@ import java.util.function.Consumer;
  */
 public class Robot extends TimedRobot {
     private boolean isInitialized;
+    /*
+    This keeps track of whether or not all subsystems are good for running auto. If one subsystem is not,
+    this will be set to false and auto won't run.
+    */
+    private boolean canRunAuto = true;
 
     private Command[] commands;
     private Map<Integer, Integer> selectorOrientation;
@@ -48,16 +54,16 @@ public class Robot extends TimedRobot {
         Config.init();
 
         // Initialize subsystems
-        Bling.init();
-        DriveBase.init();
+        logInitialization(Bling.init(), Bling.getInstance());
+        logInitialization(DriveBase.init(), DriveBase.getInstance());
 
-        Intake.init();
-        Pneumatics.init();
-        Lift.init();
-        RingLight.init();
+        logInitialization(Intake.init(), Intake.getInstance());
+        logInitialization(Pneumatics.init(), Pneumatics.getInstance());
+        logInitialization(Lift.init(), Lift.getInstance());
+        logInitialization(RingLight.init(), RingLight.getInstance());
 
         // Make sure that this is last initialized subsystem
-        SensorExtras.init();
+        logInitialization(SensorExtras.init(), SensorExtras.getInstance());
 
         // OI depends on subsystems, so initialize it after
         OI.init();
@@ -83,6 +89,32 @@ public class Robot extends TimedRobot {
         };
 
         selectorOrientation = Map.of(4, 270);
+    }
+
+    /**
+     * Logs the initialization of a subsystem
+     *
+     * @param subsystemStatus The status that the subsystem initialized with
+     * @param subsystem       The subsystem
+     */
+    private void logInitialization(SubsystemStatus subsystemStatus, Subsystem subsystem) {
+        String message = subsystem.getName() + " had initialized with status " + subsystemStatus.name();
+
+        switch (subsystemStatus) {
+            case ERROR:
+                Log.e(message);
+                break;
+            case DISABLE_AUTO:
+                Log.w(message);
+                canRunAuto = false;
+                break;
+            case WORKABLE:
+                Log.w(message);
+                break;
+            default:
+                Log.i(message);
+                break;
+        }
     }
 
     /**
@@ -142,7 +174,9 @@ public class Robot extends TimedRobot {
 
         logFMSData();
 
-        selectorInit();
+        if (canRunAuto) {
+            selectorInit();
+        }
     }
 
     // The command currently being run on the robot

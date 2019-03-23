@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot.subsystems;
 
+import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.commands.bling.BlingController;
 import ca.team2706.frc.robot.commands.bling.patterns.BlingPattern;
 import ca.team2706.frc.robot.logging.Log;
@@ -30,10 +31,12 @@ public class Bling extends Subsystem {
     /**
      * Initializes a new bling object.
      */
-    public static void init() {
+    public static SubsystemStatus init() {
         if (currentInstance == null) {
             currentInstance = new Bling();
         }
+
+        return SubsystemStatus.OK;
     }
 
     // All of the pattern numbers

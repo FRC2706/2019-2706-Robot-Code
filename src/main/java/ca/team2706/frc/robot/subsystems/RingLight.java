@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot.subsystems;
 
+import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.config.Config;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -20,10 +21,12 @@ public class RingLight extends Subsystem {
     /**
      * Initializes a new ring light instance, if needed.
      */
-    public static void init() {
+    public static SubsystemStatus init() {
         if (currentInstance == null) {
             currentInstance = new RingLight();
         }
+
+        return SubsystemStatus.OK;
     }
 
     private final Relay relay;

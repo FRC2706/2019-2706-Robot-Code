@@ -75,19 +75,6 @@ public class FluidButton extends EButton {
             Robot.interruptCurrentCommand();
         }
 
-        /*
-         * The first call happens when the button is initialized in OI.init().
-         * If it is pressed, the button will try to interrupt the current command.
-         * When interrupting the current command,
-         * OI must be initialized to ensure that the command isn't a default command.
-         * Since the initialization is not complete, the singleton is still null, and OI will be initialized again.
-         * As a result, the loop will continue indefinitely and create a stack overflow
-         */
-        if (!first && pressed) {
-            // Interrupt the current command on any button press
-            Robot.interruptCurrentCommand();
-        }
-
         first = false;
 
         return pressed;

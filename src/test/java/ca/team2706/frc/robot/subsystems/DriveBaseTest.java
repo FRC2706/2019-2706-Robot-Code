@@ -135,7 +135,7 @@ public class DriveBaseTest {
 
     @Test
     public void testPushMotionProfilePositive() {
-        driveBase.pushMotionProfile1Wheel(true, new double[]{1.0, -1.0, 5.0, 0.1}, new double[]{3.0, 8.6, 42.3, -2.54}, new double[]{35.32, 245.53, -53.53, 553.0}, new int[]{5, 5, 5, 5}, 4);
+        driveBase.pushMotionProfile1Wheel(true, new double[]{1.0, -1.0, 5.0, 0.1}, new double[]{3.0, 8.6, 42.3, -2.54}, new double[] {0.0, 0.0, 0.0, 0.0}, new double[]{35.32, 245.53, -53.53, 553.0}, new int[]{5, 5, 5, 5}, 4);
 
         final TrajectoryPoint[] expected = {
                 trajectory(1.0 / Config.DRIVE_ENCODER_DPP, 3.0 / Config.DRIVE_ENCODER_DPP / 10.0, 0.0, 35.32, 35.32 / Config.PIGEON_DPP, 0.0, 0.0, 0, 1, false, true, 5, true),
@@ -154,7 +154,7 @@ public class DriveBaseTest {
 
     @Test
     public void testPushMotionProfileNegative() {
-        driveBase.pushMotionProfile1Wheel(false, new double[]{1.0, -1.0, 5.0, 0.1}, new double[]{3.0, 8.6, 42.3, -2.54}, new double[]{35.32, 245.53, -53.53, 553.0}, new int[]{5, 5, 5, 5}, 4);
+        driveBase.pushMotionProfile1Wheel(false, new double[]{1.0, -1.0, 5.0, 0.1}, new double[]{3.0, 8.6, 42.3, -2.54}, new double[] {0.0, 0.0, 0.0, 0.0}, new double[]{35.32, 245.53, -53.53, 553.0}, new int[]{5, 5, 5, 5}, 4);
 
         final TrajectoryPoint[] expected = {
                 trajectory(-1.0 / Config.DRIVE_ENCODER_DPP, -3.0 / Config.DRIVE_ENCODER_DPP / 10.0, 0.0, 35.32, 35.32 / Config.PIGEON_DPP, 0.0, 0.0, 0, 1, false, true, 5, true),
@@ -173,7 +173,7 @@ public class DriveBaseTest {
 
     @Test
     public void testPushMotionProfile2WheelPositive() {
-        driveBase.pushMotionProfile2Wheel(true, new double[]{1.0, -1.0, 5.0, 0.1}, new double[]{3.0, 8.6, 42.3, -2.54}, new double[]{35.32, 245.53, -53.53, 553.0}, new int[]{5, 5, 5, 5}, 4, new double[]{-1.88, 11.14, 20.56, 12.41}, new double[]{16.78, -1.48, 1.18, 27.67});
+        driveBase.pushMotionProfile2Wheel(true, new double[]{1.0, -1.0, 5.0, 0.1}, new double[]{3.0, 8.6, 42.3, -2.54}, new double[] {0.0, 0.0, 0.0, 0.0}, new double[]{35.32, 245.53, -53.53, 553.0}, new int[]{5, 5, 5, 5}, 4, new double[]{-1.88, 11.14, 20.56, 12.41}, new double[]{16.78, -1.48, 1.18, 27.67}, new double[] {0.0, 0.0, 0.0, 0.0});
 
         final TrajectoryPoint[] expected1 = {
                 trajectory(1.0 / Config.DRIVE_ENCODER_DPP, 3.0 / Config.DRIVE_ENCODER_DPP / 10.0, 0.0, 35.32, 35.32 / Config.PIGEON_DPP, 0.0, 0.0, 0, 1, false, true, 5, true),
@@ -200,7 +200,7 @@ public class DriveBaseTest {
 
     @Test
     public void testPushMotionProfile2WheelNegative() {
-        driveBase.pushMotionProfile2Wheel(false, new double[]{1.0, -1.0, 5.0, 0.1}, new double[]{3.0, 8.6, 42.3, -2.54}, new double[]{35.32, 245.53, -53.53, 553.0}, new int[]{5, 5, 5, 5}, 4, new double[]{-1.88, 11.14, 20.56, 12.41}, new double[]{16.78, -1.48, 1.18, 27.67});
+        driveBase.pushMotionProfile2Wheel(false, new double[]{1.0, -1.0, 5.0, 0.1}, new double[]{3.0, 8.6, 42.3, -2.54}, new double[] {0.0, 0.0, 0.0, 0.0}, new double[]{35.32, 245.53, -53.53, 553.0}, new int[]{5, 5, 5, 5}, 4, new double[]{-1.88, 11.14, 20.56, 12.41}, new double[]{16.78, -1.48, 1.18, 27.67}, new double[] {0.0, 0.0, 0.0, 0.0});
 
         final TrajectoryPoint[] expected1 = {
                 trajectory(-1.0 / Config.DRIVE_ENCODER_DPP, -3.0 / Config.DRIVE_ENCODER_DPP / 10.0, 0.0, 35.32, 35.32 / Config.PIGEON_DPP, 0.0, 0.0, 0, 1, false, true, 5, true),

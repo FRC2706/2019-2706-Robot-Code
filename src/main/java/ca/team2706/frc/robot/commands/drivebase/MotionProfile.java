@@ -18,6 +18,7 @@ public class MotionProfile extends Command {
 
     private final double[] pos;
     private final double[] vel;
+    private final double[] accel;
     private final double[] heading;
     private final int[] time;
     private final int size;
@@ -31,12 +32,13 @@ public class MotionProfile extends Command {
      * @param minDoneCycles The cycles to hold after the motion profile has ended
      * @param pos           The positions in feet at each point
      * @param vel           The velocities in feet per second at each point
+     * @param accel The acceleraations in feet per second per second at each point
      * @param heading       The heading at each point
      * @param time          The milliseconds to run each segment
      * @param size          The amount of segments in the trajectory
      */
-    public MotionProfile(double speed, int minDoneCycles, double[] pos, double[] vel, double[] heading, int[] time, int size) {
-        this(() -> speed, () -> minDoneCycles, pos, vel, heading, time, size);
+    public MotionProfile(double speed, int minDoneCycles, double[] pos, double[] vel, double[] accel, double[] heading, int[] time, int size) {
+        this(() -> speed, () -> minDoneCycles, pos, vel, accel, heading, time, size);
     }
 
     /**
@@ -46,15 +48,17 @@ public class MotionProfile extends Command {
      * @param minDoneCycles The supplier to the cycles to hold after the motion profile has ended
      * @param pos           The positions in feet at each point
      * @param vel           The velocities in feet per second at each point
+     * @param accel The acceleraations in feet per second per second at each point
      * @param heading       The heading at each point
      * @param time          The milliseconds to run each segment
      * @param size          The amount of segments in the trajectory
      */
-    public MotionProfile(Supplier<Double> speed, Supplier<Integer> minDoneCycles, double[] pos, double[] vel, double[] heading, int[] time, int size) {
+    public MotionProfile(Supplier<Double> speed, Supplier<Integer> minDoneCycles, double[] pos, double[] vel, double[] accel, double[] heading, int[] time, int size) {
         requires(DriveBase.getInstance());
         this.speed = speed;
         this.pos = pos;
         this.vel = vel;
+        this.accel = accel;
         this.heading = heading;
         this.time = time;
         this.size = size;
@@ -65,7 +69,7 @@ public class MotionProfile extends Command {
     @Override
     public void initialize() {
         DriveBase.getInstance().setBrakeMode(true);
-        DriveBase.getInstance().pushMotionProfile1Wheel(speed.get() >= 0, pos, vel, heading, time, size);
+        DriveBase.getInstance().pushMotionProfile1Wheel(speed.get() >= 0, pos, vel, accel, heading, time, size);
         DriveBase.getInstance().setMotionProfile();
 
         doneCycles = 0;

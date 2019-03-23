@@ -65,12 +65,17 @@ public class MotionProfile2WheelTest {
     @Injectable
     private double[] velLeft = {0.2, 2.1, -4.3, -2.1};
 
+    @Injectable
+    private double[] accelLeft = {0.0, 0.0, 0.0, 0.0};
 
     @Injectable
     private double[] posRight = {1.0, 4.5, 2.4, -24};
 
     @Injectable
     private double[] velRight = {0.2, 2.1, -4.3, -2.1};
+
+    @Injectable
+    private double[] accelRight = {0.0, 0.0, 0.0, 0.0};
 
     @Injectable
     private double[] heading = {42, 21, 21, -54};

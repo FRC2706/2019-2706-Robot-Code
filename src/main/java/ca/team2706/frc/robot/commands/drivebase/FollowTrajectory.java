@@ -95,12 +95,14 @@ public class FollowTrajectory extends MotionProfile2Wheel {
         Trajectory left = leftRightTrajectory.getFirst();
         Trajectory right = leftRightTrajectory.getSecond();
 
-        DualTalonTrajectory dualTalonTrajectory = new DualTalonTrajectory(new double[trajectory.segments.length], new double[trajectory.segments.length], new double[trajectory.segments.length], new double[trajectory.segments.length], new double[trajectory.segments.length], new int[trajectory.segments.length], trajectory.segments.length);
+        DualTalonTrajectory dualTalonTrajectory = new DualTalonTrajectory(new double[trajectory.segments.length], new double[trajectory.segments.length], new double[trajectory.segments.length], new double[trajectory.segments.length],new double[trajectory.segments.length], new double[trajectory.segments.length], new double[trajectory.segments.length], new int[trajectory.segments.length], trajectory.segments.length);
         for (int i = 0; i < trajectory.segments.length; i++) {
             dualTalonTrajectory.posLeft[i] = left.segments[i].position;
             dualTalonTrajectory.velLeft[i] = left.segments[i].velocity;
+            dualTalonTrajectory.accelLeft[i] = left.segments[i].acceleration;
             dualTalonTrajectory.posRight[i] = right.segments[i].position;
             dualTalonTrajectory.velRight[i] = right.segments[i].velocity;
+            dualTalonTrajectory.accelRight[i] = right.segments[i].acceleration;
             dualTalonTrajectory.heading[i] = Pathfinder.r2d(trajectory.segments[i].heading);
             dualTalonTrajectory.time[i] = (int) (trajectory.segments[i].dt * 1000.0);
         }

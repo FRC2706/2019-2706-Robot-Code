@@ -731,13 +731,14 @@ public class DriveBase extends Subsystem {
      *
      * @param pos         The position of the robot at a trajectory point
      * @param vel         The velocity of the robot at a trajectory point
+     * @param accel       The acceleration of the robot at a trajectory point
      * @param heading     The heading of the robot at a trajectory point
      * @param time        The time for each trajectory point
      * @param size        How many trajectories there are
      * @param talon       The talon
      * @param pointStream The point stream
      */
-    private void pushMotionProfile(double[] pos, double[] vel, double[] heading, int[] time, int size, WPI_TalonSRX talon, BufferedTrajectoryPointStream pointStream) {
+    private void pushMotionProfile(double[] pos, double[] vel, double[] accel, double[] heading, int[] time, int size, WPI_TalonSRX talon, BufferedTrajectoryPointStream pointStream) {
         /* create an empty point */
         TrajectoryPoint[] points = new TrajectoryPoint[size];
 
@@ -757,6 +758,7 @@ public class DriveBase extends Subsystem {
             /* for each point, fill our structure and pass it to API */
             points[i].position = pos[i] / Config.DRIVE_ENCODER_DPP;
             points[i].velocity = vel[i] / Config.DRIVE_ENCODER_DPP / 10;
+            points[i].arbFeedFwd = Config.VOLTAGE_INTERCEPT.value() + Config.K_A.value() * (accel[i] / Config.DRIVE_ENCODER_DPP / 10);
             points[i].auxiliaryPos = heading[i] / Config.PIGEON_DPP; /* scaled such that 3600 => 360 deg */
             points[i].headingDeg = heading[i];
             points[i].profileSlotSelect0 = 0;
@@ -777,29 +779,32 @@ public class DriveBase extends Subsystem {
      * @param forwards Whether the robot is going forwards or not
      * @param pos      The position of the robot at a trajectory point
      * @param vel      The velocity of the robot at a trajectory point
+     * @param accel    The acceleration of the robot at a trajectory point
      * @param heading  The heading of the robot at a trajectory point
      * @param time     The time for each trajectory point
      * @param size     How many trajectory points there are
      */
-    public void pushMotionProfile1Wheel(boolean forwards, double[] pos, double[] vel, double[] heading, int[] time, int size) {
-        pushMotionProfile(forwards ? pos : negateDoubleArray(pos), forwards ? vel : negateDoubleArray(vel), heading, time, size, rightFrontMotor, motionProfilePointStreamRight);
+    public void pushMotionProfile1Wheel(boolean forwards, double[] pos, double[] vel, double[] accel, double[] heading, int[] time, int size) {
+        pushMotionProfile(forwards ? pos : negateDoubleArray(pos), forwards ? vel : negateDoubleArray(vel), forwards ? accel : negateDoubleArray(accel), heading, time, size, rightFrontMotor, motionProfilePointStreamRight);
     }
 
     /**
      * Applies the motion profile for 2 wheels
      *
-     * @param forwards Whether the robot is going forwards or not
-     * @param posLeft  The position of the robot at a trajectory point for the left wheel
-     * @param velLeft  The velocity of the robot at a trajectory point for the left wheel
-     * @param heading  The heading of the robot at a trajectory point
-     * @param time     The time for each trajectory point
-     * @param size     How many trajectory points there are
-     * @param posRight The position of the robot at a trajectory point for the right wheel
-     * @param velRight The velocity of the robot at a trajectory point for the right wheel
+     * @param forwards  Whether the robot is going forwards or not
+     * @param posLeft   The position of the robot at a trajectory point for the left wheel
+     * @param velLeft   The velocity of the robot at a trajectory point for the left wheel
+     * @param accelLeft The acceleration of the robot at a trajectory point for the right wheel
+     * @param heading   The heading of the robot at a trajectory point
+     * @param time      The time for each trajectory point
+     * @param size      How many trajectory points there are
+     * @param posRight  The position of the robot at a trajectory point for the right wheel
+     * @param velRight  The velocity of the robot at a trajectory point for the right wheel
+     * @param accelLeft The acceleration of the robot at a trajectory point for the right wheel
      */
-    public void pushMotionProfile2Wheel(boolean forwards, double[] posLeft, double[] velLeft, double[] heading, int[] time, int size, double[] posRight, double[] velRight) {
-        pushMotionProfile(forwards ? posLeft : negateDoubleArray(posLeft), forwards ? velLeft : negateDoubleArray(velLeft), heading, time, size, leftFrontMotor, motionProfilePointStreamLeft);
-        pushMotionProfile(forwards ? posRight : negateDoubleArray(posRight), forwards ? velRight : negateDoubleArray(velRight), heading, time, size, rightFrontMotor, motionProfilePointStreamRight);
+    public void pushMotionProfile2Wheel(boolean forwards, double[] posLeft, double[] velLeft, double[] accelLeft, double[] heading, int[] time, int size, double[] posRight, double[] velRight, double[] accelRight) {
+        pushMotionProfile(forwards ? posLeft : negateDoubleArray(posLeft), forwards ? velLeft : negateDoubleArray(velLeft), forwards ? accelLeft : negateDoubleArray(accelLeft), heading, time, size, leftFrontMotor, motionProfilePointStreamLeft);
+        pushMotionProfile(forwards ? posRight : negateDoubleArray(posRight), forwards ? velRight : negateDoubleArray(velRight), forwards ? accelRight : negateDoubleArray(accelRight), heading, time, size, rightFrontMotor, motionProfilePointStreamRight);
     }
 
     /**

@@ -198,6 +198,9 @@ public class Config {
 
     public static final FluidConstant<Boolean> ENABLE_LIFT_SUM_PHASE = constant("lift-sum-phase", true);
 
+    public static final FluidConstant<Double> VOLTAGE_INTERCEPT = constant("voltage-intercept", 0.0);
+    public static final FluidConstant<Double> K_A = constant("kA", 0.0);
+
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_P = constant("drive-P", 0.1);
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_I = constant("drive-I", 0.0);
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_D = constant("drive-D", 0.0);

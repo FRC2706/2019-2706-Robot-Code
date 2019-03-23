@@ -68,6 +68,9 @@ public class MotionProfileTest {
     private double[] vel = {0.2, 2.1, -4.3, -2.1};
 
     @Injectable
+    private double[] accel = {0.0, 0.0, 0.0, 0.0};
+
+    @Injectable
     private double[] heading = {42, 21, 21, -54};
 
     @Injectable

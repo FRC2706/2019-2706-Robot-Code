@@ -49,8 +49,8 @@ public class MoveLiftJoystickVelocity extends Command {
         if (!shouldUseOverride()) {
             Lift.getInstance().setVelocity((int) (percentSpeed * Config.LIFT_MAX_SPEED.value()));
             last = percentSpeed;
-        } else if (percentSpeed > 0) {
-            Lift.getInstance().overrideUp();
+        } else if (percentSpeed < 0) {
+            Lift.getInstance().overrideDown();
         }
     }
 

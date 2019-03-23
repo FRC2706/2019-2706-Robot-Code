@@ -1,8 +1,7 @@
 package ca.team2706.frc.robot.subsystems;
 
-import ca.team2706.frc.robot.Robot;
-import ca.team2706.frc.robot.RobotState;
 import ca.team2706.frc.robot.Sendables;
+import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.sensors.AnalogSelector;
@@ -37,10 +36,12 @@ public class DriveBase extends Subsystem {
     /**
      * Initializes a new drive base object.
      */
-    public static void init() {
+    public static SubsystemStatus init() {
         if (currentInstance == null) {
             currentInstance = new DriveBase();
         }
+
+        return currentInstance.getStatus();
     }
 
     /**
@@ -103,6 +104,8 @@ public class DriveBase extends Subsystem {
      */
     private BufferedTrajectoryPointStream motionProfilePointStreamLeft;
 
+    private final SubsystemStatus status;
+
     /**
      * Creates a drive base, and initializes all required sensors and motors
      */
@@ -112,7 +115,7 @@ public class DriveBase extends Subsystem {
         rightFrontMotor = new WPI_TalonSRX(Config.RIGHT_FRONT_DRIVE_MOTOR_ID);
         rightBackMotor = new WPI_TalonSRX(Config.RIGHT_BACK_DRIVE_MOTOR_ID);
 
-        resetTalonConfiguration();
+        SubsystemStatus status1 = resetTalonConfiguration();
 
         follow();
 
@@ -145,6 +148,8 @@ public class DriveBase extends Subsystem {
 
         addChild("Merge Light", light);
 
+        SubsystemStatus status2 = testSensors();
+
         setDisabledMode();
         setBrakeMode(false);
 
@@ -158,22 +163,78 @@ public class DriveBase extends Subsystem {
 
         resetAbsoluteGyro();
 
-        // Reset absolute gyro when robot goes into autonomous for the first time in a real match
-        Robot.setOnStateChange(robotState -> {
-            if (robotState == RobotState.AUTONOMOUS && DriverStation.getInstance().isFMSAttached()) {
-                resetAbsoluteGyro();
-            }
-        });
+        status = SubsystemStatus.maxError(status1, status2);
+    }
+
+    /**
+     * Gets the subsystem's initialization status (status of sensors and systems).
+     *
+     * @return The subsystem's status
+     */
+    private SubsystemStatus getStatus() {
+        return status;
+    }
+
+    /**
+     * Whether there are errors in initialization that should disable autonomous
+     *
+     * @return Whether autonomous can run
+     */
+    private boolean canRunAuto() {
+        return status == SubsystemStatus.OK || status == SubsystemStatus.WORKABLE;
+    }
+
+    /**
+     * Tests the drive base sensors to determine if the subsystem is working as expected.
+     *
+     * @return The subsystem's status based on the sensor test results.
+     */
+    private SubsystemStatus testSensors() {
+        SubsystemStatus subsystemStatus = SubsystemStatus.OK;
+
+        if (SubsystemStatus.checkError(leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative))) {
+            Log.e("Left encoder not working");
+            subsystemStatus = SubsystemStatus.DISABLE_AUTO;
+        }
+
+        if (SubsystemStatus.checkError(rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative))) {
+            Log.e("Right encoder not working");
+            subsystemStatus = SubsystemStatus.DISABLE_AUTO;
+        }
+
+        if (SubsystemStatus.checkError(gyro.getYawPitchRoll(new double[3]))) {
+            Log.e("Gyro not working");
+            subsystemStatus = SubsystemStatus.DISABLE_AUTO;
+        }
+
+        return subsystemStatus;
     }
 
     /**
      * Resets the talon configuration back to the initial config.
      */
-    private void resetTalonConfiguration() {
-        leftFrontMotor.configFactoryDefault(Config.CAN_LONG);
-        leftBackMotor.configFactoryDefault(Config.CAN_LONG);
-        rightFrontMotor.configFactoryDefault(Config.CAN_LONG);
-        rightBackMotor.configFactoryDefault(Config.CAN_LONG);
+    private SubsystemStatus resetTalonConfiguration() {
+        SubsystemStatus status1 = SubsystemStatus.OK, status2 = SubsystemStatus.OK, status3 = SubsystemStatus.OK, status4 = SubsystemStatus.OK;
+
+        if (SubsystemStatus.checkError(leftFrontMotor.configFactoryDefault(Config.CAN_LONG))) {
+            Log.e("Can't reset left front motor to factory default");
+            status1 = SubsystemStatus.ERROR;
+        }
+
+        if (SubsystemStatus.checkError(leftBackMotor.configFactoryDefault(Config.CAN_LONG))) {
+            Log.e("Can't reset left back motor to factory default");
+            status2 = SubsystemStatus.DISABLE_AUTO;
+        }
+
+        if (SubsystemStatus.checkError(rightFrontMotor.configFactoryDefault(Config.CAN_LONG))) {
+            Log.e("Can't reset right front motor to factory default");
+            status3 = SubsystemStatus.ERROR;
+        }
+
+        if (SubsystemStatus.checkError(rightBackMotor.configFactoryDefault(Config.CAN_LONG))) {
+            Log.e("Can't reset right back motor to factory default");
+            status4 = SubsystemStatus.DISABLE_AUTO;
+        }
 
         leftFrontMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
         leftBackMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
@@ -185,6 +246,8 @@ public class DriveBase extends Subsystem {
 
         setTalonInversion(InvertType.FollowMaster, leftBackMotor, Config.INVERT_FRONT_LEFT_DRIVE, Config.INVERT_BACK_LEFT_DRIVE);
         setTalonInversion(InvertType.FollowMaster, rightBackMotor, Config.INVERT_FRONT_RIGHT_DRIVE, Config.INVERT_BACK_RIGHT_DRIVE);
+
+        return SubsystemStatus.maxError(status1, status2, status3, status4);
     }
 
     /**
@@ -454,7 +517,9 @@ public class DriveBase extends Subsystem {
      * Sets the talons to a disabled mode
      */
     public void setPositionNoGyroMode() {
-        if (driveMode != DriveMode.PositionNoGyro) {
+        if (!canRunAuto()) {
+            setDisabledMode();
+        } else if (driveMode != DriveMode.PositionNoGyro) {
             stop();
             selectEncodersSum();
             reset();
@@ -467,7 +532,9 @@ public class DriveBase extends Subsystem {
      * Sets the robot up for rotation.
      */
     public void setRotateMode() {
-        if (driveMode != DriveMode.Rotate) {
+        if (!canRunAuto()) {
+            setDisabledMode();
+        } else if (driveMode != DriveMode.Rotate) {
             stop();
             selectGyroSensor();
             reset();
@@ -480,7 +547,9 @@ public class DriveBase extends Subsystem {
      * Sets motion magic
      */
     public void setMotionMagicWithGyroMode() {
-        if (driveMode != DriveMode.MotionMagicWithGyro) {
+        if (!canRunAuto()) {
+            setDisabledMode();
+        } else if (driveMode != DriveMode.MotionMagicWithGyro) {
             stop();
             selectEncodersSumWithPigeon(true);
             configMotionMagic();
@@ -494,7 +563,9 @@ public class DriveBase extends Subsystem {
      * Sets the drive mode to motion profile
      */
     public void setMotionProfile() {
-        if (driveMode != DriveMode.MotionProfile) {
+        if (!canRunAuto()) {
+            setDisabledMode();
+        } else if (driveMode != DriveMode.MotionProfile) {
             stop();
             selectEncodersSumWithPigeon(true);
             configMotionProfile();
@@ -509,7 +580,9 @@ public class DriveBase extends Subsystem {
      * Sets the drive mode to 2 wheel motion profile
      */
     public void setMotionProfile2Wheel() {
-        if (driveMode != DriveMode.MotionProfile2Wheel) {
+        if (!canRunAuto()) {
+            setDisabledMode();
+        } else if (driveMode != DriveMode.MotionProfile2Wheel) {
             stop();
             selectEncodersGyro();
             configMotionProfile();
@@ -547,7 +620,9 @@ public class DriveBase extends Subsystem {
      * Gets the encoder sum using the pigeon
      */
     public void setPositionGyroMode() {
-        if (driveMode != DriveMode.PositionGyro) {
+        if (!canRunAuto()) {
+            setDisabledMode();
+        } else if (driveMode != DriveMode.PositionGyro) {
             stop();
             selectEncodersSumWithPigeon(false);
             reset();
@@ -840,7 +915,6 @@ public class DriveBase extends Subsystem {
      * @param targetRotation The desired rotation
      */
     public void setPositionGyro(double speed, double setpoint, double targetRotation) {
-
         setPositionGyroMode();
 
         leftFrontMotor.configClosedLoopPeakOutput(0, speed);
@@ -923,7 +997,16 @@ public class DriveBase extends Subsystem {
      * 0 degrees.
      */
     public void resetAbsoluteGyro() {
-        savedAngle = Config.ROBOT_START_ANGLE.value();
+        resetAbsoluteGyro(Config.ROBOT_START_ANGLE.value());
+    }
+
+    /**
+     * Resets the absolute gyro to a certain angle
+     *
+     * @param savedAngle The angle from 0 to 360
+     */
+    public void resetAbsoluteGyro(double savedAngle) {
+        this.savedAngle = savedAngle;
         gyro.setYaw(0, Config.CAN_SHORT);
     }
 

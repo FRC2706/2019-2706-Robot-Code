@@ -4,6 +4,7 @@ import ca.team2706.frc.robot.Robot;
 import ca.team2706.frc.robot.RobotState;
 import ca.team2706.frc.robot.commands.intake.arms.RaiseArmsSafely;
 import ca.team2706.frc.robot.config.Config;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -18,6 +19,8 @@ public class Pneumatics extends Subsystem {
 
     private DoubleSolenoid intakeLiftSolenoid;
     private DoubleSolenoid hatchEjectorSolenoid;
+
+    private Compressor compressor;
 
     /**
      * The current status of the intake arms, whether they're in hatch mode or in cargo mode.
@@ -82,6 +85,8 @@ public class Pneumatics extends Subsystem {
         // Need to make sure that the robot's state is known at the beginning.
         listener = this::onRobotStateChange;
         Robot.setOnStateChange(listener);
+
+        compressor = new Compressor();
     }
 
     /**
@@ -164,6 +169,14 @@ public class Pneumatics extends Subsystem {
      */
     public void stopPlunger() {
         hatchEjectorSolenoid.set(DoubleSolenoid.Value.kOff);
+    }
+
+    /**
+     * Turns the pneumatics compressor on or off as desired.
+     * @param state The desired state, true for on or false for off.
+     */
+    public void setCompressorState(final boolean state) {
+        compressor.setClosedLoopControl(state);
     }
 
     /**

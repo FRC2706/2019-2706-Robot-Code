@@ -1,6 +1,7 @@
 package ca.team2706.frc.robot.commands.climber;
 
 import ca.team2706.frc.robot.subsystems.ClimberMotor;
+import ca.team2706.frc.robot.subsystems.Pneumatics;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
@@ -16,6 +17,11 @@ public class RunClimberMotor extends Command {
     }
 
     @Override
+    protected void initialize() {
+        Pneumatics.getInstance().setCompressorState(false);
+    }
+
+    @Override
     protected void execute() {
         ClimberMotor.getInstance().runMotorForward();
     }
@@ -23,5 +29,10 @@ public class RunClimberMotor extends Command {
     @Override
     protected boolean isFinished() {
         return false;
+    }
+
+    @Override
+    protected void end() {
+        Pneumatics.getInstance().setCompressorState(true);
     }
 }

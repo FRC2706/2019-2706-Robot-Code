@@ -12,6 +12,7 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import jaci.pathfinder.Trajectory;
 import mockit.Expectations;
@@ -56,6 +57,9 @@ public class DriverAssistVisionTest {
 
     @Injectable
     private SensorCollection sensorCollection;
+
+    @Mocked
+    private Relay relay;
 
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {

@@ -88,6 +88,9 @@ public class FluidConstantTest {
     @Mocked
     private DigitalInput input;
 
+    @Mocked
+    private Relay relay;
+
     // Whether or not tests have been initialized.
     private static boolean isInitialized = false;
 

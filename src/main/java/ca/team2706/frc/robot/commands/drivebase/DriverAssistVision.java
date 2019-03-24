@@ -173,12 +173,17 @@ public class DriverAssistVision extends Command {
     @Override
     public void initialize() {
         System.out.println("DAV: initialize() called");
+
+        // If command was already aborted (e.g. due to errors in setup of network tables), 
+        // make sure we don't go any further
         if (commandAborted) {
             System.out.println("DAV: Command aborted, initialize() not run");
+            return;
         }
 
+        // Check if vision has stopped for some unexpected reason
         if (visionOffline()) {
-            System.out.println("DAV: execute(): Vision offline, command aborted");
+            System.out.println("DAV: Vision offline, command aborted");
             commandAborted = true;
             return;
         }
@@ -191,7 +196,6 @@ public class DriverAssistVision extends Command {
         ringLightOnDelayTime = 0.0;
         ringLightOnStageComplete = false;
         
-        // Turn on ring light
         System.out.println("DAV: Turning ring light on");
         RingLight.getInstance().enableLight();
     
@@ -200,14 +204,13 @@ public class DriverAssistVision extends Command {
         findTapeEntry = chickenVisionTable.getEntry("Tape");
         findCargoEntry = chickenVisionTable.getEntry("Cargo");
         tapeDetectedEntry = chickenVisionTable.getEntry("tapeDetected");
-
         if ((driverEntry == null) || (findTapeEntry == null) || (findCargoEntry == null) || (tapeDetectedEntry == null)) {
             System.out.println("DAV: Network table entries not set up, command aborted");
             commandAborted = true;
             return;
         }
 
-        System.out.println("DAV: Setting network table entries to find target");
+        // Take vision out of driver mode and into target finding mode
         if ((target == DriverAssistVisionTarget.CARGO_AND_LOADING) || (target == DriverAssistVisionTarget.ROCKET)) {
             driverEntry.setBoolean(false);
             findCargoEntry.setBoolean(false);
@@ -325,7 +328,8 @@ public class DriverAssistVision extends Command {
             followTrajectory = null;
         }
 
-        // Turn off green ring light in case in was not turned off before
+        // Ring light should already be off, but just make sure in case there were early exits
+        // due to errors
         RingLight.getInstance().disableLight();
 
         // Put vision back into driver mode

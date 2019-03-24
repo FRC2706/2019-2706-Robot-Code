@@ -17,8 +17,8 @@ import jaci.pathfinder.Waypoint;
  * <p>
  * This will drive the robot from its current position/heading to one of the following
  * positon/headings based on location data provided by the vision system:
- * 1) in front of and aligned with the nearest target either on the cargo ship, rocket,
- * or loading bay, offset by a distance in the Config class given by
+ * 1) in front of and aligned with the nearest target either on the cargo ship, loading
+ * bay, or rocket ship offset by a distance in the Config class given by
  * TARGET_OFFSET_DISTANCE_<TARGET>, where <TARGET> is one of CARGO_AND_LOADING or
  * ROCKET depending on the type of target
  * 2) in front of a ball, offset by a distance in the Config class given by
@@ -55,19 +55,19 @@ public class DriverAssistVision extends Command {
     private boolean commandAborted;
 
     /*
-     * Network table entry named Driver, a boolean set to true to request to the vision system
-     * to enter Driver mode, false otherwise. Targets are not detected in this mode.
+     * Network table entry named "Driver", a boolean set to true to request to the vision 
+     * system to enter Driver mode, false otherwise. Targets are not detected in this mode.
      */
     private NetworkTableEntry driverEntry;
 
     /*
-     * Network table entry named Cargo, a boolean set to true to request to the vision
+     * Network table entry named "Cargo", a boolean set to true to request to the vision
      * to detect ball targets, false otherwise
      */
     private NetworkTableEntry findCargoEntry;
 
     /*
-     * Network table entry named Tape, a boolean set to true to request to the vision
+     * Network table entry named "Tape", a boolean set to true to request to the vision
      * to detect tape targets, false otherwise
      */
     private NetworkTableEntry findTapeEntry;
@@ -78,7 +78,7 @@ public class DriverAssistVision extends Command {
     private FollowTrajectory followTrajectory;
 
     /*
-     * True if the issueGenerateTrajectoryCommand stage of execute() method has completed,
+     * True if the generateTrajectoryRequest stage of execute() method has completed,
      * indicating that a command has been issued to generate a trajectory, false otherwise
      */
     boolean generateTrajectoryRequestStageComplete = false;
@@ -94,19 +94,14 @@ public class DriverAssistVision extends Command {
     private NetworkTable pathfinderTable;
 
     /**
-     * True if ring light on delay stage of execute() method has completed, false otherwise
+     * True if ring light on stage of execute() method has completed, false otherwise
      */
-    private boolean ringLightOnDelayStageComplete = false;
-
-    /**
-     * True if ring light is currently on, false otherwise
-     */
-    private boolean ringLightOn = false;
+    private boolean ringLightOnStageComplete = false;
 
     /**
      * Current value of time delay after ring light has been turned on.
      */
-    private double ringLightOnDelayTime;
+    private double ringLightOnDelayTime = 0.0;
 
     /*
      * Network table entry named TapeDetected, a boolean set to true if the tape target has been
@@ -135,9 +130,9 @@ public class DriverAssistVision extends Command {
         setupNetworkTables();
 
         commandAborted = false;
-        ringLightOnDelayTime = 0.0;
-        ringLightOnDelayStageComplete = false;
         generateTrajectoryRequestStageComplete = false;
+        ringLightOnDelayTime = 0.0;
+        ringLightOnStageComplete = false;
     }
 
     /**
@@ -152,9 +147,9 @@ public class DriverAssistVision extends Command {
         requires(RingLight.getInstance());
 
         commandAborted = false;
-        ringLightOnDelayTime = 0.0;
-        ringLightOnDelayStageComplete = false;
         generateTrajectoryRequestStageComplete = false;
+        ringLightOnDelayTime = 0.0;
+        ringLightOnStageComplete = false;
         
         setupNetworkTables();
     }
@@ -190,23 +185,15 @@ public class DriverAssistVision extends Command {
 
         DriveBase.getInstance().setBrakeMode(true);
         DriveBase.getInstance().setPositionNoGyroMode();
-
-        // Turn on green ring light
-        System.out.println("DAV: Turning on light");
-        RingLight.getInstance().enableLight();
-        System.out.println("DAV: Light turned on");
     
         commandAborted = false;
-        ringLightOnDelayTime = 0.0;
-        ringLightOnDelayStageComplete = false;
         generateTrajectoryRequestStageComplete = false;
+        ringLightOnDelayTime = 0.0;
+        ringLightOnStageComplete = false;
         
         // Turn on ring light
-        if(!ringLightOn) {
-            System.out.println("DAV: Turning ring light on");
-            RingLight.getInstance().toggleLight();
-            ringLightOn = true;
-        }
+        System.out.println("DAV: Turning ring light on");
+        RingLight.getInstance().enableLight();
     
         System.out.println("DAV: Getting entries for network table");
         driverEntry = chickenVisionTable.getEntry("Driver");
@@ -240,23 +227,23 @@ public class DriverAssistVision extends Command {
     }
 
     /**
-     * execute() method has three stages: 1) Turns on ring light, waits a fixed delay for vision to
-     * 
-     * 
-     * delays for ring light to be on, waits for vision system to find target, 
-     * prepares inputs to Pathfinder, calls Pathfinder in a separate thread to generate the trajectory, 
-     * waits for trajectory to be generated, then calls motion control subsystem to move to the target
+     * execute() method holds ring light on for a certain time to allow vision measurements to
+     * stabilize, gets location of target, computes waypoints for Pathfinder, calls Pathfinder
+     * to generate trajectory, and sends trajectory to motion control system to move robot
+     * through trajectory. The method is divides into stages and successive calls of execute()
+     * progress through the stages. The computation of the trajectory is done in a separate 
+     * thread.
      */
     @Override
     public void execute() {
-        // Stage 1: Ring Light on Delay Stage: Keep ring light on for a fixed delay to allow vision
+        // Stage 1: Ring Light On Stage: Keep ring light on for a fixed delay to allow vision
         // measurement to stabilize before taking a reading
-        if (!ringLightOnDelayStageComplete) {
+        if (!ringLightOnStageComplete) {
             ringLightOnDelayTime += Config.EXECUTE_PERIOD;
             if (ringLightOnDelayTime < Config.RING_LIGHT_ON_DELAY.value()) {
                 return;
             } else {
-                ringLightOnDelayStageComplete = true;
+                ringLightOnStageComplete = true;
             }
         }
 
@@ -268,7 +255,7 @@ public class DriverAssistVision extends Command {
                 return;
             else {
                 System.out.println("DAV: Tape detected");
-                
+
                 // Read angle and position of target (wrt camera coordinate frame) computed by vision
                 // system from network table 
                 NetworkTableEntry vectorCameraToTarget = pathfinderTable.getEntry("vectorCameraToTarget");
@@ -294,16 +281,13 @@ public class DriverAssistVision extends Command {
                 // vision measurement so return from the current execute() cycle but don't abort the command 
                 // so another reading can be taken on the next execute() call
                 if (distanceCameraToTarget_Camera > Config.VISION_DISTANCE_MAX.value()) {
-                    System.out.println("DAV: Distance to target too high. Driver assist command not performed.");
+                    System.out.println("DAV: Distance to target too high. Rereading vision data.");
                     return;
                 }
 
                 // Turn off ring light since we now have the data from vision
-                if (ringLightOn) {
-                    System.out.println("DAV: Turning ring light off");
-                    RingLight.getInstance().toggleLight();
-                    ringLightOn = false;
-                }
+                System.out.println("DAV: Turning ring light off");
+                RingLight.getInstance().disableLight();
 
                 // Send request to generate trajectory in a separate task to avoid execute() overruns
                 System.out.println("DAV: Generating trajectory");
@@ -341,7 +325,7 @@ public class DriverAssistVision extends Command {
             followTrajectory = null;
         }
 
-        // Turn off green ring light
+        // Turn off green ring light in case in was not turned off before
         RingLight.getInstance().disableLight();
 
         // Put vision back into driver mode
@@ -352,7 +336,7 @@ public class DriverAssistVision extends Command {
         findCargoEntry.setBoolean(false);
         findTapeEntry.setBoolean(false);
 
-        // Vision group has requested that tapeDetected entry is set to false here
+        // Vision group has requested that tapeDetected entry be set to false here
         tapeDetectedEntry = chickenVisionTable.getEntry("tapeDetected");
         tapeDetectedEntry.setBoolean(false); 
 
@@ -371,6 +355,8 @@ public class DriverAssistVision extends Command {
 
     /**
      * Gets the Pathfinder network table
+     * 
+     * @return Pathfinder network table
      */
     public NetworkTable getPathfinderNetworkTable() {
         return pathfinderTable;
@@ -378,6 +364,8 @@ public class DriverAssistVision extends Command {
 
     /**
      * Gets the ChickenVision network table
+     * 
+     * @return ChickenVision network table
      */
     public NetworkTable getChickenVisionNetworkTable() {
         return chickenVisionTable;
@@ -453,7 +441,6 @@ public class DriverAssistVision extends Command {
          *           given by TARGET_OFFSET_DISTANCE_<TARGET>, where <TARGET> is one of CARGO_AND_LOADING,
          *           ROCKET, or BALL.
          */
-        System.out.println("DAV: isTrajectoryGenerated: " + isTrajectoryGenerated());
 
         // STEP 1: Compute vector from current robot position to final robot position in robot frame, 
         // vRobotToFinal_Robot, where
@@ -479,14 +466,13 @@ public class DriverAssistVision extends Command {
         double vRobotToTarget_RobotY = vRobotToCamera_RobotY + vCameraToTarget_RobotY;
 
         // Vector 3: vTargetToFinal_Robot: Vector from target to final robot position in robot frame
-        // (Depends on target type.)
+        // Depends on target type.
         double vTargetToFinal_RobotX = 0.0;
         double vTargetToFinal_RobotY = 0.0;
         double angRobotCurrent_Field = 0.0;
         if ((target == DriverAssistVisionTarget.CARGO_AND_LOADING) ||
-                (target == DriverAssistVisionTarget.ROCKET)) {
+            (target == DriverAssistVisionTarget.ROCKET)                ) {
             // Vector 3 is aligned with and facing away from target
-
             // Get current robot heading relative to field frame from IMU
             double angRobotHeadingCurrent_Field = DriveBase.getInstance().getAbsoluteHeading() % 360;
             if(angRobotCurrent_Field < 0) {
@@ -537,9 +523,9 @@ public class DriverAssistVision extends Command {
             vTargetToFinal_RobotY = -d * (vRobotToTarget_RobotY / vRobotToTarget_magnitude);
         }
 
-        // Compute vRobotToFinal_Robot as sum of Vectors 1+2 and 3
-        // vRobotToFinal_Robot = (vRobotToCamera_Robot + vCameraToTarget_Robot) + vTargetToFinal_Robot
-        //                        vRobotToTarget_Robot                          + vTargetToFinal_Robert
+        // Compute vRobotToFinal_Robot as sum of Vectors 1+2 and 3:
+        //     vRobotToFinal_Robot = (vRobotToCamera_Robot + vCameraToTarget_Robot) + vTargetToFinal_Robot
+        //                            vRobotToTarget_Robot                          + vTargetToFinal_Robot
         double vRobotToFinal_RobotX = vRobotToTarget_RobotX + vTargetToFinal_RobotX;
         double vRobotToFinal_RobotY = vRobotToTarget_RobotY + vTargetToFinal_RobotY;
         System.out.println("DAV: vRobotToFinal_RobotX: " + vRobotToFinal_RobotX + ", vRobotToFinal_RobotY: " + vRobotToFinal_RobotY);
@@ -585,6 +571,7 @@ public class DriverAssistVision extends Command {
             trajectory.segments[i].heading = PI_OVER_2 - trajectory.segments[i].heading;
         }
 
+        // Print out trajectory
         System.out.println("DAV: Trajectory length: " + trajectory.length());
         for (int i = 0; i < trajectory.length(); i++)
         {
@@ -634,13 +621,11 @@ public class DriverAssistVision extends Command {
      * @return Final desired angle of robot heading respect to field frame in degrees
      */
     public double computeAngRobotHeadingFinal_Field(double angRobotHeadingCurrent_Field, DriverAssistVisionTarget target) {
-
         /*
         Compute final robot angle relative to field based on current angle of robot relative to field.
         Robot must be in an angular range such that it is approximately facing the desired target.
         */
         angRobotHeadingFinal_Field = 0.0;
-
         if (target == DriverAssistVisionTarget.CARGO_AND_LOADING) {
             // Assist requested for cargo ship or loading bay targets
             Log.d("DAV: Assist for cargo ship or loading bay requested");
@@ -675,7 +660,6 @@ public class DriverAssistVision extends Command {
             }
         }
         Log.d("DAV: angRobotHeadingFinal_Field: " + angRobotHeadingFinal_Field);
-
         return angRobotHeadingFinal_Field;
     }
 

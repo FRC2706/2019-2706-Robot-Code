@@ -287,7 +287,7 @@ public class Config {
     public static final FluidConstant<Double> VISION_DISTANCE_MIN = constant("vision-distance-min", 0.5);
     public static final FluidConstant<Double> VISION_DISTANCE_MAX = constant("vision-distance-max", 20.0);
     public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_CARGO_AND_LOADING = constant("target-offset-distance-cargo-and-loading", 0.25);
-    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_ROCKET = constant("target-offset-distance-rocket", 1.45);
+    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_ROCKET = constant("target-offset-distance-rocket", 0.25);
     public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_BALL = constant("target-offset-distance-ball", 0.75);
     public static final FluidConstant<Double> ROBOT_START_ANGLE = constant("robot-angle-deg", 90.0);
     public static final FluidConstant<Double> ROBOT_HALF_LENGTH = constant("robot_length", 1.35);

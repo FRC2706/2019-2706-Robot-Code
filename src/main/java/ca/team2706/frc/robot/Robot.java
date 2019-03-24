@@ -2,6 +2,7 @@ package ca.team2706.frc.robot;
 
 import ca.team2706.frc.robot.commands.auto.DriveOffHab;
 import ca.team2706.frc.robot.commands.auto.LevelOneCentreHatch;
+import ca.team2706.frc.robot.commands.drivebase.DriveForwardWithTimeMeasure;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.*;
@@ -86,6 +87,8 @@ public class Robot extends TimedRobot {
                 OI.getInstance().driveCommand,                                             // 4
                 new DriveOffHab(),                                                         // 5
                 new LevelOneCentreHatch(),                                                 // 6
+                new DriveForwardWithTimeMeasure(100, 1.0, true),   // 7
+                new DriveForwardWithTimeMeasure(100, 0.6, false)   // 8
         };
 
         selectorOrientation = Map.of(4, 270);

@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot.subsystems;
 
+import ca.team2706.frc.robot.Pair;
 import ca.team2706.frc.robot.Sendables;
 import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.config.Config;
@@ -852,7 +853,7 @@ public class DriveBase extends Subsystem {
             /* for each point, fill our structure and pass it to API */
             points[i].position = pos[i] / Config.DRIVE_ENCODER_DPP;
             points[i].velocity = vel[i] / Config.DRIVE_ENCODER_DPP / 10;
-            points[i].arbFeedFwd = Config.VOLTAGE_INTERCEPT.value() + Config.K_A.value() * (accel[i] / Config.DRIVE_ENCODER_DPP / 10);
+            points[i].arbFeedFwd = (Config.VOLTAGE_INTERCEPT.value() + Config.K_A.value() * (accel[i] / Config.DRIVE_ENCODER_DPP / 10)) / Config.DRIVE_VOLTAGE_COMPENSATION.value();
             points[i].auxiliaryPos = heading[i] / Config.PIGEON_DPP; /* scaled such that 3600 => 360 deg */
             points[i].headingDeg = heading[i];
             points[i].profileSlotSelect0 = 0;
@@ -1097,6 +1098,17 @@ public class DriveBase extends Subsystem {
         return (rightFrontMotor.isMotionProfileFinished() || leftFrontMotor.isMotionProfileFinished());
     }
 
+    public void enableRamp(boolean ramp) {
+        if(ramp) {
+            leftFrontMotor.configOpenloopRamp(48, Config.CAN_LONG);
+            rightFrontMotor.configOpenloopRamp(48, Config.CAN_LONG);
+        }
+        else {
+            leftFrontMotor.configOpenloopRamp(0, Config.CAN_LONG);
+            rightFrontMotor.configOpenloopRamp(0, Config.CAN_LONG);
+        }
+    }
+
     /**
      * Logs
      */
@@ -1185,6 +1197,10 @@ public class DriveBase extends Subsystem {
                 talon.setInverted(InvertType.FollowMaster);
             }
         }
+    }
+
+    public Pair<Double> getVoltageVelocity() {
+        return Pair.of((leftFrontMotor.getMotorOutputVoltage() + rightFrontMotor.getMotorOutputVoltage()) / 2.0, (leftFrontMotor.getSelectedSensorVelocity(0) + rightFrontMotor.getSelectedSensorVelocity(0)) / 2.0);
     }
 
     private double lastEncoderAv = 0;

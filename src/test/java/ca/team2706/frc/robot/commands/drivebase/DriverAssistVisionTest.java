@@ -79,9 +79,12 @@ public class DriverAssistVisionTest {
         new Expectations() {{
             pigeon.getYawPitchRoll((double[]) any);
             returns(SendablesTest.makePigeonExpectation(-90.0),
+                    SendablesTest.makePigeonExpectation(-90.0),
+                    SendablesTest.makePigeonExpectation(-90.0),
                     SendablesTest.makePigeonExpectation(0.0),
                     SendablesTest.makePigeonExpectation(90.0),
-                    SendablesTest.makePigeonExpectation(180.0));
+                    SendablesTest.makePigeonExpectation(180.0)
+                    );
         }};
 
         // Run the test
@@ -99,6 +102,7 @@ public class DriverAssistVisionTest {
         double[] expectedAngRobotHeadingFinal_Field = {0.0, 90.0, 180.0, 270.0};
         double offsetDistance_Robot = Config.ROBOT_HALF_LENGTH.value() + Config.TARGET_OFFSET_DISTANCE_CARGO_AND_LOADING.value();
         for (int i = 0; i < 4; i++) {
+            System.out.println("i=" + i);
             driverAssistVision.generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, yawAngleCameraToTarget_Camera,
                     target);
             Trajectory traj = driverAssistVision.getTrajectory();
@@ -123,6 +127,8 @@ public class DriverAssistVisionTest {
         new Expectations() {{
             pigeon.getYawPitchRoll((double[]) any);
             returns(SendablesTest.makePigeonExpectation(-30.0),
+                    SendablesTest.makePigeonExpectation(-30.0),
+                    SendablesTest.makePigeonExpectation(-30.0),
                     SendablesTest.makePigeonExpectation(-90.0),
                     SendablesTest.makePigeonExpectation(210.0),
                     SendablesTest.makePigeonExpectation(30.0),

@@ -492,7 +492,6 @@ public class DriverAssistVision extends Command {
             if(angRobotCurrent_Field < 0) {
                 angRobotCurrent_Field += 360;
             }
-
             System.out.println("DAV: angRobotHeadingCurrent_Field: " + angRobotHeadingCurrent_Field);
 
             // Compute final desired robot heading relative to field

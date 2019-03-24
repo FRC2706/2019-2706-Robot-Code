@@ -7,17 +7,16 @@ import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.*;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.IterativeRobotBase;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Watchdog;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -25,8 +24,14 @@ import java.util.function.Consumer;
  */
 public class Robot extends TimedRobot {
     private boolean isInitialized;
+    /*
+    This keeps track of whether or not all subsystems are good for running auto. If one subsystem is not,
+    this will be set to false and auto won't run.
+    */
+    private boolean canRunAuto = true;
 
     private Command[] commands;
+    private Map<Integer, Integer> selectorOrientation;
 
     private static Robot latestInstance;
 
@@ -49,16 +54,16 @@ public class Robot extends TimedRobot {
         Config.init();
 
         // Initialize subsystems
-        Bling.init();
-        DriveBase.init();
+        logInitialization(Bling.init(), Bling.getInstance());
+        logInitialization(DriveBase.init(), DriveBase.getInstance());
 
-        Intake.init();
-        Pneumatics.init();
-        Lift.init();
-        RingLight.init();
+        logInitialization(Intake.init(), Intake.getInstance());
+        logInitialization(Pneumatics.init(), Pneumatics.getInstance());
+        logInitialization(Lift.init(), Lift.getInstance());
+        logInitialization(RingLight.init(), RingLight.getInstance());
 
         // Make sure that this is last initialized subsystem
-        SensorExtras.init();
+        logInitialization(SensorExtras.init(), SensorExtras.getInstance());
 
         // OI depends on subsystems, so initialize it after
         OI.init();
@@ -78,9 +83,38 @@ public class Robot extends TimedRobot {
                 null,                                                                      // 1
                 null,                                                                      // 2
                 OI.getInstance().driveCommand,                                             // 3
-                new DriveOffHab(),                                                         // 4
-                new LevelOneCentreHatch(),                                                 // 5
+                OI.getInstance().driveCommand,                                             // 4
+                new DriveOffHab(),                                                         // 5
+                new LevelOneCentreHatch(),                                                 // 6
         };
+
+        selectorOrientation = Map.of(4, 270);
+    }
+
+    /**
+     * Logs the initialization of a subsystem
+     *
+     * @param subsystemStatus The status that the subsystem initialized with
+     * @param subsystem       The subsystem
+     */
+    private void logInitialization(SubsystemStatus subsystemStatus, Subsystem subsystem) {
+        String message = subsystem.getName() + " had initialized with status " + subsystemStatus.name();
+
+        switch (subsystemStatus) {
+            case ERROR:
+                Log.e(message);
+                break;
+            case DISABLE_AUTO:
+                Log.w(message);
+                canRunAuto = false;
+                break;
+            case WORKABLE:
+                Log.w(message);
+                break;
+            default:
+                Log.i(message);
+                break;
+        }
     }
 
     /**
@@ -138,7 +172,11 @@ public class Robot extends TimedRobot {
         // Iterate through each of the state-change listeners and call them.
         onStateChange(RobotState.AUTONOMOUS);
 
-        selectorInit();
+        logFMSData();
+
+        if (canRunAuto) {
+            selectorInit();
+        }
     }
 
     // The command currently being run on the robot
@@ -150,6 +188,10 @@ public class Robot extends TimedRobot {
     private void selectorInit() {
         // The index based the voltage of the selector
         final int index = DriveBase.getInstance().getAnalogSelectorIndex();
+
+        Log.d("Selector switch set to " + index);
+
+        DriveBase.getInstance().resetAbsoluteGyro(selectorOrientation.getOrDefault(index, (int) (double) Config.ROBOT_START_ANGLE.value()));
 
         // Check to see if the command exists in the desired index
         if (index < commands.length && commands[index] != null) {
@@ -183,6 +225,8 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         // Iterate through each of the state-change listeners and call them.
         onStateChange(RobotState.TELEOP);
+
+        logFMSData();
     }
 
     /**
@@ -299,7 +343,9 @@ public class Robot extends TimedRobot {
      * Interrupt the current autonomous command and start teleop mode
      */
     public static void interruptCurrentCommand() {
-        if (currentCommand != null) {
+        if (currentCommand != null && currentCommand.isRunning() && DriverStation.getInstance().isAutonomous() && currentCommand != OI.getInstance().driveCommand && currentCommand != OI.getInstance().liftCommand) {
+            DriverStation.reportWarning("Interrupting auto", false);
+            Log.w("Interrupting auto");
             currentCommand.cancel();
         }
     }
@@ -310,5 +356,14 @@ public class Robot extends TimedRobot {
     private static void shutdown() {
         // Iterate through each of the state-change listeners and call them.
         latestInstance.onStateChange(RobotState.SHUTDOWN);
+    }
+
+    /**
+     * Logs the current data in the FMS.
+     */
+    private void logFMSData() {
+        if (DriverStation.getInstance().isFMSAttached()) {
+            Log.d("FMS: " + DriverStation.getInstance().getMatchType().name() + " " + DriverStation.getInstance().getMatchNumber() + " at " + DriverStation.getInstance().getMatchTime());
+        }
     }
 }

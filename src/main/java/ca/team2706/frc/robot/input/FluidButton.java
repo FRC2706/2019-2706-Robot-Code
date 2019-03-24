@@ -25,6 +25,8 @@ public class FluidButton extends EButton {
     private int joystickPort;
     private XboxValue.XboxInputType inputType;
 
+    private boolean first = true;
+
     /**
      * Constructs a FluidButton with the given GenericHID interface and action binding.
      *
@@ -58,6 +60,40 @@ public class FluidButton extends EButton {
 
     @Override
     public boolean get() {
+        final boolean pressed = determineIfActivated(m_joystick, joystickPort, inputType, minAxisActivation);
+
+        /*
+         * The first call happens when the button is initialized in OI.init().
+         * If it is pressed, the button will try to interrupt the current command.
+         * When interrupting the current command,
+         * OI must be initialized to ensure that the command isn't a default command.
+         * Since the initialization is not complete, the singleton is still null, and OI will be initialized again.
+         * As a result, the loop will continue indefinitely and create a stack overflow
+         */
+        if (!first && pressed) {
+            // Interrupt the current command on any button press
+            Robot.interruptCurrentCommand();
+        }
+
+        first = false;
+
+        return pressed;
+    }
+
+    /**
+     * Determines if the given button/trigger is considered as being pressed.
+     *
+     * @param m_joystick        The joystick on which to check.
+     * @param joystickPort      The port binding to the button/trigger to check.
+     * @param inputType         The input type of the button/trigger to check.
+     * @param minAxisActivation The minimum axis activation (minimum value for which the axis is considered
+     *                          active).
+     * @return True if the axis/button/trigger is considered as pressed, false otheriwse.
+     */
+    public static boolean determineIfActivated(GenericHID m_joystick,
+                                               final int joystickPort,
+                                               final XboxValue.XboxInputType inputType,
+                                               final double minAxisActivation) {
         final boolean pressed;
 
         switch (inputType) {
@@ -75,11 +111,21 @@ public class FluidButton extends EButton {
                 break;
         }
 
-        // Interrupt the current command on any button press
-        if (pressed) {
-            Robot.interruptCurrentCommand();
-        }
-
         return pressed;
+    }
+
+    /**
+     * Determines if the given button/trigger is considered as being pressed with the default min axis activation.
+     *
+     * @param m_joystick   The joystick to be checked.
+     * @param joystickPort The port location of the button/trigger on the joystick.
+     * @param inputType    The input type of the binding.
+     * @return True if the button/trigger/axis is considered as pressed, false otherwise.
+     * @see #determineIfActivated(GenericHID, int, XboxValue.XboxInputType, double)
+     */
+    public static boolean determineIfActivated(GenericHID m_joystick,
+                                               final int joystickPort,
+                                               final XboxValue.XboxInputType inputType) {
+        return determineIfActivated(m_joystick, joystickPort, inputType, DEFAULT_MIN_AXIS_ACTIVATION);
     }
 }

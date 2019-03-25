@@ -18,7 +18,7 @@ public class Lift extends Subsystem {
     /**
      * The lift motor controller.
      */
-    public WPI_TalonSRX liftMotor;
+    private final WPI_TalonSRX liftMotor;
 
     private final SubsystemStatus status;
 
@@ -64,6 +64,8 @@ public class Lift extends Subsystem {
 
         return currentInstance.getStatus();
     }
+
+    private boolean isLimitSwitchEnabled = false;
 
     /**
      * Initializes a new lift object.
@@ -156,7 +158,10 @@ public class Lift extends Subsystem {
      * @param enable True to enable the limit switch, false otherwise.
      */
     private void enableLimitSwitch(final boolean enable) {
-        liftMotor.configClearPositionOnLimitR(enable, Config.CAN_SHORT);
+        if (enable != isLimitSwitchEnabled) {
+            liftMotor.configClearPositionOnLimitR(enable, Config.CAN_SHORT);
+            isLimitSwitchEnabled = enable;
+        }
     }
 
     /**

@@ -1,7 +1,5 @@
 package ca.team2706.frc.robot.subsystems;
 
-import ca.team2706.frc.robot.Robot;
-import ca.team2706.frc.robot.RobotState;
 import ca.team2706.frc.robot.Sendables;
 import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.config.Config;
@@ -164,13 +162,6 @@ public class DriveBase extends Subsystem {
         motionProfilePointStreamRight = new BufferedTrajectoryPointStream();
 
         resetAbsoluteGyro();
-
-        // Reset absolute gyro when robot goes into autonomous for the first time in a real match
-        Robot.setOnStateChange(robotState -> {
-            if (robotState == RobotState.AUTONOMOUS && DriverStation.getInstance().isFMSAttached()) {
-                resetAbsoluteGyro();
-            }
-        });
 
         status = SubsystemStatus.maxError(status1, status2);
     }
@@ -1006,7 +997,16 @@ public class DriveBase extends Subsystem {
      * 0 degrees.
      */
     public void resetAbsoluteGyro() {
-        savedAngle = Config.ROBOT_START_ANGLE.value();
+        resetAbsoluteGyro(Config.ROBOT_START_ANGLE.value());
+    }
+
+    /**
+     * Resets the absolute gyro to a certain angle
+     *
+     * @param savedAngle The angle from 0 to 360
+     */
+    public void resetAbsoluteGyro(double savedAngle) {
+        this.savedAngle = savedAngle;
         gyro.setYaw(0, Config.CAN_SHORT);
     }
 

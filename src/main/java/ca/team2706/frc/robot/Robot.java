@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -30,6 +31,7 @@ public class Robot extends TimedRobot {
     private boolean canRunAuto = true;
 
     private Command[] commands;
+    private Map<Integer, Integer> selectorOrientation;
 
     private static Robot latestInstance;
 
@@ -83,9 +85,12 @@ public class Robot extends TimedRobot {
                 null,                                                                      // 1
                 null,                                                                      // 2
                 OI.getInstance().driveCommand,                                             // 3
-                new DriveOffHab(),                                                         // 4
-                new LevelOneCentreHatch(),                                                 // 5
+                OI.getInstance().driveCommand,                                             // 4
+                new DriveOffHab(),                                                         // 5
+                new LevelOneCentreHatch(),                                                 // 6
         };
+
+        selectorOrientation = Map.of(4, 270);
     }
 
     /**
@@ -187,6 +192,8 @@ public class Robot extends TimedRobot {
         final int index = DriveBase.getInstance().getAnalogSelectorIndex();
 
         Log.d("Selector switch set to " + index);
+
+        DriveBase.getInstance().resetAbsoluteGyro(selectorOrientation.getOrDefault(index, (int) (double) Config.ROBOT_START_ANGLE.value()));
 
         // Check to see if the command exists in the desired index
         if (index < commands.length && commands[index] != null) {

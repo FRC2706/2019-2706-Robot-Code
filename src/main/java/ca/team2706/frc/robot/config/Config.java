@@ -73,6 +73,7 @@ public class Config {
             HATCH_EJECTOR_SOLENOID_FORWARD_ID = robotSpecific(0, 0, 0),
             HATCH_EJECTOR_SOLENOID_BACKWARD_ID = robotSpecific(1, 1, 1);
 
+    // Climber pneumatics PCM slots.
     public static final int
             CLIMBER_LEFT_PUSHER_FORWARD_ID = robotSpecific(4, 4, 4),
             CLIMBER_LEFT_PUSHER_BACKWARD_ID = robotSpecific(5, 5, 5),
@@ -129,14 +130,13 @@ public class Config {
 
     public static int MAX_LIFT_ENCODER_TICKS = robotSpecific(61_000, 58_000, 61_000);
 
-    // Climber values.
+    // ## Climber values ##
     public static int
             CLIMBER_PEAK_CURRENT_LIMIT = 0,
             CLIMBER_CURRENT_LIMIT_THRESHOLD_MS = 0,
             CLIMBER_CONTINUOUS_CURRENT_LIMIT = 15,
             MAX_CLIMBER_ENCODER_TICKS = 55_000, // TODO need actual value
             CLIMBER_SUFFICIENT_HEIGHT_ENCODER_TICKS = 35_000; // TODO need actual value here. // Amount of encoder ticks at which the climber pistons push out and climb the robot.
-
     /**
      * How long the climber pistons should be left on before we assume that they are fully extended and can
      * turn the solenoid off.
@@ -324,18 +324,20 @@ public class Config {
 
     public static final FluidConstant<Double> ROBOT_START_ANGLE = constant("robot-start-angle-deg", 90.0);
 
+    // ## Climber constants ##
     /**
      * Speed at which the climber motor should run when climbing.
      */
     public static final FluidConstant<Double> CLIMBER_FORWARD_SPEED = constant("climber-forward-percent-speed", 0.7);
-
     /**
      * Speed at which the climber motor should run when retracting.
      */
     public static final FluidConstant<Double> CLIMBER_REVERSE_SPEED = constant("climber-reverse-percent-speed", 0.7);
-
-    /** Number of seconds climber will take to go from neutral to full.*/
+    /**
+     * Number of seconds climber will take to go from neutral to full.
+     */
     public static final FluidConstant<Double> CLIMBER_OPEN_LOOP_RAMP = constant("climber-open-loop-ramp", 1.0);
+
 
     // ### Methods, fields and Constructors ###
     /**

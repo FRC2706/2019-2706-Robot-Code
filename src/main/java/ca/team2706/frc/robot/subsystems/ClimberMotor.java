@@ -120,21 +120,35 @@ public class ClimberMotor extends Subsystem {
     }
 
     /**
-     * Runs the climber motor forward, making the robot climb.
+     * Runs the climber motor forward at the constant speed., making the robot climb.
      */
     public void runMotorForward() {
+        runMotor(Config.CLIMBER_FORWARD_SPEED.value());
+    }
+
+    /**
+     * Retracts the climber mechanisms by running the motor backwards at the constant speed.
+     */
+    public void runMotorBackward() {
+        runMotor(-Config.CLIMBER_REVERSE_SPEED.value());
+    }
+
+    /**
+     * Runs the climber motor at the given percent output.
+     *
+     * @param percentOutput The speed, between 0 and 1.
+     */
+    public void runMotor(final double percentOutput) {
         if (getStatus() != SubsystemStatus.ERROR) {
-            climberMotor.set(ControlMode.PercentOutput, Config.CLIMBER_FORWARD_SPEED.value());
+            climberMotor.set(ControlMode.PercentOutput, percentOutput);
         }
     }
 
     /**
-     * Retracts the climber mechanisms by running the motor backwards.
+     * Stops the climber motor.
      */
-    public void runMotorBackward() {
-        if (getStatus() != SubsystemStatus.ERROR) {
-            climberMotor.set(ControlMode.PercentOutput, -Config.CLIMBER_REVERSE_SPEED.value());
-        }
+    public void stopMotor() {
+        runMotor(0);
     }
 
     /**
@@ -153,13 +167,6 @@ public class ClimberMotor extends Subsystem {
      */
     public boolean isClimberReadyForPistons() {
         return getClimberTicks() >= Config.CLIMBER_SUFFICIENT_HEIGHT_ENCODER_TICKS;
-    }
-
-    /**
-     * Stops the climber motor.
-     */
-    public void stopMotor() {
-        climberMotor.set(ControlMode.PercentOutput, 0);
     }
 
     @Override

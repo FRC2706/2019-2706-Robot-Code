@@ -94,10 +94,6 @@ public class ClimberMotor extends Subsystem {
             Log.e("Reverse climber limit switch unreachable.");
             status = SubsystemStatus.maxError(status, SubsystemStatus.WORKABLE);
         }
-        if (SubsystemStatus.checkError(climberMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, Config.CAN_LONG))) {
-            Log.e("Forward climber limit switch unreachable.");
-            status = SubsystemStatus.maxError(status, SubsystemStatus.WORKABLE);
-        }
 
         climberMotor.configVoltageCompSaturation(12, Config.CAN_LONG);
         climberMotor.enableVoltageCompensation(true);

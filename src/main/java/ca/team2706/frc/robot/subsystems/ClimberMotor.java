@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot.subsystems;
 
+import ca.team2706.frc.robot.Sendables;
 import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
@@ -54,7 +55,9 @@ public class ClimberMotor extends Subsystem {
      */
     private ClimberMotor(final WPI_TalonSRX motor) {
         this.climberMotor = motor;
-        configTalonMotor();
+        addChild("Climber Motor", this.climberMotor);
+        addChild("Climber Encoders", Sendables.newTalonEncoderSendable(this.climberMotor));
+        this.status = configTalonMotor();
     }
 
     /**

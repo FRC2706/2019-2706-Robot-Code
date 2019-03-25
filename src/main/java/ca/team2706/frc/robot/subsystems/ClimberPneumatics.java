@@ -57,6 +57,9 @@ public class ClimberPneumatics extends Subsystem {
     public ClimberPneumatics(final DoubleSolenoid rightPusher, final DoubleSolenoid leftPusher) {
         this.rightPusher = rightPusher;
         this.leftPusher = leftPusher;
+
+        addChild("Left Pusher", this.leftPusher);
+        addChild("Right Pusher", this.rightPusher);
     }
 
     /**

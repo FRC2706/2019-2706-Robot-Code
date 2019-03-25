@@ -1,6 +1,7 @@
 package ca.team2706.frc.robot;
 
-import ca.team2706.frc.robot.commands.climber.actions.RetractClimberPistons;
+import ca.team2706.frc.robot.commands.PneumaticState;
+import ca.team2706.frc.robot.commands.climber.actions.MoveClimberPistons;
 import ca.team2706.frc.robot.commands.climber.sequences.Climb;
 import ca.team2706.frc.robot.commands.drivebase.AbsoluteRotateWithGyro;
 import ca.team2706.frc.robot.commands.drivebase.CurvatureDriveWithJoystick;
@@ -109,7 +110,7 @@ public class OI {
         new FluidButton(controlStick, Config.CLIMBER_BINDING)
                 .whenHeld(new Climb());
         new FluidButton(controlStick, Config.RETRACT_CLIMBER_BINDING)
-                .whenHeld(new RetractClimberPistons());
+                .whenHeld(new MoveClimberPistons(() -> PneumaticState.STOWED));
         new ETrigger() {
             @Override
             public boolean get() {

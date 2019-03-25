@@ -1,7 +1,6 @@
 package ca.team2706.frc.robot.commands.climber.actions;
 
 import ca.team2706.frc.robot.subsystems.ClimberMotor;
-import ca.team2706.frc.robot.subsystems.Pneumatics;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**

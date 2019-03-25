@@ -6,12 +6,12 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  * Command for running the climber motors backward.
  */
-public class RetractClimberMotors extends Command {
+public class ReverseClimberMotor extends Command {
 
     /**
      * Constructs a new command for running the climber motors backward.
      */
-    public RetractClimberMotors() {
+    public ReverseClimberMotor() {
         requires(ClimberMotor.getInstance());
     }
 

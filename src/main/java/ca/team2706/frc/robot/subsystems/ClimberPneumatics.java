@@ -10,6 +10,11 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  */
 public class ClimberPneumatics extends Subsystem {
 
+    /**
+     * True if the pistons are deployed, false otherwise.
+     */
+    private boolean pistonsDeployed = false;
+
     private static ClimberPneumatics currentInstance;
 
 
@@ -66,16 +71,31 @@ public class ClimberPneumatics extends Subsystem {
      * Does the final stage in climbing by pushing out the climber pistons to mount the robot on the third level.
      */
     public void pushRobot() {
-        leftPusher.set(DoubleSolenoid.Value.kForward);
-        rightPusher.set(DoubleSolenoid.Value.kForward);
+        if (!arePistonsExtended()) {
+            leftPusher.set(DoubleSolenoid.Value.kForward);
+            rightPusher.set(DoubleSolenoid.Value.kForward);
+            pistonsDeployed = true;
+        }
     }
 
     /**
      * Retracts the climbing pistons.
      */
     public void retractPushers() {
-        leftPusher.set(DoubleSolenoid.Value.kReverse);
-        rightPusher.set(DoubleSolenoid.Value.kReverse);
+        if (arePistonsExtended()) {
+            leftPusher.set(DoubleSolenoid.Value.kReverse);
+            rightPusher.set(DoubleSolenoid.Value.kReverse);
+            pistonsDeployed = false;
+        }
+    }
+
+    /**
+     * Determines if the climber pistons are extended.
+     *
+     * @return True if the climber pistons are out, false otherwise.
+     */
+    public boolean arePistonsExtended() {
+        return pistonsDeployed;
     }
 
     /**

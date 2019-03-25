@@ -5,7 +5,6 @@ import ca.team2706.frc.robot.RobotState;
 import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.commands.intake.arms.RaiseArmsSafely;
 import ca.team2706.frc.robot.config.Config;
-import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 

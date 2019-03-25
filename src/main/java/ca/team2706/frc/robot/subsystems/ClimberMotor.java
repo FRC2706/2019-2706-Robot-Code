@@ -6,7 +6,9 @@ import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Subsystem for operating climber motors.
@@ -158,6 +160,41 @@ public class ClimberMotor extends Subsystem {
      */
     public int getClimberTicks() {
         return climberMotor.getSelectedSensorPosition(0);
+    }
+
+    @Override
+    public void periodic() {
+        super.periodic();
+
+        if (getClimberTicks() < 0) {
+            zeroTicks();
+        }
+
+        if (DriverStation.getInstance().isEnabled()) {
+            Log.d("Climber Encoders " + getClimberTicks());
+            Log.d("Climber Rev Switch " + climberMotor.getSensorCollection().isRevLimitSwitchClosed());
+            Log.d("Climber Current " + climberMotor.getOutputCurrent());
+            Log.d("Climber Voltage " + climberMotor.getMotorOutputVoltage());
+        }
+
+        SmartDashboard.putNumber("Climber Position", getClimberTicks());
+        SmartDashboard.putBoolean("Climber Reverse Limit Switch", isLimitSwitchPressed());
+    }
+
+    /**
+     * Determines if the climber limit switch is being pressed.
+     *
+     * @return True if the switch is being pressed, false otherwise.
+     */
+    private boolean isLimitSwitchPressed() {
+        return climberMotor.getSensorCollection().isRevLimitSwitchClosed();
+    }
+
+    /**
+     * Sets the climber motor's encoder value to 0.
+     */
+    private void zeroTicks() {
+        climberMotor.setSelectedSensorPosition(0);
     }
 
     /**

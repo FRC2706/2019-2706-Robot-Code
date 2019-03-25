@@ -184,12 +184,11 @@ public class Lift extends Subsystem {
         if (DriverStation.getInstance().isEnabled()) {
             Log.d("Lift Encoders " + liftMotor.getSelectedSensorPosition());
             Log.d("Lift Rev Switch " + liftMotor.getSensorCollection().isRevLimitSwitchClosed());
-            Log.d("Lift Fwd Switch " + liftMotor.getSensorCollection().isFwdLimitSwitchClosed());
             Log.d("Lift Current " + liftMotor.getOutputCurrent());
             Log.d("Lift Voltage " + liftMotor.getMotorOutputVoltage());
         }
 
-        SmartDashboard.putBoolean("Limit Switch", liftMotor.getSensorCollection().isRevLimitSwitchClosed());
+        SmartDashboard.putBoolean("Lift Limit Switch", liftMotor.getSensorCollection().isRevLimitSwitchClosed());
         SmartDashboard.putNumber("Lift Position", getLiftHeightEncoderTicks());
     }
 

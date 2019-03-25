@@ -155,6 +155,13 @@ public class ClimberMotor extends Subsystem {
         return getClimberTicks() >= Config.CLIMBER_SUFFICIENT_HEIGHT_ENCODER_TICKS;
     }
 
+    /**
+     * Stops the climber motor.
+     */
+    public void stopMotor() {
+        climberMotor.set(ControlMode.PercentOutput, 0);
+    }
+
     @Override
     protected void initDefaultCommand() {
     }

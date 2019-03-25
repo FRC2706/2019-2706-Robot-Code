@@ -25,4 +25,10 @@ public class RunClimberMotor extends Command {
     protected boolean isFinished() {
         return false;
     }
+
+    @Override
+    protected void end() {
+        super.end();
+        ClimberMotor.getInstance().stopMotor();
+    }
 }

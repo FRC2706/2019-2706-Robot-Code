@@ -15,9 +15,8 @@ public class Climb extends CommandGroup {
      * Constructs a new climb command group for the full climb operation.
      */
     public Climb() {
-        addParallel(new RunClimberMotor());
         addParallel(new RaiseArmsSafely());
-        addSequential(new WaitUntilReadyForPistons());
+        addSequential(new RunClimberMotorUntilHighEnough());
         addSequential(new PushClimberPistons());
     }
 }

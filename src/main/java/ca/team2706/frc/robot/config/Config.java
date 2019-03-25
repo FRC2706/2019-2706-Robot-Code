@@ -334,6 +334,9 @@ public class Config {
      */
     public static final FluidConstant<Double> CLIMBER_REVERSE_SPEED = constant("climber-reverse-percent-speed", 0.7);
 
+    /** Number of seconds climber will take to go from neutral to full.*/
+    public static final FluidConstant<Double> CLIMBER_OPEN_LOOP_RAMP = constant("climber-open-loop-ramp", 1.0);
+
     // ### Methods, fields and Constructors ###
     /**
      * The network table for fluid constants.

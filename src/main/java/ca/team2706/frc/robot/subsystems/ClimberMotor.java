@@ -105,7 +105,7 @@ public class ClimberMotor extends Subsystem {
         climberMotor.configForwardSoftLimitThreshold(Config.MAX_CLIMBER_ENCODER_TICKS, Config.CAN_LONG);
         climberMotor.configReverseSoftLimitThreshold(0, Config.CAN_LONG);
 
-        climberMotor.configOpenloopRamp(Config.LIFT_VOLTAGE_RAMP_UP_PERIOD, Config.CAN_LONG);
+        climberMotor.configOpenloopRamp(Config.CLIMBER_OPEN_LOOP_RAMP.value(), Config.CAN_LONG);
 
         return status;
     }

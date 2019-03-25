@@ -73,18 +73,9 @@ public class Config {
             HATCH_EJECTOR_SOLENOID_FORWARD_ID = robotSpecific(0, 0, 0),
             HATCH_EJECTOR_SOLENOID_BACKWARD_ID = robotSpecific(1, 1, 1);
 
-    // Climber pneumatics PCM slots.
-    public static final int
-            CLIMBER_LEFT_PUSHER_FORWARD_ID = robotSpecific(4, 4, 4),
-            CLIMBER_LEFT_PUSHER_BACKWARD_ID = robotSpecific(5, 5, 5),
-            CLIMBER_RIGHT_PUSHER_FORWARD_ID = robotSpecific(6, 6, 6),
-            CLIMBER_RIGHT_PUSHER_BACKWARD_ID = robotSpecific(7, 7, 7);
 
     public static final int
             LIFT_MOTOR_ID = robotSpecific(5, 5, 5);
-
-    public static final int
-            CLIMBER_MOTOR_ID = robotSpecific(7, 7, 7);
 
     public static final double
             // Max speed of the lift going up in override (between 0 and 1).
@@ -100,14 +91,34 @@ public class Config {
      */
     AUTO_INTAKE_CARGO_SPEED = 0.8;
 
+    // Climber pneumatics PCM slots.
+    public static final int
+            CLIMBER_LEFT_PUSHER_FORWARD_ID = robotSpecific(4, 4, 4),
+            CLIMBER_LEFT_PUSHER_BACKWARD_ID = robotSpecific(5, 5, 5),
+            CLIMBER_RIGHT_PUSHER_FORWARD_ID = robotSpecific(6, 6, 6),
+            CLIMBER_RIGHT_PUSHER_BACKWARD_ID = robotSpecific(7, 7, 7),
+            CLIMBER_MOTOR_ID = robotSpecific(7, 7, 7);
+
+    // ## Climber values ##
+    public static int
+            CLIMBER_PEAK_CURRENT_LIMIT = 0,
+            CLIMBER_CURRENT_LIMIT_THRESHOLD_MS = 0,
+            CLIMBER_CONTINUOUS_CURRENT_LIMIT = 15,
+            MAX_CLIMBER_ENCODER_TICKS = 55_000, // TODO need actual value
+            CLIMBER_SUFFICIENT_HEIGHT_ENCODER_TICKS = 35_000; // TODO need actual value here. // Amount of encoder ticks at which the climber pistons push out and climb the robot.
+    /**
+     * How long the climber pistons should be left on before we assume that they are fully extended and can
+     * turn the solenoid off.
+     */
+    public static final double CLIMBER_PNEUMATICS_ON_TIME = 4.0;
+    public static boolean
+            INVERT_CLIMBER_MOTOR = robotSpecific(false, false, false),
+            ENABLE_CLIMBER_CURRENT_LIMIT = robotSpecific(true, true, true);
+
 
     public static boolean
             INVERT_LIFT_MOTOR = robotSpecific(false, false, false),
             ENABLE_LIFT_CURRENT_LIMIT = robotSpecific(true, true, true);
-
-    public static boolean
-            INVERT_CLIMBER_MOTOR = robotSpecific(false, false, false),
-            ENABLE_CLIMBER_CURRENT_LIMIT = robotSpecific(true, true, true);
 
     public static int
             /**
@@ -129,19 +140,6 @@ public class Config {
     public static double LIFT_VOLTAGE_RAMP_UP_PERIOD = 0.6;
 
     public static int MAX_LIFT_ENCODER_TICKS = robotSpecific(61_000, 58_000, 61_000);
-
-    // ## Climber values ##
-    public static int
-            CLIMBER_PEAK_CURRENT_LIMIT = 0,
-            CLIMBER_CURRENT_LIMIT_THRESHOLD_MS = 0,
-            CLIMBER_CONTINUOUS_CURRENT_LIMIT = 15,
-            MAX_CLIMBER_ENCODER_TICKS = 55_000, // TODO need actual value
-            CLIMBER_SUFFICIENT_HEIGHT_ENCODER_TICKS = 35_000; // TODO need actual value here. // Amount of encoder ticks at which the climber pistons push out and climb the robot.
-    /**
-     * How long the climber pistons should be left on before we assume that they are fully extended and can
-     * turn the solenoid off.
-     */
-    public static final double CLIMBER_PNEUMATICS_ON_TIME = 4.0;
 
 
     public static final boolean ENABLE_DRIVEBASE_CURRENT_LIMIT = robotSpecific(false, false, false);

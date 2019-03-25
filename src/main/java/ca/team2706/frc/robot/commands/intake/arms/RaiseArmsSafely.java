@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot.commands.intake.arms;
 
+import ca.team2706.frc.robot.commands.PneumaticState;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 /**
@@ -12,7 +13,7 @@ public class RaiseArmsSafely extends CommandGroup {
      * has been stowed already.
      */
     public RaiseArmsSafely() {
-        addSequential(new MovePlunger(MovePlunger.DesiredState.STOWED));
+        addSequential(new MovePlunger(PneumaticState.STOWED));
         addSequential(new RaiseArms());
     }
 }

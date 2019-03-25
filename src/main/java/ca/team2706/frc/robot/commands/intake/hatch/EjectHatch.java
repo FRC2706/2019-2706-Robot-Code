@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot.commands.intake.hatch;
 
+import ca.team2706.frc.robot.commands.PneumaticState;
 import ca.team2706.frc.robot.commands.intake.arms.MovePlunger;
 import ca.team2706.frc.robot.commands.lift.LiftPosition;
 import ca.team2706.frc.robot.commands.lift.MoveLiftToPosition;
@@ -28,7 +29,7 @@ public class EjectHatch extends CommandGroup {
                 return Lift.getInstance().getLiftHeight() < -Config.SUBTRACT_LIFT_HEIGHT + 0.05;
             }
         }, 0.75);
-        addSequential(new MovePlunger(MovePlunger.DesiredState.DEPLOYED)); // Put plunger out and wait (timed command).
+        addSequential(new MovePlunger(PneumaticState.DEPLOYED)); // Put plunger out and wait (timed command).
         // Move lift down slightly
         addSequential(new MoveLiftToPosition(0.5, () -> Lift.getInstance().getLiftHeight() + Config.SUBTRACT_LIFT_HEIGHT), 0.75);
     }

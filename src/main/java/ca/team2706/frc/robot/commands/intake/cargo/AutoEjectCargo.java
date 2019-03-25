@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot.commands.intake.cargo;
 
+import ca.team2706.frc.robot.commands.PneumaticState;
 import ca.team2706.frc.robot.commands.intake.arms.MovePlunger;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.Intake;
@@ -19,6 +20,6 @@ public class AutoEjectCargo extends CommandGroup {
 
         addParallel(new RunIntakeAtSpeed(() -> 1.0));
         addSequential(new WaitCommand(Config.EXHALE_CARGO_WAIT_UNTIL_PLUNGER));
-        addSequential(new MovePlunger(MovePlunger.DesiredState.DEPLOYED));
+        addSequential(new MovePlunger(PneumaticState.DEPLOYED));
     }
 }

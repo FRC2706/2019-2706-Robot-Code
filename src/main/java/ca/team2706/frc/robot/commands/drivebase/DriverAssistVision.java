@@ -81,7 +81,7 @@ public class DriverAssistVision extends Command {
      * True if the generateTrajectoryRequest stage of execute() method has completed,
      * indicating that a command has been issued to generate a trajectory, false otherwise
      */
-    boolean generateTrajectoryRequestStageComplete = false;
+    private boolean generateTrajectoryRequestStageComplete = false;
 
     /*
      * Network table instance to get data from vision subsystem
@@ -121,7 +121,7 @@ public class DriverAssistVision extends Command {
     private volatile Trajectory trajectory;
 
     /**
-     * Creates empty driver assist command object (needed for unit testing framework only)
+     * Creates driver assist command
      */
     public DriverAssistVision() {
         // Ensure that this command is the only one to run on the drive base
@@ -136,22 +136,13 @@ public class DriverAssistVision extends Command {
     }
 
     /**
-     * Creates the driver assist command
+     * Creates driver assist command
      *
      * @param DriverAssistVisionTarget target: The type of the destination target (CARGO_AND_LOADING, ROCKET, BALL)
      */
     public DriverAssistVision(DriverAssistVisionTarget target) {
+        this();
         this.target = target;
-
-        // Ensure that this command is the only one to run on the drive base
-        requires(RingLight.getInstance());
-
-        commandAborted = false;
-        generateTrajectoryRequestStageComplete = false;
-        ringLightOnDelayTime = 0.0;
-        ringLightOnStageComplete = false;
-        
-        setupNetworkTables();
     }
 
     /**
@@ -187,9 +178,6 @@ public class DriverAssistVision extends Command {
             commandAborted = true;
             return;
         }
-
-        DriveBase.getInstance().setBrakeMode(true);
-        DriveBase.getInstance().setPositionNoGyroMode();
     
         commandAborted = false;
         generateTrajectoryRequestStageComplete = false;
@@ -343,9 +331,6 @@ public class DriverAssistVision extends Command {
         // Vision group has requested that tapeDetected entry be set to false here
         tapeDetectedEntry = chickenVisionTable.getEntry("tapeDetected");
         tapeDetectedEntry.setBoolean(false); 
-
-        // Go back to disabled mode
-        DriveBase.getInstance().setDisabledMode();
     }
 
     /**

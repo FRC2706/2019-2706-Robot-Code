@@ -94,11 +94,11 @@ public class OI {
         Lift.getInstance().setDefaultCommand(liftCommand);
 
         // ---- Operator controls ----
-        new FluidButton(controlStick, Config.INTAKE_BACKWARD_BINDING, 0.05)
+        new FluidButton(controlStick, Config.INTAKE_BACKWARD_BINDING, Config.CONTROLLER_DEADBAND.value())
                 .whenHeld(new RunIntakeOnJoystick(controlStick, Config.INTAKE_BACKWARD_BINDING, false));
-        new FluidButton(controlStick, Config.INTAKE_FORWARD_BINDING, 0.05)
+        new FluidButton(controlStick, Config.INTAKE_FORWARD_BINDING, Config.CONTROLLER_DEADBAND.value())
                 .whenHeld(new RunIntakeOnJoystick(controlStick, Config.INTAKE_FORWARD_BINDING, true));
-        new FluidButton(controlStick, Config.MOVE_LIFT_BINDING, 0.05)
+        new FluidButton(controlStick, Config.MOVE_LIFT_BINDING, Config.CONTROLLER_DEADBAND.value())
                 .whenHeld(new MoveLiftJoystickVelocity(controlStick, Config.MOVE_LIFT_BINDING, Config.OVERRIDE_LIFT_BINDING));
         new FluidButton(controlStick, Config.LIFT_ARMS_BINDING)
                 .whenPressed(new RaiseArmsSafely());

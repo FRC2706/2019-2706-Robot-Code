@@ -287,6 +287,8 @@ public class Config {
 
     public static final FluidConstant<Double> ROBOT_START_ANGLE = constant("robot-start-angle-deg", 90.0);
 
+    public static final FluidConstant<Double> CONTROLLER_DEADBAND = constant("controller-deadband", 0.05);
+
     // ### Methods, fields and Constructors ###
     /**
      * The network table for fluid constants.

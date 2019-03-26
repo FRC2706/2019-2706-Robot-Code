@@ -1,7 +1,9 @@
 package ca.team2706.frc.robot.commands.climber.sequences;
 
 import ca.team2706.frc.robot.commands.PneumaticState;
+import ca.team2706.frc.robot.commands.climber.WaitUntilReadyForPistons;
 import ca.team2706.frc.robot.commands.climber.actions.MoveClimberPistons;
+import ca.team2706.frc.robot.commands.climber.actions.RunClimberMotor;
 import ca.team2706.frc.robot.commands.intake.arms.RaiseArmsSafely;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -15,7 +17,8 @@ public class Climb extends CommandGroup {
      */
     public Climb() {
         addParallel(new RaiseArmsSafely());
-        addSequential(new RunClimberMotorUntilHighEnough());
+        addParallel(new RunClimberMotor(() -> true));
+        addSequential(new WaitUntilReadyForPistons());
         addSequential(new MoveClimberPistons(() -> PneumaticState.DEPLOYED));
     }
 }

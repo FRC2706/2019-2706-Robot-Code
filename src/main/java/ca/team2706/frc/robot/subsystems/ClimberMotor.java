@@ -79,11 +79,6 @@ public class ClimberMotor extends Subsystem {
         climberMotor.setNeutralMode(NeutralMode.Brake);
         climberMotor.setInverted(Config.INVERT_CLIMBER_MOTOR);
 
-        climberMotor.configPeakCurrentLimit(Config.CLIMBER_PEAK_CURRENT_LIMIT, Config.CAN_LONG);
-        climberMotor.configContinuousCurrentLimit(Config.CLIMBER_CONTINUOUS_CURRENT_LIMIT);
-        climberMotor.configPeakCurrentDuration(Config.CLIMBER_CURRENT_LIMIT_THRESHOLD_MS);
-        climberMotor.enableCurrentLimit(Config.ENABLE_CLIMBER_CURRENT_LIMIT);
-
         if (SubsystemStatus.checkError(climberMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_LONG))) {
             Log.e("Climber encoders unreachable.");
             status = SubsystemStatus.maxError(status, SubsystemStatus.ERROR);
@@ -99,12 +94,14 @@ public class ClimberMotor extends Subsystem {
             Log.e("Reverse climber limit switch unreachable.");
             status = SubsystemStatus.maxError(status, SubsystemStatus.WORKABLE);
         }
+        climberMotor.configClearPositionOnLimitR(true, Config.CAN_LONG);
 
         climberMotor.configVoltageCompSaturation(12, Config.CAN_LONG);
         climberMotor.enableVoltageCompensation(true);
 
         climberMotor.configForwardSoftLimitThreshold(Config.MAX_CLIMBER_ENCODER_TICKS, Config.CAN_LONG);
         climberMotor.configReverseSoftLimitThreshold(0, Config.CAN_LONG);
+        climberMotor.configForwardSoftLimitEnable(true);
 
         climberMotor.configOpenloopRamp(Config.CLIMBER_OPEN_LOOP_RAMP.value(), Config.CAN_LONG);
 
@@ -119,20 +116,6 @@ public class ClimberMotor extends Subsystem {
      */
     private SubsystemStatus getStatus() {
         return status;
-    }
-
-    /**
-     * Runs the climber motor forward at the constant speed., making the robot climb.
-     */
-    public void runMotorForward() {
-        runMotor(Config.CLIMBER_FORWARD_SPEED.value());
-    }
-
-    /**
-     * Retracts the climber mechanisms by running the motor backwards at the constant speed.
-     */
-    public void runMotorBackward() {
-        runMotor(-Config.CLIMBER_REVERSE_SPEED.value());
     }
 
     /**
@@ -160,6 +143,17 @@ public class ClimberMotor extends Subsystem {
      */
     public int getClimberTicks() {
         return climberMotor.getSelectedSensorPosition(0);
+    }
+
+    /**
+     * Sets the climber motor's neutral mode.
+     * Should be in brake mode for the most part
+     * and coast mode after climbing.
+     *
+     * @param neutralMode The neutral mode.
+     */
+    public void setNeutralMode(NeutralMode neutralMode) {
+        climberMotor.setNeutralMode(neutralMode);
     }
 
     @Override

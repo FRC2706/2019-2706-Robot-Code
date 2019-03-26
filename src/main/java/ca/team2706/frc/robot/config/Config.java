@@ -101,18 +101,15 @@ public class Config {
 
     // ## Climber values ##
     public static int
-            CLIMBER_PEAK_CURRENT_LIMIT = 0,
-            CLIMBER_CURRENT_LIMIT_THRESHOLD_MS = 0,
-            CLIMBER_CONTINUOUS_CURRENT_LIMIT = 15,
-            MAX_CLIMBER_ENCODER_TICKS = 55_000, // TODO need actual value
-            CLIMBER_SUFFICIENT_HEIGHT_ENCODER_TICKS = 35_000; // TODO need actual value here. // Amount of encoder ticks at which the climber pistons push out and climb the robot.
+            MAX_CLIMBER_ENCODER_TICKS = 9_500,
+            CLIMBER_SUFFICIENT_HEIGHT_ENCODER_TICKS = 5_000; // Amount of encoder ticks at which the climber pistons push out and climb the robot.
     /**
      * How long the climber pistons should be left on before we assume that they are fully extended and can
      * turn the solenoid off.
      */
     public static final double CLIMBER_PNEUMATICS_ON_TIME = 4.0;
     public static boolean
-            INVERT_CLIMBER_MOTOR = robotSpecific(false, false, false),
+            INVERT_CLIMBER_MOTOR = robotSpecific(true, true, false),
             ENABLE_CLIMBER_CURRENT_LIMIT = robotSpecific(true, true, true);
 
 
@@ -218,8 +215,6 @@ public class Config {
     public static final FluidConstant<Double> DRIVE_OPEN_LOOP_DEADBAND = constant("open-loop-drive-deadband", 0.04);
     public static final FluidConstant<Double> LIFT_CLOSED_LOOP_DEADBAND = constant("lift-deadband", 0.001);
 
-    public static final FluidConstant<Double> CLIMBER_CLOSED_LOOP_DEADBAND = constant("climber-deadband", 0.001);
-
     public static final FluidConstant<Boolean> DRIVE_SUM_PHASE_LEFT = constant("drive-sum-phase-left", true);
     public static final FluidConstant<Boolean> DRIVE_SUM_PHASE_RIGHT = constant("drive-sum-phase-right", true);
 
@@ -246,7 +241,6 @@ public class Config {
      * Max speed of the lift in encoder ticks.
      */
     public static final FluidConstant<Integer> LIFT_MAX_SPEED = constant("max-lift-velocity", 3000);
-    public static final FluidConstant<Double> MANUAL_LIFT_MAX_PERCENT = constant("max-manual-lift-percent-velocity", 0.7);
     public static final FluidConstant<Integer> DRIVEBASE_MOTION_MAGIC_SMOOTHING = constant("mm-smoothing", 0);
     public static final FluidConstant<Double> PATHFINDING_JERK = constant("pf-jerk", 197.0);
     public static final FluidConstant<Double> PATHFINDING_VELOCITY = constant("pf-velocity", 2.0);
@@ -273,8 +267,6 @@ public class Config {
             MOVE_LIFT_BINDING = constant("move-lift-binding", XboxValue.XBOX_LEFT_STICK_Y.getNTString()),
             LIFT_ARMS_BINDING = constant("lift-arms-binding", XboxValue.XBOX_A_BUTTON.getNTString()),
             LOWER_ARMS_BINDING = constant("lower-arms-binding", XboxValue.XBOX_Y_BUTTON.getNTString()),
-            OVERRIDE_LIFT_DOWN_BINDING = constant("override-lift-down-binding", XboxValue.XBOX_B_BUTTON.getNTString()),
-            OVERRIDE_LIFT_UP_BINDING = constant("override-lift-up-binding", XboxValue.XBOX_X_BUTTON.getNTString()),
             MANUAL_PISTON_BINDING = constant("manual-plunger-toggle", XboxValue.XBOX_RIGHT_AXIS_BUTTON.getNTString()),
             EJECT_BINDING = constant("eject-multi-purpose-binding", XboxValue.XBOX_RB_BUTTON.getNTString()),
             AUTO_INTAKE_CARGO_BINDING = constant("auto-intake-cargo-binding", XboxValue.XBOX_LB_BUTTON.getNTString()),
@@ -323,15 +315,16 @@ public class Config {
     /**
      * Speed at which the climber motor should run when climbing.
      */
-    public static final FluidConstant<Double> CLIMBER_FORWARD_SPEED = constant("climber-forward-percent-speed", 0.7);
+    public static final FluidConstant<Double> CLIMBER_FORWARD_SPEED = constant("climber-forward-percent-speed", 0.9);
     /**
      * Speed at which the climber motor should run when retracting.
      */
-    public static final FluidConstant<Double> CLIMBER_REVERSE_SPEED = constant("climber-reverse-percent-speed", 0.7);
+    public static final FluidConstant<Double> CLIMBER_REVERSE_SPEED = constant("climber-reverse-percent-speed", 0.9);
     /**
      * Number of seconds climber will take to go from neutral to full.
      */
-    public static final FluidConstant<Double> CLIMBER_OPEN_LOOP_RAMP = constant("climber-open-loop-ramp", 1.0);
+    public static final FluidConstant<Double> CLIMBER_OPEN_LOOP_RAMP = constant("climber-open-loop-ramp", 0.2);
+    public static final FluidConstant<Double> CLIMBER_CLOSED_LOOP_DEADBAND = constant("climber-deadband", 0.001);
 
 
     // ### Methods, fields and Constructors ###

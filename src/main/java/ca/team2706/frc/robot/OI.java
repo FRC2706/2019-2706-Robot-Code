@@ -110,7 +110,7 @@ public class OI {
         new FluidButton(controlStick, Config.CLIMBER_BINDING)
                 .whenHeld(new Climb());
         new FluidButton(controlStick, Config.RETRACT_CLIMBER_BINDING)
-                .whenHeld(new MoveClimberPistons(() -> PneumaticState.STOWED));
+                .whenPressed(new MoveClimberPistons(() -> PneumaticState.STOWED));
         new ETrigger() {
             @Override
             public boolean get() {

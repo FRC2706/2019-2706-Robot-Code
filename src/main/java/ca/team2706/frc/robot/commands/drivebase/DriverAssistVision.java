@@ -122,8 +122,12 @@ public class DriverAssistVision extends Command {
 
     /**
      * Creates driver assist command
+     *
+     * @param DriverAssistVisionTarget target: The type of the destination target (CARGO_AND_LOADING, ROCKET, BALL)
      */
-    public DriverAssistVision() {
+    public DriverAssistVision(DriverAssistVisionTarget target) {
+        this.target = target;
+
         // Ensure that this command is the only one to run on the drive base
         requires(RingLight.getInstance());
 
@@ -133,16 +137,6 @@ public class DriverAssistVision extends Command {
         generateTrajectoryRequestStageComplete = false;
         ringLightOnDelayTime = 0.0;
         ringLightOnStageComplete = false;
-    }
-
-    /**
-     * Creates driver assist command
-     *
-     * @param DriverAssistVisionTarget target: The type of the destination target (CARGO_AND_LOADING, ROCKET, BALL)
-     */
-    public DriverAssistVision(DriverAssistVisionTarget target) {
-        this();
-        this.target = target;
     }
 
     /**
@@ -284,7 +278,7 @@ public class DriverAssistVision extends Command {
                 Log.d("DAV: Generating trajectory");
                 Runnable task = new Runnable() {
                     public void run() {
-                        generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, angYawTargetWrtCameraLOSCWpos, target);
+                        generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, angYawTargetWrtCameraLOSCWpos);
                     }
                 };
                 new Thread(task).start();
@@ -368,8 +362,7 @@ public class DriverAssistVision extends Command {
      * @param angYawTargetWrtCameraLOSCWpos yaw angle to target wrt camera line of sight, CW with increase angle [deg]
      * @param target                        destination target (CARGO_AND_LOADING, ROCKET, or BALL)
      */
-    public void generateTrajectoryRobotToTarget(double distanceCameraToTarget_Camera, double angYawTargetWrtCameraLOSCWpos,
-                                                DriverAssistVisionTarget target) {
+    public void generateTrajectoryRobotToTarget(double distanceCameraToTarget_Camera, double angYawTargetWrtCameraLOSCWpos) {
         /**
          * Explanation of vector and coordinate frame notation in a 2-d plane:
          *

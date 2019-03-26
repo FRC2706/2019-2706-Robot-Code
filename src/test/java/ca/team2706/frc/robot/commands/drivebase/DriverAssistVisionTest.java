@@ -79,7 +79,7 @@ public class DriverAssistVisionTest {
      * is changed.
      */
     @Test
-    public void testGenerateTrajectoryCargoShipAndLoading() {
+    public void testGenerateTrajectoryCargoShipAndLoading(@Injectable("CARGO_AND_LOADING") DriverAssistVisionTarget target) {
         new Expectations() {{
             pigeon.getYawPitchRoll((double[]) any);
             returns(SendablesTest.makePigeonExpectation(-90.0),
@@ -98,7 +98,6 @@ public class DriverAssistVisionTest {
         double vCameraToTarget_CameraY = vRobotToTarget_CameraY - Config.ROBOTTOCAMERA_ROBOTY.value();
         double distanceCameraToTarget_Camera = Math.sqrt(Math.pow(vCameraToTarget_CameraX, 2) + Math.pow(vCameraToTarget_CameraY, 2));
         double yawAngleCameraToTarget_Camera = Math.toDegrees(Math.atan2(vCameraToTarget_CameraX, vCameraToTarget_CameraY));
-        DriverAssistVisionTarget target = DriverAssistVisionTarget.CARGO_AND_LOADING;
 
         // Verify the values produced with expected values. Note that the generated trajectory
         // is compared against the expected trajectory by comparing the expected x, y, and heading
@@ -106,8 +105,7 @@ public class DriverAssistVisionTest {
         double[] expectedAngRobotHeadingFinal_Field = {0.0, 90.0, 180.0, 270.0};
         double offsetDistance_Robot = Config.ROBOT_HALF_LENGTH.value() + Config.TARGET_OFFSET_DISTANCE_CARGO_AND_LOADING.value();
         for (int i = 0; i < 4; i++) {
-            driverAssistVision.generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, yawAngleCameraToTarget_Camera,
-                    target);
+            driverAssistVision.generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, yawAngleCameraToTarget_Camera);
             Trajectory traj = driverAssistVision.getTrajectory();
 
             assertEquals(driverAssistVision.getAngRobotHeadingFinal_Field(), expectedAngRobotHeadingFinal_Field[i], 0.1);
@@ -126,7 +124,7 @@ public class DriverAssistVisionTest {
      * to as "absolute heading" in the code) is changed.
      */
     @Test
-    public void testGenerateTrajectoryRocket() {
+    public void testGenerateTrajectoryRocket(@Injectable("ROCKET") DriverAssistVisionTarget target) {
         new Expectations() {{
             pigeon.getYawPitchRoll((double[]) any);
             returns(SendablesTest.makePigeonExpectation(-30.0),
@@ -146,7 +144,6 @@ public class DriverAssistVisionTest {
         double vCameraToTarget_CameraY = vRobotToTarget_CameraY - Config.ROBOTTOCAMERA_ROBOTY.value();
         double distanceCameraToTarget_Camera = Math.sqrt(Math.pow(vCameraToTarget_CameraX, 2) + Math.pow(vCameraToTarget_CameraY, 2));
         double yawAngleCameraToTarget_Camera = Math.toDegrees(Math.atan2(vCameraToTarget_CameraX, vCameraToTarget_CameraY));
-        DriverAssistVisionTarget target = DriverAssistVisionTarget.ROCKET;
 
         // Verify the values produced with expected values. Note that the generated trajectory
         // is compared against the expected trajectory by comparing the expected x, y, and heading
@@ -154,8 +151,7 @@ public class DriverAssistVisionTest {
         double[] expectedAngRobotHeadingFinal_Field = {60.0, 0.0, 300.0, 120.0, 180.0, 240.0};
         double offsetDistance_Robot = Config.ROBOT_HALF_LENGTH.value() + Config.TARGET_OFFSET_DISTANCE_ROCKET.value();
         for (int i = 0; i < 6; i++) {
-            driverAssistVision.generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, yawAngleCameraToTarget_Camera,
-                    target);
+            driverAssistVision.generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, yawAngleCameraToTarget_Camera);
             Trajectory traj = driverAssistVision.getTrajectory();
 
             assertEquals(driverAssistVision.getAngRobotHeadingFinal_Field(), expectedAngRobotHeadingFinal_Field[i], 0.1);
@@ -174,7 +170,7 @@ public class DriverAssistVisionTest {
      * to as "absolute heading" in the code) is changed.
      */
     @Test
-    public void testGenerateTrajectoryBall() {
+    public void testGenerateTrajectoryBall(@Injectable("BALL") DriverAssistVisionTarget target) {
         // Run the test
         double vRobotToTarget_CameraX = -5.0;
         double vRobotToTarget_CameraY = 7.0;
@@ -184,8 +180,7 @@ public class DriverAssistVisionTest {
         double vCameraToTarget_CameraY = vRobotToTarget_CameraY - Config.ROBOTTOCAMERA_ROBOTY.value();
         double distanceCameraToTarget_Camera = Math.sqrt(Math.pow(vCameraToTarget_CameraX, 2) + Math.pow(vCameraToTarget_CameraY, 2));
         double yawAngleCameraToTarget_Camera = Math.toDegrees(Math.atan2(vCameraToTarget_CameraX, vCameraToTarget_CameraY));
-        DriverAssistVisionTarget target = DriverAssistVisionTarget.BALL;
-
+    
         // Verify the values produced with expected values. Note that the generated trajectory
         // is compared against the expected trajectory by comparing the expected x, y, and heading
         // against those of the generated trajectory for the first and last segments.
@@ -199,7 +194,7 @@ public class DriverAssistVisionTest {
         double vRobotToFinalExpected_RobotX = vRobotToTarget_RobotX - d * vUnitRobotToTarget_RobotX;
         double vRobotToFinalExpected_RobotY = vRobotToTarget_RobotY - d * vUnitRobotToTarget_RobotY;
 
-        driverAssistVision.generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, yawAngleCameraToTarget_Camera, target);
+        driverAssistVision.generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, yawAngleCameraToTarget_Camera);
         Trajectory traj = driverAssistVision.getTrajectory();
         assertEquals(traj.segments[0].x, 0.0, 0.3);
         assertEquals(traj.segments[0].y, 0.0, 0.3);

@@ -53,7 +53,7 @@ public abstract class CurvatureDrive extends Command {
         double forward = forwardVal.get();
         double curve = curveSpeed.get();
 
-        if(squareInputs) {
+        if (squareInputs) {
             curve *= curve < 0 ? -curve : curve;
         }
 

@@ -57,9 +57,9 @@ public abstract class CurvatureDrive extends Command {
             curve *= curve < 0 ? -curve : curve;
         }
 
-        double rotation = Math.abs(curve) < Config.CONTROLLER_DEADBAND.value() ? 0 : curve;
+        double rotation = Math.abs(curve) < Config.CONTROLLER_DEADBAND ? 0 : curve;
 
-        boolean override = ((forward > -0.25 && forward < 0.25));
+        boolean override = Math.abs(forward) < Config.CURVATURE_OVERRIDE;
 
         if (buttonPress.get()) {
             DriveBase.getInstance().curvatureDrive(forward * 0.6, (override ? rotation / 2.5 : rotation), override);

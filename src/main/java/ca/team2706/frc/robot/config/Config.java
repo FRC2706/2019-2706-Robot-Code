@@ -186,6 +186,11 @@ public class Config {
 
     public static final boolean DISABLE_WARNING = robotSpecific(true, true, true);
 
+    public static final double CONTROLLER_DEADBAND = 0.05;
+
+    public static final double CURVATURE_OVERRIDE = 0.25;
+
+
     public static final Path DEPLOY_DIR = Paths.get(System.getProperty("user.home"), "deploy");
 
     // #### Fluid constants ####
@@ -286,8 +291,6 @@ public class Config {
     public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE = constant("target-offset_distance", 0.5);
 
     public static final FluidConstant<Double> ROBOT_START_ANGLE = constant("robot-start-angle-deg", 90.0);
-
-    public static final FluidConstant<Double> CONTROLLER_DEADBAND = constant("controller-deadband", 0.05);
 
     // ### Methods, fields and Constructors ###
     /**

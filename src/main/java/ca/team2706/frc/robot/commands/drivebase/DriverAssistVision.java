@@ -159,8 +159,10 @@ public class DriverAssistVision extends Command {
     public void initialize() {
         Log.d("DAV: initialize() called");
 
-        // If command was already aborted (e.g. due to errors in setup of network tables), 
-        // make sure we don't go any further
+        /*
+        If command was already aborted (e.g. due to errors in setup of network tables),
+        make sure we don't go any further
+        */
         if (commandAborted) {
             Log.d("DAV: Command aborted, initialize() not run");
         }
@@ -246,15 +248,19 @@ public class DriverAssistVision extends Command {
      */
     @Override
     public void execute() {
-        // Stage 1: Ring Light On Stage: Keep ring light on for a fixed delay to allow vision
-        // measurement to stabilize before taking a reading
+        /*
+        Stage 1: Ring Light On Stage: Keep ring light on for a fixed delay to allow vision
+        measurement to stabilize before taking a reading
+        */
         if (!ringLightOnStageComplete) {
             ringLightOnDelayTime += Config.EXECUTE_PERIOD;
             ringLightOnStageComplete = ringLightOnDelayTime >= Config.RING_LIGHT_ON_DELAY.value();
         }
 
-        // Stage 2: Generate Trajectory Request Stage: Wait for vision to find target within reasonable bounds 
-        // then, in a separate thread, issue request to generate Pathfinder trajectory
+        /*
+        Stage 2: Generate Trajectory Request Stage: Wait for vision to find target within reasonable bounds
+        then, in a separate thread, issue request to generate Pathfinder trajectory
+        */
         if (!generateTrajectoryRequestStageComplete) {
             boolean tapeDetected = tapeDetectedEntry.getBoolean(false);
             if (tapeDetected) {
@@ -280,9 +286,11 @@ public class DriverAssistVision extends Command {
                         Log.d("DAV: Distance to target too low. Driver assist command aborted.");
                         commandAborted = true;
                     } else {
-                        // If distance to target is above a reasonable value, it is likely a temporary glitch in the
-                        // vision measurement so return from the current execute() cycle but don't abort the command
-                        // so another reading can be taken on the next execute() call
+                        /*
+                        If distance to target is above a reasonable value, it is likely a temporary glitch in the
+                        vision measurement so return from the current execute() cycle but don't abort the command
+                        so another reading can be taken on the next execute() call
+                        */
                         if (distanceCameraToTarget_Camera > Config.VISION_DISTANCE_MAX.value()) {
                             Log.d("DAV: Distance to target too high. Rereading vision data.");
                             return;
@@ -442,15 +450,17 @@ public class DriverAssistVision extends Command {
          *           ROCKET, or BALL.
          */
 
-        // STEP 1: Compute vector from current robot position to final robot position in robot frame, 
-        // vRobotToFinal_Robot, where
-        //  
-        // vRobotToFinal_Robot = vRobotToCamera_Robot + vCameraToTarget_Robot + vTargetToFinal_Robot
-        //
-        // The three vectors on the right hand side will be denoted by Vector 1, Vector 2, and 
-        // Vector 3 in the comments below, and Vector 1+2 represents the sum Vector 1 and Vector 2
+        /*
+        STEP 1: Compute vector from current robot position to final robot position in robot frame,
+        vRobotToFinal_Robot, where
 
-        // Vector 1: vRobotToCamera_Robot: Vector from robot to camera in robot frame
+        vRobotToFinal_Robot = vRobotToCamera_Robot + vCameraToTarget_Robot + vTargetToFinal_Robot
+
+        The three vectors on the right hand side will be denoted by Vector 1, Vector 2, and
+        Vector 3 in the comments below, and Vector 1+2 represents the sum Vector 1 and Vector 2
+        Vector 1: vRobotToCamera_Robot: Vector from robot to camera in robot frame
+        */
+
         double vRobotToCamera_RobotX = Config.ROBOTTOCAMERA_ROBOTX.value();
         double vRobotToCamera_RobotY = Config.ROBOTTOCAMERA_ROBOTY.value();
         Log.d("DAV: vRobotToCamera_RobotX: " + vRobotToCamera_RobotX + ", vRobotToCamera_RobotY: " + vRobotToCamera_RobotY);
@@ -465,15 +475,19 @@ public class DriverAssistVision extends Command {
         double vRobotToTarget_RobotX = vRobotToCamera_RobotX + vCameraToTarget_RobotX;
         double vRobotToTarget_RobotY = vRobotToCamera_RobotY + vCameraToTarget_RobotY;
 
-        // Vector 3: vTargetToFinal_Robot: Vector from target to final robot position in robot frame
-        // Depends on target type.
+        /*
+        Vector 3: vTargetToFinal_Robot: Vector from target to final robot position in robot frame
+        Depends on target type.
+        */
         double vTargetToFinal_RobotX = 0.0;
         double vTargetToFinal_RobotY = 0.0;
         double angRobotCurrent_Field = 0.0;
         if ((target == DriverAssistVisionTarget.CARGO_AND_LOADING) ||
                 (target == DriverAssistVisionTarget.ROCKET)) {
-            // Vector 3 is aligned with and facing away from target
-            // Get current robot heading relative to field frame from IMU
+            /*
+            Vector 3 is aligned with and facing away from target
+            Get current robot heading relative to field frame from IMU
+            */
             double angRobotHeadingCurrent_Field = DriveBase.getInstance().getAbsoluteHeading() % 360;
             Log.d("DAV: angRobotHeadingCurrent_Field: " + angRobotHeadingCurrent_Field);
 
@@ -499,10 +513,12 @@ public class DriverAssistVision extends Command {
             Log.d("DAV: vec_TargetToFinalX_Field: " + vTargetToFinal_FieldX);
             Log.d("DAV: vTargetToFinal_FieldY: " + vTargetToFinal_FieldY);
 
-            // Need to do a coordinate frame transformation on vTargetToFinal_Field
-            // Note: angRobotCurrent_Field is the current angle from the x axis of robot frame with respect to the
-            //       x axis of the field frame, and the x axis of the robot frame is 90deg less than the robot heading
-            //       which points along the y axis by definition
+            /*
+            Need to do a coordinate frame transformation on vTargetToFinal_Field
+            Note: angRobotCurrent_Field is the current angle from the x axis of robot frame with respect to the
+            x axis of the field frame, and the x axis of the robot frame is 90deg less than the robot heading
+            which points along the y axis by definition
+            */
             angRobotCurrent_Field = angRobotHeadingCurrent_Field - 90.0;
             double angRobotCurrentRad_Field = Pathfinder.d2r(angRobotCurrent_Field);
             double cosAngRobotCurrentRad_Field = Math.cos(angRobotCurrentRad_Field);
@@ -519,9 +535,11 @@ public class DriverAssistVision extends Command {
             vTargetToFinal_RobotY = -d * (vRobotToTarget_RobotY / vRobotToTarget_magnitude);
         }
 
-        // Compute vRobotToFinal_Robot as sum of Vectors 1+2 and 3:
-        //     vRobotToFinal_Robot = (vRobotToCamera_Robot + vCameraToTarget_Robot) + vTargetToFinal_Robot
-        //                            vRobotToTarget_Robot                          + vTargetToFinal_Robot
+        /*
+        Compute vRobotToFinal_Robot as sum of Vectors 1+2 and 3:
+        vRobotToFinal_Robot = (vRobotToCamera_Robot + vCameraToTarget_Robot) + vTargetToFinal_Robot
+        vRobotToTarget_Robot                          + vTargetToFinal_Robot
+        */
         double vRobotToFinal_RobotX = vRobotToTarget_RobotX + vTargetToFinal_RobotX;
         double vRobotToFinal_RobotY = vRobotToTarget_RobotY + vTargetToFinal_RobotY;
         Log.d("DAV: vRobotToFinal_RobotX: " + vRobotToFinal_RobotX + ", vRobotToFinal_RobotY: " + vRobotToFinal_RobotY);
@@ -541,8 +559,10 @@ public class DriverAssistVision extends Command {
         Log.d("DAV: angRobotHeadingFinal_Robot: " + angRobotHeadingFinal_Robot);
         Log.d("DAV: angRobotHeadingFinalRad_Robot: " + angRobotHeadingFinalRad_Robot);
 
-        // STEP 3: Generate trajectory in robot frame with PathFinder library using two waypoints: one at initial position
-        // and one at final position
+        /*
+        STEP 3: Generate trajectory in robot frame with PathFinder library using two waypoints: one at initial position
+        and one at final position
+        */
         Log.d("DAV: Generating trajectory");
         Trajectory.Config config =
                 new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_FAST,

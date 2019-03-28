@@ -95,11 +95,10 @@ public class Config {
             INVERT_LIFT_MOTOR = robotSpecific(false, false, false),
             ENABLE_LIFT_CURRENT_LIMIT = robotSpecific(true, true, true);
 
-    public static int
-            /**
-             * Maximum lift current, in amps.
-             */
-            MAX_LIFT_CURRENT = 0,
+    /**
+     * Maximum lift current, in amps.
+     */
+    public static int MAX_LIFT_CURRENT = 0,
     /**
      * How long the lift current has to be over the current limit before it is cut out.
      */

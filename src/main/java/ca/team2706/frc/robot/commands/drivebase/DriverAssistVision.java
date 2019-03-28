@@ -37,7 +37,7 @@ public class DriverAssistVision extends Command {
      * Timestamp from the vision system on the previous call to the command, used to assess if
      * the vision system is still running or is offline
      */
-    static double videoTimestampPrev = 0.0;
+    private static double videoTimestampPrev = 0.0;
 
     /**
      * Angle of final desired robot heading with respect to x axis of field frame
@@ -81,7 +81,7 @@ public class DriverAssistVision extends Command {
      * True if the generateTrajectoryRequest stage of execute() method has completed,
      * indicating that a command has been issued to generate a trajectory, false otherwise
      */
-    private boolean generateTrajectoryRequestStageComplete = false;
+    private boolean generateTrajectoryRequestStageComplete;
 
     /**
      * Network table instance to get data from vision subsystem
@@ -96,12 +96,12 @@ public class DriverAssistVision extends Command {
     /**
      * True if ring light on stage of execute() method has completed, false otherwise
      */
-    private boolean ringLightOnStageComplete = false;
+    private boolean ringLightOnStageComplete;
 
     /**
      * Current value of time delay after ring light has been turned on.
      */
-    private double ringLightOnDelayTime = 0.0;
+    private double ringLightOnDelayTime;
 
     /**
      * Network table entry named TapeDetected, a boolean set to true if the tape target has been
@@ -381,7 +381,7 @@ public class DriverAssistVision extends Command {
      * @param angYawTargetWrtCameraLOSCWpos yaw angle to target wrt camera line of sight, CW with increase angle [deg]
      */
     public void generateTrajectoryRobotToTarget(double distanceCameraToTarget_Camera, double angYawTargetWrtCameraLOSCWpos) {
-        /**
+        /*
          * Explanation of vector and coordinate frame notation in a 2-d plane:
          *
          * A vector from point P1 to point P2 represented in a coordinate frame F3 is written as vP1ToP2_F3.
@@ -530,8 +530,8 @@ public class DriverAssistVision extends Command {
         Log.d("DAV: vRobotToFinal_RobotX: " + vRobotToFinal_RobotX + ", vRobotToFinal_RobotY: " + vRobotToFinal_RobotY);
 
         // STEP 2: Compute final robot heading in robot frame
-        double angRobotHeadingFinal_Robot = 0.0;
-        double angRobotHeadingFinalRad_Robot = 0.0;
+        double angRobotHeadingFinal_Robot;
+        double angRobotHeadingFinalRad_Robot;
         if ((target == DriverAssistVisionTarget.CARGO_AND_LOADING) ||
                 (target == DriverAssistVisionTarget.ROCKET)) {
             angRobotHeadingFinal_Robot = angRobotHeadingFinal_Field - angRobotCurrent_Field;

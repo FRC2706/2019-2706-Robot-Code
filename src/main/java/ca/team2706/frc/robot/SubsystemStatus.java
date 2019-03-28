@@ -32,7 +32,7 @@ public enum SubsystemStatus {
     /**
      * Finds the maximum error based on the lowest item in the enum
      *
-     * @param subsystemStatuses The stauses to compare
+     * @param subsystemStatuses The statuses to compare
      * @return The most severe subsystem status of those given
      */
     public static SubsystemStatus maxError(SubsystemStatus... subsystemStatuses) {

@@ -45,7 +45,7 @@ public class RunIntakeOnJoystick extends Command {
 
     @Override
     public void execute() {
-        double speed = controller.getRawAxis(triggerAxis);
+        double speed = controller.getRawAxis(triggerAxis) * 0.7;
         if (forward) {
             Intake.getInstance().runIntakeForward(speed);
         } else {

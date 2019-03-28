@@ -79,7 +79,7 @@ public class DriverAssistVisionTest {
      * is changed.
      */
     @Test
-    public void testGenerateTrajectoryCargoShipAndLoading(@Injectable("CARGO_AND_LOADING") DriverAssistVisionTarget target) {
+    public void testGenerateTrajectoryCargoShipAndLoading() {
         new Expectations() {{
             pigeon.getYawPitchRoll((double[]) any);
             returns(SendablesTest.makePigeonExpectation(-90.0),
@@ -124,7 +124,7 @@ public class DriverAssistVisionTest {
      * to as "absolute heading" in the code) is changed.
      */
     @Test
-    public void testGenerateTrajectoryRocket(@Injectable("ROCKET") DriverAssistVisionTarget target) {
+    public void testGenerateTrajectoryRocket() {
         new Expectations() {{
             pigeon.getYawPitchRoll((double[]) any);
             returns(SendablesTest.makePigeonExpectation(-30.0),
@@ -170,7 +170,7 @@ public class DriverAssistVisionTest {
      * to as "absolute heading" in the code) is changed.
      */
     @Test
-    public void testGenerateTrajectoryBall(@Injectable("BALL") DriverAssistVisionTarget target) {
+    public void testGenerateTrajectoryBall() {
         // Run the test
         double vRobotToTarget_CameraX = -5.0;
         double vRobotToTarget_CameraY = 7.0;

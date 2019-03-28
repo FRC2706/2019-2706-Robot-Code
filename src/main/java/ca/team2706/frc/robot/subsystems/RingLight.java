@@ -49,9 +49,11 @@ public class RingLight extends Subsystem {
         this.relay = light;
         addChild("Ring Light", relay);
 
-        Robot.setOnStateChange((state) -> {if(state == RobotState.AUTONOMOUS || state == RobotState.TELEOP) {
-            enableLight();
-        }});
+        Robot.setOnStateChange((state) -> {
+            if (state == RobotState.AUTONOMOUS || state == RobotState.TELEOP) {
+                enableLight();
+            }
+        });
     }
 
     /**
@@ -76,7 +78,7 @@ public class RingLight extends Subsystem {
      * Turns off the ring light.
      */
     public void disableLight() {
-        if(!Config.DISABLE_RING_LIGHT.value()) {
+        if (!Config.DISABLE_RING_LIGHT.value()) {
             relay.set(Relay.Value.kReverse);
         }
     }

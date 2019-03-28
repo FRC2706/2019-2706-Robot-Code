@@ -188,6 +188,11 @@ public class Config {
 
     public static final boolean DISABLE_WARNING = robotSpecific(true, true, true);
 
+    public static final double CONTROLLER_DEADBAND = 0.05;
+
+    public static final double CURVATURE_OVERRIDE = 0.25;
+
+
     public static final Path DEPLOY_DIR = Paths.get(System.getProperty("user.home"), "deploy");
 
     // #### Fluid constants ####

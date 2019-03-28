@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
+import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -17,6 +18,7 @@ public abstract class CurvatureDrive extends Command {
     private final Supplier<Double> curveSpeed;
     private final boolean initBrake;
     private final Supplier<Boolean> buttonPress;
+    private final boolean squareInputs;
 
     /**
      * Creates the arcade drive
@@ -26,7 +28,7 @@ public abstract class CurvatureDrive extends Command {
      * @param initBrake  Whether to start and end the command in brake or coast mode
      */
     protected CurvatureDrive(Supplier<Double> forwardVal, Supplier<Double> curveSpeed,
-                             boolean initBrake, Supplier<Boolean> buttonPress) {
+                             boolean initBrake, Supplier<Boolean> buttonPress, boolean squareInputs) {
         /*
            Ensure that this command is the only one to run on the drive base
            Requires must be included to use this command as a default command for the drive base
@@ -36,6 +38,7 @@ public abstract class CurvatureDrive extends Command {
         this.curveSpeed = curveSpeed;
         this.initBrake = initBrake;
         this.buttonPress = buttonPress;
+        this.squareInputs = squareInputs;
     }
 
     @Override
@@ -47,13 +50,21 @@ public abstract class CurvatureDrive extends Command {
 
     @Override
     public void execute() {
-        double rotation = (curveSpeed.get() > -0.05 && curveSpeed.get() < 0.05) ? 0 : curveSpeed.get();
-        boolean override = ((forwardVal.get() > -0.25 && forwardVal.get() < 0.25));
+        double forward = forwardVal.get();
+        double curve = curveSpeed.get();
+
+        if (squareInputs) {
+            curve *= curve < 0 ? -curve : curve;
+        }
+
+        double rotation = Math.abs(curve) < Config.CONTROLLER_DEADBAND ? 0 : curve;
+
+        boolean override = Math.abs(forward) < Config.CURVATURE_OVERRIDE;
 
         if (buttonPress.get()) {
-            DriveBase.getInstance().curvatureDrive(forwardVal.get() * 0.6, (override ? rotation / 2.5 : rotation), override);
+            DriveBase.getInstance().curvatureDrive(forward * 0.6, (override ? rotation / 2.5 : rotation), override);
         } else {
-            DriveBase.getInstance().curvatureDrive(forwardVal.get(), (override ? rotation / 2 : rotation), override);
+            DriveBase.getInstance().curvatureDrive(forward, (override ? rotation / 2 : rotation), override);
         }
     }
 

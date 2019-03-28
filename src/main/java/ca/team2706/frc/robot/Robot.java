@@ -79,11 +79,11 @@ public class Robot extends TimedRobot {
         }
 
         commands = new Command[]{
-                OI.getInstance().driveCommand,                                             // 0
+                null,                                                                      // 0
                 null,                                                                      // 1
                 null,                                                                      // 2
-                OI.getInstance().driveCommand,                                             // 3
-                OI.getInstance().driveCommand,                                             // 4
+                null,                                                                      // 3
+                null,                                                                      // 4
                 new DriveOffHab(),                                                         // 5
                 new LevelOneCentreHatch(),                                                 // 6
         };

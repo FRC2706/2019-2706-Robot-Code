@@ -33,7 +33,7 @@ import jaci.pathfinder.Waypoint;
  * positive angle is measured CCW
  */
 public class DriverAssistVision extends Command {
-    /*
+    /**
      * Timestamp from the vision system on the previous call to the command, used to assess if
      * the vision system is still running or is offline
      */
@@ -54,36 +54,36 @@ public class DriverAssistVision extends Command {
      */
     private boolean commandAborted;
 
-    /*
+    /**
      * Network table entry named "Driver", a boolean set to true to request to the vision
      * system to enter Driver mode, false otherwise. Targets are not detected in this mode.
      */
     private NetworkTableEntry driverEntry;
 
-    /*
+    /**
      * Network table entry named "Cargo", a boolean set to true to request to the vision
      * to detect ball targets, false otherwise
      */
     private NetworkTableEntry findCargoEntry;
 
-    /*
+    /**
      * Network table entry named "Tape", a boolean set to true to request to the vision
      * to detect tape targets, false otherwise
      */
     private NetworkTableEntry findTapeEntry;
 
-    /*
+    /**
      * Motion control system object providing functionality to follow a Pathfinder trajectory
      */
     private FollowTrajectory followTrajectory;
 
-    /*
+    /**
      * True if the generateTrajectoryRequest stage of execute() method has completed,
      * indicating that a command has been issued to generate a trajectory, false otherwise
      */
     private boolean generateTrajectoryRequestStageComplete = false;
 
-    /*
+    /**
      * Network table instance to get data from vision subsystem
      */
     private NetworkTableInstance inst;
@@ -103,13 +103,13 @@ public class DriverAssistVision extends Command {
      */
     private double ringLightOnDelayTime = 0.0;
 
-    /*
+    /**
      * Network table entry named TapeDetected, a boolean set to true if the tape target has been
      * detected by the vision system, false otherwise
      */
     private NetworkTableEntry tapeDetectedEntry;
 
-    /*
+    /**
      * Type of target that robot will move to (CARGO_AND_LOADING, ROCKET, or BALL)
      */
     private DriverAssistVisionTarget target;

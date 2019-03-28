@@ -55,7 +55,7 @@ public class DriverAssistVision extends Command {
     private boolean commandAborted;
 
     /*
-     * Network table entry named "Driver", a boolean set to true to request to the vision 
+     * Network table entry named "Driver", a boolean set to true to request to the vision
      * system to enter Driver mode, false otherwise. Targets are not detected in this mode.
      */
     private NetworkTableEntry driverEntry;
@@ -123,12 +123,12 @@ public class DriverAssistVision extends Command {
     /**
      * Creates driver assist command
      *
-     * @param DriverAssistVisionTarget target: The type of the destination target (CARGO_AND_LOADING, ROCKET, BALL)
+     * @param target: The type of the destination target (CARGO_AND_LOADING, ROCKET, BALL)
      */
     public DriverAssistVision(DriverAssistVisionTarget target) {
         this.target = target;
 
-        // Ensure that this command is the only one to run on the drive base
+        // Ensure that this command is the only one to run on the ring light subsystem.
         requires(RingLight.getInstance());
 
         setupNetworkTables();
@@ -146,7 +146,7 @@ public class DriverAssistVision extends Command {
         inst = NetworkTableInstance.getDefault();
         pathfinderTable = inst.getTable("PathFinder");
         chickenVisionTable = inst.getTable("ChickenVision");
-        if ((pathfinderTable == null) || (chickenVisionTable == null)) {
+        if (pathfinderTable == null || chickenVisionTable == null) {
             Log.d("DAV: Network tables not found, command aborted");
             commandAborted = true;
         }
@@ -163,52 +163,47 @@ public class DriverAssistVision extends Command {
         // make sure we don't go any further
         if (commandAborted) {
             Log.d("DAV: Command aborted, initialize() not run");
-            return;
         }
-
         // Check if vision has stopped for some unexpected reason
-        if (visionOffline()) {
+        else if (visionOffline()) {
             Log.d("DAV: Vision offline, command aborted");
             commandAborted = true;
-            return;
-        }
-    
-        commandAborted = false;
-        generateTrajectoryRequestStageComplete = false;
-        ringLightOnDelayTime = 0.0;
-        ringLightOnStageComplete = false;
-        
-        Log.d("DAV: Turning ring light on");
-        RingLight.getInstance().enableLight();
-    
-        Log.d("DAV: Getting entries for network table");
-        driverEntry = chickenVisionTable.getEntry("Driver");
-        findTapeEntry = chickenVisionTable.getEntry("Tape");
-        findCargoEntry = chickenVisionTable.getEntry("Cargo");
-        tapeDetectedEntry = chickenVisionTable.getEntry("tapeDetected");
-        if ((driverEntry == null) || (findTapeEntry == null) || (findCargoEntry == null) || (tapeDetectedEntry == null)) {
-            Log.d("DAV: Network table entries not set up, command aborted");
-            commandAborted = true;
-            return;
-        }
-
-        // Take vision out of driver mode and into target finding mode
-        if ((target == DriverAssistVisionTarget.CARGO_AND_LOADING) || (target == DriverAssistVisionTarget.ROCKET)) {
-            driverEntry.setBoolean(false);
-            findCargoEntry.setBoolean(false);
-            findTapeEntry.setBoolean(true);
-        } else if (target == DriverAssistVisionTarget.BALL) {
-            driverEntry.setBoolean(false);
-            findCargoEntry.setBoolean(true);
-            findTapeEntry.setBoolean(false);
         } else {
-            // target has unexpected value so abort command
-            Log.d ("DAV: Target value unexpected, aborting command");
-            commandAborted = true;
-            return;
-        }
+            commandAborted = false;
+            generateTrajectoryRequestStageComplete = false;
+            ringLightOnDelayTime = 0.0;
+            ringLightOnStageComplete = false;
 
-        Log.d("DAV: Exiting initialize()");
+            Log.d("DAV: Turning ring light on");
+            RingLight.getInstance().enableLight();
+
+            Log.d("DAV: Getting entries for network table");
+            driverEntry = chickenVisionTable.getEntry("Driver");
+            findTapeEntry = chickenVisionTable.getEntry("Tape");
+            findCargoEntry = chickenVisionTable.getEntry("Cargo");
+            tapeDetectedEntry = chickenVisionTable.getEntry("tapeDetected");
+            if ((driverEntry == null) || (findTapeEntry == null) || (findCargoEntry == null) || (tapeDetectedEntry == null)) {
+                Log.d("DAV: Network table entries not set up, command aborted");
+                commandAborted = true;
+            } else {
+                // Take vision out of driver mode and into target finding mode
+                if ((target == DriverAssistVisionTarget.CARGO_AND_LOADING) || (target == DriverAssistVisionTarget.ROCKET)) {
+                    driverEntry.setBoolean(false);
+                    findCargoEntry.setBoolean(false);
+                    findTapeEntry.setBoolean(true);
+                } else if (target == DriverAssistVisionTarget.BALL) {
+                    driverEntry.setBoolean(false);
+                    findCargoEntry.setBoolean(true);
+                    findTapeEntry.setBoolean(false);
+                } else {
+                    // target has unexpected value so abort command
+                    Log.d("DAV: Target value unexpected, aborting command");
+                    commandAborted = true;
+                }
+                Log.d("DAV: Exiting initialize()");
+            }
+
+        }
     }
 
     /**
@@ -216,7 +211,7 @@ public class DriverAssistVision extends Command {
      * stabilize, gets location of target, computes waypoints for Pathfinder, calls Pathfinder
      * to generate trajectory, and sends trajectory to motion control system to move robot
      * through trajectory. The method is divides into stages and successive calls of execute()
-     * progress through the stages. The computation of the trajectory is done in a separate 
+     * progress through the stages. The computation of the trajectory is done in a separate
      * thread.
      */
     @Override
@@ -225,70 +220,62 @@ public class DriverAssistVision extends Command {
         // measurement to stabilize before taking a reading
         if (!ringLightOnStageComplete) {
             ringLightOnDelayTime += Config.EXECUTE_PERIOD;
-            if (ringLightOnDelayTime < Config.RING_LIGHT_ON_DELAY.value()) {
-                return;
-            } else {
-                ringLightOnStageComplete = true;
-            }
+            ringLightOnStageComplete = ringLightOnDelayTime >= Config.RING_LIGHT_ON_DELAY.value();
         }
 
         // Stage 2: Generate Trajectory Request Stage: Wait for vision to find target within reasonable bounds 
         // then, in a separate thread, issue request to generate Pathfinder trajectory
         if (!generateTrajectoryRequestStageComplete) {
             boolean tapeDetected = tapeDetectedEntry.getBoolean(false);
-            if (!tapeDetected)
-                return;
-            else {
+            if (tapeDetected) {
                 Log.d("DAV: Tape detected");
 
-                // Read angle and position of target (wrt camera coordinate frame) computed by vision
-                // system from network table 
+                /*
+                Read angle and position of target (wrt camera coordinate frame) computed by vision
+                system from network table
+                */
                 NetworkTableEntry vectorCameraToTarget = pathfinderTable.getEntry("vectorCameraToTarget");
                 if (vectorCameraToTarget == null) {
                     Log.d("DAV: vectorCameraToTarget network table entry not available, command aborted");
                     commandAborted = true;
-                    return;
-                }
-                double[] vectorCameraToTarget_Camera = vectorCameraToTarget.getDoubleArray(new double[]{0, 0});
-                double angYawTargetWrtCameraLOSCWpos = vectorCameraToTarget_Camera[0];
-                double distanceCameraToTarget_Camera = vectorCameraToTarget_Camera[1];
-                Log.d("DAV: angYawTargetWrtCameraLOSCWpos [deg]: " + angYawTargetWrtCameraLOSCWpos);
-                Log.d("DAV: distanceCameraToTarget_Camera [ft]: " + distanceCameraToTarget_Camera);
+                } else {
+                    double[] vectorCameraToTarget_Camera = vectorCameraToTarget.getDoubleArray(new double[]{0, 0});
+                    double angYawTargetWrtCameraLOSCWpos = vectorCameraToTarget_Camera[0];
+                    double distanceCameraToTarget_Camera = vectorCameraToTarget_Camera[1];
+                    Log.d("DAV: angYawTargetWrtCameraLOSCWpos [deg]: " + angYawTargetWrtCameraLOSCWpos);
+                    Log.d("DAV: distanceCameraToTarget_Camera [ft]: " + distanceCameraToTarget_Camera);
 
-                // If distance to target is below a reasonable value, abort command completely 
-                if (distanceCameraToTarget_Camera < Config.VISION_DISTANCE_MIN.value()) {
-                    Log.d("DAV: Distance to target too low. Driver assist command aborted.");
-                    commandAborted = true;
-                    return;
-                }
+                    // If distance to target is below a reasonable value, abort command completely
+                    if (distanceCameraToTarget_Camera < Config.VISION_DISTANCE_MIN.value()) {
+                        Log.d("DAV: Distance to target too low. Driver assist command aborted.");
+                        commandAborted = true;
+                    } else {
+                        // If distance to target is above a reasonable value, it is likely a temporary glitch in the
+                        // vision measurement so return from the current execute() cycle but don't abort the command
+                        // so another reading can be taken on the next execute() call
+                        if (distanceCameraToTarget_Camera > Config.VISION_DISTANCE_MAX.value()) {
+                            Log.d("DAV: Distance to target too high. Rereading vision data.");
+                            return;
+                        }
 
-                // If distance to target is above a reasonable value, it is likely a temporary glitch in the
-                // vision measurement so return from the current execute() cycle but don't abort the command 
-                // so another reading can be taken on the next execute() call
-                if (distanceCameraToTarget_Camera > Config.VISION_DISTANCE_MAX.value()) {
-                    Log.d("DAV: Distance to target too high. Rereading vision data.");
-                    return;
-                }
+                        // Turn off ring light since we now have the data from vision
+                        Log.d("DAV: Turning ring light off");
+                        RingLight.getInstance().disableLight();
 
-                // Turn off ring light since we now have the data from vision
-                Log.d("DAV: Turning ring light off");
-                RingLight.getInstance().disableLight();
+                        // Send request to generate trajectory in a separate task to avoid execute() overruns
+                        Log.d("DAV: Generating trajectory");
+                        Runnable task = () ->
+                                generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, angYawTargetWrtCameraLOSCWpos);
+                        new Thread(task).start();
 
-                // Send request to generate trajectory in a separate task to avoid execute() overruns
-                Log.d("DAV: Generating trajectory");
-                Runnable task = new Runnable() {
-                    public void run() {
-                        generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, angYawTargetWrtCameraLOSCWpos);
+                        generateTrajectoryRequestStageComplete = true;
                     }
-                };
-                new Thread(task).start();
-
-                generateTrajectoryRequestStageComplete = true;
+                }
             }
         }
 
         // Stage 3: Command Robot to Follow Trajectory
-        if ((followTrajectory == null) && (trajectory != null)) {
+        if (followTrajectory == null && trajectory != null) {
             Log.d("DAV: Commanding robot to follow trajectory");
             followTrajectory = new FollowTrajectory(1.0, 100, trajectory);
             followTrajectory.start();
@@ -297,7 +284,7 @@ public class DriverAssistVision extends Command {
 
     @Override
     public boolean isFinished() {
-        return ( ((followTrajectory != null) && followTrajectory.isFinished()) || commandAborted);
+        return (((followTrajectory != null) && followTrajectory.isFinished()) || commandAborted);
     }
 
     @Override
@@ -310,8 +297,10 @@ public class DriverAssistVision extends Command {
             followTrajectory = null;
         }
 
-        // Ring light should already be off, but just make sure in case there were early exits
-        // due to errors
+        /*
+        Ring light should already be off, but just make sure in case there were early exits
+        due to errors
+        */
         RingLight.getInstance().disableLight();
 
         // Put vision back into driver mode
@@ -324,7 +313,7 @@ public class DriverAssistVision extends Command {
 
         // Vision group has requested that tapeDetected entry be set to false here
         tapeDetectedEntry = chickenVisionTable.getEntry("tapeDetected");
-        tapeDetectedEntry.setBoolean(false); 
+        tapeDetectedEntry.setBoolean(false);
     }
 
     /**
@@ -338,7 +327,7 @@ public class DriverAssistVision extends Command {
 
     /**
      * Gets the Pathfinder network table
-     * 
+     *
      * @return Pathfinder network table
      */
     public NetworkTable getPathfinderNetworkTable() {
@@ -347,7 +336,7 @@ public class DriverAssistVision extends Command {
 
     /**
      * Gets the ChickenVision network table
-     * 
+     *
      * @return ChickenVision network table
      */
     public NetworkTable getChickenVisionNetworkTable() {
@@ -360,7 +349,6 @@ public class DriverAssistVision extends Command {
      *
      * @param distanceCameraToTarget_Camera distance from camera to target [ft]
      * @param angYawTargetWrtCameraLOSCWpos yaw angle to target wrt camera line of sight, CW with increase angle [deg]
-     * @param target                        destination target (CARGO_AND_LOADING, ROCKET, or BALL)
      */
     public void generateTrajectoryRobotToTarget(double distanceCameraToTarget_Camera, double angYawTargetWrtCameraLOSCWpos) {
         /**
@@ -453,11 +441,11 @@ public class DriverAssistVision extends Command {
         double vTargetToFinal_RobotY = 0.0;
         double angRobotCurrent_Field = 0.0;
         if ((target == DriverAssistVisionTarget.CARGO_AND_LOADING) ||
-            (target == DriverAssistVisionTarget.ROCKET)                ) {
+                (target == DriverAssistVisionTarget.ROCKET)) {
             // Vector 3 is aligned with and facing away from target
             // Get current robot heading relative to field frame from IMU
             double angRobotHeadingCurrent_Field = DriveBase.getInstance().getAbsoluteHeading() % 360;
-            if(angRobotCurrent_Field < 0) {
+            if (angRobotCurrent_Field < 0) { // FIXME this if statement's conditions are always false.
                 angRobotCurrent_Field += 360;
             }
             Log.d("DAV: angRobotHeadingCurrent_Field: " + angRobotHeadingCurrent_Field);
@@ -651,7 +639,7 @@ public class DriverAssistVision extends Command {
         double videoTimestamp = videoTimestampEntry.getDouble(0.0);
         boolean offline = (videoTimestamp == videoTimestampPrev);
         videoTimestampPrev = videoTimestamp;
-        return(offline);
+        return (offline);
     }
 
     /**

@@ -95,7 +95,7 @@ public class CurvatureDriveTest {
             result = false;
         }};
 
-        CurvatureDrive curvatureDrive = new CurvatureDrive(forwardVal, curveSpeed, brake, buttonPress) {
+        CurvatureDrive curvatureDrive = new CurvatureDrive(forwardVal, curveSpeed, brake, buttonPress, false) {
             @Override
             public boolean isFinished() {
                 return false;

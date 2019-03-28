@@ -475,8 +475,8 @@ public class DriverAssistVision extends Command {
             // Vector 3 is aligned with and facing away from target
             // Get current robot heading relative to field frame from IMU
             double angRobotHeadingCurrent_Field = DriveBase.getInstance().getAbsoluteHeading() % 360;
-            if (angRobotCurrent_Field < 0) { // FIXME this if statement's conditions are always false.
-                angRobotCurrent_Field += 360;
+            if (angRobotHeadingCurrent_Field < 0) { // FIXME this if statement's conditions are always false.
+                angRobotHeadingCurrent_Field += 360;
             }
             Log.d("DAV: angRobotHeadingCurrent_Field: " + angRobotHeadingCurrent_Field);
 
@@ -502,8 +502,7 @@ public class DriverAssistVision extends Command {
             Log.d("DAV: vec_TargetToFinalX_Field: " + vTargetToFinal_FieldX);
             Log.d("DAV: vTargetToFinal_FieldY: " + vTargetToFinal_FieldY);
 
-            // Vector 3: vTargetToFinal_Robot: Vector from target to final robot position in robot frame
-            //           (need to do a coordinate frame transformation on vTargetToFinal_Field)
+            // Need to do a coordinate frame transformation on vTargetToFinal_Field
             // Note: angRobotCurrent_Field is the current angle from the x axis of robot frame with respect to the
             //       x axis of the field frame, and the x axis of the robot frame is 90deg less than the robot heading
             //       which points along the y axis by definition

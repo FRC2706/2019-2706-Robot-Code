@@ -39,7 +39,7 @@ public class Pneumatics extends Subsystem {
     }
 
     /**
-     * Initializes a new IntkaePneumatics instance if not already initialized.
+     * Initializes a new IntakePneumatics instance if not already initialized.
      */
     public static SubsystemStatus init() {
         if (currentInstance == null) {

@@ -8,10 +8,7 @@ import java.util.function.Supplier;
 
 /**
  * Abstract class to extend when using curve drive, allows for basic Command architecture
- */
-
-/**
- * Allows the WPI Curvature Drive to be used  with passed values
+ * Allows the WPI Curvature Drive to be used with passed values
  */
 public abstract class CurvatureDrive extends Command {
     private final Supplier<Double> forwardVal;

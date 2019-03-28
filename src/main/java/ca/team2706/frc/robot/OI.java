@@ -3,6 +3,7 @@ package ca.team2706.frc.robot;
 import ca.team2706.frc.robot.commands.drivebase.AbsoluteRotateWithGyro;
 import ca.team2706.frc.robot.commands.drivebase.CurvatureDriveWithJoystick;
 import ca.team2706.frc.robot.commands.drivebase.DriverAssistVision;
+import ca.team2706.frc.robot.commands.drivebase.DriverAssistVision.DriverAssistVisionTarget;
 import ca.team2706.frc.robot.commands.intake.AfterEjectConditional;
 import ca.team2706.frc.robot.commands.intake.EjectConditional;
 import ca.team2706.frc.robot.commands.intake.arms.LowerArmsSafely;
@@ -135,9 +136,11 @@ public class OI {
         new FluidButton(driverStick, Config.INTERRUPT_BUTTON)
                 .whenPressed(new InstantCommand(Robot::interruptCurrentCommand));
         new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING)
-                .whenPressed(new DriverAssistVision(true, false));
+                .whenHeld(new DriverAssistVision(DriverAssistVisionTarget.CARGO_AND_LOADING));
         new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_ROCKET_BINDING)
-                .whenPressed(new DriverAssistVision(false, true));
+                .whenHeld(new DriverAssistVision(DriverAssistVisionTarget.ROCKET));
+        new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_BALL_BINDING)
+                .whenHeld(new DriverAssistVision(DriverAssistVisionTarget.BALL));
         new FluidButton(driverStick, Config.FACE_FORWARD_BINDING)
                 .whenHeld(new AbsoluteRotateWithGyro(0.6, 90, Integer.MAX_VALUE));
         new FluidButton(driverStick, Config.FACE_RIGHT_BINDING)

@@ -303,7 +303,7 @@ public class Config {
     }
 
     /**
-     * Createds a new config manager for handling config tasks.
+     * Creates a new config manager for handling config tasks.
      *
      * @param ntTable The networktable instance to be used.
      */

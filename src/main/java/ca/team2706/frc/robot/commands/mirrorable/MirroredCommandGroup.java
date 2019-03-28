@@ -71,7 +71,7 @@ public class MirroredCommandGroup extends CommandGroup implements IMirrorable<Co
     }
 
     /**
-     * Gets the mirrored version of this command group by mirroroing sub commands (doesn't mirror an already mirrored command)
+     * Gets the mirrored version of this command group by mirroring sub commands (doesn't mirror an already mirrored command)
      */
     public MirroredCommandGroup mirror() {
         if (mirrored) {

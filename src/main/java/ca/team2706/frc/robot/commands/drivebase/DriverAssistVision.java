@@ -40,7 +40,7 @@ public class DriverAssistVision extends Command {
      * Value of angYawTargetWrtCameraLOSCWposAngle (yaw angle to target wrt camera line of sight in degrees)
      * from the previous time the command was issued.
      */
-    private double angYawTargetWrtCameraLOSCWposPrev = 0.0;
+    private double angYawTargetWrtCameraLOSCWposPrev;
 
     private boolean commandAborted;
 
@@ -48,7 +48,7 @@ public class DriverAssistVision extends Command {
      * Value of distanceCameraToTarget_Camera (distance from camera frame origin to target in feet)
      * from the previous time the command was issued.
      */
-    private double distanceCameraToTarget_CameraPrev = 0.0;
+    private double distanceCameraToTarget_CameraPrev;
 
     /**
      * True if target is cargo ship or loading bay
@@ -79,12 +79,12 @@ public class DriverAssistVision extends Command {
      * True if trajectory has been generated for this command, false otherwise.
      * (This will be removed when motion control functionality is implemented.)
      */
-    private boolean trajGenerated = false;
+    private boolean trajGenerated;
 
     /**
      * True if vision system has been assessed to be offline
      */
-    boolean visionOffline = false;
+    private boolean visionOffline;
 
     /**
      * Creates empty driver assist command object (needed for unit testing framework only)

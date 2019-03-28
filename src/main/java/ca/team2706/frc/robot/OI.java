@@ -125,8 +125,6 @@ public class OI {
         LiftPosition position = new LiftPosition();
         button.whenHeld(new EjectConditional(position));
         button.whenReleased(new AfterEjectConditional(position::getPosition));
-        new FluidButton(controlStick, Config.AUTO_INTAKE_CARGO_BINDING)
-                .whenHeld(new AutoIntakeCargo());
         new FluidButton(controlStick, Config.TOGGLE_RING_LIGHT_BINDING)
                 .whenPressed(new ToggleRingLight());
         new FluidButton(controlStick, Config.SLIGHTLY_LIFT_LIFT_BINDING)
@@ -135,7 +133,8 @@ public class OI {
         // ---- Driver controls ----
 
         // The button to use to interrupt the robots current command
-        new FluidButton(driverStick, Config.INTERRUPT_BUTTON).whenPressed(new InstantCommand(Robot::interruptCurrentCommand));
+        new FluidButton(driverStick, Config.INTERRUPT_BUTTON)
+                .whenPressed(new InstantCommand(Robot::interruptCurrentCommand));
         new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING)
                 .whenHeld(new DriverAssistVision(DriverAssistVisionTarget.CARGO_AND_LOADING));
         new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_ROCKET_BINDING)

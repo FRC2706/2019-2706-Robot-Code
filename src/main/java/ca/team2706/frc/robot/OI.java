@@ -94,11 +94,11 @@ public class OI {
         Lift.getInstance().setDefaultCommand(liftCommand);
 
         // ---- Operator controls ----
-        new FluidButton(controlStick, Config.INTAKE_BACKWARD_BINDING, 0.05)
+        new FluidButton(controlStick, Config.INTAKE_BACKWARD_BINDING, Config.CONTROLLER_DEADBAND)
                 .whenHeld(new RunIntakeOnJoystick(controlStick, Config.INTAKE_BACKWARD_BINDING, false));
-        new FluidButton(controlStick, Config.INTAKE_FORWARD_BINDING, 0.05)
+        new FluidButton(controlStick, Config.INTAKE_FORWARD_BINDING, Config.CONTROLLER_DEADBAND)
                 .whenHeld(new RunIntakeOnJoystick(controlStick, Config.INTAKE_FORWARD_BINDING, true));
-        new FluidButton(controlStick, Config.MOVE_LIFT_BINDING, 0.05)
+        new FluidButton(controlStick, Config.MOVE_LIFT_BINDING, Config.CONTROLLER_DEADBAND)
                 .whenHeld(new MoveLiftJoystickVelocity(controlStick, Config.MOVE_LIFT_BINDING, Config.OVERRIDE_LIFT_BINDING));
         new FluidButton(controlStick, Config.LIFT_ARMS_BINDING)
                 .whenPressed(new RaiseArmsSafely());
@@ -124,8 +124,6 @@ public class OI {
         LiftPosition position = new LiftPosition();
         button.whenHeld(new EjectConditional(position));
         button.whenReleased(new AfterEjectConditional(position::getPosition));
-        new FluidButton(controlStick, Config.AUTO_INTAKE_CARGO_BINDING)
-                .whenHeld(new AutoIntakeCargo());
         new FluidButton(controlStick, Config.TOGGLE_RING_LIGHT_BINDING)
                 .whenPressed(new ToggleRingLight());
         new FluidButton(controlStick, Config.SLIGHTLY_LIFT_LIFT_BINDING)
@@ -134,7 +132,8 @@ public class OI {
         // ---- Driver controls ----
 
         // The button to use to interrupt the robots current command
-        new FluidButton(driverStick, Config.INTERRUPT_BUTTON).whenPressed(new InstantCommand(Robot::interruptCurrentCommand));
+        new FluidButton(driverStick, Config.INTERRUPT_BUTTON)
+                .whenPressed(new InstantCommand(Robot::interruptCurrentCommand));
         new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING)
                 .whenPressed(new DriverAssistVision(true, false));
         new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_ROCKET_BINDING)

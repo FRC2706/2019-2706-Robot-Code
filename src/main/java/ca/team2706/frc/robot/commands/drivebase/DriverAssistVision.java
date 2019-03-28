@@ -475,9 +475,6 @@ public class DriverAssistVision extends Command {
             // Vector 3 is aligned with and facing away from target
             // Get current robot heading relative to field frame from IMU
             double angRobotHeadingCurrent_Field = DriveBase.getInstance().getAbsoluteHeading() % 360;
-            if (angRobotHeadingCurrent_Field < 0) { // FIXME this if statement's conditions are always false.
-                angRobotHeadingCurrent_Field += 360;
-            }
             Log.d("DAV: angRobotHeadingCurrent_Field: " + angRobotHeadingCurrent_Field);
 
             // Compute final desired robot heading relative to field

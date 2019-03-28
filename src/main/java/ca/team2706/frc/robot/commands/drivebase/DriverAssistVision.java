@@ -173,6 +173,7 @@ public class DriverAssistVision extends Command {
             generateTrajectoryRequestStageComplete = false;
             ringLightOnDelayTime = 0.0;
             ringLightOnStageComplete = false;
+            trajectory = null;
 
             Log.d("DAV: Turning ring light on");
             RingLight.getInstance().enableLight();
@@ -185,24 +186,53 @@ public class DriverAssistVision extends Command {
             if ((driverEntry == null) || (findTapeEntry == null) || (findCargoEntry == null) || (tapeDetectedEntry == null)) {
                 Log.d("DAV: Network table entries not set up, command aborted");
                 commandAborted = true;
-            } else {
-                // Take vision out of driver mode and into target finding mode
-                if ((target == DriverAssistVisionTarget.CARGO_AND_LOADING) || (target == DriverAssistVisionTarget.ROCKET)) {
-                    driverEntry.setBoolean(false);
-                    findCargoEntry.setBoolean(false);
-                    findTapeEntry.setBoolean(true);
-                } else if (target == DriverAssistVisionTarget.BALL) {
-                    driverEntry.setBoolean(false);
-                    findCargoEntry.setBoolean(true);
-                    findTapeEntry.setBoolean(false);
-                } else {
-                    // target has unexpected value so abort command
-                    Log.d("DAV: Target value unexpected, aborting command");
-                    commandAborted = true;
-                }
-                Log.d("DAV: Exiting initialize()");
+                return;
             }
 
+            // Take vision out of driver mode and into target finding mode
+            if ((target == DriverAssistVisionTarget.CARGO_AND_LOADING) || (target == DriverAssistVisionTarget.ROCKET)) {
+                driverEntry.setBoolean(false);
+                findCargoEntry.setBoolean(false);
+                findTapeEntry.setBoolean(true);
+            } else if (target == DriverAssistVisionTarget.BALL) {
+                driverEntry.setBoolean(false);
+                findCargoEntry.setBoolean(true);
+                findTapeEntry.setBoolean(false);
+            } else {
+                commandAborted = false;
+                generateTrajectoryRequestStageComplete = false;
+                ringLightOnDelayTime = 0.0;
+                ringLightOnStageComplete = false;
+
+                Log.d("DAV: Turning ring light on");
+                RingLight.getInstance().enableLight();
+
+                Log.d("DAV: Getting entries for network table");
+                driverEntry = chickenVisionTable.getEntry("Driver");
+                findTapeEntry = chickenVisionTable.getEntry("Tape");
+                findCargoEntry = chickenVisionTable.getEntry("Cargo");
+                tapeDetectedEntry = chickenVisionTable.getEntry("tapeDetected");
+                if ((driverEntry == null) || (findTapeEntry == null) || (findCargoEntry == null) || (tapeDetectedEntry == null)) {
+                    Log.d("DAV: Network table entries not set up, command aborted");
+                    commandAborted = true;
+                } else {
+                    // Take vision out of driver mode and into target finding mode
+                    if ((target == DriverAssistVisionTarget.CARGO_AND_LOADING) || (target == DriverAssistVisionTarget.ROCKET)) {
+                        driverEntry.setBoolean(false);
+                        findCargoEntry.setBoolean(false);
+                        findTapeEntry.setBoolean(true);
+                    } else if (target == DriverAssistVisionTarget.BALL) {
+                        driverEntry.setBoolean(false);
+                        findCargoEntry.setBoolean(true);
+                        findTapeEntry.setBoolean(false);
+                    } else {
+                        // target has unexpected value so abort command
+                        Log.d("DAV: Target value unexpected, aborting command");
+                        commandAborted = true;
+                    }
+                    Log.d("DAV: Exiting initialize()");
+                }
+            }
         }
     }
 

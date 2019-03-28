@@ -177,6 +177,7 @@ public class DriverAssistVision extends Command {
         generateTrajectoryRequestStageComplete = false;
         ringLightOnDelayTime = 0.0;
         ringLightOnStageComplete = false;
+        trajectory = null;
         
         Log.d("DAV: Turning ring light on");
         RingLight.getInstance().enableLight();

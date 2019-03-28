@@ -206,7 +206,7 @@ public class Config {
 
     public static final FluidConstant<Double> DRIVE_MOTION_MAGIC_P = constant("drive-mm-P", 0.4096);
     public static final FluidConstant<Double> DRIVE_MOTION_MAGIC_I = constant("drive-mm-I", 0.0);
-    public static final FluidConstant<Double> DRIVE_MOTION_MAGIC_D = constant("drive-mm-D", 1.0);
+    public static final FluidConstant<Double> DRIVE_MOTION_MAGIC_D = constant("drive-mm-D", 6.5);
     public static final FluidConstant<Double> DRIVE_MOTION_MAGIC_F = constant("drive-mm-F", 0.397);
 
     public static final FluidConstant<Double> DRIVEBASE_MOTION_MAGIC_CRUISE_VELOCITY = constant("mm-drivebase-cruise-velocity", 8.0);
@@ -279,7 +279,7 @@ public class Config {
     public static final FluidConstant<Double> CARGO_CAPTURED_IDEAL_IR_VOLTAGE = constant("cargo-ideal-ir-voltage", 0.29);
 
     public static final FluidConstant<Double> TRAJ_DELTA_TIME = constant("traj-delta-time", 0.05);
-    public static final FluidConstant<Double> VISION_ASSIST_MAX_VELOCITY = constant("robot-max-vel", 6.0);
+    public static final FluidConstant<Double> VISION_ASSIST_MAX_VELOCITY = constant("robot-max-vel", 2.0);
     public static final FluidConstant<Double> VISION_ASSIST_MAX_ACCELERATION = constant("robot-max-acc", 12.0);
     public static final FluidConstant<Double> VISION_ASSIST_MAX_JERK = constant("robot-max-jerk", 60.0);
     public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTX = constant("robottocamera-robotx", -0.25);
@@ -291,7 +291,11 @@ public class Config {
     public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_BALL = constant("target-offset-distance-ball", 0.75);
     public static final FluidConstant<Double> ROBOT_START_ANGLE = constant("robot-angle-deg", 90.0);
     public static final FluidConstant<Double> ROBOT_HALF_LENGTH = constant("robot_length", 1.35);
-    public static final FluidConstant<Double> RING_LIGHT_ON_DELAY = constant("ringlight_on_delay", 1.0);
+    public static final FluidConstant<Double> RING_LIGHT_ON_DELAY = constant("ringlight_on_delay", 0.25);
+
+    public static final FluidConstant<Double> CURVE_ADJUSTMENT = constant("curve-adjustment", 0.0105);
+
+    public static final FluidConstant<Boolean> DISABLE_RING_LIGHT = constant("disable-ring-light", true);
 
     // ### Methods, fields and Constructors ###
     /**

@@ -37,7 +37,7 @@ public class Lift extends Subsystem {
      */
     private static final int[] HATCH_SETPOINTS = {
             0, // Bottom position
-            2125, // lowest hatch deploy
+            2000, // lowest hatch deploy
             27138, // middle hatch
             53500 // highest hatch
     };

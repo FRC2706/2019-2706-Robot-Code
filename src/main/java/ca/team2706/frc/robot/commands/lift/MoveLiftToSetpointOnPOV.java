@@ -93,6 +93,7 @@ public class MoveLiftToSetpointOnPOV extends Command {
     public void end() {
         Lift.getInstance().stop();
         lastPressedBound = null;
+        currentSetpoint = -1;
     }
 
     /**

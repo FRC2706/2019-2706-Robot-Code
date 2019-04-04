@@ -59,8 +59,16 @@ public abstract class CurvatureDrive extends Command {
         boolean override = Math.abs(forward) < Config.CURVATURE_OVERRIDE;
 
         if (buttonPress.get()) {
+            if(!DriveBase.getInstance().isBrakeMode()) {
+                DriveBase.getInstance().setBrakeMode(true);
+            }
+
             DriveBase.getInstance().curvatureDrive(forward * 0.6, (override ? rotation / 2.5 : rotation), override);
         } else {
+            if(DriveBase.getInstance().isBrakeMode()) {
+                DriveBase.getInstance().setBrakeMode(false);
+            }
+
             DriveBase.getInstance().curvatureDrive(forward, (override ? rotation / 2 : rotation), override);
         }
     }

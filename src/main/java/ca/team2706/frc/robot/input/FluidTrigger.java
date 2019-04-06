@@ -51,7 +51,7 @@ public abstract class FluidTrigger extends ETrigger {
      * @return True if any of the buttons/triggers/axis are considered pressed, false otherwise.
      */
     public static boolean areAnyActive(GenericHID controller, final double minAxisActivation, XboxValue... values) {
-        return Arrays.stream(values).anyMatch(xboxValue -> FluidButton.determineIfActivated(controller, xboxValue.getPort(), xboxValue.getInputType(), minAxisActivation));
+        return Arrays.stream(values).anyMatch(xboxValue -> EButton.determineIfActivated(controller, xboxValue.getPort(), xboxValue.getInputType(), minAxisActivation));
     }
 
     /**
@@ -76,7 +76,7 @@ public abstract class FluidTrigger extends ETrigger {
      * @return True if any of the buttons/triggers/axis are considered pressed, false otherwise.
      */
     public static boolean areAllActive(GenericHID controller, final double minAxisActivation, XboxValue... values) {
-        return Arrays.stream(values).allMatch(xboxValue -> FluidButton.determineIfActivated(controller, xboxValue.getPort(), xboxValue.getInputType(), minAxisActivation));
+        return Arrays.stream(values).allMatch(xboxValue -> EButton.determineIfActivated(controller, xboxValue.getPort(), xboxValue.getInputType(), minAxisActivation));
     }
 
     /**

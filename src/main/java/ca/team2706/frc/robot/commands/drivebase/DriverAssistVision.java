@@ -16,7 +16,7 @@ import jaci.pathfinder.Waypoint;
  * Command for 2-D driver assist using vision
  * <p>
  * This will drive the robot from its current position/heading to one of the following
- * positon/headings based on location data provided by the vision system:
+ * position/headings based on location data provided by the vision system:
  * 1) in front of and aligned with the nearest target either on the cargo ship, loading
  * bay, or rocket ship offset by a distance in the Config class given by
  * TARGET_OFFSET_DISTANCE_<TARGET>, where <TARGET> is one of CARGO_AND_LOADING or

@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import mockit.*;
 import org.junit.Before;
 import org.junit.Test;
+import util.Util;
 
 import static org.junit.Assert.*;
 
@@ -55,11 +56,13 @@ public class StraightDriveTest {
     private SensorCollection sensorCollection;
 
     @Before
-    public void setUp() {
+    public void setUp() throws NoSuchFieldException, IllegalAccessException {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
         }};
+
+        Util.resetSubsystems();
     }
 
     /**

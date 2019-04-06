@@ -360,6 +360,7 @@ public class DriveBase extends Subsystem {
             rightFrontMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
             rightFrontMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
             rightFrontMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value());
+            rightFrontMotor.config_kF(0, 0);
         }
 
         rightFrontMotor.config_kP(1, Config.PIGEON_KP.value());
@@ -379,7 +380,7 @@ public class DriveBase extends Subsystem {
     /**
      * Selects encoders for each wheel and configures the gyro as an auxiliary sensor for each wheel
      */
-    private void selectEncodersGyro() {
+    private void selectEncodersGyro(boolean motionProfile) {
         resetTalonConfiguration();
 
         leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_SHORT);
@@ -410,23 +411,38 @@ public class DriveBase extends Subsystem {
         rightFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value(), Config.CAN_SHORT);
         leftFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value(), Config.CAN_SHORT);
 
-        rightFrontMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
-        rightFrontMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
-        rightFrontMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value());
+        if (motionProfile) {
+            rightFrontMotor.config_kP(0, Config.DRIVE_MOTION_MAGIC_P.value());
+            rightFrontMotor.config_kI(0, Config.DRIVE_MOTION_MAGIC_I.value());
+            rightFrontMotor.config_kD(0, Config.DRIVE_MOTION_MAGIC_D.value());
+            rightFrontMotor.config_kF(0, Config.DRIVE_MOTION_MAGIC_F.value());
 
-        rightFrontMotor.config_kP(1, Config.PIGEON_KP.value());
-        rightFrontMotor.config_kI(1, Config.PIGEON_KI.value());
-        rightFrontMotor.config_kD(1, Config.PIGEON_KD.value());
-        rightFrontMotor.config_kF(1, Config.PIGEON_KF.value());
+            leftFrontMotor.config_kP(0, Config.DRIVE_MOTION_MAGIC_P.value());
+            leftFrontMotor.config_kI(0, Config.DRIVE_MOTION_MAGIC_I.value());
+            leftFrontMotor.config_kD(0, Config.DRIVE_MOTION_MAGIC_D.value());
+            rightFrontMotor.config_kF(0, Config.DRIVE_MOTION_MAGIC_F.value());
+        } else {
+            rightFrontMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
+            rightFrontMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
+            rightFrontMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value());
+            rightFrontMotor.config_kF(0, 0);
 
-        leftFrontMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
-        leftFrontMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
-        leftFrontMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value());
+            leftFrontMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
+            leftFrontMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
+            leftFrontMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value());
+            leftFrontMotor.config_kF(0, 0);
+
+        }
 
         leftFrontMotor.config_kP(1, Config.PIGEON_KP.value());
         leftFrontMotor.config_kI(1, Config.PIGEON_KI.value());
         leftFrontMotor.config_kD(1, Config.PIGEON_KD.value());
         leftFrontMotor.config_kF(1, Config.PIGEON_KF.value());
+
+        rightFrontMotor.config_kP(1, Config.PIGEON_KP.value());
+        rightFrontMotor.config_kI(1, Config.PIGEON_KI.value());
+        rightFrontMotor.config_kD(1, Config.PIGEON_KD.value());
+        rightFrontMotor.config_kF(1, Config.PIGEON_KF.value());
 
         rightFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
         leftFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
@@ -584,7 +600,7 @@ public class DriveBase extends Subsystem {
             setDisabledMode();
         } else if (driveMode != DriveMode.MotionProfile2Wheel) {
             stop();
-            selectEncodersGyro();
+            selectEncodersGyro(true);
             configMotionProfile();
             reset();
             rightFrontMotor.startMotionProfile(motionProfilePointStreamRight, 20, ControlMode.MotionProfileArc);
@@ -839,6 +855,7 @@ public class DriveBase extends Subsystem {
             points[i].timeDur = time[i];
             points[i].zeroPos = i == 0;
             points[i].useAuxPID = true;
+            points[i].auxiliaryArbFeedFwd = Config.CURVE_ADJUSTMENT.value() * vel[i] / Config.DRIVEBASE_MOTION_MAGIC_CRUISE_VELOCITY.value();
 
             points[i].isLastPoint = (i + 1) == size;
         }

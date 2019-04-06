@@ -123,8 +123,9 @@ public class MotionMagicVisionTest {
             relay.set(Relay.Value.kForward);
             times = 1;
 
+            // FIXME: Dependant on whether Config.DISABLE_RING_LIGHT is true
             relay.set(Relay.Value.kReverse);
-            times = 1;
+            minTimes = 0;
         }};
     }
 

@@ -117,11 +117,10 @@ public class Config {
             INVERT_LIFT_MOTOR = robotSpecific(false, false, false),
             ENABLE_LIFT_CURRENT_LIMIT = robotSpecific(true, true, true);
 
-    public static int
-            /**
-             * Maximum lift current, in amps.
-             */
-            MAX_LIFT_CURRENT = 0,
+    /**
+     * Maximum lift current, in amps.
+     */
+    public static int MAX_LIFT_CURRENT = 0,
     /**
      * How long the lift current has to be over the current limit before it is cut out.
      */
@@ -202,11 +201,18 @@ public class Config {
 
     public static final double MAX_INTAKE_SPEED = 1.0;
 
+    public static final double EXECUTE_PERIOD = 0.02;
+
     public static final double LOG_PERIOD = robotSpecific(0.02, 0.02, 0.02, Double.POSITIVE_INFINITY);
 
     public static final double WHEELBASE_WIDTH = robotSpecific(2.0, 2.0, 2.0);
 
     public static final boolean DISABLE_WARNING = robotSpecific(true, true, true);
+
+    public static final double CONTROLLER_DEADBAND = 0.05;
+
+    public static final double CURVATURE_OVERRIDE = 0.25;
+
 
     public static final Path DEPLOY_DIR = Paths.get(System.getProperty("user.home"), "deploy");
 
@@ -251,12 +257,12 @@ public class Config {
     public static final FluidConstant<Double> TURN_D = constant("turn-D", 0.0);
 
     public static final FluidConstant<Double>
-            LIFT_P = constant("lift-P", 0.5),
+            LIFT_P = constant("lift-P", 0.9),
             LIFT_I = constant("lift-I", 0.0),
             LIFT_D = constant("lift-D", 0.0),
             LIFT_F = constant("lift-F", 0.0);
 
-    public static final FluidConstant<Double> PIGEON_KP = constant("pigeon-kp", 2.0);
+    public static final FluidConstant<Double> PIGEON_KP = constant("pigeon-kp", 0.8);
     public static final FluidConstant<Double> PIGEON_KI = constant("pigeon-ki", 0.0);
     public static final FluidConstant<Double> PIGEON_KD = constant("pigeon-kd", 4.0);
     public static final FluidConstant<Double> PIGEON_KF = constant("pigeon-kf", 0.0);
@@ -273,9 +279,11 @@ public class Config {
             TOGGLE_RING_LIGHT_BINDING = constant("toggle-ring-light-binding", XboxValue.XBOX_START_BUTTON.getNTString()),
             OVERRIDE_LIFT_BINDING = constant("override-lift-binding", XboxValue.XBOX_LEFT_AXIS_BUTTON.getNTString()),
             DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING =
-                    constant("driver-assist-vision-cargo-loading-binding", XboxValue.XBOX_X_BUTTON.getNTString()),
+                    constant("driver-assist-vision-cargo-loading-binding", XboxValue.XBOX_RB_BUTTON.getNTString()),
             DRIVER_ASSIST_VISION_ROCKET_BINDING =
-                    constant("driver-assist-vision-rocket-binding", XboxValue.XBOX_B_BUTTON.getNTString()),
+                    constant("driver-assist-vision-rocket-binding", XboxValue.XBOX_BACK_RIGHT_TRIGGER.getNTString()),
+            DRIVER_ASSIST_VISION_BALL_BINDING =
+                    constant("driver-assist-vision-ball-binding", XboxValue.XBOX_A_BUTTON.getNTString()),
             DRIVER_ASSIST_LASER_BINDING =
                     constant("driver-assist-laser-binding", XboxValue.XBOX_Y_BUTTON.getNTString()),
             FACE_FORWARD_BINDING = constant("face-forward-binding", XboxValue.XBOX_POV_UP.getNTString()),
@@ -298,18 +306,24 @@ public class Config {
      */
     public static final FluidConstant<Double> CARGO_CAPTURED_IDEAL_IR_VOLTAGE = constant("cargo-ideal-ir-voltage", 0.29);
 
-    public static final FluidConstant<Double> TRAJ_DELTA_TIME = constant("traj-delta-time", 0.1);
-    public static final FluidConstant<Double> VISION_ASSIST_MAX_VELOCITY = constant("robot-max-vel", 3.0);
-    public static final FluidConstant<Double> VISION_ASSIST_MAX_ACCELERATION = constant("robot-max-acc", 6.0);
+    public static final FluidConstant<Double> TRAJ_DELTA_TIME = constant("traj-delta-time", 0.05);
+    public static final FluidConstant<Double> VISION_ASSIST_MAX_VELOCITY = constant("robot-max-vel", 2.0);
+    public static final FluidConstant<Double> VISION_ASSIST_MAX_ACCELERATION = constant("robot-max-acc", 12.0);
     public static final FluidConstant<Double> VISION_ASSIST_MAX_JERK = constant("robot-max-jerk", 60.0);
-
     public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTX = constant("robottocamera-robotx", -0.25);
-    public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTY = constant("robottocamera-roboty", 0.25);
+    public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTY = constant("robottocamera-roboty", 0.15);
+    public static final FluidConstant<Double> VISION_DISTANCE_MIN = constant("vision-distance-min", 0.5);
+    public static final FluidConstant<Double> VISION_DISTANCE_MAX = constant("vision-distance-max", 20.0);
+    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_CARGO_AND_LOADING = constant("target-offset-distance-cargo-and-loading", 0.25);
+    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_ROCKET = constant("target-offset-distance-rocket", 0.25);
+    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_BALL = constant("target-offset-distance-ball", 0.75);
+    public static final FluidConstant<Double> ROBOT_START_ANGLE = constant("robot-angle-deg", 90.0);
+    public static final FluidConstant<Double> ROBOT_HALF_LENGTH = constant("robot_length", 1.35);
+    public static final FluidConstant<Double> RING_LIGHT_ON_DELAY = constant("ringlight_on_delay", 0.25);
 
-    public static final FluidConstant<Double> VISION_DISTANCE_MIN = constant("target-offset_distance", 0.5);
-    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE = constant("target-offset_distance", 0.5);
+    public static final FluidConstant<Double> CURVE_ADJUSTMENT = constant("curve-adjustment", 0.0105);
 
-    public static final FluidConstant<Double> ROBOT_START_ANGLE = constant("robot-start-angle-deg", 90.0);
+    public static final FluidConstant<Boolean> DISABLE_RING_LIGHT = constant("disable-ring-light", true);
 
     // ## Climber constants ##
     /**

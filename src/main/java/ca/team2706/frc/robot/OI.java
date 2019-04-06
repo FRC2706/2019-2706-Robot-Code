@@ -6,6 +6,7 @@ import ca.team2706.frc.robot.commands.climber.sequences.Climb;
 import ca.team2706.frc.robot.commands.drivebase.AbsoluteRotateWithGyro;
 import ca.team2706.frc.robot.commands.drivebase.CurvatureDriveWithJoystick;
 import ca.team2706.frc.robot.commands.drivebase.DriverAssistVision;
+import ca.team2706.frc.robot.commands.drivebase.DriverAssistVision.DriverAssistVisionTarget;
 import ca.team2706.frc.robot.commands.intake.AfterEjectConditional;
 import ca.team2706.frc.robot.commands.intake.EjectConditional;
 import ca.team2706.frc.robot.commands.intake.arms.LowerArmsSafely;
@@ -97,11 +98,11 @@ public class OI {
         Lift.getInstance().setDefaultCommand(liftCommand);
 
         // ---- Operator controls ----
-        new FluidButton(controlStick, Config.INTAKE_BACKWARD_BINDING, 0.05)
+        new FluidButton(controlStick, Config.INTAKE_BACKWARD_BINDING, Config.CONTROLLER_DEADBAND)
                 .whenHeld(new RunIntakeOnJoystick(controlStick, Config.INTAKE_BACKWARD_BINDING, false));
-        new FluidButton(controlStick, Config.INTAKE_FORWARD_BINDING, 0.05)
+        new FluidButton(controlStick, Config.INTAKE_FORWARD_BINDING, Config.CONTROLLER_DEADBAND)
                 .whenHeld(new RunIntakeOnJoystick(controlStick, Config.INTAKE_FORWARD_BINDING, true));
-        new FluidButton(controlStick, Config.MOVE_LIFT_BINDING, 0.05)
+        new FluidButton(controlStick, Config.MOVE_LIFT_BINDING, Config.CONTROLLER_DEADBAND)
                 .whenHeld(new MoveLiftJoystickVelocity(controlStick, Config.MOVE_LIFT_BINDING, Config.OVERRIDE_LIFT_BINDING));
         new FluidButton(controlStick, Config.LIFT_ARMS_BINDING)
                 .whenPressed(new RaiseArmsSafely());
@@ -131,21 +132,22 @@ public class OI {
         LiftPosition position = new LiftPosition();
         button.whenHeld(new EjectConditional(position));
         button.whenReleased(new AfterEjectConditional(position::getPosition));
-        new FluidButton(controlStick, Config.AUTO_INTAKE_CARGO_BINDING)
-                .whenHeld(new AutoIntakeCargo());
         new FluidButton(controlStick, Config.TOGGLE_RING_LIGHT_BINDING)
                 .whenPressed(new ToggleRingLight());
         new FluidButton(controlStick, Config.SLIGHTLY_LIFT_LIFT_BINDING)
-                .whenPressed(new MoveLiftToPosition(0.7, () -> Lift.getInstance().getLiftHeight() + 1.1));
+                .whenPressed(new MoveLiftToPosition(0.7, () -> Lift.getInstance().getLiftHeight() + 0.9));
 
         // ---- Driver controls ----
 
         // The button to use to interrupt the robots current command
-        new FluidButton(driverStick, Config.INTERRUPT_BUTTON).whenPressed(new InstantCommand(Robot::interruptCurrentCommand));
-        new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING)
-                .whenPressed(new DriverAssistVision(true, false));
-        new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_ROCKET_BINDING)
-                .whenPressed(new DriverAssistVision(false, true));
+        new FluidButton(driverStick, Config.INTERRUPT_BUTTON)
+                .whenPressed(new InstantCommand(Robot::interruptCurrentCommand));
+//        new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING)
+//                .whenHeld(new DriverAssistVision(DriverAssistVisionTarget.CARGO_AND_LOADING));
+//        new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_ROCKET_BINDING)
+//                .whenHeld(new DriverAssistVision(DriverAssistVisionTarget.ROCKET));
+//        new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_BALL_BINDING)
+//                .whenHeld(new DriverAssistVision(DriverAssistVisionTarget.BALL));
         new FluidButton(driverStick, Config.FACE_FORWARD_BINDING)
                 .whenHeld(new AbsoluteRotateWithGyro(0.6, 90, Integer.MAX_VALUE));
         new FluidButton(driverStick, Config.FACE_RIGHT_BINDING)

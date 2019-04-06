@@ -1,6 +1,8 @@
 // Based on package from org.usfirst.frc.team3504.robot;
 package ca.team2706.frc.robot.sensors;
 import ca.team2706.frc.robot.logging.Log;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.DigitalSource;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -62,6 +64,8 @@ public double getDistanceCm() {
 	 * The LIDAR-Lite unit sends a high signal for 10 microseconds per cm of distance.
 	 */
 	cm = (counter.getPeriod() * 1000000.0 / 10.0) + CALIBRATION_OFFSET;
+	NetworkTableInstance.getDefault().getTable("Pathfinder").getEntry("lidar-reading-cm").setDouble(cm);
+
 	return cm;
 }
 }

@@ -1113,6 +1113,8 @@ public class DriveBase extends Subsystem {
             Log.d("Right front motor speed: " + rightFrontMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP * 10);
             Log.d("Left back motor speed: " + leftBackMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP * 10);
             Log.d("Right back motor speed: " + rightBackMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP * 10);
+
+            Log.d("Lidar reading in cm" + lidarLitePWM.getDistanceCm());
         }
 
         SmartDashboard.putNumber("Relative Gyro", getHeading());

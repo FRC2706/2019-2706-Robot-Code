@@ -17,7 +17,7 @@ public class Climb extends CommandGroup {
      */
     public Climb() {
         addParallel(new RaiseArmsSafely());
-        addParallel(new RunClimberMotor(() -> true));
+        addParallel(RunClimberMotor.createWithBoolean(() -> true));
         addSequential(new WaitUntilReadyForPistons());
         addSequential(new MoveClimberPistons(() -> PneumaticState.DEPLOYED));
     }

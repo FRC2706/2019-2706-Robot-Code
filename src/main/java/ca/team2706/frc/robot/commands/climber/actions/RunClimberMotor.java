@@ -12,16 +12,27 @@ import java.util.function.Supplier;
  */
 public class RunClimberMotor extends Command {
 
-    private Supplier<Boolean> forwardSpeed;
+    private final Supplier<Double> speed;
 
     /**
-     * Constructs a new command to run the climber motors.
+     * Runs the climber motor at the given speed.
+     *
+     * @param speed The speed, from -1 to 1, at which the motor should run.
+     */
+    public RunClimberMotor(Supplier<Double> speed) {
+        requires(ClimberMotor.getInstance());
+        this.speed = speed;
+    }
+
+    /**
+     * Constructs a new command to run the climber motors using a boolean speed,
+     * which uses the correct constant for moving the motor.
      *
      * @param forward Supplier of the speed, true for forward, false for backward.
+     * @return The resultant command.
      */
-    public RunClimberMotor(Supplier<Boolean> forward) {
-        requires(ClimberMotor.getInstance());
-        this.forwardSpeed = forward;
+    public static RunClimberMotor createWithBoolean(Supplier<Boolean> forward) {
+        return new RunClimberMotor((() -> (forward.get()) ? Config.CLIMBER_FORWARD_SPEED.value() : -Config.CLIMBER_REVERSE_SPEED.value()));
     }
 
     @Override
@@ -32,7 +43,7 @@ public class RunClimberMotor extends Command {
 
     @Override
     protected void execute() {
-        ClimberMotor.getInstance().runMotor((forwardSpeed.get()) ? Config.CLIMBER_FORWARD_SPEED.value() : -Config.CLIMBER_REVERSE_SPEED.value());
+        ClimberMotor.getInstance().runMotor(speed.get());
     }
 
     @Override

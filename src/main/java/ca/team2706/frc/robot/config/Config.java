@@ -243,6 +243,16 @@ public class Config {
     public static final FluidConstant<Double> LIFT_MOTION_MAGIC_ACCELERATION = constant("mm-lift-acceleration", 4.0);
     public static final FluidConstant<Double> LIFT_MOTION_MAGIC_VELOCITY = constant("mm-lift-velocity", 4.0);
 
+    public static final FluidConstant<Double> CLIMBER_MOTION_MAGIC_P = constant("climber-mm-P", 0.0);
+    public static final FluidConstant<Double> CLIMBER_MOTION_MAGIC_I = constant("climber-mm-I", 0.0);
+    public static final FluidConstant<Double> CLIMBER_MOTION_MAGIC_D = constant("climber-mm-D", 0.0);
+    public static final FluidConstant<Double> CLIMBER_MOTION_MAGIC_F = constant("climber-mm-F", 1.023);
+
+    // Units per second (per second)
+    public static final FluidConstant<Double> CLIMBER_MOTION_MAGIC_ACCELERATION = constant("mm-climber-acceleration", 1000.0);
+    public static final FluidConstant<Double> CLIMBER_MOTION_MAGIC_VELOCITY = constant("mm-climber-velocity", 1000.0);
+
+
     /**
      * Max speed of the lift in encoder ticks.
      */

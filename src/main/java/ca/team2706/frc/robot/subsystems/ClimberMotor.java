@@ -4,11 +4,22 @@ import ca.team2706.frc.robot.Sendables;
 import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
+import com.ctre.phoenix.motion.BufferedTrajectoryPointStream;
+import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * Subsystem for operating climber motors.
@@ -39,9 +50,11 @@ public class ClimberMotor extends Subsystem {
         return currentInstance.getStatus();
     }
 
-    private WPI_TalonSRX climberMotor;
+    private final WPI_TalonSRX climberMotor;
 
-    private SubsystemStatus status;
+    private final SubsystemStatus status;
+
+    private final BufferedTrajectoryPointStream pointStream;
 
     /**
      * Constructs a new climber motor instance with default motor id.
@@ -59,6 +72,7 @@ public class ClimberMotor extends Subsystem {
         this.climberMotor = motor;
         addChild("Climber Motor", this.climberMotor);
         addChild("Climber Encoders", Sendables.newTalonEncoderSendable(this.climberMotor));
+        this.pointStream = configPointStream();
         this.status = configTalonMotor();
     }
 
@@ -84,11 +98,27 @@ public class ClimberMotor extends Subsystem {
             status = SubsystemStatus.maxError(status, SubsystemStatus.ERROR);
         }
 
-        climberMotor.configSelectedFeedbackCoefficient(0.5, 0, Config.CAN_LONG);
         climberMotor.setSensorPhase(Config.ENABLE_CLIMBER_SUM_PHASE.value());
         climberMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Config.CAN_LONG);
         climberMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Config.CAN_LONG);
         climberMotor.configNeutralDeadband(Config.CLIMBER_CLOSED_LOOP_DEADBAND.value());
+
+        climberMotor.configRemoteFeedbackFilter(Config.GYRO_TALON_ID, RemoteSensorSource.Pigeon_Pitch, 0, Config.CAN_LONG);
+
+        // Encoder
+        climberMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_LONG);
+
+        // Pigeon
+//        climberMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 0, Config.CAN_LONG);
+
+        climberMotor.config_kP(0, Config.CLIMBER_MOTION_MAGIC_P.value());
+        climberMotor.config_kI(0, Config.CLIMBER_MOTION_MAGIC_I.value());
+        climberMotor.config_kD(0, Config.CLIMBER_MOTION_MAGIC_D.value());
+        climberMotor.config_kF(0, Config.CLIMBER_MOTION_MAGIC_F.value());
+
+        climberMotor.configMotionCruiseVelocity((int) (Config.CLIMBER_MOTION_MAGIC_VELOCITY.value() / 10.0), Config.CAN_LONG);
+        climberMotor.configMotionAcceleration((int) (Config.CLIMBER_MOTION_MAGIC_ACCELERATION.value() / 10.0), Config.CAN_LONG);
+        climberMotor.configMotionSCurveStrength(0);
 
         if (SubsystemStatus.checkError(climberMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, Config.CAN_LONG))) {
             Log.e("Reverse climber limit switch unreachable.");
@@ -106,6 +136,56 @@ public class ClimberMotor extends Subsystem {
         climberMotor.configOpenloopRamp(Config.CLIMBER_OPEN_LOOP_RAMP.value(), Config.CAN_LONG);
 
         return status;
+    }
+
+    private BufferedTrajectoryPointStream configPointStream() {
+        BufferedTrajectoryPointStream pointStream = new BufferedTrajectoryPointStream();
+
+        TrajectoryPoint[] trajectoryPoints = null;
+
+        // CSV should follow time (ms), pos (either encoder ticks or gyro pitch ticks), vel (position units per second), profile index (0-3)
+        try(BufferedReader br = Files.newBufferedReader(Config.DEPLOY_DIR.resolve("motion-profiles/climber.csv"))) {
+            List<TrajectoryPoint> trajectoryPointList = new ArrayList<>();
+
+            // Skip header line
+            br.readLine();
+
+            String line;
+            while((line = br.readLine()) != null) {
+                StringTokenizer stringTokenizer = new StringTokenizer(line, ",");
+
+                TrajectoryPoint trajectoryPoint = new TrajectoryPoint();
+                trajectoryPoint.timeDur = Integer.parseInt(stringTokenizer.nextToken());
+
+                // TODO: Scale based on desired sensor/units
+                trajectoryPoint.position = Double.parseDouble(stringTokenizer.nextToken());
+                trajectoryPoint.velocity = Double.parseDouble(stringTokenizer.nextToken()) / 10.0;
+
+                trajectoryPoint.profileSlotSelect0 = Integer.parseInt(stringTokenizer.nextToken());
+                trajectoryPoint.arbFeedFwd = 0.0;
+                trajectoryPoint.useAuxPID = false;
+
+                trajectoryPointList.add(trajectoryPoint);
+            }
+
+            trajectoryPoints = trajectoryPointList.toArray(new TrajectoryPoint[0]);
+
+            if(trajectoryPoints.length > 0) {
+                trajectoryPoints[0].zeroPos = true;
+                trajectoryPoints[trajectoryPoints.length - 1].isLastPoint = true;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if(trajectoryPoints != null) {
+            pointStream.Write(trajectoryPoints);
+        }
+        else {
+            Log.e("Couldn't initialize motion profile buffer");
+        }
+
+        return pointStream;
     }
 
     /**
@@ -127,6 +207,19 @@ public class ClimberMotor extends Subsystem {
         if (getStatus() != SubsystemStatus.ERROR) {
             climberMotor.set(ControlMode.PercentOutput, percentOutput);
         }
+    }
+
+    public void startMotionProfile() {
+         climberMotor.startMotionProfile(pointStream, 20, ControlMode.MotionProfile);
+    }
+
+    public void motionProfilePeriodic(double maxOutput) {
+        climberMotor.configClosedLoopPeakOutput(0, maxOutput, Config.CAN_SHORT);
+        climberMotor.feed();
+    }
+
+    public boolean motionProfileDone() {
+        return climberMotor.isMotionProfileFinished();
     }
 
     /**

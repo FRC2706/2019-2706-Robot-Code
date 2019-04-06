@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import mockit.*;
 import org.junit.Before;
 import org.junit.Test;
+import util.Util;
 
 import static org.junit.Assert.*;
 
@@ -65,6 +66,8 @@ public class StraightDriveGyroTest {
             talon.getSensorCollection();
             result = sensorCollection;
         }};
+
+        Util.resetSubsystems();
     }
 
     /**

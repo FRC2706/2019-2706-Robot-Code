@@ -20,6 +20,7 @@ public abstract class FluidTrigger extends ETrigger {
      *
      * @param bindings The fluid constant bindings.
      */
+    @SafeVarargs
     public FluidTrigger(FluidConstant<String>... bindings) {
         if (bindings == null || bindings.length <= 0) {
             throw new IllegalArgumentException("Bindings cannot be null or empty for FluidTrigger.");

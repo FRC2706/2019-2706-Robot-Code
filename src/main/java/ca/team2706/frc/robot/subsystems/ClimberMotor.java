@@ -15,8 +15,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -72,7 +70,7 @@ public class ClimberMotor extends Subsystem {
         this.climberMotor = motor;
         addChild("Climber Motor", this.climberMotor);
         addChild("Climber Encoders", Sendables.newTalonEncoderSendable(this.climberMotor));
-        this.pointStream = configPointStream();
+        this.pointStream = loadPointStream();
         this.status = configTalonMotor();
     }
 
@@ -138,20 +136,25 @@ public class ClimberMotor extends Subsystem {
         return status;
     }
 
-    private BufferedTrajectoryPointStream configPointStream() {
+    /**
+     * Loads the climber's motion profile stream from the motion profile CSV file.
+     *
+     * @return The loaded point stream.
+     */
+    private BufferedTrajectoryPointStream loadPointStream() {
         BufferedTrajectoryPointStream pointStream = new BufferedTrajectoryPointStream();
 
         TrajectoryPoint[] trajectoryPoints = null;
 
         // CSV should follow time (ms), pos (either encoder ticks or gyro pitch ticks), vel (position units per second), profile index (0-3)
-        try(BufferedReader br = Files.newBufferedReader(Config.DEPLOY_DIR.resolve("motion-profiles/climber.csv"))) {
+        try (BufferedReader br = Files.newBufferedReader(Config.DEPLOY_DIR.resolve("motion-profiles/climber.csv"))) {
             List<TrajectoryPoint> trajectoryPointList = new ArrayList<>();
 
             // Skip header line
             br.readLine();
 
             String line;
-            while((line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null) {
                 StringTokenizer stringTokenizer = new StringTokenizer(line, ",");
 
                 TrajectoryPoint trajectoryPoint = new TrajectoryPoint();
@@ -170,7 +173,7 @@ public class ClimberMotor extends Subsystem {
 
             trajectoryPoints = trajectoryPointList.toArray(new TrajectoryPoint[0]);
 
-            if(trajectoryPoints.length > 0) {
+            if (trajectoryPoints.length > 0) {
                 trajectoryPoints[0].zeroPos = true;
                 trajectoryPoints[trajectoryPoints.length - 1].isLastPoint = true;
             }
@@ -178,10 +181,9 @@ public class ClimberMotor extends Subsystem {
             e.printStackTrace();
         }
 
-        if(trajectoryPoints != null) {
+        if (trajectoryPoints != null) {
             pointStream.Write(trajectoryPoints);
-        }
-        else {
+        } else {
             Log.e("Couldn't initialize motion profile buffer");
         }
 
@@ -209,16 +211,30 @@ public class ClimberMotor extends Subsystem {
         }
     }
 
+    /**
+     * Begins running the currently loaded motion profile on the climber motor.
+     */
     public void startMotionProfile() {
-         climberMotor.startMotionProfile(pointStream, 20, ControlMode.MotionProfile);
+        climberMotor.startMotionProfile(pointStream, 20, ControlMode.MotionProfile);
     }
 
+    /**
+     * Feeds the currently running motion profile sequence. Should be called
+     * periodically throughout a motion profile run.
+     *
+     * @param maxOutput The maximum velocity output.
+     */
     public void motionProfilePeriodic(double maxOutput) {
         climberMotor.configClosedLoopPeakOutput(0, maxOutput, Config.CAN_SHORT);
         climberMotor.feed();
     }
 
-    public boolean motionProfileDone() {
+    /**
+     * Determines if the motion profile sequence has completed.
+     *
+     * @return True if the sequence is over, false otherwise.
+     */
+    public boolean isMotionProfileDone() {
         return climberMotor.isMotionProfileFinished();
     }
 

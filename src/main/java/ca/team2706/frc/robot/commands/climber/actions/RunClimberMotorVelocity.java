@@ -37,7 +37,7 @@ public class RunClimberMotorVelocity extends Command {
 
     @Override
     protected boolean isFinished() {
-        return ClimberMotor.getInstance().motionProfileDone();
+        return ClimberMotor.getInstance().isMotionProfileDone();
     }
 
     @Override

@@ -249,8 +249,6 @@ public class Config {
             MOVE_LIFT_BINDING = constant("move-lift-binding", XboxValue.XBOX_LEFT_STICK_Y.getNTString()),
             LIFT_ARMS_BINDING = constant("lift-arms-binding", XboxValue.XBOX_A_BUTTON.getNTString()),
             LOWER_ARMS_BINDING = constant("lower-arms-binding", XboxValue.XBOX_Y_BUTTON.getNTString()),
-            OVERRIDE_LIFT_DOWN_BINDING = constant("override-lift-down-binding", XboxValue.XBOX_B_BUTTON.getNTString()),
-            OVERRIDE_LIFT_UP_BINDING = constant("override-lift-up-binding", XboxValue.XBOX_X_BUTTON.getNTString()),
             MANUAL_PISTON_BINDING = constant("manual-plunger-toggle", XboxValue.XBOX_RIGHT_AXIS_BUTTON.getNTString()),
             EJECT_BINDING = constant("eject-multi-purpose-binding", XboxValue.XBOX_RB_BUTTON.getNTString()),
             AUTO_INTAKE_CARGO_BINDING = constant("auto-intake-cargo-binding", XboxValue.XBOX_LB_BUTTON.getNTString()),
@@ -261,7 +259,7 @@ public class Config {
             DRIVER_ASSIST_VISION_ROCKET_BINDING =
                     constant("driver-assist-vision-rocket-binding", XboxValue.XBOX_BACK_RIGHT_TRIGGER.getNTString()),
             DRIVER_ASSIST_VISION_BALL_BINDING =
-                    constant("driver-assist-vision-ball-binding", XboxValue.XBOX_A_BUTTON.getNTString()),
+                    constant("driver-assist-vision-ball-binding", XboxValue.XBOX_B_BUTTON.getNTString()),
             DRIVER_ASSIST_LASER_BINDING =
                     constant("driver-assist-laser-binding", XboxValue.XBOX_Y_BUTTON.getNTString()),
             FACE_FORWARD_BINDING = constant("face-forward-binding", XboxValue.XBOX_POV_UP.getNTString()),

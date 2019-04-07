@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
+import ca.team2706.frc.robot.commands.drivebase.DriverAssistVisionTarget;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.DriveBase;
@@ -84,6 +85,12 @@ public class DriverAssistVision extends Command {
     private boolean generateTrajectoryRequestStageComplete;
 
     /**
+     * True if destination is the initial position at a relatively large offset to the target, 
+     * false if destination is the final position at small offset directly in front of the target
+     */
+    private boolean initialApproach;
+
+    /**
      * Network table instance to get data from vision subsystem
      */
     private NetworkTableInstance inst;
@@ -125,8 +132,9 @@ public class DriverAssistVision extends Command {
      *
      * @param target: The type of the destination target (CARGO_AND_LOADING, ROCKET, BALL)
      */
-    public DriverAssistVision(DriverAssistVisionTarget target) {
+    public DriverAssistVision(DriverAssistVisionTarget target, boolean initialApproach) {
         this.target = target;
+        this.initialApproach = initialApproach;
 
         // Ensure that this command is the only one to run on the ring light subsystem.
         requires(RingLight.getInstance());
@@ -472,7 +480,7 @@ public class DriverAssistVision extends Command {
             System.out.println("DAV: angRobotHeadingCurrent_Field: " + angRobotHeadingCurrent_Field);
 
             // Compute final desired robot heading relative to field
-            double angRobotHeadingFinal_Field =
+            angRobotHeadingFinal_Field =
                     computeAngRobotHeadingFinal_Field(angRobotHeadingCurrent_Field, target);
             System.out.println("DAV: angRobotHeadingFinal_Field: " + angRobotHeadingFinal_Field);
 
@@ -483,10 +491,12 @@ public class DriverAssistVision extends Command {
 
             // Compute vector from target to final robot position in field frame from unit vector in field frame
             double d = 0.0;
-            if (target == DriverAssistVisionTarget.CARGO_AND_LOADING) {
-                d = Config.ROBOT_HALF_LENGTH.value() + Config.TARGET_OFFSET_DISTANCE_CARGO_AND_LOADING.value();
+            if (initialApproach) {
+                d = Config.ROBOT_HALF_LENGTH.value() + Config.TARGET_OFFSET_DISTANCE_INITIAL.value();
+            } else if (target == DriverAssistVisionTarget.CARGO_AND_LOADING) {
+                d = Config.ROBOT_HALF_LENGTH.value() + Config.TARGET_OFFSET_DISTANCE_FINAL_CARGO_AND_LOADING.value();
             } else if (target == DriverAssistVisionTarget.ROCKET) {
-                d = Config.ROBOT_HALF_LENGTH.value() + Config.TARGET_OFFSET_DISTANCE_ROCKET.value();
+                d = Config.ROBOT_HALF_LENGTH.value() + Config.TARGET_OFFSET_DISTANCE_FINAL_ROCKET.value();
             }
             double vTargetToFinal_FieldX = -d * vUnitFacingTarget_FieldX;
             double vTargetToFinal_FieldY = -d * vUnitFacingTarget_FieldY;
@@ -616,12 +626,12 @@ public class DriverAssistVision extends Command {
      * @param target                       Destination target
      * @return Final desired angle of robot heading respect to field frame in degrees
      */
-    public double computeAngRobotHeadingFinal_Field(double angRobotHeadingCurrent_Field, DriverAssistVisionTarget target) {
+    static public double computeAngRobotHeadingFinal_Field(double angRobotHeadingCurrent_Field, DriverAssistVisionTarget target) {
         /*
         Compute final robot angle relative to field based on current angle of robot relative to field.
         Robot must be in an angular range such that it is approximately facing the desired target.
         */
-        angRobotHeadingFinal_Field = 0.0;
+        double angRobotHeadingFinal_Field = 0.0;
         if (target == DriverAssistVisionTarget.CARGO_AND_LOADING) {
             // Assist requested for cargo ship or loading bay targets
             Log.d("DAV: Assist for cargo ship or loading bay requested");
@@ -679,26 +689,6 @@ public class DriverAssistVision extends Command {
         videoTimestampPrev = videoTimestamp;
         return (offline);
         //**PUT BACK
-    }
-
-    /**
-     * Enum for the different targets the robot may be request to go to
-     */
-    public enum DriverAssistVisionTarget {
-        /**
-         * Cargo ship or loading bay target
-         */
-        CARGO_AND_LOADING,
-
-        /**
-         * Rocket target
-         */
-        ROCKET,
-
-        /**
-         * Ball target
-         */
-        BALL
     }
 }
 

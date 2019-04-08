@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.Timer;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.appender.NullAppender;
 import org.apache.logging.log4j.core.config.Configurator;
 
 import java.io.IOException;
@@ -18,8 +17,6 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAmount;
-import java.time.temporal.TemporalUnit;
 import java.util.Properties;
 
 /**
@@ -28,16 +25,15 @@ import java.util.Properties;
 public class Log {
 
     private static final String LOG_FILE_KEY = "logFilename";
-    private static final Path LOG_LOCATION = Path.of("D:\\Desktop\\logs");
+    private static final Path LOG_LOCATION = Path.of("/U/logs");
 
     private static boolean validDate;
 
     static {
-        if(Instant.now().isBefore(Instant.EPOCH)) {
+        if (!Instant.now().isAfter(Instant.EPOCH)) {
             System.setProperty(LOG_FILE_KEY, logFile("latest"));
             validDate = false;
-        }
-        else {
+        } else {
             System.setProperty(LOG_FILE_KEY, logFile(formattedDate(0)));
             validDate = true;
         }
@@ -63,6 +59,7 @@ public class Log {
 
     /**
      * Given the current date, formats the date for the start of the program
+     *
      * @param secondsAgo The time in seconds since the program started
      * @return The formatted start time of the program
      */
@@ -72,6 +69,7 @@ public class Log {
 
     /**
      * Sets up the logs for the newly connected driverstation and FMS
+     *
      * @param state The new connection state
      */
     public static void setupFMS(ConnectionState state) {
@@ -86,12 +84,12 @@ public class Log {
 
             String logFile = logFile(eventName + "-" + matchType + "-" + matchNumber + "-" + replayNumber);
 
-            if(!logFile.equals(System.getProperty(LOG_FILE_KEY))) {
+            if (!logFile.equals(System.getProperty(LOG_FILE_KEY))) {
                 validDate = true;
 
                 changeLogFile(logFile);
             }
-        } else if(state == ConnectionState.DRIVERSTATION_CONNECT && !validDate) {
+        } else if (state == ConnectionState.DRIVERSTATION_CONNECT && !validDate) {
             String logFile = logFile(formattedDate(Timer.getFPGATimestamp()));
             validDate = true;
 
@@ -101,6 +99,7 @@ public class Log {
 
     /**
      * Changes the log file to a new location
+     *
      * @param newFile The new location
      */
     private static void changeLogFile(String newFile) {
@@ -122,6 +121,7 @@ public class Log {
 
     /**
      * Gets the path to a log file from the name
+     *
      * @param name The name of the file to log
      * @return The path with a number at the end if the original alredy exists
      */
@@ -129,7 +129,7 @@ public class Log {
         String fileName = LOG_LOCATION.resolve(name + ".log").toString();
 
         int i = 1;
-        while(Files.exists(Path.of(fileName))) {
+        while (Files.exists(Path.of(fileName))) {
             fileName = LOG_LOCATION.resolve(name + "-" + i++ + ".log").toString();
         }
 

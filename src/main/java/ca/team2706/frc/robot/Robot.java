@@ -57,7 +57,7 @@ public class Robot extends TimedRobot {
         isInitialized = true;
 
         Config.init();
-        
+
         // Initialize subsystems
         logInitialization(Bling.init(), Bling.getInstance());
         logInitialization(DriveBase.init(), DriveBase.getInstance());
@@ -127,20 +127,18 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
-        if(!fmsConnected && DriverStation.getInstance().isFMSAttached()) {
+        if (!fmsConnected && DriverStation.getInstance().isFMSAttached()) {
             onConnectionChange(ConnectionState.FMS_CONNECT);
             fmsConnected = true;
-        }
-        else if(fmsConnected && !DriverStation.getInstance().isFMSAttached()) {
+        } else if (fmsConnected && !DriverStation.getInstance().isFMSAttached()) {
             onConnectionChange(ConnectionState.FMS_DISCONNECT);
             fmsConnected = false;
         }
 
-        if(!driverStationConnected && DriverStation.getInstance().isDSAttached()) {
+        if (!driverStationConnected && DriverStation.getInstance().isDSAttached()) {
             onConnectionChange(ConnectionState.DRIVERSTATION_CONNECT);
             driverStationConnected = true;
-        }
-        else if(driverStationConnected && !DriverStation.getInstance().isDSAttached()) {
+        } else if (driverStationConnected && !DriverStation.getInstance().isDSAttached()) {
             onConnectionChange(ConnectionState.DRIVERSTATION_DISCONNECT);
             driverStationConnected = false;
         }

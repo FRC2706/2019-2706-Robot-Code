@@ -36,6 +36,9 @@ public class Robot extends TimedRobot {
     private static Robot latestInstance;
 
     private final List<Consumer<RobotState>> stateListeners = new ArrayList<>();
+    private final List<Consumer<ConnectionState>> connectionListeners = new ArrayList<>();
+
+    private boolean driverStationConnected, fmsConnected;
 
     public Robot() {
         latestInstance = this;
@@ -47,12 +50,14 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         setOnStateChange((state) -> Log.i("Robot State: " + state.name()));
+        setOnConnectionChange((state) -> Log.i("Connection State: " + state.name()));
+        setOnConnectionChange(Log::setupFMS);
 
         onStateChange(RobotState.ROBOT_INIT);
         isInitialized = true;
 
         Config.init();
-
+        
         // Initialize subsystems
         logInitialization(Bling.init(), Bling.getInstance());
         logInitialization(DriveBase.init(), DriveBase.getInstance());
@@ -122,6 +127,23 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
+        if(!fmsConnected && DriverStation.getInstance().isFMSAttached()) {
+            onConnectionChange(ConnectionState.FMS_CONNECT);
+            fmsConnected = true;
+        }
+        else if(fmsConnected && !DriverStation.getInstance().isFMSAttached()) {
+            onConnectionChange(ConnectionState.FMS_DISCONNECT);
+            fmsConnected = false;
+        }
+
+        if(!driverStationConnected && DriverStation.getInstance().isDSAttached()) {
+            onConnectionChange(ConnectionState.DRIVERSTATION_CONNECT);
+            driverStationConnected = true;
+        }
+        else if(driverStationConnected && !DriverStation.getInstance().isDSAttached()) {
+            onConnectionChange(ConnectionState.DRIVERSTATION_DISCONNECT);
+            driverStationConnected = false;
+        }
     }
 
     /**
@@ -171,8 +193,6 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         // Iterate through each of the state-change listeners and call them.
         onStateChange(RobotState.AUTONOMOUS);
-
-        logFMSData();
 
         if (canRunAuto) {
             selectorInit();
@@ -225,8 +245,6 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         // Iterate through each of the state-change listeners and call them.
         onStateChange(RobotState.TELEOP);
-
-        logFMSData();
     }
 
     /**
@@ -268,6 +286,57 @@ public class Robot extends TimedRobot {
         Runtime.getRuntime().addShutdownHook(new Thread(Robot::shutdown));
 
         RobotBase.startRobot(Robot::new);
+    }
+
+    /**
+     * Adds a method to be called when the connection robot's state is changed.
+     *
+     * @param listener The connection listener to be added.
+     */
+    public void addConnectionListener(Consumer<ConnectionState> listener) {
+        connectionListeners.add(listener);
+    }
+
+    /**
+     * Sets the given connection listener to be called when connection state is changed
+     *
+     * @param listener The listener to be invoked when the connection state is changed
+     */
+    public static void setOnConnectionChange(Consumer<ConnectionState> listener) {
+        if (latestInstance != null) {
+            latestInstance.addConnectionListener(listener);
+        }
+    }
+
+    /**
+     * Removes a connection state listener.
+     *
+     * @param listener The listener to be removed.
+     */
+    public void removeConnectionStateListener(Consumer<ConnectionState> listener) {
+        connectionListeners.remove(listener);
+    }
+
+    /**
+     * Removes a connection state listener so that it is no longer subscribed to robot state change events.
+     *
+     * @param listener The listener to be removed.
+     */
+    public static void removeConnectionListener(Consumer<ConnectionState> listener) {
+        if (latestInstance != null) {
+            latestInstance.removeConnectionStateListener(listener);
+        }
+    }
+
+    /**
+     * Calls the connection state change event, executing the listeners.
+     *
+     * @param newState The robot's current (new) connection state.
+     */
+    private void onConnectionChange(ConnectionState newState) {
+        // Make shallow copy of this.
+        ArrayList<Consumer<ConnectionState>> listeners = new ArrayList<>(connectionListeners);
+        listeners.forEach(action -> action.accept(newState));
     }
 
     /**
@@ -356,14 +425,5 @@ public class Robot extends TimedRobot {
     private static void shutdown() {
         // Iterate through each of the state-change listeners and call them.
         latestInstance.onStateChange(RobotState.SHUTDOWN);
-    }
-
-    /**
-     * Logs the current data in the FMS.
-     */
-    private void logFMSData() {
-        if (DriverStation.getInstance().isFMSAttached()) {
-            Log.d("FMS: " + DriverStation.getInstance().getMatchType().name() + " " + DriverStation.getInstance().getMatchNumber() + " at " + DriverStation.getInstance().getMatchTime());
-        }
     }
 }

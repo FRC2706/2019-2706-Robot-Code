@@ -101,7 +101,7 @@ public class Config {
 
     // ## Climber values ##
     public static int
-            MAX_CLIMBER_ENCODER_TICKS = 9_500,
+            MAX_CLIMBER_ENCODER_TICKS = 9_000,
             CLIMBER_SUFFICIENT_HEIGHT_ENCODER_TICKS = 5_000; // Amount of encoder ticks at which the climber pistons push out and climb the robot.
     /**
      * How long the climber pistons should be left on before we assume that they are fully extended and can
@@ -109,8 +109,7 @@ public class Config {
      */
     public static final double CLIMBER_PNEUMATICS_ON_TIME = 4.0;
     public static boolean
-            INVERT_CLIMBER_MOTOR = robotSpecific(true, true, false),
-            ENABLE_CLIMBER_CURRENT_LIMIT = robotSpecific(true, true, true);
+            INVERT_CLIMBER_MOTOR = robotSpecific(false, false, false);
 
 
     public static boolean

@@ -23,19 +23,17 @@ import java.util.Properties;
  * Logs to USB and console at levels debug, info, warning, error
  */
 public class Log {
-
     private static final String LOG_FILE_KEY = "logFilename";
     private static final Path LOG_LOCATION = Path.of("/U/logs");
 
     private static boolean validDate;
 
     static {
-        if (!Instant.now().isAfter(Instant.EPOCH)) {
+        validDate = Instant.now().isAfter(Instant.EPOCH);
+        if (!validDate) {
             System.setProperty(LOG_FILE_KEY, logFile("latest"));
-            validDate = false;
         } else {
             System.setProperty(LOG_FILE_KEY, logFile(formattedDate(0)));
-            validDate = true;
         }
     }
 

@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import java.lang.reflect.Field;
+import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -127,20 +128,14 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
-        if (!fmsConnected && DriverStation.getInstance().isFMSAttached()) {
-            onConnectionChange(ConnectionState.FMS_CONNECT);
-            fmsConnected = true;
-        } else if (fmsConnected && !DriverStation.getInstance().isFMSAttached()) {
-            onConnectionChange(ConnectionState.FMS_DISCONNECT);
-            fmsConnected = false;
+        if (fmsConnected != DriverStation.getInstance().isFMSAttached()) {
+            fmsConnected = DriverStation.getInstance().isFMSAttached();
+            onConnectionChange(fmsConnected ? ConnectionState.FMS_CONNECT : ConnectionState.FMS_DISCONNECT);
         }
 
-        if (!driverStationConnected && DriverStation.getInstance().isDSAttached()) {
-            onConnectionChange(ConnectionState.DRIVERSTATION_CONNECT);
-            driverStationConnected = true;
-        } else if (driverStationConnected && !DriverStation.getInstance().isDSAttached()) {
-            onConnectionChange(ConnectionState.DRIVERSTATION_DISCONNECT);
-            driverStationConnected = false;
+        if (driverStationConnected != DriverStation.getInstance().isDSAttached()) {
+            driverStationConnected = DriverStation.getInstance().isDSAttached();
+            onConnectionChange(driverStationConnected ? ConnectionState.DRIVERSTATION_CONNECT : ConnectionState.DRIVERSTATION_DISCONNECT);
         }
     }
 

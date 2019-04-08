@@ -303,6 +303,7 @@ public class Config {
     public static final FluidConstant<Double> ROBOT_START_ANGLE = constant("robot-angle-deg", 90.0);
     public static final FluidConstant<Double> ROBOT_HALF_LENGTH = constant("robot_length", 1.6);
     public static final FluidConstant<Double> RING_LIGHT_ON_DELAY = constant("ringlight_on_delay", 0.25);
+    public static final FluidConstant<Double> FINAL_POSITION_ADJUSTMENT_X = constant("final-position-adjustment-x", -0.17);
 
     public static final FluidConstant<Double> CURVE_ADJUSTMENT = constant("curve-adjustment", 0.0105);
 

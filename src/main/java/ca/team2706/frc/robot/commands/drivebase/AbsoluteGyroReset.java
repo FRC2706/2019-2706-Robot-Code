@@ -1,7 +1,6 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
 import ca.team2706.frc.robot.commands.drivebase.DriverAssistVision;
-import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.command.Command;

@@ -268,7 +268,6 @@ public class DriverAssistVision extends Command {
 
                         generateTrajectoryRequestStageComplete = true;
                     }
-
                 }
             }
         }

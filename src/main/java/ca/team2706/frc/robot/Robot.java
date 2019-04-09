@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -36,6 +37,9 @@ public class Robot extends TimedRobot {
     private static Robot latestInstance;
 
     private final List<Consumer<RobotState>> stateListeners = new ArrayList<>();
+    private final List<Consumer<ConnectionState>> connectionListeners = new ArrayList<>();
+
+    private boolean driverStationConnected, fmsConnected;
 
     public Robot() {
         latestInstance = this;
@@ -47,6 +51,10 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         setOnStateChange((state) -> Log.i("Robot State: " + state.name()));
+        setOnConnectionChange((state) -> Log.i("Connection State: " + state.name()));
+        setOnConnectionChange(Log::setupFMS);
+        // Adding the match time to SmartDashboard for use by other processors.
+        SmartDashboard.putNumber(Config.MATCH_TIME_NT_KEY, 0);
 
         onStateChange(RobotState.ROBOT_INIT);
         isInitialized = true;
@@ -122,6 +130,42 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
+        if (fmsConnected != DriverStation.getInstance().isFMSAttached()) {
+            fmsConnected = DriverStation.getInstance().isFMSAttached();
+            onConnectionChange(fmsConnected ? ConnectionState.FMS_CONNECT : ConnectionState.FMS_DISCONNECT);
+        }
+
+        if (driverStationConnected != DriverStation.getInstance().isDSAttached()) {
+            driverStationConnected = DriverStation.getInstance().isDSAttached();
+            onConnectionChange(driverStationConnected ? ConnectionState.DRIVERSTATION_CONNECT : ConnectionState.DRIVERSTATION_DISCONNECT);
+        }
+
+        // If it's a real match, output the match time for use by others.
+        if (fmsConnected) {
+            SmartDashboard.putNumber(Config.MATCH_TIME_NT_KEY, getMatchTime());
+        }
+    }
+
+    /**
+     * Gets the match time counting autonomous and the teleop period together. Will count down from 150 to 0,
+     * 150 being start of the match at auto, 0 being end of teleop.
+     * <b>This may not return accurate match times if it is not a real match.</b>
+     *
+     * @return The current match time in seconds.
+     */
+    public static double getMatchTime() {
+        final double time;
+        if (DriverStation.getInstance().isDisabled()) {
+            time = 0;
+        } else if (DriverStation.getInstance().isAutonomous()) {
+            time = Timer.getMatchTime() + 135;
+        } else if (DriverStation.getInstance().isOperatorControl()) {
+            time = Timer.getMatchTime();
+        } else {
+            time = 0;
+        }
+
+        return time;
     }
 
     /**
@@ -171,8 +215,6 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         // Iterate through each of the state-change listeners and call them.
         onStateChange(RobotState.AUTONOMOUS);
-
-        logFMSData();
 
         if (canRunAuto) {
             selectorInit();
@@ -225,8 +267,6 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         // Iterate through each of the state-change listeners and call them.
         onStateChange(RobotState.TELEOP);
-
-        logFMSData();
     }
 
     /**
@@ -268,6 +308,57 @@ public class Robot extends TimedRobot {
         Runtime.getRuntime().addShutdownHook(new Thread(Robot::shutdown));
 
         RobotBase.startRobot(Robot::new);
+    }
+
+    /**
+     * Adds a method to be called when the connection robot's state is changed.
+     *
+     * @param listener The connection listener to be added.
+     */
+    public void addConnectionListener(Consumer<ConnectionState> listener) {
+        connectionListeners.add(listener);
+    }
+
+    /**
+     * Sets the given connection listener to be called when connection state is changed
+     *
+     * @param listener The listener to be invoked when the connection state is changed
+     */
+    public static void setOnConnectionChange(Consumer<ConnectionState> listener) {
+        if (latestInstance != null) {
+            latestInstance.addConnectionListener(listener);
+        }
+    }
+
+    /**
+     * Removes a connection state listener.
+     *
+     * @param listener The listener to be removed.
+     */
+    public void removeConnectionStateListener(Consumer<ConnectionState> listener) {
+        connectionListeners.remove(listener);
+    }
+
+    /**
+     * Removes a connection state listener so that it is no longer subscribed to robot state change events.
+     *
+     * @param listener The listener to be removed.
+     */
+    public static void removeConnectionListener(Consumer<ConnectionState> listener) {
+        if (latestInstance != null) {
+            latestInstance.removeConnectionStateListener(listener);
+        }
+    }
+
+    /**
+     * Calls the connection state change event, executing the listeners.
+     *
+     * @param newState The robot's current (new) connection state.
+     */
+    private void onConnectionChange(ConnectionState newState) {
+        // Make shallow copy of this.
+        ArrayList<Consumer<ConnectionState>> listeners = new ArrayList<>(connectionListeners);
+        listeners.forEach(action -> action.accept(newState));
     }
 
     /**
@@ -356,14 +447,5 @@ public class Robot extends TimedRobot {
     private static void shutdown() {
         // Iterate through each of the state-change listeners and call them.
         latestInstance.onStateChange(RobotState.SHUTDOWN);
-    }
-
-    /**
-     * Logs the current data in the FMS.
-     */
-    private void logFMSData() {
-        if (DriverStation.getInstance().isFMSAttached()) {
-            Log.d("FMS: " + DriverStation.getInstance().getMatchType().name() + " " + DriverStation.getInstance().getMatchNumber() + " at " + DriverStation.getInstance().getMatchTime());
-        }
     }
 }

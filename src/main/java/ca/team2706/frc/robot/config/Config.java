@@ -42,6 +42,11 @@ public class Config {
     private static int robotId = -1;
 
 
+    /**
+     * Networktables key for the current match time.
+     */
+    public static final String MATCH_TIME_NT_KEY = "Match Time";
+
     // Values for driving robot with joystick
     public static final boolean
             TELEOP_SQUARE_JOYSTICK_INPUTS = true,

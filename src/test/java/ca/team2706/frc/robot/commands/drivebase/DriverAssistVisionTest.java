@@ -90,7 +90,7 @@ public class DriverAssistVisionTest {
                     SendablesTest.makePigeonExpectation(0.0),
                     SendablesTest.makePigeonExpectation(90.0),
                     SendablesTest.makePigeonExpectation(180.0)
-                    );
+            );
         }};
 
         // Run the test
@@ -182,7 +182,7 @@ public class DriverAssistVisionTest {
         double vCameraToTarget_CameraY = vRobotToTarget_CameraY - Config.ROBOTTOCAMERA_ROBOTY.value();
         double distanceCameraToTarget_Camera = Math.sqrt(Math.pow(vCameraToTarget_CameraX, 2) + Math.pow(vCameraToTarget_CameraY, 2));
         double yawAngleCameraToTarget_Camera = Math.toDegrees(Math.atan2(vCameraToTarget_CameraX, vCameraToTarget_CameraY));
-    
+
         // Verify the values produced with expected values. Note that the generated trajectory
         // is compared against the expected trajectory by comparing the expected x, y, and heading
         // against those of the generated trajectory for the first and last segments.

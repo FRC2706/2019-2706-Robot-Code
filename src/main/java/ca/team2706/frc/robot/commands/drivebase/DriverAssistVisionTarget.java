@@ -1,21 +1,21 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
+/**
+ * Enum for the different targets the robot may be request to go to
+ */
+public enum DriverAssistVisionTarget {
     /**
-     * Enum for the different targets the robot may be request to go to
+     * Cargo ship or loading bay target
      */
-    public enum DriverAssistVisionTarget {
-        /**
-         * Cargo ship or loading bay target
-         */
-        CARGO_AND_LOADING,
+    CARGO_AND_LOADING,
 
-        /**
-         * Rocket target
-         */
-        ROCKET,
+    /**
+     * Rocket target
+     */
+    ROCKET,
 
-        /**
-         * Ball target
-         */
-        BALL
-    }
+    /**
+     * Ball target
+     */
+    BALL
+}

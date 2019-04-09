@@ -1,7 +1,6 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
 import ca.team2706.frc.robot.SendablesTest;
-import ca.team2706.frc.robot.commands.drivebase.DriverAssistVisionTarget;
 import ca.team2706.frc.robot.config.Config;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motion.BuffTrajPointStreamJNI;
@@ -9,8 +8,6 @@ import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
-
-import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;

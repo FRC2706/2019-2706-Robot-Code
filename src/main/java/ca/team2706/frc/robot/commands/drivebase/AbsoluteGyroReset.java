@@ -1,6 +1,5 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
-import ca.team2706.frc.robot.commands.drivebase.DriverAssistVision;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.command.Command;
@@ -23,8 +22,9 @@ public class AbsoluteGyroReset extends Command {
     public void initialize() {
         Log.d("AGR: initialize() called");
         double angRobotHeadingCurrent_Field = DriveBase.getInstance().getAbsoluteHeading() % 360;
-        if (angRobotHeadingCurrent_Field < 0.0)
-        angRobotHeadingCurrent_Field += 360.0;
+        if (angRobotHeadingCurrent_Field < 0.0) {
+            angRobotHeadingCurrent_Field += 360.0;
+        }
         Log.d("AGR: angRobotHeadingCurrent_Field: " + angRobotHeadingCurrent_Field);
         double updatedAngle = DriverAssistVision.computeAngRobotHeadingFinal_Field(angRobotHeadingCurrent_Field, target);
         DriveBase.getInstance().resetAbsoluteGyro(updatedAngle);
@@ -33,7 +33,7 @@ public class AbsoluteGyroReset extends Command {
 
     @Override
     public boolean isFinished() {
-        return (true);
+        return true;
     }
 }
 

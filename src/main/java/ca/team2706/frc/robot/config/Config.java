@@ -256,7 +256,6 @@ public class Config {
             LOWER_ARMS_BINDING = constant("lower-arms-binding", XboxValue.XBOX_Y_BUTTON.getNTString()),
             MANUAL_PISTON_BINDING = constant("manual-plunger-toggle", XboxValue.XBOX_RIGHT_AXIS_BUTTON.getNTString()),
             EJECT_BINDING = constant("eject-multi-purpose-binding", XboxValue.XBOX_RB_BUTTON.getNTString()),
-            //AUTO_INTAKE_CARGO_BINDING = constant("auto-intake-cargo-binding", XboxValue.XBOX_LB_BUTTON.getNTString()),
             TOGGLE_RING_LIGHT_BINDING = constant("toggle-ring-light-binding", XboxValue.XBOX_START_BUTTON.getNTString()),
             OVERRIDE_LIFT_BINDING = constant("override-lift-binding", XboxValue.XBOX_LEFT_AXIS_BUTTON.getNTString()),
             DRIVER_ASSIST_VISION_CARGO_AND_LOADING_INITIAL_OFFSET_BINDING =

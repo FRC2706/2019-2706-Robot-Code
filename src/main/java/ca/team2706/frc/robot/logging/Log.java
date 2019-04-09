@@ -23,7 +23,6 @@ import java.util.Properties;
  * Logs to USB and console at levels debug, info, warning, error
  */
 public class Log {
-
     private static final String LOG_FILE_KEY = "logFilename";
     private static final Path LOG_LOCATION = Path.of("/U/logs");
 

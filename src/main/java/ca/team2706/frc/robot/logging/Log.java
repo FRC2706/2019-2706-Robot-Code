@@ -30,13 +30,8 @@ public class Log {
     private static boolean validDate;
 
     static {
-        if (!Instant.now().isAfter(Instant.EPOCH)) {
-            System.setProperty(LOG_FILE_KEY, logFile("latest"));
-            validDate = false;
-        } else {
-            System.setProperty(LOG_FILE_KEY, logFile(formattedDate(0)));
-            validDate = true;
-        }
+        System.setProperty(LOG_FILE_KEY, logFile("latest"));
+        validDate = false;
     }
 
     private static final Logger LOGGER = LogManager.getLogger(Robot.class.getName());
@@ -105,6 +100,8 @@ public class Log {
     private static void changeLogFile(String newFile) {
         Log.i("Changed log file from " + System.getProperty(LOG_FILE_KEY) + " to " + newFile);
 
+        final Path oldPath = Paths.get(System.getProperty(LOG_FILE_KEY));
+
         org.apache.logging.log4j.core.LoggerContext ctx =
                 (org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false);
 
@@ -117,6 +114,25 @@ public class Log {
         System.setProperty(LOG_FILE_KEY, newFile);
 
         ctx.reconfigure();
+
+        // File is still locked so periodically loop until it can be deleted
+        Thread delete = new Thread(() -> {
+            // Loop until file is deleted
+            while(Files.isRegularFile(oldPath)) {
+                try {
+                    Files.delete(oldPath);
+                } catch (IOException ignored) {
+                }
+
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    return;
+                }
+            }
+        });
+        delete.setDaemon(true);
+        delete.start();
     }
 
     /**

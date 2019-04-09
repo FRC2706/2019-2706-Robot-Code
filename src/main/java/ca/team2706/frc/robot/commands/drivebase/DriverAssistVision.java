@@ -197,7 +197,6 @@ public class DriverAssistVision extends Command {
             if ((driverEntry == null) || (findTapeEntry == null) || (findCargoEntry == null) || (tapeDetectedEntry == null)) {
                 Log.d("DAV: Network table entries not set up, command aborted");
                 commandAborted = true;
-                return;
             }
         }
     }
@@ -257,16 +256,16 @@ public class DriverAssistVision extends Command {
                         */
                         if (distanceCameraToTarget_Camera > Config.VISION_DISTANCE_MAX.value()) {
                             Log.d("DAV: Distance to target too high. Rereading vision data.");
-                            return;
+                        } else {
+
+                            // Send request to generate trajectory in a separate task to avoid execute() overruns
+                            Log.d("DAV: Generating trajectory");
+                            Runnable task = () ->
+                                    generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, angYawTargetWrtCameraLOSCWpos);
+                            new Thread(task).start();
+
+                            generateTrajectoryRequestStageComplete = true;
                         }
-
-                        // Send request to generate trajectory in a separate task to avoid execute() overruns
-                        Log.d("DAV: Generating trajectory");
-                        Runnable task = () ->
-                                generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, angYawTargetWrtCameraLOSCWpos);
-                        new Thread(task).start();
-
-                        generateTrajectoryRequestStageComplete = true;
                     }
                 }
             }
@@ -282,12 +281,12 @@ public class DriverAssistVision extends Command {
             if (trajectory.segments[trajectory.length() - 1].y < 0) {
                 Log.d("DAV: Robot trajectory is in backwards direction, command aborted");
                 commandAborted = true;
-                return;
-            }
+            } else {
 
-            Log.d("DAV: Commanding robot to follow trajectory");
-            followTrajectory = new FollowTrajectory(1.0, 100, trajectory);
-            followTrajectory.start();
+                Log.d("DAV: Commanding robot to follow trajectory");
+                followTrajectory = new FollowTrajectory(1.0, 100, trajectory);
+                followTrajectory.start();
+            }
         }
     }
 
@@ -577,7 +576,7 @@ public class DriverAssistVision extends Command {
      * @return True if the trajectory has been generated, false otherwise.
      */
     public boolean isTrajectoryGenerated() {
-        return (trajectoryGenerated);
+        return trajectoryGenerated;
     }
 
     /**

@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -52,6 +53,8 @@ public class Robot extends TimedRobot {
         setOnStateChange((state) -> Log.i("Robot State: " + state.name()));
         setOnConnectionChange((state) -> Log.i("Connection State: " + state.name()));
         setOnConnectionChange(Log::setupFMS);
+        // Adding the match time to SmartDashboard for use by other processors.
+        SmartDashboard.putNumber(Config.MATCH_TIME_NT_KEY, 0);
 
         onStateChange(RobotState.ROBOT_INIT);
         isInitialized = true;
@@ -136,6 +139,33 @@ public class Robot extends TimedRobot {
             driverStationConnected = DriverStation.getInstance().isDSAttached();
             onConnectionChange(driverStationConnected ? ConnectionState.DRIVERSTATION_CONNECT : ConnectionState.DRIVERSTATION_DISCONNECT);
         }
+
+        // If it's a real match, output the match time for use by others.
+        if (fmsConnected) {
+            SmartDashboard.putNumber(Config.MATCH_TIME_NT_KEY, getMatchTime());
+        }
+    }
+
+    /**
+     * Gets the match time counting autonomous and the teleop period together. Will count down from 150 to 0,
+     * 150 being start of the match at auto, 0 being end of teleop.
+     * <b>This may not return accurate match times if it is not a real match.</b>
+     *
+     * @return The current match time in seconds.
+     */
+    public static double getMatchTime() {
+        final double time;
+        if (DriverStation.getInstance().isDisabled()) {
+            time = 0;
+        } else if (DriverStation.getInstance().isAutonomous()) {
+            time = Timer.getMatchTime() + 135;
+        } else if (DriverStation.getInstance().isOperatorControl()) {
+            time = Timer.getMatchTime();
+        } else {
+            time = 0;
+        }
+
+        return time;
     }
 
     /**

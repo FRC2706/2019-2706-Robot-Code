@@ -256,24 +256,28 @@ public class Config {
             LOWER_ARMS_BINDING = constant("lower-arms-binding", XboxValue.XBOX_Y_BUTTON.getNTString()),
             MANUAL_PISTON_BINDING = constant("manual-plunger-toggle", XboxValue.XBOX_RIGHT_AXIS_BUTTON.getNTString()),
             EJECT_BINDING = constant("eject-multi-purpose-binding", XboxValue.XBOX_RB_BUTTON.getNTString()),
-            AUTO_INTAKE_CARGO_BINDING = constant("auto-intake-cargo-binding", XboxValue.XBOX_LB_BUTTON.getNTString()),
             TOGGLE_RING_LIGHT_BINDING = constant("toggle-ring-light-binding", XboxValue.XBOX_START_BUTTON.getNTString()),
             OVERRIDE_LIFT_BINDING = constant("override-lift-binding", XboxValue.XBOX_LEFT_AXIS_BUTTON.getNTString()),
-            DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING =
-                    constant("driver-assist-vision-cargo-loading-binding", XboxValue.XBOX_RB_BUTTON.getNTString()),
-            DRIVER_ASSIST_VISION_ROCKET_BINDING =
-                    constant("driver-assist-vision-rocket-binding", XboxValue.XBOX_BACK_RIGHT_TRIGGER.getNTString()),
-            DRIVER_ASSIST_VISION_BALL_BINDING =
-                    constant("driver-assist-vision-ball-binding", XboxValue.XBOX_B_BUTTON.getNTString()),
+            DRIVER_ASSIST_VISION_CARGO_AND_LOADING_INITIAL_OFFSET_BINDING =
+                    constant("driver-assist-vision-cargo-loading-initial-offset-binding", XboxValue.XBOX_LB_BUTTON.getNTString()),
+            DRIVER_ASSIST_VISION_CARGO_AND_LOADING_FINAL_OFFSET_BINDING =
+                    constant("driver-assist-vision-cargo-loading-final-offset-binding", XboxValue.XBOX_BACK_LEFT_TRIGGER.getNTString()),
+            DRIVER_ASSIST_VISION_ROCKET_INITIAL_OFFSET_BINDING =
+                    constant("driver-assist-vision-rocket-initial-offset-binding", XboxValue.XBOX_RB_BUTTON.getNTString()),
+            DRIVER_ASSIST_VISION_ROCKET_FINAL_OFFSET_BINDING =
+                    constant("driver-assist-vision-rocket-final-offset-binding", XboxValue.XBOX_BACK_RIGHT_TRIGGER.getNTString()),
             DRIVER_ASSIST_LASER_BINDING =
                     constant("driver-assist-laser-binding", XboxValue.XBOX_Y_BUTTON.getNTString()),
+            DRIVER_ASSIST_ABSOLUTE_GYRO_RESET_CARGO_AND_LOADING_BINDING =
+                    constant("driver-assist-gyro-reset-cargo-and-loading-binding", XboxValue.XBOX_X_BUTTON.getNTString()),
+            DRIVER_ASSIST_ABSOLUTE_GYRO_RESET_ROCKET_BINDING =
+                    constant("driver-assist-gyro-reset-rocket-binding", XboxValue.XBOX_B_BUTTON.getNTString()),
             FACE_FORWARD_BINDING = constant("face-forward-binding", XboxValue.XBOX_POV_UP.getNTString()),
             FACE_RIGHT_BINDING = constant("face-right-binding", XboxValue.XBOX_POV_RIGHT.getNTString()),
             FACE_LEFT_BINDING = constant("face-left-binding", XboxValue.XBOX_POV_LEFT.getNTString()),
             FACE_BACK_BINDING = constant("face-back-binding", XboxValue.XBOX_POV_DOWN.getNTString()),
             INTERRUPT_BUTTON = constant("interrupt-button", XboxValue.XBOX_A_BUTTON.getNTString()),
             SLIGHTLY_LIFT_LIFT_BINDING = constant("lift-lift-slightly-binding", XboxValue.XBOX_SELECT_BUTTON.getNTString());
-
 
     /**
      * The minimum reading on the cargo IR sensor to assert that we have cargo in the mechanism.
@@ -293,12 +297,14 @@ public class Config {
     public static final FluidConstant<Double> ROBOTTOCAMERA_ROBOTY = constant("robottocamera-roboty", 0.15);
     public static final FluidConstant<Double> VISION_DISTANCE_MIN = constant("vision-distance-min", 0.5);
     public static final FluidConstant<Double> VISION_DISTANCE_MAX = constant("vision-distance-max", 20.0);
-    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_CARGO_AND_LOADING = constant("target-offset-distance-cargo-and-loading", 0.25);
-    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_ROCKET = constant("target-offset-distance-rocket", 0.25);
+    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_FINAL_CARGO_AND_LOADING = constant("target-offset-distance-final-cargo-and-loading", 0.5);
+    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_FINAL_ROCKET = constant("target-offset-distance-final-rocket", 0.5);
+    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_INITIAL = constant("target-offset-distance-initial-cargo-and-loading", 3.0);
     public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_BALL = constant("target-offset-distance-ball", 0.75);
     public static final FluidConstant<Double> ROBOT_START_ANGLE = constant("robot-angle-deg", 90.0);
-    public static final FluidConstant<Double> ROBOT_HALF_LENGTH = constant("robot_length", 1.35);
-    public static final FluidConstant<Double> RING_LIGHT_ON_DELAY = constant("ringlight_on_delay", 0.25);
+    public static final FluidConstant<Double> ROBOT_HALF_LENGTH = constant("robot_length", 1.6);
+    public static final FluidConstant<Double> RING_LIGHT_ON_DELAY = constant("ringlight_on_delay", 0.0);
+    public static final FluidConstant<Double> FINAL_POSITION_ADJUSTMENT_X = constant("final-position-adjustment-x", 0.0);
 
     public static final FluidConstant<Double> CURVE_ADJUSTMENT = constant("curve-adjustment", 0.0105);
 

@@ -238,11 +238,6 @@ public class RobotTest {
      */
     @Test
     public void testAbsoluteReset() {
-        new Expectations() {{
-            driverStation.isFMSAttached();
-            result = true;
-        }};
-
         robot.robotInit();
 
         robot.autonomousInit();

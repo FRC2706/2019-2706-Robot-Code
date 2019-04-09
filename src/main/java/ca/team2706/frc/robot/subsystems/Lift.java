@@ -37,7 +37,7 @@ public class Lift extends Subsystem {
      */
     private static final int[] HATCH_SETPOINTS = {
             0, // Bottom position
-            1000, // lowest hatch deploy
+            2000, // lowest hatch deploy
             27138, // middle hatch
             53500 // highest hatch
     };
@@ -359,6 +359,8 @@ public class Lift extends Subsystem {
      * @param setpoint The setpoint id, between 0 and 3.
      */
     public void moveToSetpoint(final double speed, final int setpoint) {
+        Log.d("Moving to " + setpoint + " at " + speed + " speed");
+
         final int[] currentSetpoints = getCurrentSetpoints();
         if (0 <= setpoint && setpoint <= currentSetpoints.length) {
             setPositionMotionMagicEncoderTicks(speed, currentSetpoints[setpoint]);

@@ -88,7 +88,7 @@ public class FollowTrajectory extends MotionProfile2Wheel {
      *
      * @param trajectory          The main trajectory
      * @param leftRightTrajectory The two derived trajectories
-     * @return The data that can be pased to the left and right talons
+     * @return The data that can be passed to the left and right talons
      */
     private static DualTalonTrajectory generateDualTrajectory(Trajectory trajectory, Pair<Trajectory> leftRightTrajectory) {
 

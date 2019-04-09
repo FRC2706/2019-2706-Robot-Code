@@ -1,6 +1,6 @@
 package ca.team2706.frc.robot.commands.climber.sequences;
 
-import ca.team2706.frc.robot.commands.PneumaticState;
+import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import ca.team2706.frc.robot.commands.climber.WaitUntilReadyForPistons;
 import ca.team2706.frc.robot.commands.climber.actions.MoveClimberPistons;
 import ca.team2706.frc.robot.commands.climber.actions.RunClimberMotor;

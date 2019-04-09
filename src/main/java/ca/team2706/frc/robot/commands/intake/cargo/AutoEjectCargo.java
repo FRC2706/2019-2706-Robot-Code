@@ -1,6 +1,6 @@
 package ca.team2706.frc.robot.commands.intake.cargo;
 
-import ca.team2706.frc.robot.commands.PneumaticState;
+import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import ca.team2706.frc.robot.commands.intake.arms.MovePlunger;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.Intake;

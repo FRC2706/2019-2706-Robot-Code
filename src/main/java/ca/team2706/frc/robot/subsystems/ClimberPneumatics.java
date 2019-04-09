@@ -1,6 +1,8 @@
 package ca.team2706.frc.robot.subsystems;
 
+import ca.team2706.frc.robot.pneumatics.PneumaticPiston;
 import ca.team2706.frc.robot.SubsystemStatus;
+import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import ca.team2706.frc.robot.config.Config;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -19,7 +21,7 @@ public class ClimberPneumatics extends Subsystem {
 
 
     // Pistons that extend and push the robot onto the platform.
-    private DoubleSolenoid leftPusher, rightPusher;
+    private PneumaticPiston leftPusher, rightPusher;
 
     /**
      * Gets the current instance of the climber subsystem
@@ -49,8 +51,8 @@ public class ClimberPneumatics extends Subsystem {
      */
     private ClimberPneumatics() {
         this(
-                new DoubleSolenoid(Config.CLIMBER_LEFT_PUSHER_FORWARD_ID, Config.CLIMBER_LEFT_PUSHER_BACKWARD_ID),
-                new DoubleSolenoid(Config.CLIMBER_RIGHT_PUSHER_FORWARD_ID, Config.CLIMBER_RIGHT_PUSHER_BACKWARD_ID));
+                new PneumaticPiston(Config.CLIMBER_LEFT_PUSHER_FORWARD_ID, Config.CLIMBER_LEFT_PUSHER_BACKWARD_ID),
+                new PneumaticPiston(Config.CLIMBER_RIGHT_PUSHER_FORWARD_ID, Config.CLIMBER_RIGHT_PUSHER_BACKWARD_ID));
     }
 
     /**
@@ -59,7 +61,7 @@ public class ClimberPneumatics extends Subsystem {
      * @param rightPusher The right pusher double solenoid.
      * @param leftPusher  The left pusher double solenoid.
      */
-    public ClimberPneumatics(final DoubleSolenoid rightPusher, final DoubleSolenoid leftPusher) {
+    public ClimberPneumatics(final PneumaticPiston rightPusher, final PneumaticPiston leftPusher) {
         this.rightPusher = rightPusher;
         this.leftPusher = leftPusher;
 
@@ -87,6 +89,22 @@ public class ClimberPneumatics extends Subsystem {
             rightPusher.set(DoubleSolenoid.Value.kReverse);
             pistonsDeployed = false;
         }
+    }
+
+    /**
+     * Moves the left piston to the desired state.
+     * @param desiredState The desired piston state.
+     */
+    public void moveLeftPiston(final PneumaticState desiredState) {
+        leftPusher.set(desiredState);
+    }
+
+    /**
+     * Moves the right piston to the desired state
+     * @param desiredState The desired piston state.
+     */
+    public void moveRightPiston(final PneumaticState desiredState) {
+        rightPusher.set(desiredState);
     }
 
     /**

@@ -1,4 +1,4 @@
-package ca.team2706.frc.robot.commands;
+package ca.team2706.frc.robot.pneumatics;
 
 /**
  * Enum for the desired new state of the plunger, either {@link #STOWED}, {@link #DEPLOYED}

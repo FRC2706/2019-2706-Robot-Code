@@ -93,10 +93,10 @@ public class Config {
 
     // Climber pneumatics PCM slots.
     public static final int
-            CLIMBER_LEFT_PUSHER_FORWARD_ID = robotSpecific(4, 4, 4),
-            CLIMBER_LEFT_PUSHER_BACKWARD_ID = robotSpecific(5, 5, 5),
-            CLIMBER_RIGHT_PUSHER_FORWARD_ID = robotSpecific(6, 6, 6),
-            CLIMBER_RIGHT_PUSHER_BACKWARD_ID = robotSpecific(7, 7, 7),
+            CLIMBER_LEFT_PUSHER_FORWARD_ID = robotSpecific(6, 6, 6),
+            CLIMBER_LEFT_PUSHER_BACKWARD_ID = robotSpecific(7, 7, 7),
+            CLIMBER_RIGHT_PUSHER_FORWARD_ID = robotSpecific(4, 4, 4),
+            CLIMBER_RIGHT_PUSHER_BACKWARD_ID = robotSpecific(5, 5, 5),
             CLIMBER_MOTOR_ID = robotSpecific(7, 7, 7);
 
     // ## Climber values ##

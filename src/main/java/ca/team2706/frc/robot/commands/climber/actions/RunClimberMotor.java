@@ -55,6 +55,6 @@ public class RunClimberMotor extends Command {
     protected void end() {
         super.end();
         ClimberMotor.getInstance().stopMotor();
-        ClimberMotor.getInstance().setNeutralMode(NeutralMode.Coast);
+//        ClimberMotor.getInstance().setNeutralMode(NeutralMode.Coast); // TODO re-enable later
     }
 }

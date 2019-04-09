@@ -117,7 +117,7 @@ public class Log {
         // File is still locked so periodically loop until it can be deleted
         Thread delete = new Thread(() -> {
             // Loop until file is deleted
-            while(Files.isRegularFile(oldPath)) {
+            while (Files.isRegularFile(oldPath)) {
                 try {
                     Files.delete(oldPath);
                 } catch (IOException ignored) {

@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import java.lang.reflect.Field;
-import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

@@ -155,12 +155,14 @@ public class Robot extends TimedRobot {
      */
     public static double getMatchTime() {
         final double time;
-        if (DriverStation.getInstance().isAutonomous()) {
+        if (DriverStation.getInstance().isDisabled()) {
+            time = 0;
+        } else if (DriverStation.getInstance().isAutonomous()) {
             time = Timer.getMatchTime() + 135;
         } else if (DriverStation.getInstance().isOperatorControl()) {
             time = Timer.getMatchTime();
         } else {
-            time = Timer.getMatchTime();
+            time = 0;
         }
 
         return time;

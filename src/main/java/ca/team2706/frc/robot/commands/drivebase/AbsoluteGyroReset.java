@@ -14,7 +14,6 @@ public class AbsoluteGyroReset extends Command {
 
     /**
      * Creates absolute gyro reset object
-     *
      */
     public AbsoluteGyroReset(DriverAssistVisionTarget target) {
         this.target = target;
@@ -22,14 +21,14 @@ public class AbsoluteGyroReset extends Command {
 
     @Override
     public void initialize() {
-        System.out.println("AGR: initialize() called");
+        Log.d("AGR: initialize() called");
         double angRobotHeadingCurrent_Field = DriveBase.getInstance().getAbsoluteHeading() % 360;
         if (angRobotHeadingCurrent_Field < 0.0)
         angRobotHeadingCurrent_Field += 360.0;
-        System.out.println("DAV: angRobotHeadingCurrent_Field: " + angRobotHeadingCurrent_Field);
+        Log.d("AGR: angRobotHeadingCurrent_Field: " + angRobotHeadingCurrent_Field);
         double updatedAngle = DriverAssistVision.computeAngRobotHeadingFinal_Field(angRobotHeadingCurrent_Field, target);
         DriveBase.getInstance().resetAbsoluteGyro(updatedAngle);
-        System.out.println("DAV: Absolute gyro angle updated to: " + updatedAngle);
+        Log.d("AGR: Absolute gyro angle updated to: " + updatedAngle);
     }
 
     @Override

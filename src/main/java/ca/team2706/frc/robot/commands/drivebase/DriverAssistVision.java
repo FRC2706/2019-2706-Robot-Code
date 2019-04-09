@@ -399,18 +399,18 @@ public class DriverAssistVision extends Command {
          * case is F3).
          *
          * Points P1 or P2 can also be the origin of a coordinate frame. In this case, P1 is replaced by
-         * the name of the frame. Thus, if F1, F2, and F3 are coordinatre frames, then vF1ToF2_F3 represents 
-         * the vector from the origin of frame F1 to the origin of frame F2 represented in the frame F3. 
+         * the name of the frame. Thus, if F1, F2, and F3 are coordinatre frames, then vF1ToF2_F3 represents
+         * the vector from the origin of frame F1 to the origin of frame F2 represented in the frame F3.
          *
          * In this class, all vectors represent distances measured in feet.
          *
-         * An angle in the 2-d plane can be defined with respect to a particular coordinate frame as the 
-         * angle between the line of interest and the x-axis of the coordinate frame. An angle between 
-         * a line of interest having name "ZZZ" and with respect to the x-axis of a frame F1 will be written 
-         * as angZZZ_F1. Angles are assumed to be in degrees by default. If an angle is represented in units 
-         * of radians (which is needed when the sin or cos of an angle is taken), then the text "Rad" will be 
-         * added after the name of the line of interest. Thus the previous angle in radians would be 
-         * angZZZRad_F1. Angles are assumed to increase in the counter-clockwise direction by default. If an 
+         * An angle in the 2-d plane can be defined with respect to a particular coordinate frame as the
+         * angle between the line of interest and the x-axis of the coordinate frame. An angle between
+         * a line of interest having name "ZZZ" and with respect to the x-axis of a frame F1 will be written
+         * as angZZZ_F1. Angles are assumed to be in degrees by default. If an angle is represented in units
+         * of radians (which is needed when the sin or cos of an angle is taken), then the text "Rad" will be
+         * added after the name of the line of interest. Thus the previous angle in radians would be
+         * angZZZRad_F1. Angles are assumed to increase in the counter-clockwise direction by default. If an
          * angle increases in the clockwise direction, "CWpos" will be added after the name and after the
          * "Rad" text. In this case, if the original example is in units of radians and if the angle increases
          * in the clockwise direction, it would be written as angZZZRadCWpos.
@@ -418,24 +418,24 @@ public class DriverAssistVision extends Command {
          * An angle in the 2-d plane can also be defined as the angular measurement between the line of
          * interest and a suitably chosen reference line. This will be written as angZZZWrtWWW where
          * ZZZ is the name of the line of interest and WWW is the name of the reference line. Use of
-         * non-default units of degrees or a clockwise positive angle direction are represented as 
+         * non-default units of degrees or a clockwise positive angle direction are represented as
          * described above.
          *
          * The three coordinate frames of interest are given below. Note that these are planar frames and
          * their height is not relevant for the model used in this class.
          *
-         *   Camera: Coordinate frame attached to camera with origin at focal point of lens, y axis 
-         *           pointing along the camera line of sight, and x axis pointing to the right when 
+         *   Camera: Coordinate frame attached to camera with origin at focal point of lens, y axis
+         *           pointing along the camera line of sight, and x axis pointing to the right when
          *           looking from the back to the front of the camera.
          *
-         *   Robot:  Coordinate frame attached to camera with origin at the centre of the robot base, 
-         *           y axis pointing toward the front along the centre line, and x axis pointing to 
+         *   Robot:  Coordinate frame attached to camera with origin at the centre of the robot base,
+         *           y axis pointing toward the front along the centre line, and x axis pointing to
          *           the right when looking from the back to the front of the robot.
          *
-         *   Field:  Coordinate frame attached to field where the origin is in the lower left corner 
-         *           of the field, the y axis points down the field and the x axis points horizontally 
-         *           across the field. The home team is located at the bottom of the field and the 
-         *           drivers are looking down the field. The location of the origin is actually not 
+         *   Field:  Coordinate frame attached to field where the origin is in the lower left corner
+         *           of the field, the y axis points down the field and the x axis points horizontally
+         *           across the field. The home team is located at the bottom of the field and the
+         *           drivers are looking down the field. The location of the origin is actually not
          *           important since this frame is used only as a reference for the angular measurement.
          *
          * Two point of interest are
@@ -445,7 +445,7 @@ public class DriverAssistVision extends Command {
          *           at the centre of the ball.
          *
          *   Final:  Final position of robot as represented by the location of the origin of the robot
-         *           frame. This is offset by a user-specified distance distance in the Config class 
+         *           frame. This is offset by a user-specified distance distance in the Config class
          *           given by TARGET_OFFSET_DISTANCE_<TARGET>, where <TARGET> is one of CARGO_AND_LOADING,
          *           ROCKET, or BALL.
          */

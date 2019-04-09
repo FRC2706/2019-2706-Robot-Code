@@ -159,7 +159,7 @@ public class DriveBaseTest {
         final TrajectoryPoint[] expected = {
                 trajectory(-1.0 / Config.DRIVE_ENCODER_DPP, -3.0 / Config.DRIVE_ENCODER_DPP / 10.0, 0.0, 35.32, 35.32 / Config.PIGEON_DPP, 0.0, -3.0 / Config.DRIVEBASE_MOTION_MAGIC_CRUISE_VELOCITY.value() * Config.CURVE_ADJUSTMENT.value(), 0, 1, false, true, 5, true),
                 trajectory(1.0 / Config.DRIVE_ENCODER_DPP, -8.6 / Config.DRIVE_ENCODER_DPP / 10.0, 0.0, 245.53, 245.53 / Config.PIGEON_DPP, 0.0, -8.6 / Config.DRIVEBASE_MOTION_MAGIC_CRUISE_VELOCITY.value() * Config.CURVE_ADJUSTMENT.value(), 0, 1, false, false, 5, true),
-                trajectory(-5.0 / Config.DRIVE_ENCODER_DPP, -42.3 / Config.DRIVE_ENCODER_DPP / 10.0, 0.0, -53.53, -53.53 / Config.PIGEON_DPP, 0.0, -42.3 / Config.DRIVEBASE_MOTION_MAGIC_CRUISE_VELOCITY.value() * Config.CURVE_ADJUSTMENT.value(),0, 1, false, false, 5, true),
+                trajectory(-5.0 / Config.DRIVE_ENCODER_DPP, -42.3 / Config.DRIVE_ENCODER_DPP / 10.0, 0.0, -53.53, -53.53 / Config.PIGEON_DPP, 0.0, -42.3 / Config.DRIVEBASE_MOTION_MAGIC_CRUISE_VELOCITY.value() * Config.CURVE_ADJUSTMENT.value(), 0, 1, false, false, 5, true),
                 trajectory(-0.1 / Config.DRIVE_ENCODER_DPP, 2.54 / Config.DRIVE_ENCODER_DPP / 10.0, 0.0, 553.0, 553.0 / Config.PIGEON_DPP, 0.0, 2.54 / Config.DRIVEBASE_MOTION_MAGIC_CRUISE_VELOCITY.value() * Config.CURVE_ADJUSTMENT.value(), 0, 1, true, false, 5, true),
         };
 

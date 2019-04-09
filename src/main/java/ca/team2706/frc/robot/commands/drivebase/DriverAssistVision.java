@@ -207,23 +207,6 @@ public class DriverAssistVision extends Command {
                 commandAborted = true;
                 return;
             }
-
-            // Take vision out of driver mode and into target finding mode
-            /*
-            if ((target == DriverAssistVisionTarget.CARGO_AND_LOADING) || (target == DriverAssistVisionTarget.ROCKET)) {
-                driverEntry.setBoolean(false);
-                findCargoEntry.setBoolean(false);
-                findTapeEntry.setBoolean(true);
-            } else if (target == DriverAssistVisionTarget.BALL) {
-                driverEntry.setBoolean(false);
-                findCargoEntry.setBoolean(true);
-                findTapeEntry.setBoolean(false);
-            } else {
-                // target has unexpected value so abort command
-                System.out.println("DAV: Target value unexpected, aborting command");
-                commandAborted = true;
-            }
-            */
         }
     }
 
@@ -285,10 +268,6 @@ public class DriverAssistVision extends Command {
                             return;
                         }
 
-                        // Turn off ring light since we now have the data from vision
-                        //System.out.println("DAV: Turning ring light off");
-                        //RingLight.getInstance().disableLight();
-
                         // Send request to generate trajectory in a separate task to avoid execute() overruns
                         System.out.println("DAV: Generating trajectory");
                         Runnable task = () ->
@@ -335,26 +314,6 @@ public class DriverAssistVision extends Command {
             }
             followTrajectory = null;
         }
-
-        /*
-        Ring light should already be off, but just make sure in case there were early exits
-        due to errors
-        */
-        //RingLight.getInstance().disableLight();
-
-        // Put vision back into driver mode
-        /*
-        driverEntry = chickenVisionTable.getEntry("Driver");
-        findTapeEntry = chickenVisionTable.getEntry("Tape");
-        findCargoEntry = chickenVisionTable.getEntry("Cargo");
-        driverEntry.setBoolean(true);
-        findCargoEntry.setBoolean(false);
-        findTapeEntry.setBoolean(false);
-        */
-
-        // Vision group has requested that tapeDetected entry be set to false here
-        //tapeDetectedEntry = chickenVisionTable.getEntry("tapeDetected");
-        //tapeDetectedEntry.setBoolean(false);
     }
 
     /**
@@ -492,6 +451,8 @@ public class DriverAssistVision extends Command {
             Get current robot heading relative to field frame from IMU
             */
             double angRobotHeadingCurrent_Field = DriveBase.getInstance().getAbsoluteHeading() % 360;
+            if (angRobotHeadingCurrent_Field < 0.0)
+                angRobotHeadingCurrent_Field += 360.0;
             System.out.println("DAV: angRobotHeadingCurrent_Field: " + angRobotHeadingCurrent_Field);
 
             // Compute final desired robot heading relative to field
@@ -597,7 +558,7 @@ public class DriverAssistVision extends Command {
             trajectory.segments[i].heading = PI_OVER_2 - trajectory.segments[i].heading;
         }
 
-         // Print out trajectory
+         // Log trajectory
          System.out.println("DAV: Trajectory length: " + trajectory.length());
          for (int i = 0; i < trajectory.length(); i++)
          {

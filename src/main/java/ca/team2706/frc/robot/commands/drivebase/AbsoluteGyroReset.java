@@ -24,6 +24,8 @@ public class AbsoluteGyroReset extends Command {
     public void initialize() {
         System.out.println("AGR: initialize() called");
         double angRobotHeadingCurrent_Field = DriveBase.getInstance().getAbsoluteHeading() % 360;
+        if (angRobotHeadingCurrent_Field < 0.0)
+        angRobotHeadingCurrent_Field += 360.0;
         System.out.println("DAV: angRobotHeadingCurrent_Field: " + angRobotHeadingCurrent_Field);
         double updatedAngle = DriverAssistVision.computeAngRobotHeadingFinal_Field(angRobotHeadingCurrent_Field, target);
         DriveBase.getInstance().resetAbsoluteGyro(updatedAngle);

@@ -144,8 +144,6 @@ public class OI {
                 .whenHeld(new DriverAssistVision(DriverAssistVisionTarget.CARGO_AND_LOADING, false));
         new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_ROCKET_FINAL_OFFSET_BINDING)
                 .whenHeld(new DriverAssistVision(DriverAssistVisionTarget.ROCKET, false));
-        //new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_BALL_BINDING)
-        //        .whenHeld(new DriverAssistVision(DriverAssistVisionTarget.BALL, false));
         new FluidButton(driverStick, Config.DRIVER_ASSIST_ABSOLUTE_GYRO_RESET_CARGO_AND_LOADING_BINDING)
                 .whenHeld(new AbsoluteGyroReset(DriverAssistVisionTarget.CARGO_AND_LOADING));
         new FluidButton(driverStick, Config.DRIVER_ASSIST_ABSOLUTE_GYRO_RESET_ROCKET_BINDING)

@@ -28,20 +28,6 @@ public class Pneumatics extends Subsystem {
     private IntakeMode mode;
 
     /**
-     * True if the plunger is out, false otherwise.
-     */
-    private boolean plungerExtended = false;
-
-    /**
-     * Moves the plunger to the given position.
-     *
-     * @param newState The new plunger position.
-     */
-    public void movePlunger(PneumaticState newState) {
-        hatchEjectorSolenoid.set(newState);
-    }
-
-    /**
      * Different states that the intake subsystem can be in, either
      * inhaling hatches or inhaling cargo.
      */
@@ -158,19 +144,12 @@ public class Pneumatics extends Subsystem {
     }
 
     /**
-     * Extends the hatch deployment cylinder
+     * Moves the plunger to the given position.
+     *
+     * @param newState The new plunger position.
      */
-    public void deployPlunger() {
-        hatchEjectorSolenoid.set(DoubleSolenoid.Value.kReverse);
-        plungerExtended = true;
-    }
-
-    /**
-     * Retracts the hatch deployment cylinder
-     */
-    public void retractPlunger() {
-        hatchEjectorSolenoid.set(DoubleSolenoid.Value.kForward);
-        plungerExtended = false;
+    public void movePlunger(PneumaticState newState) {
+        hatchEjectorSolenoid.set(newState);
     }
 
     /**
@@ -186,7 +165,7 @@ public class Pneumatics extends Subsystem {
      * @return True if the plunger is stowed, false otherwise.
      */
     public boolean isPlungerStowed() {
-        return !plungerExtended;
+        return hatchEjectorSolenoid.getState() == PneumaticState.STOWED;
     }
 
     @Override

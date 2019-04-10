@@ -301,7 +301,7 @@ public class Config {
     public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_FINAL_ROCKET = constant("target-offset-distance-final-rocket", 0.5);
     public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_INITIAL = constant("target-offset-distance-initial", 3.0);
     public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_BALL = constant("target-offset-distance-ball", 0.75);
-    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_LASER = constant("target-offset-distance-laser", 1.0); //0.25
+    public static final FluidConstant<Double> TARGET_OFFSET_DISTANCE_LASER = constant("target-offset-distance-laser", 0.5);
     public static final FluidConstant<Double> ROBOT_START_ANGLE = constant("robot-start-angle", 90.0);
     public static final FluidConstant<Double> ROBOT_HALF_LENGTH = constant("robot_half-length", 1.6);
     public static final FluidConstant<Double> RING_LIGHT_ON_DELAY = constant("ringlight_on_delay", 0.0);
@@ -309,6 +309,7 @@ public class Config {
     public static final FluidConstant<Double> ROBOTTOLASER_ROBOTX = constant("robottolaser-robotx", -0.3);
     public static final FluidConstant<Double> ROBOTTOLASER_ROBOTY = constant("robottolaser-roboty", -0.3);
     public static final FluidConstant<Double> LASER_DISTANCE_MAX = constant("laser-distance-max", 10.0);
+    public static final FluidConstant<Double> LASER_CALIBRATION_OFFSET_CM = constant("laser-cal-offset-cm", 1.22);
 
     public static final FluidConstant<Double> CURVE_ADJUSTMENT = constant("curve-adjustment", 0.0105);
 

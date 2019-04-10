@@ -8,16 +8,37 @@ import ca.team2706.frc.robot.subsystems.DriveBase;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
- * Command for 1-D driver assist using laser rangefinder 
+ * Command for 1-D driver assist using laser rangefinder sensor
  */
 public class DriverAssistLaser extends Command {
-
-    private LidarLitePWM lidarLitePWM;
-    private double laserDistanceToTarget = 0.0;
+    /**
+     * True if command has been aborted, false otherwise
+     */
     private boolean commandAborted = false;
+
+        /**
+     * Distance of laser to target
+     */
+    private double laserDistanceToTarget = 0.0;
+
+    /**
+     * LidarLite PWM sensor wrapper
+     */
+    private LidarLitePWM lidarLitePWM;
+
+    /**
+     * Motion Magic object that moves robot in a straight line
+     */
     private MotionMagic motionMagic;
 
+    /**
+     * Factor that converts measurement in centimetres to feet
+     */
     private final double CENTIMETRES_TO_FEET = 1.0/(2.54*12);
+
+    /**
+     * Miniumum laser distance measurement for command to be processed
+     */
     private final double LASER_DISTANCE_MIN = Config.TARGET_OFFSET_DISTANCE_LASER.value() + Config.ROBOT_HALF_LENGTH.value() - Config.ROBOTTOLASER_ROBOTY.value();
 
     /**
@@ -43,9 +64,10 @@ public class DriverAssistLaser extends Command {
             motionMagic.start();
         } else if (laserDistanceToTarget < LASER_DISTANCE_MIN) {
             Log.d("DAL: Laser reading too low. Driver assist command rejected.");
- 
+            commandAborted = true;
         } else if (laserDistanceToTarget > Config.LASER_DISTANCE_MAX.value()) {
             Log.d("DAL: Laser reading too high. Driver assist command rejected.");
+            commandAborted = true;
         }
     }
 
@@ -57,6 +79,6 @@ public class DriverAssistLaser extends Command {
     @Override
     public void end() {
         if (motionMagic != null)
-        motionMagic.close();
+            motionMagic.close();
     }
 }

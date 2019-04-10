@@ -45,8 +45,8 @@ public class ClimberPneumatics extends Subsystem {
      */
     private ClimberPneumatics() {
         this(
-                new PneumaticPiston(Config.CLIMBER_LEFT_PUSHER_FORWARD_ID, Config.CLIMBER_LEFT_PUSHER_BACKWARD_ID, PneumaticState.STOWED, true),
-                new PneumaticPiston(Config.CLIMBER_RIGHT_PUSHER_FORWARD_ID, Config.CLIMBER_RIGHT_PUSHER_BACKWARD_ID, PneumaticState.STOWED, true));
+                new PneumaticPiston(Config.CLIMBER_FRONT_PUSHER_FORWARD_ID, Config.CLIMBER_FRONT_PUSHER_BACKWARD_ID, PneumaticState.STOWED, true),
+                new PneumaticPiston(Config.CLIMBER_BACK_PUSHER_FORWARD_ID, Config.CLIMBER_BACK_PUSHER_BACKWARD_ID, PneumaticState.STOWED, true));
     }
 
     /**

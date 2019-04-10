@@ -85,10 +85,6 @@ public class Config {
     public static final double
             // Max speed of the lift going up in override (between 0 and 1).
             LIFT_OVERRIDE_UP_SPEED = 0.4,
-    /**
-     * Speed for automatically ejecting cargo from the intake, from 0 to 1.
-     */
-    AUTO_EJECT_CARGO_INTAKE_SPEED = 1.0,
     // Max speed of the lift going down in override (between -1 and 0).
     LIFT_OVERRIDE_DOWN_SPEED = -0.2,
     /**
@@ -98,18 +94,16 @@ public class Config {
 
     // Climber pneumatics PCM slots.
     public static final int
-            CLIMBER_LEFT_PUSHER_FORWARD_ID = robotSpecific(6, 6, 6),
-            CLIMBER_LEFT_PUSHER_BACKWARD_ID = robotSpecific(7, 7, 7),
-            CLIMBER_RIGHT_PUSHER_FORWARD_ID = robotSpecific(4, 4, 4),
-            CLIMBER_RIGHT_PUSHER_BACKWARD_ID = robotSpecific(5, 5, 5);
+            CLIMBER_FRONT_PUSHER_FORWARD_ID = robotSpecific(6, 6, 6),
+            CLIMBER_FRONT_PUSHER_BACKWARD_ID = robotSpecific(7, 7, 7),
+            CLIMBER_BACK_PUSHER_FORWARD_ID = robotSpecific(4, 4, 4),
+            CLIMBER_BACK_PUSHER_BACKWARD_ID = robotSpecific(5, 5, 5);
 
     /**
      * How long the climber pistons should be left on before we assume that they are fully extended and can
      * turn the solenoid off.
      */
     public static final double CLIMBER_PNEUMATICS_ON_TIME = 4.0;
-    public static boolean
-            INVERT_CLIMBER_MOTOR = robotSpecific(false, false, false);
 
 
     public static boolean
@@ -225,8 +219,6 @@ public class Config {
 
     public static final FluidConstant<Boolean> ENABLE_LIFT_SUM_PHASE = constant("lift-sum-phase", true);
 
-    public static final FluidConstant<Boolean> ENABLE_CLIMBER_SUM_PHASE = constant("climber-sum-phase", true);
-
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_P = constant("drive-P", 0.1);
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_I = constant("drive-I", 0.0);
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_D = constant("drive-D", 0.0);
@@ -329,21 +321,6 @@ public class Config {
     public static final FluidConstant<Double> CURVE_ADJUSTMENT = constant("curve-adjustment", 0.0105);
 
     public static final FluidConstant<Boolean> DISABLE_RING_LIGHT = constant("disable-ring-light", true);
-
-    // ## Climber constants ##
-    /**
-     * Speed at which the climber motor should run when climbing.
-     */
-    public static final FluidConstant<Double> CLIMBER_FORWARD_SPEED = constant("climber-forward-percent-speed", 0.9);
-    /**
-     * Speed at which the climber motor should run when retracting.
-     */
-    public static final FluidConstant<Double> CLIMBER_REVERSE_SPEED = constant("climber-reverse-percent-speed", 0.9);
-    /**
-     * Number of seconds climber will take to go from neutral to full.
-     */
-    public static final FluidConstant<Double> CLIMBER_OPEN_LOOP_RAMP = constant("climber-open-loop-ramp", 0.2);
-    public static final FluidConstant<Double> CLIMBER_CLOSED_LOOP_DEADBAND = constant("climber-deadband", 0.001);
 
 
     // ### Methods, fields and Constructors ###

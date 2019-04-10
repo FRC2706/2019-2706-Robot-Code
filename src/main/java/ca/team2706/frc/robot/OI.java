@@ -1,10 +1,8 @@
 package ca.team2706.frc.robot;
 
-import ca.team2706.frc.robot.commands.climber.MoveFrontClimberPistons;
-import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import ca.team2706.frc.robot.commands.climber.MoveBackClimberPistons;
-import ca.team2706.frc.robot.commands.drivebase.AbsoluteRotateWithGyro;
-import ca.team2706.frc.robot.commands.drivebase.CurvatureDriveWithJoystick;
+import ca.team2706.frc.robot.commands.climber.MoveFrontClimberPistons;
+import ca.team2706.frc.robot.commands.drivebase.*;
 import ca.team2706.frc.robot.commands.intake.AfterEjectConditional;
 import ca.team2706.frc.robot.commands.intake.EjectConditional;
 import ca.team2706.frc.robot.commands.intake.arms.LowerArmsSafely;
@@ -15,7 +13,10 @@ import ca.team2706.frc.robot.commands.lift.*;
 import ca.team2706.frc.robot.commands.ringlight.ToggleRingLight;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.config.XboxValue;
-import ca.team2706.frc.robot.input.*;
+import ca.team2706.frc.robot.input.ETrigger;
+import ca.team2706.frc.robot.input.FluidButton;
+import ca.team2706.frc.robot.input.FluidTrigger;
+import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import ca.team2706.frc.robot.subsystems.Lift;
 import edu.wpi.first.wpilibj.Joystick;
@@ -139,12 +140,18 @@ public class OI {
         // The button to use to interrupt the robots current command
         new FluidButton(driverStick, Config.INTERRUPT_BUTTON)
                 .whenPressed(new InstantCommand(Robot::interruptCurrentCommand));
-//        new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_CARGO_AND_LOADING_BINDING)
-//                .whenHeld(new DriverAssistVision(DriverAssistVisionTarget.CARGO_AND_LOADING));
-//        new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_ROCKET_BINDING)
-//                .whenHeld(new DriverAssistVision(DriverAssistVisionTarget.ROCKET));
-//        new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_BALL_BINDING)
-//                .whenHeld(new DriverAssistVision(DriverAssistVisionTarget.BALL));
+        new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_CARGO_AND_LOADING_INITIAL_OFFSET_BINDING)
+                .whenHeld(new DriverAssistVision(DriverAssistVisionTarget.CARGO_AND_LOADING, true));
+        new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_ROCKET_INITIAL_OFFSET_BINDING)
+                .whenHeld(new DriverAssistVision(DriverAssistVisionTarget.ROCKET, true));
+        new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_CARGO_AND_LOADING_FINAL_OFFSET_BINDING)
+                .whenHeld(new DriverAssistVision(DriverAssistVisionTarget.CARGO_AND_LOADING, false));
+        new FluidButton(driverStick, Config.DRIVER_ASSIST_VISION_ROCKET_FINAL_OFFSET_BINDING)
+                .whenHeld(new DriverAssistVision(DriverAssistVisionTarget.ROCKET, false));
+        new FluidButton(driverStick, Config.DRIVER_ASSIST_ABSOLUTE_GYRO_RESET_CARGO_AND_LOADING_BINDING)
+                .whenHeld(new AbsoluteGyroReset(DriverAssistVisionTarget.CARGO_AND_LOADING));
+        new FluidButton(driverStick, Config.DRIVER_ASSIST_ABSOLUTE_GYRO_RESET_ROCKET_BINDING)
+                .whenHeld(new AbsoluteGyroReset(DriverAssistVisionTarget.ROCKET));
         new FluidButton(driverStick, Config.FACE_FORWARD_BINDING)
                 .whenHeld(new AbsoluteRotateWithGyro(0.6, 90, Integer.MAX_VALUE));
         new FluidButton(driverStick, Config.FACE_RIGHT_BINDING)

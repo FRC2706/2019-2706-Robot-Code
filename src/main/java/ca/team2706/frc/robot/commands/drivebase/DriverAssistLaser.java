@@ -25,7 +25,7 @@ public class DriverAssistLaser extends Command {
     private MotionMagic motionMagic;
 
     private final double CENTIMETRES_TO_FEET = 1.0/(2.54*12);
-    private final double LASER_DISTANCE_MIN = Config.TARGET_OFFSET_DISTANCE_LASER.value() + Config.ROBOT_LENGTH.value()/2.0 - Config.ROBOTTOLASER_ROBOTY.value();
+    private final double LASER_DISTANCE_MIN = Config.TARGET_OFFSET_DISTANCE_LASER.value() + Config.ROBOT_HALF_LENGTH.value() - Config.ROBOTTOLASER_ROBOTY.value();
     /**
      * Creates driver assist laser command object
      */
@@ -33,7 +33,7 @@ public class DriverAssistLaser extends Command {
         // Ensure that this command is the only one to run on the drive base
         requires(DriveBase.getInstance());
 
-        laserDistanceToTarget = lidarLitePWM.getDistanceCm() * CENTIMETRES_TO_FEET;
+        laserDistanceToTarget = DriveBase.getInstance().getLidarLiteDistanceCm() * CENTIMETRES_TO_FEET;
         System.out.println("laserDistanceToTarget:" + laserDistanceToTarget);
     }
 
@@ -49,43 +49,37 @@ public class DriverAssistLaser extends Command {
         DriveBase.getInstance().setPositionNoGyroMode();
 
         // Get distance of robot from target using laster rangefinder
-        laserDistanceToTarget = lidarLitePWM.getDistanceCm() * CENTIMETRES_TO_FEET;
+        laserDistanceToTarget = DriveBase.getInstance().getLidarLiteDistanceCm() * CENTIMETRES_TO_FEET;
         System.out.println("laserDistanceToTarget:" + laserDistanceToTarget);
         
         if (laserDistanceToTarget < LASER_DISTANCE_MIN) {
-            Log.d("DAL: Laser reading too low. Driver assist command rejected.");
+            System.out.println("DAL: Laser reading too low. Driver assist command rejected.");
             commandAborted = true;
             return;
         } else if (laserDistanceToTarget > Config.LASER_DISTANCE_MAX.value()) {
-            Log.d("DAL: Laser reading too high. Driver assist command rejected.");
+            System.out.println("DAL: Laser reading too high. Driver assist command rejected.");
             commandAborted = true;
             return;
         }
 
-        double robotFrontBumperDistanceToTarget = laserDistanceToTarget - (Config.ROBOT_LENGTH.value()/2.0 - Config.ROBOTTOLASER_ROBOTY.value());
-
+        double robotFrontBumperDistanceToTarget = laserDistanceToTarget - (Config.ROBOT_HALF_LENGTH.value() - Config.ROBOTTOLASER_ROBOTY.value());
         double robotDistanceToTravel = robotFrontBumperDistanceToTarget - Config.TARGET_OFFSET_DISTANCE_LASER.value();
 
-        //commandMotion();
-
-        //motionMagic = new MotionMagic(1.0, robotDistanceToTravel, 3);
-        //motionMagic.start();
+        motionMagic = new MotionMagic(1.0, robotDistanceToTravel, 3, 0.0);
+        motionMagic.start();
     }
 
     @Override
     public boolean isFinished() {
-        return (commandAborted /* || motionMagic.isCompleted()*/);
+        return (commandAborted || motionMagic.isCompleted());
     }
 
     @Override
     public void end() {
-        /*motionMagic.close();*/
+        if (motionMagic != null)
+        motionMagic.close();
 
         // Go back to disabled mode
         DriveBase.getInstance().setDisabledMode();
-    }
-
-    public void commandMotion() {
-
     }
 }

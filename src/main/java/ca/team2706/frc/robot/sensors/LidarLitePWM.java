@@ -13,8 +13,7 @@ public class LidarLitePWM extends SendableBase {
  * We've found this is a reasonably constant value for readings in the 25 cm to 600 cm range.
  * You can also use the offset to zero out the distance between the sensor and edge of the robot.
  */
-//private static final int CALIBRATION_OFFSET = -18;
-private static final int CALIBRATION_OFFSET = 0;
+private static final double CALIBRATION_OFFSET = 1.22;
 
 private Counter counter;
 private int printedWarningCount = 5;

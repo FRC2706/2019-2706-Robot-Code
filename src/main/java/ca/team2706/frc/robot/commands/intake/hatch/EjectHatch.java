@@ -29,7 +29,7 @@ public class EjectHatch extends CommandGroup {
                 return Lift.getInstance().getLiftHeight() < -Config.SUBTRACT_LIFT_HEIGHT + 0.05;
             }
         }, 0.75);
-        addSequential(new MovePlunger(PneumaticState.DEPLOYED)); // Put plunger out and wait (timed command).
+        addSequential(new MovePlunger(pneumaticState -> PneumaticState.DEPLOYED)); // Put plunger out and wait (timed command).
         // Move lift down slightly
         addSequential(new MoveLiftToPosition(0.5, () -> Lift.getInstance().getLiftHeight() + Config.SUBTRACT_LIFT_HEIGHT), 0.75);
     }

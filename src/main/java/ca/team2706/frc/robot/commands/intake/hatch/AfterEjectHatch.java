@@ -18,7 +18,7 @@ public class AfterEjectHatch extends CommandGroup {
      * @param position The lift position before ejecting the hatch.
      */
     public AfterEjectHatch(Supplier<Double> position) {
-        addSequential(new MovePlunger(PneumaticState.STOWED));
+        addSequential(new MovePlunger(pneumaticState -> PneumaticState.STOWED));
         addParallel(new MoveLiftToPosition(0.5, position));
     }
 

@@ -5,6 +5,8 @@ import ca.team2706.frc.robot.RobotState;
 import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.commands.intake.arms.RaiseArmsSafely;
 import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.pneumatics.PneumaticPiston;
+import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -18,7 +20,7 @@ public class Pneumatics extends Subsystem {
     private static Pneumatics currentInstance;
 
     private DoubleSolenoid intakeLiftSolenoid;
-    private DoubleSolenoid hatchEjectorSolenoid;
+    private PneumaticPiston hatchEjectorSolenoid;
 
     /**
      * The current status of the intake arms, whether they're in hatch mode or in cargo mode.
@@ -29,6 +31,15 @@ public class Pneumatics extends Subsystem {
      * True if the plunger is out, false otherwise.
      */
     private boolean plungerExtended = false;
+
+    /**
+     * Moves the plunger to the given position.
+     *
+     * @param newState The new plunger position.
+     */
+    public void movePlunger(PneumaticState newState) {
+        hatchEjectorSolenoid.set(newState);
+    }
 
     /**
      * Different states that the intake subsystem can be in, either
@@ -64,7 +75,7 @@ public class Pneumatics extends Subsystem {
      */
     private Pneumatics() {
         this(new DoubleSolenoid(Config.INTAKE_LIFT_SOLENOID_FORWARD_ID, Config.INTAKE_LIFT_SOLENOID_BACKWARD_ID),
-                new DoubleSolenoid(Config.HATCH_EJECTOR_SOLENOID_FORWARD_ID, Config.HATCH_EJECTOR_SOLENOID_BACKWARD_ID));
+                new PneumaticPiston(Config.HATCH_EJECTOR_SOLENOID_FORWARD_ID, Config.HATCH_EJECTOR_SOLENOID_BACKWARD_ID, PneumaticState.STOWED));
     }
 
     private final Consumer<RobotState> listener;
@@ -75,7 +86,7 @@ public class Pneumatics extends Subsystem {
      * @param intakeLiftSolenoid   The intake lift double solenoid.
      * @param hatchEjectorSolenoid The hatch ejector (plunger) solenoid.
      */
-    private Pneumatics(final DoubleSolenoid intakeLiftSolenoid, final DoubleSolenoid hatchEjectorSolenoid) {
+    private Pneumatics(final DoubleSolenoid intakeLiftSolenoid, final PneumaticPiston hatchEjectorSolenoid) {
         this.intakeLiftSolenoid = intakeLiftSolenoid;
         this.hatchEjectorSolenoid = hatchEjectorSolenoid;
 

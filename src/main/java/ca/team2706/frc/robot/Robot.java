@@ -61,7 +61,6 @@ public class Robot extends TimedRobot {
         logInitialization(Pneumatics.init(), Pneumatics.getInstance());
         logInitialization(Lift.init(), Lift.getInstance());
         logInitialization(RingLight.init(), RingLight.getInstance());
-        logInitialization(ClimberMotor.init(), ClimberMotor.getInstance());
         logInitialization(ClimberPneumatics.init(), ClimberPneumatics.getInstance());
 
         // Make sure that this is last initialized subsystem

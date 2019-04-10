@@ -20,6 +20,6 @@ public class AutoEjectCargo extends CommandGroup {
 
         addParallel(new RunIntakeAtSpeed(() -> 1.0));
         addSequential(new WaitCommand(Config.EXHALE_CARGO_WAIT_UNTIL_PLUNGER));
-        addSequential(new MovePlunger(PneumaticState.DEPLOYED));
+        addSequential(new MovePlunger(pneumaticState -> PneumaticState.DEPLOYED));
     }
 }

@@ -1,9 +1,9 @@
 package ca.team2706.frc.robot.subsystems;
 
-import ca.team2706.frc.robot.pneumatics.PneumaticPiston;
 import ca.team2706.frc.robot.SubsystemStatus;
-import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.pneumatics.PneumaticPiston;
+import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -11,17 +11,11 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  * ClimberPneumatics subsystem for controlling the climber pneumatics.
  */
 public class ClimberPneumatics extends Subsystem {
-
-    /**
-     * True if the pistons are deployed, false otherwise.
-     */
-    private boolean pistonsDeployed = false;
-
     private static ClimberPneumatics currentInstance;
 
 
     // Pistons that extend and push the robot onto the platform.
-    private PneumaticPiston leftPusher, rightPusher;
+    private final PneumaticPiston backPusher, frontPusher;
 
     /**
      * Gets the current instance of the climber subsystem
@@ -51,77 +45,64 @@ public class ClimberPneumatics extends Subsystem {
      */
     private ClimberPneumatics() {
         this(
-                new PneumaticPiston(Config.CLIMBER_LEFT_PUSHER_FORWARD_ID, Config.CLIMBER_LEFT_PUSHER_BACKWARD_ID),
-                new PneumaticPiston(Config.CLIMBER_RIGHT_PUSHER_FORWARD_ID, Config.CLIMBER_RIGHT_PUSHER_BACKWARD_ID));
+                new PneumaticPiston(Config.CLIMBER_LEFT_PUSHER_FORWARD_ID, Config.CLIMBER_LEFT_PUSHER_BACKWARD_ID, PneumaticState.STOWED, true),
+                new PneumaticPiston(Config.CLIMBER_RIGHT_PUSHER_FORWARD_ID, Config.CLIMBER_RIGHT_PUSHER_BACKWARD_ID, PneumaticState.STOWED, true));
     }
 
     /**
      * Constructs a new climber instance with the given climber motor.
      *
-     * @param rightPusher The right pusher double solenoid.
-     * @param leftPusher  The left pusher double solenoid.
+     * @param backPusher  The left pusher double solenoid.
+     * @param frontPusher The front pusher double solenoid.
      */
-    public ClimberPneumatics(final PneumaticPiston rightPusher, final PneumaticPiston leftPusher) {
-        this.rightPusher = rightPusher;
-        this.leftPusher = leftPusher;
+    public ClimberPneumatics(final PneumaticPiston backPusher, final PneumaticPiston frontPusher) {
+        this.backPusher = backPusher;
+        this.frontPusher = frontPusher;
 
-        addChild("Left Pusher", this.leftPusher);
-        addChild("Right Pusher", this.rightPusher);
+        addChild("Back Pusher", this.backPusher);
+        addChild("Front Pusher", this.frontPusher);
     }
 
     /**
-     * Does the final stage in climbing by pushing out the climber pistons to mount the robot on the third level.
-     */
-    public void pushRobot() {
-        if (!arePistonsExtended()) {
-            leftPusher.set(DoubleSolenoid.Value.kForward);
-            rightPusher.set(DoubleSolenoid.Value.kForward);
-            pistonsDeployed = true;
-        }
-    }
-
-    /**
-     * Retracts the climbing pistons.
-     */
-    public void retractPushers() {
-        if (arePistonsExtended()) {
-            leftPusher.set(DoubleSolenoid.Value.kReverse);
-            rightPusher.set(DoubleSolenoid.Value.kReverse);
-            pistonsDeployed = false;
-        }
-    }
-
-    /**
-     * Moves the left piston to the desired state.
-     * @param desiredState The desired piston state.
-     */
-    public void moveLeftPiston(final PneumaticState desiredState) {
-        leftPusher.set(desiredState);
-    }
-
-    /**
-     * Moves the right piston to the desired state
-     * @param desiredState The desired piston state.
-     */
-    public void moveRightPiston(final PneumaticState desiredState) {
-        rightPusher.set(desiredState);
-    }
-
-    /**
-     * Determines if the climber pistons are extended.
+     * Moves the back piston to the desired state.
      *
-     * @return True if the climber pistons are out, false otherwise.
+     * @param desiredState The desired piston state.
      */
-    public boolean arePistonsExtended() {
-        return pistonsDeployed;
+    public void moveBackPiston(final PneumaticState desiredState) {
+        backPusher.set(desiredState);
+    }
+
+    /**
+     * Moves the front piston to the desired state
+     *
+     * @param desiredState The desired piston state.
+     */
+    public void moveFrontPiston(final PneumaticState desiredState) {
+        frontPusher.set(desiredState);
+    }
+
+    /**
+     * Gets the state of the front pistons.
+     * @return The piston state.
+     */
+    public PneumaticState getFrontState() {
+        return frontPusher.getState();
+    }
+
+    /**
+     * Gets the state of the back pistons.
+     * @return The piston state.
+     */
+    public PneumaticState getBackState() {
+        return backPusher.getState();
     }
 
     /**
      * Stops the climber pneumatics.
      */
     public void stopPneumatics() {
-        leftPusher.set(DoubleSolenoid.Value.kOff);
-        rightPusher.set(DoubleSolenoid.Value.kOff);
+        backPusher.set(DoubleSolenoid.Value.kOff);
+        frontPusher.set(DoubleSolenoid.Value.kOff);
     }
 
     @Override

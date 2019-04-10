@@ -5,20 +5,22 @@ import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.subsystems.Pneumatics;
 import edu.wpi.first.wpilibj.command.TimedCommand;
 
+import java.util.function.Function;
+
 /**
  * Command for moving the plunger, either retracting it or expanding it.
  * Timeout is to ensure that the command ends when the plunger is in the right position.
  */
 public class MovePlunger extends TimedCommand {
-    private PneumaticState oldState;
+    private boolean isAlreadyInPosition = false;
 
 
-    private PneumaticState newState;
+    private Function<PneumaticState, PneumaticState> newState;
 
     /**
-     * @param newState True to retract the plunger, false to shoot it out.
+     * @param newState Function for determining the desired new state of the plunger based on its current state.
      */
-    public MovePlunger(final PneumaticState newState) {
+    public MovePlunger(final Function<PneumaticState, PneumaticState> newState) {
         super(Config.PLUNGER_TIMEOUT);
         requires(Pneumatics.getInstance());
         this.newState = newState;
@@ -28,42 +30,29 @@ public class MovePlunger extends TimedCommand {
      * Constructs a new plunger mover that toggles the plunger.
      */
     public MovePlunger() {
-        this(PneumaticState.TOGGLE);
+        this(PneumaticState::getOpposite);
     }
 
     @Override
     protected void initialize() {
         super.initialize();
-        oldState = (Pneumatics.getInstance().isPlungerStowed()) ? PneumaticState.STOWED : PneumaticState.DEPLOYED;
+        final PneumaticState oldState = (Pneumatics.getInstance().isPlungerStowed()) ? PneumaticState.STOWED : PneumaticState.DEPLOYED;
+        final PneumaticState newState = this.newState.apply(oldState);
 
-        PneumaticState goodNewState = newState;
-        if (goodNewState == PneumaticState.TOGGLE) {
-            if (Pneumatics.getInstance().isPlungerStowed()) {
-                goodNewState = PneumaticState.DEPLOYED;
-            } else {
-                goodNewState = PneumaticState.STOWED;
-            }
-        }
+        isAlreadyInPosition = oldState == newState;
+        Pneumatics.getInstance().movePlunger(newState);
+    }
 
-        switch (goodNewState) {
-            case DEPLOYED:
-                Pneumatics.getInstance().deployPlunger();
-                break;
-            case STOWED:
-                Pneumatics.getInstance().retractPlunger();
-                break;
-        }
+    @Override
+    protected boolean isFinished() {
+        // We're done already if the plunger is already in the desired position.
+        return super.isFinished() || isAlreadyInPosition;
     }
 
     @Override
     protected void end() {
         super.end();
         Pneumatics.getInstance().stopPlunger();
-    }
-
-    @Override
-    protected boolean isFinished() {
-        // We're done already if the plunger is already in the desired position.
-        return super.isFinished() || oldState == newState;
+        isAlreadyInPosition = false;
     }
 }

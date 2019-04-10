@@ -1,7 +1,8 @@
 package ca.team2706.frc.robot;
 
+import ca.team2706.frc.robot.commands.climber.MoveFrontClimberPistons;
 import ca.team2706.frc.robot.pneumatics.PneumaticState;
-import ca.team2706.frc.robot.commands.climber.actions.MoveClimberPistons;
+import ca.team2706.frc.robot.commands.climber.MoveBackClimberPistons;
 import ca.team2706.frc.robot.commands.drivebase.AbsoluteRotateWithGyro;
 import ca.team2706.frc.robot.commands.drivebase.CurvatureDriveWithJoystick;
 import ca.team2706.frc.robot.commands.intake.AfterEjectConditional;
@@ -15,13 +16,11 @@ import ca.team2706.frc.robot.commands.ringlight.ToggleRingLight;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.config.XboxValue;
 import ca.team2706.frc.robot.input.*;
-import ca.team2706.frc.robot.subsystems.ClimberPneumatics;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import ca.team2706.frc.robot.subsystems.Lift;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
-import edu.wpi.first.wpilibj.command.TimedCommand;
 
 /**
  * This class is the glue that binds the controls on the physical operator interface to the commands
@@ -104,10 +103,6 @@ public class OI {
                 .whenPressed(new RaiseArmsSafely());
         new FluidButton(controlStick, Config.LOWER_ARMS_BINDING)
                 .whenPressed(new LowerArmsSafely());
-//        new FluidButton(controlStick, Config.CLIMBER_BINDING) // TODO add back
-//                .whenHeld(new Climb());
-//        new FluidButton(controlStick, Config.RETRACT_CLIMBER_BINDING)
-//                .whenPressed(new MoveClimberPistons(() -> PneumaticState.STOWED));
         new ETrigger() {
             @Override
             public boolean get() {
@@ -132,43 +127,12 @@ public class OI {
                 .whenPressed(new ToggleRingLight());
         new FluidButton(controlStick, Config.SLIGHTLY_LIFT_LIFT_BINDING)
                 .whenPressed(new MoveLiftToPosition(0.7, () -> Lift.getInstance().getLiftHeight() + 0.9));
+        // Climber controls
+        new FluidButton(controlStick, Config.FRONT_CLIMBER_BINDING)
+                .whenPressed(new MoveFrontClimberPistons(PneumaticState::getOpposite));
+        new FluidButton(controlStick, Config.BACK_CLIMBER_BINDING)
+                .whenPressed(new MoveBackClimberPistons(PneumaticState::getOpposite));
 
-        // TODO delete after testing
-        new EJoystickButton(controlStick, XboxValue.XBOX_LB_BUTTON.getPort())
-                .whenPressed(new MoveClimberPistons(() -> PneumaticState.TOGGLE));
-////        new AxisButton(controlStick, XboxValue.XBOX_RIGHT_STICK_Y.getPort(), Config.CONTROLLER_DEADBAND, AxisButton.TriggerType.Both)
-////                .whenHeld(new RunClimberMotor(() -> -controlStick.getRawAxis(XboxValue.XBOX_RIGHT_STICK_Y.getPort()) * 0.5));
-//        new AxisButton(controlStick, XboxValue.XBOX_RIGHT_STICK_Y.getPort(), Config.CONTROLLER_DEADBAND, AxisButton.TriggerType.Both)
-//                .whenHeld(new RunClimberMotor(() -> (controlStick.getRawAxis(XboxValue.XBOX_RIGHT_STICK_Y.getPort()) < 0) ? Config.TEST_CLIMBER_CONSTANT.value() : -Config.TEST_CLIMBER_CONSTANT.value()));
-        new EJoystickButton(controlStick, XboxValue.XBOX_X_BUTTON.getPort())
-                .whenPressed(new TimedCommand(Config.CLIMBER_PNEUMATICS_ON_TIME) {
-                    @Override
-                    protected void initialize() {
-                        super.initialize();
-                        ClimberPneumatics.getInstance().moveLeftPiston(PneumaticState.TOGGLE);
-                    }
-
-                    @Override
-                    protected void end() {
-                        super.end();
-                        ClimberPneumatics.getInstance().stopPneumatics();
-                    }
-                });
-        new EJoystickButton(controlStick, XboxValue.XBOX_B_BUTTON.getPort())
-                .whenPressed(new TimedCommand(Config.CLIMBER_PNEUMATICS_ON_TIME) {
-                    @Override
-                    protected void initialize() {
-                        super.initialize();
-                        ClimberPneumatics.getInstance().moveRightPiston(PneumaticState.TOGGLE);
-                    }
-
-                    @Override
-                    protected void end() {
-                        super.end();
-                        ClimberPneumatics.getInstance().stopPneumatics();
-                    }
-                });
-        // TODO end of deletion zone.
 
         // ---- Driver controls ----
 

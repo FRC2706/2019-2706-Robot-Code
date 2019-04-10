@@ -96,13 +96,8 @@ public class Config {
             CLIMBER_LEFT_PUSHER_FORWARD_ID = robotSpecific(6, 6, 6),
             CLIMBER_LEFT_PUSHER_BACKWARD_ID = robotSpecific(7, 7, 7),
             CLIMBER_RIGHT_PUSHER_FORWARD_ID = robotSpecific(4, 4, 4),
-            CLIMBER_RIGHT_PUSHER_BACKWARD_ID = robotSpecific(5, 5, 5),
-            CLIMBER_MOTOR_ID = robotSpecific(7, 7, 7);
+            CLIMBER_RIGHT_PUSHER_BACKWARD_ID = robotSpecific(5, 5, 5);
 
-    // ## Climber values ##
-    public static int
-            MAX_CLIMBER_ENCODER_TICKS = 9_000,
-            CLIMBER_SUFFICIENT_HEIGHT_ENCODER_TICKS = 5_000; // Amount of encoder ticks at which the climber pistons push out and climb the robot.
     /**
      * How long the climber pistons should be left on before we assume that they are fully extended and can
      * turn the solenoid off.
@@ -291,8 +286,8 @@ public class Config {
             FACE_BACK_BINDING = constant("face-back-binding", XboxValue.XBOX_POV_DOWN.getNTString()),
             INTERRUPT_BUTTON = constant("interrupt-button", XboxValue.XBOX_A_BUTTON.getNTString()),
             SLIGHTLY_LIFT_LIFT_BINDING = constant("lift-lift-slightly-binding", XboxValue.XBOX_SELECT_BUTTON.getNTString()),
-            CLIMBER_BINDING = constant("climber-binding", XboxValue.XBOX_X_BUTTON.getNTString()),
-            RETRACT_CLIMBER_BINDING = constant("retract-climber-binding", XboxValue.XBOX_B_BUTTON.getNTString());
+            FRONT_CLIMBER_BINDING = constant("climber-binding", XboxValue.XBOX_X_BUTTON.getNTString()),
+            BACK_CLIMBER_BINDING = constant("retract-climber-binding", XboxValue.XBOX_B_BUTTON.getNTString());
 
 
     /**

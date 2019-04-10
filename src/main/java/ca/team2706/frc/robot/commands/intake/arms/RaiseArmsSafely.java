@@ -13,7 +13,7 @@ public class RaiseArmsSafely extends CommandGroup {
      * has been stowed already.
      */
     public RaiseArmsSafely() {
-        addSequential(new MovePlunger(PneumaticState.STOWED));
+        addSequential(new MovePlunger(pneumaticState -> PneumaticState.STOWED));
         addSequential(new RaiseArms());
     }
 }

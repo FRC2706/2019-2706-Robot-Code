@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 public class AfterEjectConditional extends ConditionalCommand {
 
     public AfterEjectConditional(Supplier<Double> elevatorPosition) {
-        super(new MovePlunger(PneumaticState.STOWED), new AfterEjectHatch(elevatorPosition));
+        super(new MovePlunger(pneumaticState -> PneumaticState.STOWED), new AfterEjectHatch(elevatorPosition));
     }
 
     @Override

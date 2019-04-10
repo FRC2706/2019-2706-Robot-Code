@@ -86,21 +86,22 @@ public class Robot extends TimedRobot {
         }
 
         commands = new Command[]{
-                OI.getInstance().driveCommand,                                             // 0
-                new ApproachSecondSideCargoRight().mirror(),                               // 1
-                new ApproachSecondSideCargoRight(),                                        // 2                                                                   // 2
-                OI.getInstance().driveCommand,                                             // 3
-                new DriveOffHab(),                                                         // 4
-                new LevelOneCentreHatch(),                                                 // 5
-                new ApproachCloseRocketRight().mirror(),                                   // 6
-                new ApproachCloseRocketRight(),                                            // 7
-                new ApproachMiddleRocketRight().mirror(),                                  // 8
-                new ApproachMiddleRocketRight(),                                           // 9
-                new ApproachFirstSideCargoRight().mirror(),                                // 10
-                new ApproachFirstSideCargoRight()                                          // 11
+                null,                                         // 0
+                null,                                         // 1
+                null,                                         // 2
+                new ApproachSecondSideCargoRight().mirror(),  // 3
+                new ApproachSecondSideCargoRight(),           // 4
+                new DriveOffHab(),                            // 5
+                new LevelOneCentreHatch(),                    // 6
+                new ApproachCloseRocketRight().mirror(),      // 7
+                new ApproachCloseRocketRight(),               // 8
+                new ApproachCentreCargoRight().mirror(),      // 9
+                new ApproachCentreCargoRight(),               // 10
+                new ApproachFirstSideCargoRight().mirror(),   // 11
+                new ApproachFirstSideCargoRight()             // 12
         };
 
-        selectorOrientation = Map.of(4, 270);
+        selectorOrientation = Map.of(2, 270);
     }
 
     /**

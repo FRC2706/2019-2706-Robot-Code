@@ -11,8 +11,8 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
 import mockit.Expectations;
 import mockit.Injectable;
@@ -57,6 +57,9 @@ public class DriverAssistVisionTest {
     @Injectable
     private SensorCollection sensorCollection;
 
+    @Mocked
+    private Relay relay;
+
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
         new Expectations() {{
@@ -75,13 +78,16 @@ public class DriverAssistVisionTest {
      * is changed.
      */
     @Test
-    public void testGenerateTrajectoryCargoShipAndLoading() {
+    public void testGenerateTrajectoryCargoShipAndLoading(@Injectable("CARGO_AND_LOADING") DriverAssistVisionTarget target, @Injectable("false") boolean initialApproach) {
         new Expectations() {{
             pigeon.getYawPitchRoll((double[]) any);
             returns(SendablesTest.makePigeonExpectation(-90.0),
+                    SendablesTest.makePigeonExpectation(-90.0),
+                    SendablesTest.makePigeonExpectation(-90.0),
                     SendablesTest.makePigeonExpectation(0.0),
                     SendablesTest.makePigeonExpectation(90.0),
-                    SendablesTest.makePigeonExpectation(180.0));
+                    SendablesTest.makePigeonExpectation(180.0)
+            );
         }};
 
         // Run the test
@@ -89,28 +95,25 @@ public class DriverAssistVisionTest {
         double vRobotToTarget_CameraY = 7.0;
         double vCameraToTarget_CameraX = vRobotToTarget_CameraX - Config.ROBOTTOCAMERA_ROBOTX.value();
         double vCameraToTarget_CameraY = vRobotToTarget_CameraY - Config.ROBOTTOCAMERA_ROBOTY.value();
-
         double distanceCameraToTarget_Camera = Math.sqrt(Math.pow(vCameraToTarget_CameraX, 2) + Math.pow(vCameraToTarget_CameraY, 2));
         double yawAngleCameraToTarget_Camera = Math.toDegrees(Math.atan2(vCameraToTarget_CameraX, vCameraToTarget_CameraY));
-        boolean driverAssistCargoAndLoading = true;
-        boolean driverAssistRocket = false;
 
         // Verify the values produced with expected values. Note that the generated trajectory
         // is compared against the expected trajectory by comparing the expected x, y, and heading
         // against those of the generated trajectory for the first and last segments.
         double[] expectedAngRobotHeadingFinal_Field = {0.0, 90.0, 180.0, 270.0};
+        double offsetDistance_Robot = Config.ROBOT_HALF_LENGTH.value() + Config.TARGET_OFFSET_DISTANCE_FINAL_CARGO_AND_LOADING.value();
         for (int i = 0; i < 4; i++) {
-            driverAssistVision.generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, yawAngleCameraToTarget_Camera,
-                    driverAssistCargoAndLoading, driverAssistRocket);
-            Trajectory traj = driverAssistVision.getTraj();
+            driverAssistVision.generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, yawAngleCameraToTarget_Camera);
+            Trajectory traj = driverAssistVision.getTrajectory();
 
             assertEquals(driverAssistVision.getAngRobotHeadingFinal_Field(), expectedAngRobotHeadingFinal_Field[i], 0.1);
             assertEquals(traj.segments[0].x, 0.0, 0.3);
             assertEquals(traj.segments[0].y, 0.0, 0.3);
-            assertEquals(traj.segments[0].heading, Pathfinder.d2r(90.0), 0.3);
-            assertEquals(vRobotToTarget_CameraX, traj.segments[traj.length() - 1].x, 0.3);
-            assertEquals(vRobotToTarget_CameraY - Config.TARGET_OFFSET_DISTANCE.value(), traj.segments[traj.length() - 1].y, 0.3); // 6.5
-            assertEquals(Pathfinder.d2r(90.0), traj.segments[traj.length() - 1].heading, 0.3);
+            assertEquals(traj.segments[0].heading, 0.0, 0.3);
+            assertEquals(traj.segments[traj.length() - 1].x, vRobotToTarget_CameraX, 0.3);
+            assertEquals(traj.segments[traj.length() - 1].y, vRobotToTarget_CameraY - offsetDistance_Robot, 0.3); // 6.5
+            assertEquals(traj.segments[traj.length() - 1].heading, 0.0, 0.3);
         }
     }
 
@@ -120,10 +123,12 @@ public class DriverAssistVisionTest {
      * to as "absolute heading" in the code) is changed.
      */
     @Test
-    public void testGenerateTrajectoryRocket() {
+    public void testGenerateTrajectoryRocket(@Injectable("ROCKET") DriverAssistVisionTarget target, @Injectable("false") boolean initialApproach) {
         new Expectations() {{
             pigeon.getYawPitchRoll((double[]) any);
             returns(SendablesTest.makePigeonExpectation(-30.0),
+                    SendablesTest.makePigeonExpectation(-30.0),
+                    SendablesTest.makePigeonExpectation(-30.0),
                     SendablesTest.makePigeonExpectation(-90.0),
                     SendablesTest.makePigeonExpectation(210.0),
                     SendablesTest.makePigeonExpectation(30.0),
@@ -136,28 +141,65 @@ public class DriverAssistVisionTest {
         double vRobotToTarget_CameraY = 7.0;
         double vCameraToTarget_CameraX = vRobotToTarget_CameraX - Config.ROBOTTOCAMERA_ROBOTX.value();
         double vCameraToTarget_CameraY = vRobotToTarget_CameraY - Config.ROBOTTOCAMERA_ROBOTY.value();
-
         double distanceCameraToTarget_Camera = Math.sqrt(Math.pow(vCameraToTarget_CameraX, 2) + Math.pow(vCameraToTarget_CameraY, 2));
         double yawAngleCameraToTarget_Camera = Math.toDegrees(Math.atan2(vCameraToTarget_CameraX, vCameraToTarget_CameraY));
-        boolean driverAssistCargoAndLoading = false;
-        boolean driverAssistRocket = true;
 
         // Verify the values produced with expected values. Note that the generated trajectory
         // is compared against the expected trajectory by comparing the expected x, y, and heading
         // against those of the generated trajectory for the first and last segments.
         double[] expectedAngRobotHeadingFinal_Field = {60.0, 0.0, 300.0, 120.0, 180.0, 240.0};
+        double offsetDistance_Robot = Config.ROBOT_HALF_LENGTH.value() + Config.TARGET_OFFSET_DISTANCE_FINAL_ROCKET.value();
         for (int i = 0; i < 6; i++) {
-            driverAssistVision.generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, yawAngleCameraToTarget_Camera,
-                    driverAssistCargoAndLoading, driverAssistRocket);
-            Trajectory traj = driverAssistVision.getTraj();
+            driverAssistVision.generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, yawAngleCameraToTarget_Camera);
+            Trajectory traj = driverAssistVision.getTrajectory();
 
-            assertEquals(expectedAngRobotHeadingFinal_Field[i], driverAssistVision.getAngRobotHeadingFinal_Field(), 0.1);
-            assertEquals(0D, traj.segments[0].x, 0.3);
-            assertEquals(0D, traj.segments[0].y, 0.3);
-            assertEquals(Pathfinder.d2r(90.0), traj.segments[0].heading, 0.3);
-            assertEquals(vRobotToTarget_CameraX, traj.segments[traj.length() - 1].x, 0.3);
-            assertEquals(vRobotToTarget_CameraY - Config.TARGET_OFFSET_DISTANCE.value(), traj.segments[traj.length() - 1].y, 0.3);
-            assertEquals(Pathfinder.d2r(90.0), traj.segments[traj.length() - 1].heading, 0.3);
+            assertEquals(driverAssistVision.getAngRobotHeadingFinal_Field(), expectedAngRobotHeadingFinal_Field[i], 0.1);
+            assertEquals(traj.segments[0].x, 0.0, 0.3);
+            assertEquals(traj.segments[0].y, 0.0, 0.3);
+            assertEquals(traj.segments[0].heading, 0.0, 0.3);
+            assertEquals(traj.segments[traj.length() - 1].x, vRobotToTarget_CameraX, 0.3);
+            assertEquals(traj.segments[traj.length() - 1].y, vRobotToTarget_CameraY - offsetDistance_Robot, 0.3);
+            assertEquals(traj.segments[traj.length() - 1].heading, 0.0, 0.3);
         }
+    }
+
+    /**
+     * Runs various test for generating a trajectory to ball targets. For each test,
+     * the same vision input is used but the heading of the robot in the field frame (referred
+     * to as "absolute heading" in the code) is changed.
+     */
+    @Test
+    public void testGenerateTrajectoryBall(@Injectable("BALL") DriverAssistVisionTarget target, @Injectable("false") boolean initialApproach) {
+        // Run the test
+        double vRobotToTarget_CameraX = -5.0;
+        double vRobotToTarget_CameraY = 7.0;
+        double vRobotToTarget_RobotX = vRobotToTarget_CameraX;
+        double vRobotToTarget_RobotY = vRobotToTarget_CameraY;
+        double vCameraToTarget_CameraX = vRobotToTarget_CameraX - Config.ROBOTTOCAMERA_ROBOTX.value();
+        double vCameraToTarget_CameraY = vRobotToTarget_CameraY - Config.ROBOTTOCAMERA_ROBOTY.value();
+        double distanceCameraToTarget_Camera = Math.sqrt(Math.pow(vCameraToTarget_CameraX, 2) + Math.pow(vCameraToTarget_CameraY, 2));
+        double yawAngleCameraToTarget_Camera = Math.toDegrees(Math.atan2(vCameraToTarget_CameraX, vCameraToTarget_CameraY));
+
+        // Verify the values produced with expected values. Note that the generated trajectory
+        // is compared against the expected trajectory by comparing the expected x, y, and heading
+        // against those of the generated trajectory for the first and last segments.
+        double PI_OVER_2 = Math.PI / 2.0;
+        double angRobotHeadingFinalExpectedRad_Robot = Math.atan2(vRobotToTarget_RobotY, vRobotToTarget_RobotX);
+        double angRobotHeadingFinalExpectedRad_Motion = PI_OVER_2 - angRobotHeadingFinalExpectedRad_Robot;
+        double mag = Math.sqrt(Math.pow(vRobotToTarget_RobotX, 2.0) + Math.pow(vRobotToTarget_RobotY, 2.0));
+        double vUnitRobotToTarget_RobotX = vRobotToTarget_RobotX / mag;
+        double vUnitRobotToTarget_RobotY = vRobotToTarget_RobotY / mag;
+        double d = Config.ROBOT_HALF_LENGTH.value() + Config.TARGET_OFFSET_DISTANCE_BALL.value();
+        double vRobotToFinalExpected_RobotX = vRobotToTarget_RobotX - d * vUnitRobotToTarget_RobotX;
+        double vRobotToFinalExpected_RobotY = vRobotToTarget_RobotY - d * vUnitRobotToTarget_RobotY;
+
+        driverAssistVision.generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, yawAngleCameraToTarget_Camera);
+        Trajectory traj = driverAssistVision.getTrajectory();
+        assertEquals(traj.segments[0].x, 0.0, 0.3);
+        assertEquals(traj.segments[0].y, 0.0, 0.3);
+        assertEquals(traj.segments[0].heading, 0.0, 0.3);
+        assertEquals(traj.segments[traj.length() - 1].x, vRobotToFinalExpected_RobotX, 0.3);
+        assertEquals(traj.segments[traj.length() - 1].y, vRobotToFinalExpected_RobotY, 0.3);
+        assertEquals(traj.segments[traj.length() - 1].heading, angRobotHeadingFinalExpectedRad_Motion, 0.3);
     }
 }

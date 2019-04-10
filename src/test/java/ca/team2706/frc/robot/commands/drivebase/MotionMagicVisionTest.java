@@ -11,7 +11,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
@@ -124,8 +123,9 @@ public class MotionMagicVisionTest {
             relay.set(Relay.Value.kForward);
             times = 1;
 
+            // FIXME: Dependant on whether Config.DISABLE_RING_LIGHT is true
             relay.set(Relay.Value.kReverse);
-            times = 1;
+            minTimes = 0;
         }};
     }
 

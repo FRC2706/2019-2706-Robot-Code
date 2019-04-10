@@ -3,7 +3,7 @@ package ca.team2706.frc.robot.commands.lift;
 import ca.team2706.frc.robot.config.FluidConstant;
 import ca.team2706.frc.robot.config.XboxValue;
 import ca.team2706.frc.robot.subsystems.Lift;
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class MoveLiftOnJoystick extends Command {
 
-    private Joystick controller;
+    private GenericHID controller;
 
     private int axisPort;
 
@@ -21,7 +21,7 @@ public class MoveLiftOnJoystick extends Command {
      * @param joystick    The joystick at which to look at to determine speed.
      * @param portBinding The axis port at which to look at for the speed.
      */
-    public MoveLiftOnJoystick(Joystick joystick, final FluidConstant<String> portBinding) {
+    public MoveLiftOnJoystick(GenericHID joystick, final FluidConstant<String> portBinding) {
         requires(Lift.getInstance());
         controller = joystick;
 

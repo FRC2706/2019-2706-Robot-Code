@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot.subsystems;
 
+import ca.team2706.frc.robot.SubsystemStatus;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -43,10 +44,12 @@ public class SensorExtras extends Subsystem {
     /**
      * Initializes the subsystem
      */
-    public static void init() {
+    public static SubsystemStatus init() {
         if (currentInstance == null) {
             currentInstance = new SensorExtras();
         }
+
+        return SubsystemStatus.OK;
     }
 
     /**

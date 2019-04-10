@@ -6,17 +6,17 @@ import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.*;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.IterativeRobotBase;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Watchdog;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -24,12 +24,21 @@ import java.util.function.Consumer;
  */
 public class Robot extends TimedRobot {
     private boolean isInitialized;
+    /*
+    This keeps track of whether or not all subsystems are good for running auto. If one subsystem is not,
+    this will be set to false and auto won't run.
+    */
+    private boolean canRunAuto = true;
 
     private Command[] commands;
+    private Map<Integer, Integer> selectorOrientation;
 
     private static Robot latestInstance;
 
     private final List<Consumer<RobotState>> stateListeners = new ArrayList<>();
+    private final List<Consumer<ConnectionState>> connectionListeners = new ArrayList<>();
+
+    private boolean driverStationConnected, fmsConnected;
 
     public Robot() {
         latestInstance = this;
@@ -41,6 +50,10 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         setOnStateChange((state) -> Log.i("Robot State: " + state.name()));
+        setOnConnectionChange((state) -> Log.i("Connection State: " + state.name()));
+        setOnConnectionChange(Log::setupFMS);
+        // Adding the match time to SmartDashboard for use by other processors.
+        SmartDashboard.putNumber(Config.MATCH_TIME_NT_KEY, 0);
 
         onStateChange(RobotState.ROBOT_INIT);
         isInitialized = true;
@@ -48,16 +61,16 @@ public class Robot extends TimedRobot {
         Config.init();
 
         // Initialize subsystems
-        Bling.init();
-        DriveBase.init();
+        logInitialization(Bling.init(), Bling.getInstance());
+        logInitialization(DriveBase.init(), DriveBase.getInstance());
 
-        Intake.init();
-        Pneumatics.init();
-        Lift.init();
-        RingLight.init();
+        logInitialization(Intake.init(), Intake.getInstance());
+        logInitialization(Pneumatics.init(), Pneumatics.getInstance());
+        logInitialization(Lift.init(), Lift.getInstance());
+        logInitialization(RingLight.init(), RingLight.getInstance());
 
         // Make sure that this is last initialized subsystem
-        SensorExtras.init();
+        logInitialization(SensorExtras.init(), SensorExtras.getInstance());
 
         // OI depends on subsystems, so initialize it after
         OI.init();
@@ -86,6 +99,34 @@ public class Robot extends TimedRobot {
                 new ApproachFirstSideCargoRight().mirror(),                                // 10
                 new ApproachFirstSideCargoRight()                                          // 11
         };
+
+        selectorOrientation = Map.of(4, 270);
+    }
+
+    /**
+     * Logs the initialization of a subsystem
+     *
+     * @param subsystemStatus The status that the subsystem initialized with
+     * @param subsystem       The subsystem
+     */
+    private void logInitialization(SubsystemStatus subsystemStatus, Subsystem subsystem) {
+        String message = subsystem.getName() + " had initialized with status " + subsystemStatus.name();
+
+        switch (subsystemStatus) {
+            case ERROR:
+                Log.e(message);
+                break;
+            case DISABLE_AUTO:
+                Log.w(message);
+                canRunAuto = false;
+                break;
+            case WORKABLE:
+                Log.w(message);
+                break;
+            default:
+                Log.i(message);
+                break;
+        }
     }
 
     /**
@@ -93,6 +134,42 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
+        if (fmsConnected != DriverStation.getInstance().isFMSAttached()) {
+            fmsConnected = DriverStation.getInstance().isFMSAttached();
+            onConnectionChange(fmsConnected ? ConnectionState.FMS_CONNECT : ConnectionState.FMS_DISCONNECT);
+        }
+
+        if (driverStationConnected != DriverStation.getInstance().isDSAttached()) {
+            driverStationConnected = DriverStation.getInstance().isDSAttached();
+            onConnectionChange(driverStationConnected ? ConnectionState.DRIVERSTATION_CONNECT : ConnectionState.DRIVERSTATION_DISCONNECT);
+        }
+
+        // If it's a real match, output the match time for use by others.
+        if (fmsConnected) {
+            SmartDashboard.putNumber(Config.MATCH_TIME_NT_KEY, getMatchTime());
+        }
+    }
+
+    /**
+     * Gets the match time counting autonomous and the teleop period together. Will count down from 150 to 0,
+     * 150 being start of the match at auto, 0 being end of teleop.
+     * <b>This may not return accurate match times if it is not a real match.</b>
+     *
+     * @return The current match time in seconds.
+     */
+    public static double getMatchTime() {
+        final double time;
+        if (DriverStation.getInstance().isDisabled()) {
+            time = 0;
+        } else if (DriverStation.getInstance().isAutonomous()) {
+            time = Timer.getMatchTime() + 135;
+        } else if (DriverStation.getInstance().isOperatorControl()) {
+            time = Timer.getMatchTime();
+        } else {
+            time = 0;
+        }
+
+        return time;
     }
 
     /**
@@ -143,7 +220,9 @@ public class Robot extends TimedRobot {
         // Iterate through each of the state-change listeners and call them.
         onStateChange(RobotState.AUTONOMOUS);
 
-        selectorInit();
+        if (canRunAuto) {
+            selectorInit();
+        }
     }
 
     // The command currently being run on the robot
@@ -155,6 +234,10 @@ public class Robot extends TimedRobot {
     private void selectorInit() {
         // The index based the voltage of the selector
         final int index = DriveBase.getInstance().getAnalogSelectorIndex();
+
+        Log.d("Selector switch set to " + index);
+
+        DriveBase.getInstance().resetAbsoluteGyro(selectorOrientation.getOrDefault(index, (int) (double) Config.ROBOT_START_ANGLE.value()));
 
         // Check to see if the command exists in the desired index
         if (index < commands.length && commands[index] != null) {
@@ -232,6 +315,57 @@ public class Robot extends TimedRobot {
     }
 
     /**
+     * Adds a method to be called when the connection robot's state is changed.
+     *
+     * @param listener The connection listener to be added.
+     */
+    public void addConnectionListener(Consumer<ConnectionState> listener) {
+        connectionListeners.add(listener);
+    }
+
+    /**
+     * Sets the given connection listener to be called when connection state is changed
+     *
+     * @param listener The listener to be invoked when the connection state is changed
+     */
+    public static void setOnConnectionChange(Consumer<ConnectionState> listener) {
+        if (latestInstance != null) {
+            latestInstance.addConnectionListener(listener);
+        }
+    }
+
+    /**
+     * Removes a connection state listener.
+     *
+     * @param listener The listener to be removed.
+     */
+    public void removeConnectionStateListener(Consumer<ConnectionState> listener) {
+        connectionListeners.remove(listener);
+    }
+
+    /**
+     * Removes a connection state listener so that it is no longer subscribed to robot state change events.
+     *
+     * @param listener The listener to be removed.
+     */
+    public static void removeConnectionListener(Consumer<ConnectionState> listener) {
+        if (latestInstance != null) {
+            latestInstance.removeConnectionStateListener(listener);
+        }
+    }
+
+    /**
+     * Calls the connection state change event, executing the listeners.
+     *
+     * @param newState The robot's current (new) connection state.
+     */
+    private void onConnectionChange(ConnectionState newState) {
+        // Make shallow copy of this.
+        ArrayList<Consumer<ConnectionState>> listeners = new ArrayList<>(connectionListeners);
+        listeners.forEach(action -> action.accept(newState));
+    }
+
+    /**
      * Adds a method to be called when the robot's state is changed.
      *
      * @param listener The listener to be added.
@@ -304,7 +438,9 @@ public class Robot extends TimedRobot {
      * Interrupt the current autonomous command and start teleop mode
      */
     public static void interruptCurrentCommand() {
-        if (currentCommand != null) {
+        if (currentCommand != null && currentCommand.isRunning() && DriverStation.getInstance().isAutonomous() && currentCommand != OI.getInstance().driveCommand && currentCommand != OI.getInstance().liftCommand) {
+            DriverStation.reportWarning("Interrupting auto", false);
+            Log.w("Interrupting auto");
             currentCommand.cancel();
         }
     }

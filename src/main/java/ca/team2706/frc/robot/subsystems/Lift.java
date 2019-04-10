@@ -1,12 +1,14 @@
 package ca.team2706.frc.robot.subsystems;
 
 import ca.team2706.frc.robot.Sendables;
+import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Subsystem that controls the elevator on the robot
@@ -16,7 +18,9 @@ public class Lift extends Subsystem {
     /**
      * The lift motor controller.
      */
-    public WPI_TalonSRX liftMotor;
+    private final WPI_TalonSRX liftMotor;
+
+    private final SubsystemStatus status;
 
     /**
      * Setpoints for cargo, in encoder ticks.
@@ -33,7 +37,7 @@ public class Lift extends Subsystem {
      */
     private static final int[] HATCH_SETPOINTS = {
             0, // Bottom position
-            1000, // lowest hatch deploy
+            2000, // lowest hatch deploy
             27138, // middle hatch
             53500 // highest hatch
     };
@@ -53,11 +57,15 @@ public class Lift extends Subsystem {
     /**
      * Initializes a new Lift instance, if there isn't an instance already.
      */
-    public static void init() {
+    public static SubsystemStatus init() {
         if (currentInstance == null) {
             currentInstance = new Lift();
         }
+
+        return currentInstance.getStatus();
     }
+
+    private boolean isLimitSwitchEnabled = false;
 
     /**
      * Initializes a new lift object.
@@ -66,7 +74,16 @@ public class Lift extends Subsystem {
         liftMotor = new WPI_TalonSRX(Config.LIFT_MOTOR_ID);
         addChild("Lift Motor", liftMotor);
         addChild("Lift Position", Sendables.newTalonEncoderSendable(liftMotor));
-        setupTalonConfig();
+        status = setupTalonConfig();
+    }
+
+    /**
+     * Gets the subsystem's initialization status (status of sensors and systems).
+     *
+     * @return The subsystem's status
+     */
+    private SubsystemStatus getStatus() {
+        return status;
     }
 
     @Override
@@ -76,9 +93,15 @@ public class Lift extends Subsystem {
     /**
      * Sets up the talon configuration.
      */
-    private void setupTalonConfig() {
+    private SubsystemStatus setupTalonConfig() {
+        SubsystemStatus status1 = SubsystemStatus.OK, status2 = SubsystemStatus.OK, status3 = SubsystemStatus.OK;
+
+        if (SubsystemStatus.checkError(liftMotor.configFactoryDefault(Config.CAN_LONG))) {
+            Log.e("Lift motor not working");
+            status1 = SubsystemStatus.ERROR;
+        }
+
         liftMotor.setNeutralMode(NeutralMode.Brake);
-        liftMotor.configFactoryDefault(Config.CAN_LONG);
         liftMotor.setInverted(Config.INVERT_LIFT_MOTOR);
 
         liftMotor.configPeakCurrentLimit(Config.MAX_LIFT_CURRENT, Config.CAN_LONG);
@@ -86,7 +109,11 @@ public class Lift extends Subsystem {
         liftMotor.configPeakCurrentDuration(Config.CURRENT_LIMIT_THRESHOLD_MS);
         liftMotor.enableCurrentLimit(Config.ENABLE_LIFT_CURRENT_LIMIT);
 
-        liftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_LONG);
+        if (SubsystemStatus.checkError(liftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_LONG))) {
+            Log.e("Lift encoder not functioning");
+            status2 = SubsystemStatus.DISABLE_AUTO;
+        }
+
         liftMotor.configSelectedFeedbackCoefficient(0.5, 0, Config.CAN_LONG);
         liftMotor.setSensorPhase(Config.ENABLE_LIFT_SUM_PHASE.value());
         liftMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Config.CAN_LONG);
@@ -100,7 +127,10 @@ public class Lift extends Subsystem {
 
         liftMotor.configClosedLoopPeriod(0, 1, Config.CAN_LONG);
 
-        liftMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, Config.CAN_LONG);
+        if (SubsystemStatus.checkError(liftMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, Config.CAN_LONG))) {
+            Log.e("Lift limit switch not functioning");
+            status3 = SubsystemStatus.WORKABLE;
+        }
         enableLimitSwitch(true);
 
         enableLimit(true);
@@ -116,10 +146,20 @@ public class Lift extends Subsystem {
         liftMotor.configMotionAcceleration((int) (Config.LIFT_MOTION_MAGIC_ACCELERATION.value() / Config.LIFT_ENCODER_DPP / 10), Config.CAN_LONG);
 
         liftMotor.configOpenloopRamp(Config.LIFT_VOLTAGE_RAMP_UP_PERIOD, Config.CAN_LONG);
+
+        return SubsystemStatus.maxError(status1, status2, status3);
     }
 
+    /**
+     * Enables or disables the limit switch on the lift.
+     *
+     * @param enable True to enable the limit switch, false otherwise.
+     */
     private void enableLimitSwitch(final boolean enable) {
-        liftMotor.configClearPositionOnLimitR(enable, Config.CAN_SHORT);
+        if (enable != isLimitSwitchEnabled) {
+            liftMotor.configClearPositionOnLimitR(enable, Config.CAN_SHORT);
+            isLimitSwitchEnabled = enable;
+        }
     }
 
     /**
@@ -146,6 +186,9 @@ public class Lift extends Subsystem {
             Log.d("Lift Current " + liftMotor.getOutputCurrent());
             Log.d("Lift Voltage " + liftMotor.getMotorOutputVoltage());
         }
+
+        SmartDashboard.putBoolean("Limit Switch", liftMotor.getSensorCollection().isRevLimitSwitchClosed());
+        SmartDashboard.putNumber("Lift Position", getLiftHeightEncoderTicks());
     }
 
     /**
@@ -219,6 +262,10 @@ public class Lift extends Subsystem {
      * @param position The number of encoder ticks.
      */
     public void setPositionMotionMagicEncoderTicks(final double maxSpeed, final double position) {
+        if (getStatus() == SubsystemStatus.DISABLE_AUTO || getStatus() == SubsystemStatus.ERROR) {
+            return;
+        }
+
         enableLimit(true);
         enableLimitSwitch(getLiftHeight() > 0);
 
@@ -232,33 +279,35 @@ public class Lift extends Subsystem {
      * @param velocity Velocity in encoder ticks.
      */
     public void setVelocity(int velocity) {
-        enableLimit(true);
-        enableLimitSwitch(true);
+        if (!(getStatus() == SubsystemStatus.DISABLE_AUTO || getStatus() == SubsystemStatus.ERROR)) {
+            enableLimit(true);
+            enableLimitSwitch(true);
 
-        // If we're approaching either the top of the bottom of the lift, begin to slow down.
-        final double liftHeight = getLiftHeight(); // Get lift height above bottom.
-        // Get lift distance from top
-        final double liftDistanceFromTop = Config.MAX_LIFT_ENCODER_TICKS * Config.LIFT_ENCODER_DPP - liftHeight;
+            // If we're approaching either the top of the bottom of the lift, begin to slow down.
+            final double liftHeight = getLiftHeight(); // Get lift height above bottom.
+            // Get lift distance from top
+            final double liftDistanceFromTop = Config.MAX_LIFT_ENCODER_TICKS * Config.LIFT_ENCODER_DPP - liftHeight;
 
-        final boolean needToSlowDown = (liftDistanceFromTop < Config.LIFT_SLOWDOWN_RANGE_UP && velocity > 0) || (liftHeight < Config.LIFT_SLOWDOWN_RANGE_DOWN && velocity < 0);
-        if (needToSlowDown) {
-            int maxLiftSpeedAtThisHeight;
-            // If we're going down.
-            if (velocity < 0) {
-                maxLiftSpeedAtThisHeight = -(int) (Config.LIFT_MAX_SPEED.value() * (liftHeight
-                        / Config.LIFT_SLOWDOWN_RANGE_UP + 0.25));
-                velocity = Math.max(velocity, maxLiftSpeedAtThisHeight);
+            final boolean needToSlowDown = (liftDistanceFromTop < Config.LIFT_SLOWDOWN_RANGE_UP && velocity > 0) || (liftHeight < Config.LIFT_SLOWDOWN_RANGE_DOWN && velocity < 0);
+            if (needToSlowDown) {
+                int maxLiftSpeedAtThisHeight;
+                // If we're going down.
+                if (velocity < 0) {
+                    maxLiftSpeedAtThisHeight = -(int) (Config.LIFT_MAX_SPEED.value() * (liftHeight
+                            / Config.LIFT_SLOWDOWN_RANGE_UP + 0.25));
+                    velocity = Math.max(velocity, maxLiftSpeedAtThisHeight);
+                }
+                // If we're going up.
+                else {
+                    maxLiftSpeedAtThisHeight = (int) (Config.LIFT_MAX_SPEED.value() * (liftDistanceFromTop
+                            / Config.LIFT_SLOWDOWN_RANGE_DOWN + 0.25));
+                    velocity = Math.min(velocity, maxLiftSpeedAtThisHeight);
+                }
             }
-            // If we're going up.
-            else {
-                maxLiftSpeedAtThisHeight = (int) (Config.LIFT_MAX_SPEED.value() * (liftDistanceFromTop
-                        / Config.LIFT_SLOWDOWN_RANGE_DOWN + 0.25));
-                velocity = Math.min(velocity, maxLiftSpeedAtThisHeight);
-            }
+
+            liftMotor.configClosedLoopPeakOutput(0, 1.0); // Peak output to max (1.0).
+            liftMotor.set(ControlMode.Velocity, velocity);
         }
-
-        liftMotor.configClosedLoopPeakOutput(0, 1.0); // Peak output to max (1.0).
-        liftMotor.set(ControlMode.Velocity, velocity);
     }
 
     /**
@@ -310,6 +359,8 @@ public class Lift extends Subsystem {
      * @param setpoint The setpoint id, between 0 and 3.
      */
     public void moveToSetpoint(final double speed, final int setpoint) {
+        Log.d("Moving to " + setpoint + " at " + speed + " speed");
+
         final int[] currentSetpoints = getCurrentSetpoints();
         if (0 <= setpoint && setpoint <= currentSetpoints.length) {
             setPositionMotionMagicEncoderTicks(speed, currentSetpoints[setpoint]);

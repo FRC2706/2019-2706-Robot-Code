@@ -1,5 +1,8 @@
 package ca.team2706.frc.robot.subsystems;
 
+import ca.team2706.frc.robot.Robot;
+import ca.team2706.frc.robot.RobotState;
+import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.config.Config;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -20,10 +23,12 @@ public class RingLight extends Subsystem {
     /**
      * Initializes a new ring light instance, if needed.
      */
-    public static void init() {
+    public static SubsystemStatus init() {
         if (currentInstance == null) {
             currentInstance = new RingLight();
         }
+
+        return SubsystemStatus.OK;
     }
 
     private final Relay relay;
@@ -43,6 +48,12 @@ public class RingLight extends Subsystem {
     private RingLight(final Relay light) {
         this.relay = light;
         addChild("Ring Light", relay);
+
+        Robot.setOnStateChange((state) -> {
+            if (state == RobotState.AUTONOMOUS || state == RobotState.TELEOP) {
+                enableLight();
+            }
+        });
     }
 
     /**
@@ -67,7 +78,9 @@ public class RingLight extends Subsystem {
      * Turns off the ring light.
      */
     public void disableLight() {
-        relay.set(Relay.Value.kReverse);
+        if (!Config.DISABLE_RING_LIGHT.value()) {
+            relay.set(Relay.Value.kReverse);
+        }
     }
 
     @Override

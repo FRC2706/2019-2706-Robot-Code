@@ -2,6 +2,7 @@ package ca.team2706.frc.robot.subsystems;
 
 import ca.team2706.frc.robot.Robot;
 import ca.team2706.frc.robot.RobotState;
+import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.commands.intake.arms.RaiseArmsSafely;
 import ca.team2706.frc.robot.config.Config;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -38,12 +39,14 @@ public class Pneumatics extends Subsystem {
     }
 
     /**
-     * Initializes a new IntkaePneumatics instance if not already initialized.
+     * Initializes a new IntakePneumatics instance if not already initialized.
      */
-    public static void init() {
+    public static SubsystemStatus init() {
         if (currentInstance == null) {
             currentInstance = new Pneumatics();
         }
+
+        return SubsystemStatus.OK;
     }
 
     /**

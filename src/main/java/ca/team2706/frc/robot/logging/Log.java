@@ -1,19 +1,37 @@
 package ca.team2706.frc.robot.logging;
 
+import ca.team2706.frc.robot.ConnectionState;
 import ca.team2706.frc.robot.Robot;
-import ca.team2706.frc.robot.RobotState;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Properties;
 
 /**
  * Logs to USB and console at levels debug, info, warning, error
  */
 public class Log {
+    private static final String LOG_FILE_KEY = "logFilename";
+    private static final Path LOG_LOCATION = Path.of("/U/logs");
+
+    private static boolean validDate;
+
+    static {
+        System.setProperty(LOG_FILE_KEY, logFile("latest"));
+        validDate = false;
+    }
 
     private static final Logger LOGGER = LogManager.getLogger(Robot.class.getName());
     private static final String BUILD_INFO_NAME = "/build-info.properties";
@@ -31,6 +49,106 @@ public class Log {
         logBuildInfo();
 
         Log.i("Game specific message: " + DriverStation.getInstance().getGameSpecificMessage());
+    }
+
+    /**
+     * Given the current date, formats the date for the start of the program
+     *
+     * @param secondsAgo The time in seconds since the program started
+     * @return The formatted start time of the program
+     */
+    private static String formattedDate(double secondsAgo) {
+        return new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(Date.from(Instant.now().minus((long) (secondsAgo * 1000), ChronoUnit.MILLIS)));
+    }
+
+    /**
+     * Sets up the logs for the newly connected driverstation and FMS
+     *
+     * @param state The new connection state
+     */
+    public static void setupFMS(ConnectionState state) {
+        if (state == ConnectionState.FMS_CONNECT) {
+            String eventName = DriverStation.getInstance().getEventName();
+            String matchType = DriverStation.getInstance().getMatchType().name();
+            int matchNumber = DriverStation.getInstance().getMatchNumber();
+            int replayNumber = DriverStation.getInstance().getReplayNumber();
+            double matchTime = DriverStation.getInstance().getMatchTime();
+
+            Log.d("FMS: " + eventName + " " + matchType + " " + matchNumber + "-" + replayNumber + " at " + matchTime);
+
+            String logFile = logFile(eventName + "-" + matchType + "-" + matchNumber + "-" + replayNumber);
+
+            if (!logFile.equals(System.getProperty(LOG_FILE_KEY))) {
+                validDate = true;
+
+                changeLogFile(logFile);
+            }
+        } else if (state == ConnectionState.DRIVERSTATION_CONNECT && !validDate) {
+            String logFile = logFile(formattedDate(Timer.getFPGATimestamp()));
+            validDate = true;
+
+            changeLogFile(logFile);
+        }
+    }
+
+    /**
+     * Changes the log file to a new location
+     *
+     * @param newFile The new location
+     */
+    private static void changeLogFile(String newFile) {
+        Log.i("Changed log file from " + System.getProperty(LOG_FILE_KEY) + " to " + newFile);
+
+        final Path oldPath = Paths.get(System.getProperty(LOG_FILE_KEY));
+
+        org.apache.logging.log4j.core.LoggerContext ctx =
+                (org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false);
+
+        try {
+            Files.copy(Paths.get(System.getProperty(LOG_FILE_KEY)), Paths.get(newFile));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.setProperty(LOG_FILE_KEY, newFile);
+
+        ctx.reconfigure();
+
+        // File is still locked so periodically loop until it can be deleted
+        Thread delete = new Thread(() -> {
+            // Loop until file is deleted
+            while (Files.isRegularFile(oldPath)) {
+                try {
+                    Files.delete(oldPath);
+                } catch (IOException ignored) {
+                }
+
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    return;
+                }
+            }
+        });
+        delete.setDaemon(true);
+        delete.start();
+    }
+
+    /**
+     * Gets the path to a log file from the name
+     *
+     * @param name The name of the file to log
+     * @return The path with a number at the end if the original alredy exists
+     */
+    private static String logFile(String name) {
+        String fileName = LOG_LOCATION.resolve(name + ".log").toString();
+
+        int i = 1;
+        while (Files.exists(Path.of(fileName))) {
+            fileName = LOG_LOCATION.resolve(name + "-" + i++ + ".log").toString();
+        }
+
+        return fileName;
     }
 
     /**

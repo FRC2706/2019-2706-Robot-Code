@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.command.Command;
  * Command for moving the lift to a given setpoint.
  */
 public class MoveLiftToSetpoint extends Command {
-
     private final int setpoint;
 
     /**

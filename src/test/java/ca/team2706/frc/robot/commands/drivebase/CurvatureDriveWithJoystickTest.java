@@ -105,7 +105,7 @@ public class CurvatureDriveWithJoystickTest {
 
         }};
 
-        CurvatureDriveWithJoystick curveDrive = new CurvatureDriveWithJoystick(joy1, Config.CURVATURE_DRIVE_FORWARD, true, joy2, Config.CURVATURE_CURVE_SPEED, false, joy3, Config.SLOW_MODE);
+        CurvatureDriveWithJoystick curveDrive = new CurvatureDriveWithJoystick(joy1, Config.CURVATURE_DRIVE_FORWARD, true, joy2, Config.CURVATURE_CURVE_SPEED, false, joy3, Config.SLOW_MODE, false);
 
         curveDrive.initialize();
 
@@ -115,8 +115,8 @@ public class CurvatureDriveWithJoystickTest {
         curveDrive.end();
 
         new Verifications() {{
-            DriveBase.getInstance().curvatureDrive(0.6, 0, false);
-            DriveBase.getInstance().curvatureDrive(0.6, 0, false);
+            DriveBase.getInstance().curvatureDrive(-0.6, 1.0, false);
+            DriveBase.getInstance().curvatureDrive(1.0, -1.0, false);
         }};
     }
 }

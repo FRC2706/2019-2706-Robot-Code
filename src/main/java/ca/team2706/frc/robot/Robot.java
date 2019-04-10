@@ -170,6 +170,15 @@ public class Robot extends TimedRobot {
     }
 
     /**
+     * Determines if the robot is in a real match.
+     *
+     * @return True if the robot is in a real match, false otherwise.
+     */
+    public static boolean isRealMatch() {
+        return DriverStation.getInstance().isFMSAttached();
+    }
+
+    /**
      * Called when the robot enters the disabled state.
      */
     @Override

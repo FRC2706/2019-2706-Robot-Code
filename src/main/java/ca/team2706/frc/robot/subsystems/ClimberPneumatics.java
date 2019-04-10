@@ -1,10 +1,13 @@
 package ca.team2706.frc.robot.subsystems;
 
+import ca.team2706.frc.robot.Robot;
 import ca.team2706.frc.robot.SubsystemStatus;
+import ca.team2706.frc.robot.commands.climber.MoveBackClimberPistons;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.pneumatics.PneumaticPiston;
 import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
@@ -61,6 +64,18 @@ public class ClimberPneumatics extends Subsystem {
 
         addChild("Back Pusher", this.backPusher);
         addChild("Front Pusher", this.frontPusher);
+    }
+
+    @Override
+    public void periodic() {
+        super.periodic();
+
+        // When there is less than half a second left in the match, retract all climber pneumatics.
+        // This should also make sure that this is a real match.
+        if (Robot.isRealMatch() && Robot.getMatchTime() < 0.5) {
+            moveFrontPiston(PneumaticState.STOWED);
+            moveBackPiston(PneumaticState.STOWED);
+        }
     }
 
     /**

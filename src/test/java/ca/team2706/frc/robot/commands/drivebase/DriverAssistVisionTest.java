@@ -1,7 +1,6 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
 import ca.team2706.frc.robot.SendablesTest;
-import ca.team2706.frc.robot.commands.drivebase.DriverAssistVision.DriverAssistVisionTarget;
 import ca.team2706.frc.robot.config.Config;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motion.BuffTrajPointStreamJNI;
@@ -83,7 +82,7 @@ public class DriverAssistVisionTest {
      * is changed.
      */
     @Test
-    public void testGenerateTrajectoryCargoShipAndLoading(@Injectable("CARGO_AND_LOADING") DriverAssistVisionTarget target) {
+    public void testGenerateTrajectoryCargoShipAndLoading(@Injectable("CARGO_AND_LOADING") DriverAssistVisionTarget target, @Injectable("false") boolean initialApproach) {
         new Expectations() {{
             pigeon.getYawPitchRoll((double[]) any);
             returns(SendablesTest.makePigeonExpectation(-90.0),
@@ -107,7 +106,7 @@ public class DriverAssistVisionTest {
         // is compared against the expected trajectory by comparing the expected x, y, and heading
         // against those of the generated trajectory for the first and last segments.
         double[] expectedAngRobotHeadingFinal_Field = {0.0, 90.0, 180.0, 270.0};
-        double offsetDistance_Robot = Config.ROBOT_HALF_LENGTH.value() + Config.TARGET_OFFSET_DISTANCE_CARGO_AND_LOADING.value();
+        double offsetDistance_Robot = Config.ROBOT_HALF_LENGTH.value() + Config.TARGET_OFFSET_DISTANCE_FINAL_CARGO_AND_LOADING.value();
         for (int i = 0; i < 4; i++) {
             driverAssistVision.generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, yawAngleCameraToTarget_Camera);
             Trajectory traj = driverAssistVision.getTrajectory();
@@ -128,7 +127,7 @@ public class DriverAssistVisionTest {
      * to as "absolute heading" in the code) is changed.
      */
     @Test
-    public void testGenerateTrajectoryRocket(@Injectable("ROCKET") DriverAssistVisionTarget target) {
+    public void testGenerateTrajectoryRocket(@Injectable("ROCKET") DriverAssistVisionTarget target, @Injectable("false") boolean initialApproach) {
         new Expectations() {{
             pigeon.getYawPitchRoll((double[]) any);
             returns(SendablesTest.makePigeonExpectation(-30.0),
@@ -153,7 +152,7 @@ public class DriverAssistVisionTest {
         // is compared against the expected trajectory by comparing the expected x, y, and heading
         // against those of the generated trajectory for the first and last segments.
         double[] expectedAngRobotHeadingFinal_Field = {60.0, 0.0, 300.0, 120.0, 180.0, 240.0};
-        double offsetDistance_Robot = Config.ROBOT_HALF_LENGTH.value() + Config.TARGET_OFFSET_DISTANCE_ROCKET.value();
+        double offsetDistance_Robot = Config.ROBOT_HALF_LENGTH.value() + Config.TARGET_OFFSET_DISTANCE_FINAL_ROCKET.value();
         for (int i = 0; i < 6; i++) {
             driverAssistVision.generateTrajectoryRobotToTarget(distanceCameraToTarget_Camera, yawAngleCameraToTarget_Camera);
             Trajectory traj = driverAssistVision.getTrajectory();
@@ -174,7 +173,7 @@ public class DriverAssistVisionTest {
      * to as "absolute heading" in the code) is changed.
      */
     @Test
-    public void testGenerateTrajectoryBall(@Injectable("BALL") DriverAssistVisionTarget target) {
+    public void testGenerateTrajectoryBall(@Injectable("BALL") DriverAssistVisionTarget target, @Injectable("false") boolean initialApproach) {
         // Run the test
         double vRobotToTarget_CameraX = -5.0;
         double vRobotToTarget_CameraY = 7.0;

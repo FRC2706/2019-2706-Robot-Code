@@ -289,7 +289,8 @@ public class Config {
             INTERRUPT_BUTTON = constant("interrupt-button", XboxValue.XBOX_A_BUTTON.getNTString()),
             SLIGHTLY_LIFT_LIFT_BINDING = constant("lift-lift-slightly-binding", XboxValue.XBOX_SELECT_BUTTON.getNTString()),
             FRONT_CLIMBER_BINDING = constant("climber-binding", XboxValue.XBOX_X_BUTTON.getNTString()),
-            BACK_CLIMBER_BINDING = constant("retract-climber-binding", XboxValue.XBOX_B_BUTTON.getNTString());
+            BACK_CLIMBER_BINDING = constant("retract-climber-binding", XboxValue.XBOX_B_BUTTON.getNTString()),
+            AUTO_CLIMB_BINDING = constant("automatic-climb", XboxValue.XBOX_LB_BUTTON.getNTString());
 
     /**
      * The minimum reading on the cargo IR sensor to assert that we have cargo in the mechanism.

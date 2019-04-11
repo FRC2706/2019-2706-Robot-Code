@@ -1,5 +1,6 @@
 package ca.team2706.frc.robot;
 
+import ca.team2706.frc.robot.commands.climber.AutoClimb;
 import ca.team2706.frc.robot.commands.climber.MoveBackClimberPistons;
 import ca.team2706.frc.robot.commands.climber.MoveFrontClimberPistons;
 import ca.team2706.frc.robot.commands.drivebase.*;
@@ -129,6 +130,8 @@ public class OI {
                 .whenPressed(new ToggleRingLight());
         new FluidButton(controlStick, Config.SLIGHTLY_LIFT_LIFT_BINDING)
                 .whenPressed(new MoveLiftToPosition(0.7, () -> Lift.getInstance().getLiftHeight() + 0.9));
+        new FluidButton(controlStick, Config.AUTO_CLIMB_BINDING)
+                .whenHeld(new AutoClimb());
 
 
         // ---- Driver controls ----

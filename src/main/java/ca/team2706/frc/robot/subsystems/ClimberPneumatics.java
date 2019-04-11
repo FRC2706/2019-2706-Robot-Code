@@ -82,7 +82,7 @@ public class ClimberPneumatics extends Subsystem {
      * @param desiredState The desired piston state.
      */
     public void moveBackPiston(final PneumaticState desiredState) {
-        Log.i("Back climber " + desiredState.name());
+        Log.d("Back climber " + desiredState.name());
         backPusher.set(desiredState);
     }
 
@@ -93,7 +93,7 @@ public class ClimberPneumatics extends Subsystem {
      */
     public void moveFrontPiston(final PneumaticState desiredState) {
 
-        Log.i("Front climber " + desiredState.name());
+        Log.d("Front climber " + desiredState.name());
         frontPusher.set(desiredState);
     }
 

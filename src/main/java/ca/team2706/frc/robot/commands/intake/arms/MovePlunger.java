@@ -41,8 +41,6 @@ public class MovePlunger extends TimedCommand {
 
         isAlreadyInPosition = oldState == newState;
         Pneumatics.getInstance().movePlunger(newState);
-
-        System.out.println("Move plunger to: " + newState); // TODO remove
     }
 
     @Override

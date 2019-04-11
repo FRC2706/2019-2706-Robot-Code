@@ -132,6 +132,8 @@ public class Log {
         });
         delete.setDaemon(true);
         delete.start();
+
+        Log.i("Exited rename method");
     }
 
     /**

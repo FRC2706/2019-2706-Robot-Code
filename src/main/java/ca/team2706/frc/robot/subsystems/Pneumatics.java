@@ -123,9 +123,12 @@ public class Pneumatics extends Subsystem {
     public void lowerArms() {
         // We don't want to lower the intake onto the plunger.
         if (isPlungerStowed()) {
+
             intakeLiftSolenoid.set(DoubleSolenoid.Value.kReverse);
             mode = IntakeMode.CARGO;
         }
+
+        System.out.println("Lowering arms. Is plunger in: " + isPlungerStowed()); // TODO remove
     }
 
     /**
@@ -134,6 +137,7 @@ public class Pneumatics extends Subsystem {
     public void raiseArms() {
         intakeLiftSolenoid.set(DoubleSolenoid.Value.kForward);
         mode = IntakeMode.HATCH;
+        System.out.println("Raising arms. State: " + mode); // TODO remove
     }
 
     /**

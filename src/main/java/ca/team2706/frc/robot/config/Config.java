@@ -75,8 +75,8 @@ public class Config {
             CARGO_IR_SENSOR_ID = robotSpecific(1, 1, 1),
             INTAKE_LIFT_SOLENOID_FORWARD_ID = robotSpecific(2, 2, 2),
             INTAKE_LIFT_SOLENOID_BACKWARD_ID = robotSpecific(3, 3, 3),
-            HATCH_EJECTOR_SOLENOID_FORWARD_ID = robotSpecific(0, 0, 0),
-            HATCH_EJECTOR_SOLENOID_BACKWARD_ID = robotSpecific(1, 1, 1);
+            HATCH_EJECTOR_SOLENOID_FORWARD_ID = robotSpecific(1, 0, 0),
+            HATCH_EJECTOR_SOLENOID_BACKWARD_ID = robotSpecific(0, 1, 1);
 
 
     public static final int
@@ -94,10 +94,10 @@ public class Config {
 
     // Climber pneumatics PCM slots.
     public static final int
-            CLIMBER_FRONT_PUSHER_FORWARD_ID = robotSpecific(6, 6, 6),
-            CLIMBER_FRONT_PUSHER_BACKWARD_ID = robotSpecific(7, 7, 7),
-            CLIMBER_BACK_PUSHER_FORWARD_ID = robotSpecific(4, 4, 4),
-            CLIMBER_BACK_PUSHER_BACKWARD_ID = robotSpecific(5, 5, 5);
+            CLIMBER_FRONT_PUSHER_FORWARD_ID = robotSpecific(4, 4, 4),
+            CLIMBER_FRONT_PUSHER_BACKWARD_ID = robotSpecific(5, 5, 5),
+            CLIMBER_BACK_PUSHER_FORWARD_ID = robotSpecific(6, 6, 6),
+            CLIMBER_BACK_PUSHER_BACKWARD_ID = robotSpecific(7, 7, 7);
 
     /**
      * How long the climber pistons should be left on before we assume that they are fully extended and can

@@ -1,7 +1,7 @@
 package ca.team2706.frc.robot.commands.climber;
 
-import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import ca.team2706.frc.robot.subsystems.ClimberPneumatics;
 import edu.wpi.first.wpilibj.command.TimedCommand;
 
@@ -21,6 +21,7 @@ public class MoveFrontClimberPistons extends TimedCommand {
 
     /**
      * Constructs the command for moving climber pistons.
+     *
      * @param desiredState The desired state of the back climber pistons. Argument provided is their current state,
      *                     expected return is the desired state.
      */
@@ -33,14 +34,12 @@ public class MoveFrontClimberPistons extends TimedCommand {
 
     @Override
     protected void initialize() {
-        final PneumaticState oldState = ClimberPneumatics.getInstance().getBackState();
+        final PneumaticState oldState = ClimberPneumatics.getInstance().getFrontState();
         final PneumaticState newState = desiredState.apply(oldState);
 
         isAlreadyInPosition = newState == oldState;
 
-        if (!isAlreadyInPosition) {
-            ClimberPneumatics.getInstance().moveFrontPiston(newState);
-        }
+        ClimberPneumatics.getInstance().moveFrontPiston(newState);
     }
 
     @Override

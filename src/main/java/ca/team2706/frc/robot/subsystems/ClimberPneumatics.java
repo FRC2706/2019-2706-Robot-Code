@@ -1,13 +1,11 @@
 package ca.team2706.frc.robot.subsystems;
 
-import ca.team2706.frc.robot.Robot;
 import ca.team2706.frc.robot.SubsystemStatus;
-import ca.team2706.frc.robot.commands.climber.MoveBackClimberPistons;
 import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.pneumatics.PneumaticPiston;
 import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
@@ -48,8 +46,8 @@ public class ClimberPneumatics extends Subsystem {
      */
     private ClimberPneumatics() {
         this(
-                new PneumaticPiston(Config.CLIMBER_FRONT_PUSHER_FORWARD_ID, Config.CLIMBER_FRONT_PUSHER_BACKWARD_ID, PneumaticState.STOWED, true),
-                new PneumaticPiston(Config.CLIMBER_BACK_PUSHER_FORWARD_ID, Config.CLIMBER_BACK_PUSHER_BACKWARD_ID, PneumaticState.STOWED, true));
+                new PneumaticPiston(Config.CLIMBER_FRONT_PUSHER_FORWARD_ID, Config.CLIMBER_FRONT_PUSHER_BACKWARD_ID, PneumaticState.STOWED, false),
+                new PneumaticPiston(Config.CLIMBER_BACK_PUSHER_FORWARD_ID, Config.CLIMBER_BACK_PUSHER_BACKWARD_ID, PneumaticState.STOWED, false));
     }
 
     /**
@@ -72,10 +70,10 @@ public class ClimberPneumatics extends Subsystem {
 
         // When there is less than half a second left in the match, retract all climber pneumatics.
         // This should also make sure that this is a real match.
-        if (Robot.isRealMatch() && Robot.getMatchTime() < 0.5) {
-            moveFrontPiston(PneumaticState.STOWED);
-            moveBackPiston(PneumaticState.STOWED);
-        }
+//        if (Robot.isRealMatch() && Robot.getMatchTime() < 0.5) {
+//            moveFrontPiston(PneumaticState.STOWED);
+//            moveBackPiston(PneumaticState.STOWED);
+//        }
     }
 
     /**
@@ -84,6 +82,7 @@ public class ClimberPneumatics extends Subsystem {
      * @param desiredState The desired piston state.
      */
     public void moveBackPiston(final PneumaticState desiredState) {
+        Log.i("Back climber " + desiredState.name());
         backPusher.set(desiredState);
     }
 
@@ -93,11 +92,14 @@ public class ClimberPneumatics extends Subsystem {
      * @param desiredState The desired piston state.
      */
     public void moveFrontPiston(final PneumaticState desiredState) {
+
+        Log.i("Front climber " + desiredState.name());
         frontPusher.set(desiredState);
     }
 
     /**
      * Gets the state of the front pistons.
+     *
      * @return The piston state.
      */
     public PneumaticState getFrontState() {
@@ -106,6 +108,7 @@ public class ClimberPneumatics extends Subsystem {
 
     /**
      * Gets the state of the back pistons.
+     *
      * @return The piston state.
      */
     public PneumaticState getBackState() {

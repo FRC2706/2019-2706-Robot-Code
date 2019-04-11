@@ -26,7 +26,7 @@ public class MoveBackClimberPistons extends TimedCommand {
      *                     expected return is the desired state.
      */
     public MoveBackClimberPistons(Function<PneumaticState, PneumaticState> desiredState) {
-        super(Config.CLIMBER_PNEUMATICS_ON_TIME);
+        super(Config.CLIMBER_BACK_PISTONS_ON_TIME);
         requires(ClimberPneumatics.getInstance());
 
         this.desiredState = desiredState;

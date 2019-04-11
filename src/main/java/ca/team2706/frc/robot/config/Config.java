@@ -103,7 +103,8 @@ public class Config {
      * How long the climber pistons should be left on before we assume that they are fully extended and can
      * turn the solenoid off.
      */
-    public static final double CLIMBER_PNEUMATICS_ON_TIME = 1.0;
+    public static final double CLIMBER_BACK_PISTONS_ON_TIME = 1.0,
+        CLIMBER_FRONT_PISTONS_ON_TIME = 0.5;
 
 
     public static boolean

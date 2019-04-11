@@ -20,10 +20,10 @@ public class AutoClimb extends CommandGroup {
         addSequential(new WaitCommand(0.2));
         addSequential(new MoveFrontClimberPistons(pneumaticState -> PneumaticState.DEPLOYED));
         // Needs to be accurate to avoid turning
-        addSequential(new ArcadeDriveWithTime(2, 0.275, -0.075));
-        addParallel(new DriveForwardWithTime(Config.CLIMBER_PNEUMATICS_ON_TIME, 0.2));
+        addSequential(new ArcadeDriveWithTime(2, 0.2, -0.075));
+        addParallel(new DriveForwardWithTime(Config.CLIMBER_FRONT_PISTONS_ON_TIME, 0.2));
         addSequential(new MoveFrontClimberPistons(pneumaticState -> PneumaticState.STOWED));
-        addSequential(new DriveForwardWithTime(0.25, 0.25));
+        addSequential(new DriveForwardWithTime(0.25, 0.35));
         addParallel(new DriveForwardWithTime(Double.POSITIVE_INFINITY, 0.25));
         addSequential(new MoveBackClimberPistons(pneumaticState -> PneumaticState.DEPLOYED));
         addSequential(new WaitCommand("Climb Last Stage Delay", 1.0));

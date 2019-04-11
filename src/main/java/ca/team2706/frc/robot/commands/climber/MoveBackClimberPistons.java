@@ -39,8 +39,6 @@ public class MoveBackClimberPistons extends TimedCommand {
 
         isAlreadyInPosition = newState == oldState;
 
-        System.out.println("Back climb oldState: " + oldState + " newState: " + newState + " In position: " + isAlreadyInPosition); // TODO remove
-
         ClimberPneumatics.getInstance().moveBackPiston(newState);
     }
 

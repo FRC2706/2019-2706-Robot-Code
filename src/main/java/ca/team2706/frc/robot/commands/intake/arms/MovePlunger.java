@@ -36,11 +36,13 @@ public class MovePlunger extends TimedCommand {
     @Override
     protected void initialize() {
         super.initialize();
-        final PneumaticState oldState = (Pneumatics.getInstance().isPlungerStowed()) ? PneumaticState.STOWED : PneumaticState.DEPLOYED;
+        final PneumaticState oldState = Pneumatics.getInstance().getPlungerState();
         final PneumaticState newState = this.newState.apply(oldState);
 
         isAlreadyInPosition = oldState == newState;
         Pneumatics.getInstance().movePlunger(newState);
+
+        System.out.println("Move plunger to: " + newState); // TODO remove
     }
 
     @Override

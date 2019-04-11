@@ -5,6 +5,7 @@ import ca.team2706.frc.robot.commands.climber.MoveFrontClimberPistons;
 import ca.team2706.frc.robot.commands.drivebase.*;
 import ca.team2706.frc.robot.commands.intake.AfterEjectConditional;
 import ca.team2706.frc.robot.commands.intake.EjectConditional;
+import ca.team2706.frc.robot.commands.intake.arms.LowerArms;
 import ca.team2706.frc.robot.commands.intake.arms.LowerArmsSafely;
 import ca.team2706.frc.robot.commands.intake.arms.MovePlunger;
 import ca.team2706.frc.robot.commands.intake.arms.RaiseArmsSafely;
@@ -128,11 +129,6 @@ public class OI {
                 .whenPressed(new ToggleRingLight());
         new FluidButton(controlStick, Config.SLIGHTLY_LIFT_LIFT_BINDING)
                 .whenPressed(new MoveLiftToPosition(0.7, () -> Lift.getInstance().getLiftHeight() + 0.9));
-        // Climber controls
-        new FluidButton(controlStick, Config.FRONT_CLIMBER_BINDING)
-                .whenPressed(new MoveFrontClimberPistons(PneumaticState::getOpposite));
-        new FluidButton(controlStick, Config.BACK_CLIMBER_BINDING)
-                .whenPressed(new MoveBackClimberPistons(PneumaticState::getOpposite));
 
 
         // ---- Driver controls ----
@@ -160,6 +156,11 @@ public class OI {
                 .whenHeld(new AbsoluteRotateWithGyro(0.6, 180, Integer.MAX_VALUE));
         new FluidButton(driverStick, Config.FACE_BACK_BINDING)
                 .whenHeld(new AbsoluteRotateWithGyro(0.6, 270, Integer.MAX_VALUE));
+        // Climber controls
+        new FluidButton(driverStick, Config.FRONT_CLIMBER_BINDING)
+                .whenPressed(new MoveFrontClimberPistons(PneumaticState::getOpposite));
+        new FluidButton(driverStick, Config.BACK_CLIMBER_BINDING)
+                .whenPressed(new MoveBackClimberPistons(PneumaticState::getOpposite));
     }
 
     /**

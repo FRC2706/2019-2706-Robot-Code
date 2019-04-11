@@ -131,9 +131,13 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
-        if (fmsConnected != DriverStation.getInstance().isFMSAttached()) {
-            fmsConnected = DriverStation.getInstance().isFMSAttached();
-            onConnectionChange(fmsConnected ? ConnectionState.FMS_CONNECT : ConnectionState.FMS_DISCONNECT);
+        if (!fmsConnected && DriverStation.getInstance().isFMSAttached() && !DriverStation.getInstance().getEventName().isEmpty()) {
+            fmsConnected = true;
+            onConnectionChange(ConnectionState.FMS_CONNECT);
+        }
+        else if(fmsConnected && !DriverStation.getInstance().isFMSAttached()) {
+            fmsConnected = false;
+            onConnectionChange(ConnectionState.FMS_DISCONNECT);
         }
 
         if (driverStationConnected != DriverStation.getInstance().isDSAttached()) {

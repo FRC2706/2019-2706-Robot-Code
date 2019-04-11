@@ -9,6 +9,7 @@ import ca.team2706.frc.robot.pneumatics.PneumaticPiston;
 import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.function.Consumer;
 
@@ -123,12 +124,9 @@ public class Pneumatics extends Subsystem {
     public void lowerArms() {
         // We don't want to lower the intake onto the plunger.
         if (isPlungerStowed()) {
-
             intakeLiftSolenoid.set(DoubleSolenoid.Value.kReverse);
             mode = IntakeMode.CARGO;
         }
-
-        System.out.println("Lowering arms. Is plunger in: " + isPlungerStowed()); // TODO remove
     }
 
     /**
@@ -137,7 +135,6 @@ public class Pneumatics extends Subsystem {
     public void raiseArms() {
         intakeLiftSolenoid.set(DoubleSolenoid.Value.kForward);
         mode = IntakeMode.HATCH;
-        System.out.println("Raising arms. State: " + mode); // TODO remove
     }
 
     /**
@@ -170,6 +167,15 @@ public class Pneumatics extends Subsystem {
      */
     public boolean isPlungerStowed() {
         return hatchEjectorSolenoid.getState() == PneumaticState.STOWED;
+    }
+
+    /**
+     * Gets the plunger's piston state.
+     *
+     * @return The plunger piston state.
+     */
+    public PneumaticState getPlungerState() {
+        return hatchEjectorSolenoid.getState();
     }
 
     @Override

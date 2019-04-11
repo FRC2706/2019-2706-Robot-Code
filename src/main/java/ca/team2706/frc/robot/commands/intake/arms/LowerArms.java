@@ -22,8 +22,8 @@ public class LowerArms extends TimedCommand {
     @Override
     protected void initialize() {
         super.initialize();
-        Pneumatics.getInstance().lowerArms();
         previousIntakeState = Pneumatics.getInstance().getMode();
+        Pneumatics.getInstance().lowerArms();
     }
 
     @Override

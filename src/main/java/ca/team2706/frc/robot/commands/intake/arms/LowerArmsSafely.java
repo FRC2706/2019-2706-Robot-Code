@@ -12,7 +12,7 @@ public class LowerArmsSafely extends CommandGroup {
      * Constructs a new lower arms safely command.
      */
     public LowerArmsSafely() {
-        addSequential(new MovePlunger(pneumaticState -> PneumaticState.STOWED)); // Stow plunger. This finished immediately if already stowed.
+        addSequential(new MovePlunger(pneumaticState -> PneumaticState.STOWED)); // Stow plunger. This finishes immediately if already stowed.
         addSequential(new LowerArms()); // Then lower arms.
     }
 }

@@ -50,7 +50,6 @@ public class PneumaticPiston extends DoubleSolenoid {
     public void set(final Value value) {
         if (!checkState || !isSameState(value, getState())) {
             super.set(value);
-            System.out.println("Set plunger to : " + value); // TODO remove
             switch (value) {
                 case kForward:
                     currentState = PneumaticState.DEPLOYED;
@@ -59,8 +58,6 @@ public class PneumaticPiston extends DoubleSolenoid {
                     currentState = PneumaticState.STOWED;
                     break;
             }
-
-            System.out.println("After move state: " + currentState); // TODO remove
         }
     }
 
@@ -99,7 +96,6 @@ public class PneumaticPiston extends DoubleSolenoid {
      * @return The Value state of the pneumatic piston.
      */
     public PneumaticState getState() {
-        System.out.println("Get state: " + currentState); // TODO remove
         return currentState;
     }
 }

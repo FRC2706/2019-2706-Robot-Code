@@ -75,8 +75,9 @@ public class Config {
             CARGO_IR_SENSOR_ID = robotSpecific(1, 1, 1),
             INTAKE_LIFT_SOLENOID_FORWARD_ID = robotSpecific(2, 2, 2),
             INTAKE_LIFT_SOLENOID_BACKWARD_ID = robotSpecific(3, 3, 3),
-            HATCH_EJECTOR_SOLENOID_FORWARD_ID = robotSpecific(0, 0, 0),
-            HATCH_EJECTOR_SOLENOID_BACKWARD_ID = robotSpecific(1, 1, 1);
+            HATCH_EJECTOR_SOLENOID_FORWARD_ID = robotSpecific(1, 0, 0),
+            HATCH_EJECTOR_SOLENOID_BACKWARD_ID = robotSpecific(0, 1, 1);
+
 
     public static final int
             LIFT_MOTOR_ID = robotSpecific(5, 5, 5);
@@ -84,16 +85,26 @@ public class Config {
     public static final double
             // Max speed of the lift going up in override (between 0 and 1).
             LIFT_OVERRIDE_UP_SPEED = 0.4,
-    /**
-     * Speed for automatically ejecting cargo from the intake, from 0 to 1.
-     */
-    AUTO_EJECT_CARGO_INTAKE_SPEED = 1.0,
     // Max speed of the lift going down in override (between -1 and 0).
     LIFT_OVERRIDE_DOWN_SPEED = -0.2,
     /**
      * Speed (from 0 to 1) for automatically intaking cargo.
      */
     AUTO_INTAKE_CARGO_SPEED = 0.8;
+
+    // Climber pneumatics PCM slots.
+    public static final int
+            CLIMBER_FRONT_PUSHER_FORWARD_ID = robotSpecific(4, 4, 4),
+            CLIMBER_FRONT_PUSHER_BACKWARD_ID = robotSpecific(5, 5, 5),
+            CLIMBER_BACK_PUSHER_FORWARD_ID = robotSpecific(6, 6, 6),
+            CLIMBER_BACK_PUSHER_BACKWARD_ID = robotSpecific(7, 7, 7);
+
+    /**
+     * How long the climber pistons should be left on before we assume that they are fully extended and can
+     * turn the solenoid off.
+     */
+    public static final double CLIMBER_BACK_PISTONS_ON_TIME = 1.0,
+            CLIMBER_FRONT_PISTONS_ON_TIME = 0.5;
 
 
     public static boolean
@@ -107,11 +118,11 @@ public class Config {
     /**
      * How long the lift current has to be over the current limit before it is cut out.
      */
-    CURRENT_LIMIT_THRESHOLD_MS = 0,
+    LIFT_CURRENT_LIMIT_THRESHOLD_MS = 0,
     /**
      * Continuous current limit
      */
-    CONTINUOUS_CURRENT_LIMIT = 15;
+    LIFT_CONTINUOUS_CURRENT_LIMIT = 15;
 
     /**
      * How long (in seconds) the lift ramp up on voltage should be.
@@ -223,12 +234,12 @@ public class Config {
 
     public static final FluidConstant<Double> LIFT_MOTION_MAGIC_ACCELERATION = constant("mm-lift-acceleration", 4.0);
     public static final FluidConstant<Double> LIFT_MOTION_MAGIC_VELOCITY = constant("mm-lift-velocity", 4.0);
+
     /**
      * Max speed of the lift in encoder ticks.
      */
     public static final FluidConstant<Integer> LIFT_MAX_SPEED = constant("max-lift-velocity", 3000);
-    public static final FluidConstant<Double> MANUAL_LIFT_MAX_PERCENT = constant("max-manual-lift-percent-velocity", 0.7);
-    public static final FluidConstant<Integer> MOTION_MAGIC_SMOOTHING = constant("mm-smoothing", 0);
+    public static final FluidConstant<Integer> DRIVEBASE_MOTION_MAGIC_SMOOTHING = constant("mm-smoothing", 0);
     public static final FluidConstant<Double> PATHFINDING_JERK = constant("pf-jerk", 197.0);
     public static final FluidConstant<Double> PATHFINDING_VELOCITY = constant("pf-velocity", 2.0);
     public static final FluidConstant<Double> PATHFINDING_ACCELERATION = constant("pf-acceleration", 6.56);
@@ -269,15 +280,18 @@ public class Config {
             DRIVER_ASSIST_LASER_BINDING =
                     constant("driver-assist-laser-binding", XboxValue.XBOX_Y_BUTTON.getNTString()),
             DRIVER_ASSIST_ABSOLUTE_GYRO_RESET_CARGO_AND_LOADING_BINDING =
-                    constant("driver-assist-gyro-reset-cargo-and-loading-binding", XboxValue.XBOX_X_BUTTON.getNTString()),
+                    constant("driver-assist-gyro-reset-cargo-and-loading-binding", XboxValue.XBOX_START_BUTTON.getNTString()),
             DRIVER_ASSIST_ABSOLUTE_GYRO_RESET_ROCKET_BINDING =
-                    constant("driver-assist-gyro-reset-rocket-binding", XboxValue.XBOX_B_BUTTON.getNTString()),
+                    constant("driver-assist-gyro-reset-rocket-binding", XboxValue.XBOX_SELECT_BUTTON.getNTString()),
             FACE_FORWARD_BINDING = constant("face-forward-binding", XboxValue.XBOX_POV_UP.getNTString()),
             FACE_RIGHT_BINDING = constant("face-right-binding", XboxValue.XBOX_POV_RIGHT.getNTString()),
             FACE_LEFT_BINDING = constant("face-left-binding", XboxValue.XBOX_POV_LEFT.getNTString()),
             FACE_BACK_BINDING = constant("face-back-binding", XboxValue.XBOX_POV_DOWN.getNTString()),
             INTERRUPT_BUTTON = constant("interrupt-button", XboxValue.XBOX_A_BUTTON.getNTString()),
-            SLIGHTLY_LIFT_LIFT_BINDING = constant("lift-lift-slightly-binding", XboxValue.XBOX_SELECT_BUTTON.getNTString());
+            SLIGHTLY_LIFT_LIFT_BINDING = constant("lift-lift-slightly-binding", XboxValue.XBOX_SELECT_BUTTON.getNTString()),
+            FRONT_CLIMBER_BINDING = constant("climber-binding", XboxValue.XBOX_X_BUTTON.getNTString()),
+            BACK_CLIMBER_BINDING = constant("retract-climber-binding", XboxValue.XBOX_B_BUTTON.getNTString()),
+            AUTO_CLIMB_BINDING = constant("automatic-climb", XboxValue.XBOX_LB_BUTTON.getNTString());
 
     /**
      * The minimum reading on the cargo IR sensor to assert that we have cargo in the mechanism.
@@ -309,6 +323,7 @@ public class Config {
     public static final FluidConstant<Double> CURVE_ADJUSTMENT = constant("curve-adjustment", 0.0105);
 
     public static final FluidConstant<Boolean> DISABLE_RING_LIGHT = constant("disable-ring-light", true);
+
 
     // ### Methods, fields and Constructors ###
     /**

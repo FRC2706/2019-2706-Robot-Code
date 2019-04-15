@@ -50,6 +50,8 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
+        Log.init();
+
         setOnStateChange((state) -> Log.i("Robot State: " + state.name()));
         setOnConnectionChange((state) -> Log.i("Connection State: " + state.name()));
         setOnConnectionChange(Log::setupFMS);
@@ -69,6 +71,7 @@ public class Robot extends TimedRobot {
         logInitialization(Pneumatics.init(), Pneumatics.getInstance());
         logInitialization(Lift.init(), Lift.getInstance());
         logInitialization(RingLight.init(), RingLight.getInstance());
+        logInitialization(ClimberPneumatics.init(), ClimberPneumatics.getInstance());
 
         // Make sure that this is last initialized subsystem
         logInitialization(SensorExtras.init(), SensorExtras.getInstance());
@@ -130,9 +133,12 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
-        if (fmsConnected != DriverStation.getInstance().isFMSAttached()) {
-            fmsConnected = DriverStation.getInstance().isFMSAttached();
-            onConnectionChange(fmsConnected ? ConnectionState.FMS_CONNECT : ConnectionState.FMS_DISCONNECT);
+        if (!fmsConnected && DriverStation.getInstance().isFMSAttached() && !DriverStation.getInstance().getEventName().isEmpty()) {
+            fmsConnected = true;
+            onConnectionChange(ConnectionState.FMS_CONNECT);
+        } else if (fmsConnected && !DriverStation.getInstance().isFMSAttached()) {
+            fmsConnected = false;
+            onConnectionChange(ConnectionState.FMS_DISCONNECT);
         }
 
         if (driverStationConnected != DriverStation.getInstance().isDSAttached()) {
@@ -166,6 +172,15 @@ public class Robot extends TimedRobot {
         }
 
         return time;
+    }
+
+    /**
+     * Determines if the robot is in a real match.
+     *
+     * @return True if the robot is in a real match, false otherwise.
+     */
+    public static boolean isRealMatch() {
+        return DriverStation.getInstance().isFMSAttached();
     }
 
     /**
@@ -303,8 +318,6 @@ public class Robot extends TimedRobot {
      * @param args Arguments passed on startup
      */
     public static void main(String[] args) {
-        Log.init();
-
         Runtime.getRuntime().addShutdownHook(new Thread(Robot::shutdown));
 
         RobotBase.startRobot(Robot::new);

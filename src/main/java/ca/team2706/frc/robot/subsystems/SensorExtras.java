@@ -22,7 +22,7 @@ public class SensorExtras extends Subsystem {
      */
     // Put above singleton pattern for better visibility
     private static final Map<SensorType, int[]> allocationTable = Map.ofEntries(
-            Map.entry(SensorType.Talon, new int[]{6, 7, 8}),
+            Map.entry(SensorType.Talon, new int[]{6, 8}),
             Map.entry(SensorType.Pwm, new int[]{0, 1, 2, 4}),
             Map.entry(SensorType.AnalogInput, new int[]{}),
             Map.entry(SensorType.Dio, new int[]{1, 2, 3, 4}),

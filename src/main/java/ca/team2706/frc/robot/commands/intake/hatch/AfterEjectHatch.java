@@ -2,6 +2,7 @@ package ca.team2706.frc.robot.commands.intake.hatch;
 
 import ca.team2706.frc.robot.commands.intake.arms.MovePlunger;
 import ca.team2706.frc.robot.commands.lift.MoveLiftToPosition;
+import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 import java.util.function.Supplier;
@@ -17,7 +18,7 @@ public class AfterEjectHatch extends CommandGroup {
      * @param position The lift position before ejecting the hatch.
      */
     public AfterEjectHatch(Supplier<Double> position) {
-        addSequential(new MovePlunger(MovePlunger.DesiredState.STOWED));
+        addSequential(new MovePlunger(pneumaticState -> PneumaticState.STOWED));
         addParallel(new MoveLiftToPosition(0.5, position));
     }
 

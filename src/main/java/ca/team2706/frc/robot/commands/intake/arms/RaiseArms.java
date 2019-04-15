@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj.command.TimedCommand;
  */
 public class RaiseArms extends TimedCommand {
 
+    private Pneumatics.IntakeMode previousIntakeState;
+
     /**
      * Constructs a new command to raise the intake arms in preparation for handling hatches.
      */
@@ -18,9 +20,16 @@ public class RaiseArms extends TimedCommand {
     }
 
     @Override
-    protected void execute() {
-        super.execute();
+    protected void initialize() {
+        super.initialize();
+        previousIntakeState = Pneumatics.getInstance().getMode();
         Pneumatics.getInstance().raiseArms();
+    }
+
+    @Override
+    protected boolean isFinished() {
+        // We're done if the timed command is done (thus the or statement) or if the arms were in hatch mode to start.
+        return super.isFinished() || previousIntakeState == Pneumatics.IntakeMode.HATCH;
     }
 
     @Override

@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj.command.TimedCommand;
  */
 public class LowerArms extends TimedCommand {
 
+    private Pneumatics.IntakeMode previousIntakeState;
+
     /**
      * Constructs a new command to lower the intake arms in preparation for handling cargo.
      */
@@ -19,7 +21,15 @@ public class LowerArms extends TimedCommand {
 
     @Override
     protected void initialize() {
+        super.initialize();
+        previousIntakeState = Pneumatics.getInstance().getMode();
         Pneumatics.getInstance().lowerArms();
+    }
+
+    @Override
+    protected boolean isFinished() {
+        // We're done if time command is done (thus the or statement) or if the arms were in a good position to start.
+        return super.isFinished() || previousIntakeState == Pneumatics.IntakeMode.CARGO;
     }
 
     @Override

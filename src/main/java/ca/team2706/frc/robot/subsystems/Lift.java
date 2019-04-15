@@ -37,7 +37,7 @@ public class Lift extends Subsystem {
      */
     private static final int[] HATCH_SETPOINTS = {
             0, // Bottom position
-            2000, // lowest hatch deploy
+            1725, // lowest hatch deploy
             27138, // middle hatch
             53500 // highest hatch
     };
@@ -92,6 +92,8 @@ public class Lift extends Subsystem {
 
     /**
      * Sets up the talon configuration.
+     *
+     * @return The status after configuring talons.
      */
     private SubsystemStatus setupTalonConfig() {
         SubsystemStatus status1 = SubsystemStatus.OK, status2 = SubsystemStatus.OK, status3 = SubsystemStatus.OK;
@@ -105,8 +107,8 @@ public class Lift extends Subsystem {
         liftMotor.setInverted(Config.INVERT_LIFT_MOTOR);
 
         liftMotor.configPeakCurrentLimit(Config.MAX_LIFT_CURRENT, Config.CAN_LONG);
-        liftMotor.configContinuousCurrentLimit(Config.CONTINUOUS_CURRENT_LIMIT);
-        liftMotor.configPeakCurrentDuration(Config.CURRENT_LIMIT_THRESHOLD_MS);
+        liftMotor.configContinuousCurrentLimit(Config.LIFT_CONTINUOUS_CURRENT_LIMIT);
+        liftMotor.configPeakCurrentDuration(Config.LIFT_CURRENT_LIMIT_THRESHOLD_MS);
         liftMotor.enableCurrentLimit(Config.ENABLE_LIFT_CURRENT_LIMIT);
 
         if (SubsystemStatus.checkError(liftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_LONG))) {
@@ -182,12 +184,11 @@ public class Lift extends Subsystem {
         if (DriverStation.getInstance().isEnabled()) {
             Log.d("Lift Encoders " + liftMotor.getSelectedSensorPosition());
             Log.d("Lift Rev Switch " + liftMotor.getSensorCollection().isRevLimitSwitchClosed());
-            Log.d("Lift Fwd Switch " + liftMotor.getSensorCollection().isFwdLimitSwitchClosed());
             Log.d("Lift Current " + liftMotor.getOutputCurrent());
             Log.d("Lift Voltage " + liftMotor.getMotorOutputVoltage());
         }
 
-        SmartDashboard.putBoolean("Limit Switch", liftMotor.getSensorCollection().isRevLimitSwitchClosed());
+        SmartDashboard.putBoolean("Lift Limit Switch", liftMotor.getSensorCollection().isRevLimitSwitchClosed());
         SmartDashboard.putNumber("Lift Position", getLiftHeightEncoderTicks());
     }
 

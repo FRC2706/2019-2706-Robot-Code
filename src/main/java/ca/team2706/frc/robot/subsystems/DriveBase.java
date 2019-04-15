@@ -614,7 +614,7 @@ public class DriveBase extends Subsystem {
      * Configures motion magic
      */
     private void configMotionMagic() {
-        rightFrontMotor.configMotionSCurveStrength(Config.MOTION_MAGIC_SMOOTHING.value(), Config.CAN_SHORT);
+        rightFrontMotor.configMotionSCurveStrength(Config.DRIVEBASE_MOTION_MAGIC_SMOOTHING.value(), Config.CAN_SHORT);
         rightFrontMotor.configMotionCruiseVelocity((int) (Config.DRIVEBASE_MOTION_MAGIC_CRUISE_VELOCITY.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
         rightFrontMotor.configMotionAcceleration((int) (Config.DRIVEBASE_MOTION_MAGIC_ACCELERATION.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
     }
@@ -623,10 +623,10 @@ public class DriveBase extends Subsystem {
      * Configures motion profile
      */
     private void configMotionProfile() {
-        rightFrontMotor.configMotionSCurveStrength(Config.MOTION_MAGIC_SMOOTHING.value(), Config.CAN_SHORT);
+        rightFrontMotor.configMotionSCurveStrength(Config.DRIVEBASE_MOTION_MAGIC_SMOOTHING.value(), Config.CAN_SHORT);
         rightFrontMotor.configMotionCruiseVelocity((int) (Config.DRIVEBASE_MOTION_MAGIC_CRUISE_VELOCITY.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
         rightFrontMotor.configMotionAcceleration((int) (Config.DRIVEBASE_MOTION_MAGIC_ACCELERATION.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
-        leftFrontMotor.configMotionSCurveStrength(Config.MOTION_MAGIC_SMOOTHING.value(), Config.CAN_SHORT);
+        leftFrontMotor.configMotionSCurveStrength(Config.DRIVEBASE_MOTION_MAGIC_SMOOTHING.value(), Config.CAN_SHORT);
         leftFrontMotor.configMotionCruiseVelocity((int) (Config.DRIVEBASE_MOTION_MAGIC_CRUISE_VELOCITY.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
         leftFrontMotor.configMotionAcceleration((int) (Config.DRIVEBASE_MOTION_MAGIC_ACCELERATION.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
     }

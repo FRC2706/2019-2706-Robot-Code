@@ -1,5 +1,8 @@
 package ca.team2706.frc.robot;
 
+import ca.team2706.frc.robot.commands.climber.AutoClimb;
+import ca.team2706.frc.robot.commands.climber.MoveBackClimberPistons;
+import ca.team2706.frc.robot.commands.climber.MoveFrontClimberPistons;
 import ca.team2706.frc.robot.commands.drivebase.*;
 import ca.team2706.frc.robot.commands.intake.AfterEjectConditional;
 import ca.team2706.frc.robot.commands.intake.EjectConditional;
@@ -14,6 +17,7 @@ import ca.team2706.frc.robot.config.XboxValue;
 import ca.team2706.frc.robot.input.ETrigger;
 import ca.team2706.frc.robot.input.FluidButton;
 import ca.team2706.frc.robot.input.FluidTrigger;
+import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import ca.team2706.frc.robot.subsystems.DriveBase;
 import ca.team2706.frc.robot.subsystems.Lift;
 import edu.wpi.first.wpilibj.Joystick;
@@ -125,6 +129,14 @@ public class OI {
                 .whenPressed(new ToggleRingLight());
         new FluidButton(controlStick, Config.SLIGHTLY_LIFT_LIFT_BINDING)
                 .whenPressed(new MoveLiftToPosition(0.7, () -> Lift.getInstance().getLiftHeight() + 0.9));
+        // Climber controls
+        new FluidButton(controlStick, Config.AUTO_CLIMB_BINDING)
+                .whenHeld(new AutoClimb());
+        new FluidButton(controlStick, Config.FRONT_CLIMBER_BINDING)
+                .whenPressed(new MoveFrontClimberPistons(PneumaticState::getOpposite));
+        new FluidButton(controlStick, Config.BACK_CLIMBER_BINDING)
+                .whenPressed(new MoveBackClimberPistons(PneumaticState::getOpposite));
+
 
         // ---- Driver controls ----
 

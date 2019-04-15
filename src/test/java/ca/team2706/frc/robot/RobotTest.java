@@ -105,8 +105,6 @@ public class RobotTest {
     @Mocked
     private DigitalInput input;
 
-    @SuppressWarnings("unchecked")
-
     @Before
     public void setUp() throws IOException, NoSuchFieldException, IllegalAccessException {
         new Expectations() {{
@@ -116,10 +114,6 @@ public class RobotTest {
 
             genericHID.getRawAxis(0);
             result = 0;
-            minTimes = 0;
-
-            DriverStation.getInstance();
-            result = driverStation;
             minTimes = 0;
         }};
 

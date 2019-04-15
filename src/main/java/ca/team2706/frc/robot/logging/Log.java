@@ -67,27 +67,31 @@ public class Log {
      * @param state The new connection state
      */
     public static void setupFMS(ConnectionState state) {
-        if (state == ConnectionState.FMS_CONNECT) {
-            String eventName = DriverStation.getInstance().getEventName();
-            String matchType = DriverStation.getInstance().getMatchType().name();
-            int matchNumber = DriverStation.getInstance().getMatchNumber();
-            int replayNumber = DriverStation.getInstance().getReplayNumber();
-            double matchTime = DriverStation.getInstance().getMatchTime();
+        try {
+            if (state == ConnectionState.FMS_CONNECT) {
+                String eventName = DriverStation.getInstance().getEventName();
+                String matchType = DriverStation.getInstance().getMatchType().name();
+                int matchNumber = DriverStation.getInstance().getMatchNumber();
+                int replayNumber = DriverStation.getInstance().getReplayNumber();
+                double matchTime = DriverStation.getInstance().getMatchTime();
 
-            Log.d("FMS: " + eventName + " " + matchType + " " + matchNumber + "-" + replayNumber + " at " + matchTime);
+                Log.d("FMS: " + eventName + " " + matchType + " " + matchNumber + "-" + replayNumber + " at " + matchTime);
 
-            String logFile = logFile(eventName + "-" + matchType + "-" + matchNumber + "-" + replayNumber);
+                String logFile = logFile(eventName + "-" + matchType + "-" + matchNumber + "-" + replayNumber);
 
-            if (!logFile.equals(System.getProperty(LOG_FILE_KEY))) {
+                if (!logFile.equals(System.getProperty(LOG_FILE_KEY))) {
+                    validDate = true;
+
+                    changeLogFile(logFile);
+                }
+            } else if (state == ConnectionState.DRIVERSTATION_CONNECT && !validDate) {
+                String logFile = logFile(formattedDate(Timer.getFPGATimestamp()));
                 validDate = true;
 
                 changeLogFile(logFile);
             }
-        } else if (state == ConnectionState.DRIVERSTATION_CONNECT && !validDate) {
-            String logFile = logFile(formattedDate(Timer.getFPGATimestamp()));
-            validDate = true;
-
-            changeLogFile(logFile);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
         }
     }
 
@@ -120,7 +124,7 @@ public class Log {
             while (Files.isRegularFile(oldPath)) {
                 try {
                     Files.delete(oldPath);
-                } catch (IOException ignored) {
+                } catch (SecurityException | IOException ignored) {
                 }
 
                 try {
@@ -132,6 +136,8 @@ public class Log {
         });
         delete.setDaemon(true);
         delete.start();
+
+        Log.i("Exited rename method");
     }
 
     /**

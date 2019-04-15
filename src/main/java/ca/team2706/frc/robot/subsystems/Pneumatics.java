@@ -5,6 +5,8 @@ import ca.team2706.frc.robot.RobotState;
 import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.commands.intake.arms.RaiseArmsSafely;
 import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.pneumatics.PneumaticPiston;
+import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -18,17 +20,12 @@ public class Pneumatics extends Subsystem {
     private static Pneumatics currentInstance;
 
     private DoubleSolenoid intakeLiftSolenoid;
-    private DoubleSolenoid hatchEjectorSolenoid;
+    private PneumaticPiston hatchEjectorSolenoid;
 
     /**
      * The current status of the intake arms, whether they're in hatch mode or in cargo mode.
      */
     private IntakeMode mode;
-
-    /**
-     * True if the plunger is out, false otherwise.
-     */
-    private boolean plungerExtended = false;
 
     /**
      * Different states that the intake subsystem can be in, either
@@ -64,7 +61,7 @@ public class Pneumatics extends Subsystem {
      */
     private Pneumatics() {
         this(new DoubleSolenoid(Config.INTAKE_LIFT_SOLENOID_FORWARD_ID, Config.INTAKE_LIFT_SOLENOID_BACKWARD_ID),
-                new DoubleSolenoid(Config.HATCH_EJECTOR_SOLENOID_FORWARD_ID, Config.HATCH_EJECTOR_SOLENOID_BACKWARD_ID));
+                new PneumaticPiston(Config.HATCH_EJECTOR_SOLENOID_FORWARD_ID, Config.HATCH_EJECTOR_SOLENOID_BACKWARD_ID, PneumaticState.STOWED));
     }
 
     private final Consumer<RobotState> listener;
@@ -75,7 +72,7 @@ public class Pneumatics extends Subsystem {
      * @param intakeLiftSolenoid   The intake lift double solenoid.
      * @param hatchEjectorSolenoid The hatch ejector (plunger) solenoid.
      */
-    private Pneumatics(final DoubleSolenoid intakeLiftSolenoid, final DoubleSolenoid hatchEjectorSolenoid) {
+    private Pneumatics(final DoubleSolenoid intakeLiftSolenoid, final PneumaticPiston hatchEjectorSolenoid) {
         this.intakeLiftSolenoid = intakeLiftSolenoid;
         this.hatchEjectorSolenoid = hatchEjectorSolenoid;
 
@@ -147,19 +144,12 @@ public class Pneumatics extends Subsystem {
     }
 
     /**
-     * Extends the hatch deployment cylinder
+     * Moves the plunger to the given position.
+     *
+     * @param newState The new plunger position.
      */
-    public void deployPlunger() {
-        hatchEjectorSolenoid.set(DoubleSolenoid.Value.kReverse);
-        plungerExtended = true;
-    }
-
-    /**
-     * Retracts the hatch deployment cylinder
-     */
-    public void retractPlunger() {
-        hatchEjectorSolenoid.set(DoubleSolenoid.Value.kForward);
-        plungerExtended = false;
+    public void movePlunger(PneumaticState newState) {
+        hatchEjectorSolenoid.set(newState);
     }
 
     /**
@@ -175,7 +165,16 @@ public class Pneumatics extends Subsystem {
      * @return True if the plunger is stowed, false otherwise.
      */
     public boolean isPlungerStowed() {
-        return !plungerExtended;
+        return hatchEjectorSolenoid.getState() == PneumaticState.STOWED;
+    }
+
+    /**
+     * Gets the plunger's piston state.
+     *
+     * @return The plunger piston state.
+     */
+    public PneumaticState getPlungerState() {
+        return hatchEjectorSolenoid.getState();
     }
 
     @Override

@@ -102,6 +102,9 @@ public class ConfigTest {
 
     private boolean initialized = false;
 
+    @Mocked
+    private DriverStation driverStation;
+
     @Before
     public void setUp() throws Exception {
         // Only set up everything once, making this more of an integration test.

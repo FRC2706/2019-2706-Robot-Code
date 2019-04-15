@@ -3,6 +3,7 @@ package ca.team2706.frc.robot.commands.pneumatics;
 import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import edu.wpi.first.wpilibj.command.TimedCommand;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -25,12 +26,14 @@ public class PneumaticController extends TimedCommand {
      *
      * @param moveFunction         The function for moving the piston, which accepts an argument of the piston's
      *                             desired state.
+     *                             Cannot be null.
      * @param desiredStateProvider The supplier of the desired state of the piston.
      *                             The provided argument is the current state of the piston.
      *                             The expected return value is the desired state of the piston.
-     * @param currentStateProvider The supplier for the piston's current state.
+     *                             Cannot be null or return null.
+     * @param currentStateProvider The supplier for the piston's current state. Can be null, but must not return null.
      * @param moveTime             The time that should be allotted for moving the piston, if it is necessary to move it.
-     * @param stopFunction         The function for turning off the pneumatics.
+     * @param stopFunction         The function for turning off the pneumatics. Cannot be null.
      */
     public PneumaticController(final Consumer<PneumaticState> moveFunction,
                                final Function<PneumaticState, PneumaticState> desiredStateProvider,
@@ -39,17 +42,20 @@ public class PneumaticController extends TimedCommand {
                                final Runnable stopFunction) {
         super(moveTime);
 
-        this.moveFunction = moveFunction;
-        this.desiredStateProvider = desiredStateProvider;
+        this.moveFunction = Objects.requireNonNull(moveFunction, "Move Function cannot be null.");
+        this.desiredStateProvider =
+                Objects.requireNonNull(desiredStateProvider, "Desired state supplier cannot be null.");
         this.currentStateSupplier = currentStateProvider;
-        this.stopFunction = stopFunction;
+        this.stopFunction = Objects.requireNonNull(stopFunction, "Stop function cannot be null.");
     }
 
     /**
      * Constructs a generic pneumatic controller command for controlling a pneumatic piston.
      *
      * @param deployFunction       The function for deploying (extending) the pneumatic piston.
+     *                             Can be null if deploying isn't desired behaviour.
      * @param stowFunction         The function for retracting (stowing) the pneumatic piston.
+     *                             Can be null if stowing isn't desired behaviour.
      * @param desiredStateProvider The supplier of the desired state of the piston.
      *                             The provided argument is the current state of the piston.
      *                             The expected return value is the desired state of the piston.
@@ -66,13 +72,36 @@ public class PneumaticController extends TimedCommand {
         this(pneumaticState -> {
             switch (pneumaticState) {
                 case DEPLOYED:
-                    deployFunction.run();
+                    if (deployFunction != null) {
+                        deployFunction.run();
+                    }
                     break;
                 case STOWED:
-                    stowFunction.run();
+                    if (stowFunction != null) {
+                        stowFunction.run();
+                    }
                     break;
             }
         }, desiredStateProvider, currentStateProvider, moveTime, stopFunction);
+    }
+
+    /**
+     * Constructs a pneumatic controller command for moving a pneumatic piston.
+     *
+     * @param moveFunction         The function for moving the piston, which accepts an argument of the piston's
+     *                             desired state.
+     *                             Cannot be null.
+     * @param desiredStateSupplier The supplier of the desired state of the piston.
+     *                             The provided argument is the current state of the piston.
+     *                             The expected return value is the desired state of the piston.
+     * @param stopFunction         The function for turning off the pneumatics.
+     * @param moveTime             The time that should be allotted for moving the piston, if it is necessary to move it.
+     */
+    public PneumaticController(final Consumer<PneumaticState> moveFunction,
+                               final Function<PneumaticState, PneumaticState> desiredStateSupplier,
+                               final Runnable stopFunction,
+                               final double moveTime) {
+        this(moveFunction, desiredStateSupplier, null, moveTime, stopFunction);
     }
 
 
@@ -80,7 +109,7 @@ public class PneumaticController extends TimedCommand {
     protected void initialize() {
         super.initialize();
 
-        final PneumaticState previousState = currentStateSupplier.get();
+        final PneumaticState previousState = (currentStateSupplier != null) ? currentStateSupplier.get() : null;
         final PneumaticState desiredState = desiredStateProvider.apply(previousState);
 
         isAlreadyInPosition = previousState == desiredState;

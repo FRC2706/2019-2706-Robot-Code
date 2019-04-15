@@ -1,23 +1,16 @@
 package ca.team2706.frc.robot.commands.climber;
 
+import ca.team2706.frc.robot.commands.pneumatics.PneumaticController;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import ca.team2706.frc.robot.subsystems.ClimberPneumatics;
-import edu.wpi.first.wpilibj.command.TimedCommand;
 
 import java.util.function.Function;
 
 /**
  * Command for moving the climber pistons, either in or out.
  */
-public class MoveFrontClimberPistons extends TimedCommand {
-
-    private Function<PneumaticState, PneumaticState> desiredState;
-
-    /**
-     * True if the pneumatics are already in position, false otherwise.
-     */
-    private boolean isAlreadyInPosition;
+public class MoveFrontClimberPistons extends PneumaticController {
 
     /**
      * Constructs the command for moving climber pistons.
@@ -26,31 +19,11 @@ public class MoveFrontClimberPistons extends TimedCommand {
      *                     expected return is the desired state.
      */
     public MoveFrontClimberPistons(Function<PneumaticState, PneumaticState> desiredState) {
-        super(Config.CLIMBER_FRONT_PISTONS_ON_TIME);
+        super(ClimberPneumatics.getInstance()::moveFrontPiston,
+                desiredState,
+                ClimberPneumatics.getInstance()::getFrontState,
+                Config.CLIMBER_FRONT_PISTONS_ON_TIME,
+                ClimberPneumatics.getInstance()::stopPneumatics);
         requires(ClimberPneumatics.getInstance());
-
-        this.desiredState = desiredState;
-    }
-
-    @Override
-    protected void initialize() {
-        final PneumaticState oldState = ClimberPneumatics.getInstance().getFrontState();
-        final PneumaticState newState = desiredState.apply(oldState);
-
-        isAlreadyInPosition = newState == oldState;
-
-        ClimberPneumatics.getInstance().moveFrontPiston(newState);
-    }
-
-    @Override
-    protected boolean isFinished() {
-        // Complete when the timed command thinks we're done or if the pistons are already where we want them.
-        return super.isFinished() || isAlreadyInPosition;
-    }
-
-    @Override
-    protected void end() {
-        ClimberPneumatics.getInstance().stopPneumatics();
-        isAlreadyInPosition = false;
     }
 }

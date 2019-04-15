@@ -1,8 +1,8 @@
 package ca.team2706.frc.robot.commands.intake.hatch;
 
-import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import ca.team2706.frc.robot.commands.intake.arms.MovePlunger;
 import ca.team2706.frc.robot.commands.lift.MoveLiftToPosition;
+import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 import java.util.function.Supplier;

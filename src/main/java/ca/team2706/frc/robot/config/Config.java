@@ -104,7 +104,7 @@ public class Config {
      * turn the solenoid off.
      */
     public static final double CLIMBER_BACK_PISTONS_ON_TIME = 1.0,
-        CLIMBER_FRONT_PISTONS_ON_TIME = 0.5;
+            CLIMBER_FRONT_PISTONS_ON_TIME = 0.5;
 
 
     public static boolean

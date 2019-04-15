@@ -1,7 +1,7 @@
 package ca.team2706.frc.robot.commands.intake.arms;
 
-import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import ca.team2706.frc.robot.subsystems.Pneumatics;
 import edu.wpi.first.wpilibj.command.TimedCommand;
 

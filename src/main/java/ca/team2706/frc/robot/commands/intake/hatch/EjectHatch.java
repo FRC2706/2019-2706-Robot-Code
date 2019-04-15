@@ -1,10 +1,10 @@
 package ca.team2706.frc.robot.commands.intake.hatch;
 
-import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import ca.team2706.frc.robot.commands.intake.arms.MovePlunger;
 import ca.team2706.frc.robot.commands.lift.LiftPosition;
 import ca.team2706.frc.robot.commands.lift.MoveLiftToPosition;
 import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import ca.team2706.frc.robot.subsystems.Lift;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.ConditionalCommand;

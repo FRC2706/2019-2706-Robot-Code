@@ -14,8 +14,8 @@ public class ArcadeDriveWithTime extends TimedCommand {
     /**
      * Creates a drive forward with time command
      *
-     * @param timeout Makes it stop the command after a time in seconds
-     * @param forward   The speed for the robot to drive
+     * @param timeout       Makes it stop the command after a time in seconds
+     * @param forward       The speed for the robot to drive
      * @param rotationSpeed
      */
     public ArcadeDriveWithTime(double timeout, double forward, double rotationSpeed) {

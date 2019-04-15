@@ -136,8 +136,7 @@ public class Robot extends TimedRobot {
         if (!fmsConnected && DriverStation.getInstance().isFMSAttached() && !DriverStation.getInstance().getEventName().isEmpty()) {
             fmsConnected = true;
             onConnectionChange(ConnectionState.FMS_CONNECT);
-        }
-        else if(fmsConnected && !DriverStation.getInstance().isFMSAttached()) {
+        } else if (fmsConnected && !DriverStation.getInstance().isFMSAttached()) {
             fmsConnected = false;
             onConnectionChange(ConnectionState.FMS_DISCONNECT);
         }

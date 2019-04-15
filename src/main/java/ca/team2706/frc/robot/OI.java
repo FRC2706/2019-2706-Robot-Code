@@ -130,9 +130,9 @@ public class OI {
                 .whenPressed(new ToggleRingLight());
         new FluidButton(controlStick, Config.SLIGHTLY_LIFT_LIFT_BINDING)
                 .whenPressed(new MoveLiftToPosition(0.7, () -> Lift.getInstance().getLiftHeight() + 0.9));
+        // Climber controls
         new FluidButton(controlStick, Config.AUTO_CLIMB_BINDING)
                 .whenHeld(new AutoClimb());
-        // Climber controls
         new FluidButton(controlStick, Config.FRONT_CLIMBER_BINDING)
                 .whenPressed(new MoveFrontClimberPistons(PneumaticState::getOpposite));
         new FluidButton(controlStick, Config.BACK_CLIMBER_BINDING)

@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.command.WaitCommand;
 
 /**
  * Command for automatically climbing to the second level hab platform.
+ * Robot should start with bumpers against the platform while lined up.
  */
 public class AutoClimb extends CommandGroup {
 

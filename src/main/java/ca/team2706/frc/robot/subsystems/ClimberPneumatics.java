@@ -67,13 +67,6 @@ public class ClimberPneumatics extends Subsystem {
     @Override
     public void periodic() {
         super.periodic();
-
-        // When there is less than half a second left in the match, retract all climber pneumatics.
-        // This should also make sure that this is a real match.
-//        if (Robot.isRealMatch() && Robot.getMatchTime() < 0.5) {
-//            moveFrontPiston(PneumaticState.STOWED);
-//            moveBackPiston(PneumaticState.STOWED);
-//        }
     }
 
     /**
@@ -92,7 +85,6 @@ public class ClimberPneumatics extends Subsystem {
      * @param desiredState The desired piston state.
      */
     public void moveFrontPiston(final PneumaticState desiredState) {
-
         Log.d("Front climber " + desiredState.name());
         frontPusher.set(desiredState);
     }

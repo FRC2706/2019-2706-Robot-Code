@@ -7,12 +7,14 @@ import edu.wpi.first.wpilibj.Timer;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.RollingRandomAccessFileAppender;
+import org.apache.logging.log4j.core.appender.rolling.RollingRandomAccessFileManager;
 import org.apache.logging.log4j.core.config.Configurator;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -24,6 +26,7 @@ import java.util.Properties;
  */
 public class Log {
     private static final String LOG_FILE_KEY = "logFilename";
+    private static final String OLD_LOG_FILE_KEY = "oldLogFilename";
     private static final Path LOG_LOCATION = Path.of("/U/logs");
 
     private static boolean validDate;
@@ -34,6 +37,14 @@ public class Log {
     }
 
     private static final Logger LOGGER = LogManager.getLogger(Robot.class.getName());
+    private static final RollingRandomAccessFileManager ROLLING_APPENDER;
+
+    static {
+        LoggerContext context = (LoggerContext) LogManager.getContext(false);
+        Appender appender = context.getConfiguration().getAppender("FileLogger");
+        ROLLING_APPENDER = ((RollingRandomAccessFileAppender) appender).getManager();
+    }
+
     private static final String BUILD_INFO_NAME = "/build-info.properties";
 
     /**
@@ -103,39 +114,10 @@ public class Log {
     private static void changeLogFile(String newFile) {
         Log.i("Changed log file from " + System.getProperty(LOG_FILE_KEY) + " to " + newFile);
 
-        final Path oldPath = Paths.get(System.getProperty(LOG_FILE_KEY));
-
-        org.apache.logging.log4j.core.LoggerContext ctx =
-                (org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false);
-
-        try {
-            Files.copy(Paths.get(System.getProperty(LOG_FILE_KEY)), Paths.get(newFile));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        System.setProperty(OLD_LOG_FILE_KEY, System.getProperty(LOG_FILE_KEY));
         System.setProperty(LOG_FILE_KEY, newFile);
 
-        ctx.reconfigure();
-
-        // File is still locked so periodically loop until it can be deleted
-        Thread delete = new Thread(() -> {
-            // Loop until file is deleted
-            while (Files.isRegularFile(oldPath)) {
-                try {
-                    Files.delete(oldPath);
-                } catch (SecurityException | IOException ignored) {
-                }
-
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    return;
-                }
-            }
-        });
-        delete.setDaemon(true);
-        delete.start();
+        ROLLING_APPENDER.rollover();
 
         Log.i("Exited rename method");
     }

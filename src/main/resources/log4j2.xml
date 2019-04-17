@@ -4,11 +4,14 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
-        <RandomAccessFile name="FileLogger" fileName="${sys:logFilename}">
+        <RollingRandomAccessFile name="FileLogger" filePattern="${sys:logFilename}">
             <PatternLayout>
                 <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</pattern>
             </PatternLayout>
-        </RandomAccessFile>
+            <DefaultRolloverStrategy>
+                <Rename src="${sys:oldLogFilename}" dest="${sys:logFilename}" renameEmptyFiles="true"/>
+            </DefaultRolloverStrategy>
+        </RollingRandomAccessFile>
     </Appenders>
     <Loggers>
         <AsyncLogger name="ca.team2706.frc.robot.Robot" level="trace" additivity="false">

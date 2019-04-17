@@ -67,6 +67,8 @@ dependencies {
 jar {
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
+    
+    manifest.attributes('Multi-Release': 'true')
 }
 
 ext.genOutputDir = file("$buildDir/generated-resources")

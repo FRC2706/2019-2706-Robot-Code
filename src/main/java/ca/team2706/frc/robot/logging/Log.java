@@ -121,26 +121,13 @@ public class Log {
             e.printStackTrace();
         }
 
-        // File is still locked so periodically loop until it can be deleted
-        Thread delete = new Thread(() -> {
-            // Loop until file is deleted
-            while (Files.isRegularFile(oldPath)) {
-                try {
-                    Files.delete(oldPath);
-                } catch (SecurityException | IOException ignored) {
-                }
-
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    return;
-                }
-            }
-        });
-        delete.setDaemon(true);
-        delete.start();
-
         getRollingAppender().rollover();
+        
+        try {
+            Files.delete(oldPath);
+        } catch (SecurityException | IOException e) {
+            e.printStackTrace();
+        }
 
         Log.i("Exited rename method");
     }

@@ -48,7 +48,6 @@ public class StraightDrive extends DriveBaseCloseLoop {
     @Override
     public void initialize() {
         super.initialize();
-        DriveBase.getInstance().setPositionNoGyroMode();
     }
 
     @Override

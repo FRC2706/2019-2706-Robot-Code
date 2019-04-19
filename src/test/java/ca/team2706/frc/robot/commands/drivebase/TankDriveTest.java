@@ -64,6 +64,7 @@ public class TankDriveTest {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
+            minTimes = 0;
         }};
     }
 

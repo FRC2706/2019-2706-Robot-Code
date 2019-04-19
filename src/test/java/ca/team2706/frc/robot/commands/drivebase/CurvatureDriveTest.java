@@ -77,6 +77,7 @@ public class CurvatureDriveTest {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
+            minTimes = 0;
         }};
     }
 

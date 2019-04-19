@@ -85,25 +85,8 @@ public class MotionProfile2WheelTest {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
+            minTimes = 0;
         }};
-    }
-
-    /**
-     * Tests that the command puts the drivetrain into the correct state
-     *
-     * @param speed         The speed to create the command with
-     * @param minDoneCycles The minimum cycles to use
-     * @param size          The number of trajectory points
-     */
-    @Test
-    public void testCorrectState(@Injectable("0.0") double speed, @Injectable("1") int minDoneCycles, @Injectable("4") int size) {
-        assertEquals(DriveBase.DriveMode.Disabled, DriveBase.getInstance().getDriveMode());
-        motionProfile2Wheel.initialize();
-        assertEquals(DriveBase.DriveMode.MotionProfile2Wheel, DriveBase.getInstance().getDriveMode());
-        assertTrue(DriveBase.getInstance().isBrakeMode());
-
-        motionProfile2Wheel.end();
-        assertEquals(DriveBase.DriveMode.Disabled, DriveBase.getInstance().getDriveMode());
     }
 
     /**
@@ -121,16 +104,10 @@ public class MotionProfile2WheelTest {
             motionProfile2Wheel.execute();
         }
 
-        motionProfile2Wheel.end();
-
         new Verifications() {{
             talon.startMotionProfile((BufferedTrajectoryPointStream) any, 20, ControlMode.MotionProfileArc);
             times = 2;
             talon.feed();
-            times = 6;
-            talon.configClosedLoopPeakOutput(0, speed);
-            times = 6;
-            talon.configClosedLoopPeakOutput(1, speed);
             times = 6;
         }};
     }
@@ -160,13 +137,9 @@ public class MotionProfile2WheelTest {
         assertFalse(motionProfile2Wheel.isFinished());
         assertTrue(motionProfile2Wheel.isFinished());
 
-        motionProfile2Wheel.end();
-
         motionProfile2Wheel.initialize();
 
         assertFalse(motionProfile2Wheel.isFinished());
         assertFalse(motionProfile2Wheel.isFinished());
-
-        motionProfile2Wheel.end();
     }
 }

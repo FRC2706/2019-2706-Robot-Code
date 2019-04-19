@@ -238,7 +238,7 @@ public class RobotTest {
 
         new Verifications() {{
             pigeon.setYaw(0, anyInt);
-            times = 3;
+            times = 2;
         }};
     }
 

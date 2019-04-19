@@ -69,6 +69,7 @@ public class ArcadeDriveWithJoystickTest {
             new Expectations() {{
                 talon.getSensorCollection();
                 result = sensorCollection;
+                minTimes = 0;
             }};
         }
     }

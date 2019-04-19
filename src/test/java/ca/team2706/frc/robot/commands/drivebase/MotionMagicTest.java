@@ -65,26 +65,8 @@ public class MotionMagicTest {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
+            minTimes = 0;
         }};
-    }
-
-    /**
-     * Tests that the command puts the drivetrain into the correct state
-     *
-     * @param speed         The speed to create the command with
-     * @param position      The position to create the command with
-     * @param minDoneCycles The minimum cycles to use
-     * @param heading       The heading to use
-     */
-    @Test
-    public void testCorrectState(@Injectable("0.0") double speed, @Injectable("0.0") double position, @Injectable("1") int minDoneCycles, @Injectable("0.0") double heading) {
-        assertEquals(DriveBase.DriveMode.Disabled, DriveBase.getInstance().getDriveMode());
-        motionMagic.initialize();
-        assertEquals(DriveBase.DriveMode.MotionMagicWithGyro, DriveBase.getInstance().getDriveMode());
-        assertTrue(DriveBase.getInstance().isBrakeMode());
-
-        motionMagic.end();
-        assertEquals(DriveBase.DriveMode.Disabled, DriveBase.getInstance().getDriveMode());
     }
 
     /**
@@ -104,8 +86,6 @@ public class MotionMagicTest {
             motionMagic.execute();
         }
 
-        motionMagic.end();
-
         new Verifications() {{
             talon.set(ControlMode.MotionMagic, position / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, 0);
             times = 3;
@@ -113,10 +93,6 @@ public class MotionMagicTest {
             times = 0;
             talon.follow((IMotorController) any, FollowerType.AuxOutput1);
             times = 3;
-            talon.configClosedLoopPeakOutput(0, speed);
-            times = 6;
-            talon.configClosedLoopPeakOutput(1, speed);
-            times = 6;
         }};
     }
 
@@ -153,13 +129,9 @@ public class MotionMagicTest {
         assertFalse(motionMagic.isFinished());
         assertTrue(motionMagic.isFinished());
 
-        motionMagic.end();
-
         motionMagic.initialize();
 
         assertFalse(motionMagic.isFinished());
-
-        motionMagic.end();
     }
 
     /**

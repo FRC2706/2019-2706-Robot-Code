@@ -67,31 +67,7 @@ public class DriveBaseTest {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
-        }};
-    }
-
-    /**
-     * Ensures that the control mode for the drivebase is correct
-     */
-    @Test
-    public void testControlMode() {
-        assertEquals(DriveBase.DriveMode.Disabled, driveBase.getDriveMode());
-        driveBase.tankDrive(0, 0, false);
-        assertEquals(DriveBase.DriveMode.OpenLoopVoltage, driveBase.getDriveMode());
-
-        driveBase.arcadeDrive(0, 0, false);
-        driveBase.curvatureDrive(0, 0, false);
-
-        new Verifications() {{
-            talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
-            talon.follow((IMotorController) any);
-            times = 8;
-        }};
-
-        driveBase.setPositionNoGyro(0, 0);
-
-        new Verifications() {{
-            talon.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, 0, anyInt);
+            minTimes = 0;
         }};
     }
 

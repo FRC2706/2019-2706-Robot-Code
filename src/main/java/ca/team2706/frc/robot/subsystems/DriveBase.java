@@ -45,11 +45,6 @@ public class DriveBase extends Subsystem {
     }
 
     /**
-     * The mode that the robot is driving with
-     */
-    private DriveMode driveMode;
-
-    /**
      * Four drive Talons
      */
     private final WPI_TalonSRX leftFrontMotor, leftBackMotor, rightFrontMotor, rightBackMotor;
@@ -115,17 +110,13 @@ public class DriveBase extends Subsystem {
         rightFrontMotor = new WPI_TalonSRX(Config.RIGHT_FRONT_DRIVE_MOTOR_ID);
         rightBackMotor = new WPI_TalonSRX(Config.RIGHT_BACK_DRIVE_MOTOR_ID);
 
-        SubsystemStatus status1 = resetTalonConfiguration();
+        gyro = new PigeonIMU(new TalonSRX(Config.GYRO_TALON_ID));
 
-        follow();
-
-        enableCurrentLimit(Config.ENABLE_DRIVEBASE_CURRENT_LIMIT);
+        status = resetTalonConfiguration();
 
         robotDriveBase = new DifferentialDrive(leftFrontMotor, rightFrontMotor);
         robotDriveBase.setRightSideInverted(false);
         robotDriveBase.setSafetyEnabled(false);
-
-        gyro = new PigeonIMU(new TalonSRX(Config.GYRO_TALON_ID));
 
         selector = new AnalogSelector(Config.SELECTOR_ID);
 
@@ -148,9 +139,6 @@ public class DriveBase extends Subsystem {
 
         addChild("Merge Light", light);
 
-        SubsystemStatus status2 = testSensors();
-
-        setDisabledMode();
         setBrakeMode(false);
 
         loggingNotifier = new Notifier(this::log);
@@ -162,8 +150,6 @@ public class DriveBase extends Subsystem {
         motionProfilePointStreamRight = new BufferedTrajectoryPointStream();
 
         resetAbsoluteGyro();
-
-        status = SubsystemStatus.maxError(status1, status2);
     }
 
     /**
@@ -185,69 +171,213 @@ public class DriveBase extends Subsystem {
     }
 
     /**
-     * Tests the drive base sensors to determine if the subsystem is working as expected.
-     *
-     * @return The subsystem's status based on the sensor test results.
-     */
-    private SubsystemStatus testSensors() {
-        SubsystemStatus subsystemStatus = SubsystemStatus.OK;
-
-        if (SubsystemStatus.checkError(leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative))) {
-            Log.e("Left encoder not working");
-            subsystemStatus = SubsystemStatus.DISABLE_AUTO;
-        }
-
-        if (SubsystemStatus.checkError(rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative))) {
-            Log.e("Right encoder not working");
-            subsystemStatus = SubsystemStatus.DISABLE_AUTO;
-        }
-
-        if (SubsystemStatus.checkError(gyro.getYawPitchRoll(new double[3]))) {
-            Log.e("Gyro not working");
-            subsystemStatus = SubsystemStatus.DISABLE_AUTO;
-        }
-
-        return subsystemStatus;
-    }
-
-    /**
      * Resets the talon configuration back to the initial config.
      */
     private SubsystemStatus resetTalonConfiguration() {
-        SubsystemStatus status1 = SubsystemStatus.OK, status2 = SubsystemStatus.OK, status3 = SubsystemStatus.OK, status4 = SubsystemStatus.OK;
+        SubsystemStatus status = SubsystemStatus.OK;
 
         if (SubsystemStatus.checkError(leftFrontMotor.configFactoryDefault(Config.CAN_LONG))) {
             Log.e("Can't reset left front motor to factory default");
-            status1 = SubsystemStatus.ERROR;
+            status = SubsystemStatus.maxError(status, SubsystemStatus.ERROR);
         }
 
         if (SubsystemStatus.checkError(leftBackMotor.configFactoryDefault(Config.CAN_LONG))) {
             Log.e("Can't reset left back motor to factory default");
-            status2 = SubsystemStatus.DISABLE_AUTO;
+            status = SubsystemStatus.maxError(status, SubsystemStatus.ERROR);
         }
 
         if (SubsystemStatus.checkError(rightFrontMotor.configFactoryDefault(Config.CAN_LONG))) {
             Log.e("Can't reset right front motor to factory default");
-            status3 = SubsystemStatus.ERROR;
+            status = SubsystemStatus.maxError(status, SubsystemStatus.ERROR);
         }
 
         if (SubsystemStatus.checkError(rightBackMotor.configFactoryDefault(Config.CAN_LONG))) {
             Log.e("Can't reset right back motor to factory default");
-            status4 = SubsystemStatus.DISABLE_AUTO;
+            status = SubsystemStatus.maxError(status, SubsystemStatus.ERROR);
         }
 
-        leftFrontMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
-        leftBackMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
-        rightFrontMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
-        rightBackMotor.configPeakCurrentLimit(2, Config.CAN_LONG);
+        status = SubsystemStatus.maxError(status, configTalon(leftFrontMotor));
+        status = SubsystemStatus.maxError(status, configTalon(rightFrontMotor));
+        status = SubsystemStatus.maxError(status, configTalon(leftBackMotor));
+        status = SubsystemStatus.maxError(status, configTalon(rightBackMotor));
 
+        status = SubsystemStatus.maxError(status, setupFrontLeftMotor());
+        status = SubsystemStatus.maxError(status, setupFrontRightMotor());
+        status = SubsystemStatus.maxError(status, setupBackLeftMotor());
+        status = SubsystemStatus.maxError(status, setupBackRightMotor());
+
+        return status;
+    }
+
+    private SubsystemStatus configTalon(WPI_TalonSRX talon) {
+        talon.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value(), Config.CAN_LONG);
+
+        talon.configMotionSCurveStrength(Config.DRIVEBASE_MOTION_MAGIC_SMOOTHING.value(), Config.CAN_LONG);
+        talon.configMotionCruiseVelocity((int) (Config.DRIVEBASE_MOTION_MAGIC_CRUISE_VELOCITY.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_LONG);
+        talon.configMotionAcceleration((int) (Config.DRIVEBASE_MOTION_MAGIC_ACCELERATION.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_LONG);
+
+        /* set the base trajectory period to zero, use the individual trajectory period */
+        talon.configMotionProfileTrajectoryPeriod(0, Config.CAN_LONG);
+
+        return SubsystemStatus.OK;
+    }
+
+
+    private SubsystemStatus setupFrontLeftMotor() {
         leftFrontMotor.setInverted(Config.INVERT_FRONT_LEFT_DRIVE);
-        rightFrontMotor.setInverted(Config.INVERT_FRONT_RIGHT_DRIVE);
 
-        setTalonInversion(InvertType.FollowMaster, leftBackMotor, Config.INVERT_FRONT_LEFT_DRIVE, Config.INVERT_BACK_LEFT_DRIVE);
-        setTalonInversion(InvertType.FollowMaster, rightBackMotor, Config.INVERT_FRONT_RIGHT_DRIVE, Config.INVERT_BACK_RIGHT_DRIVE);
+        leftFrontMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, 0, Config.CAN_LONG);
 
-        return SubsystemStatus.maxError(status1, status2, status3, status4);
+        leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 0, Config.CAN_LONG);
+
+        leftFrontMotor.configSelectedFeedbackCoefficient(1.0, 0, Config.CAN_LONG);
+
+        leftFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_LEFT.value());
+
+        // TODO: Config timings
+
+        leftFrontMotor.config_kP(0, Config.TURN_P.value(), Config.CAN_LONG);
+        leftFrontMotor.config_kI(0, Config.TURN_I.value(), Config.CAN_LONG);
+        leftFrontMotor.config_kD(0, Config.TURN_D.value(), Config.CAN_LONG);
+        leftFrontMotor.config_kF(0, Config.TURN_F.value(), Config.CAN_LONG);
+
+        leftFrontMotor.config_kP(1, Config.TURN_MM_P.value(), Config.CAN_LONG);
+        leftFrontMotor.config_kI(1, Config.TURN_MM_I.value(), Config.CAN_LONG);
+        leftFrontMotor.config_kD(1, Config.TURN_MM_D.value(), Config.CAN_LONG);
+        leftFrontMotor.config_kF(1, Config.TURN_MM_F.value(), Config.CAN_LONG);
+
+        leftFrontMotor.config_kP(3, Config.TURN_MM_P.value(), Config.CAN_LONG);
+        leftFrontMotor.config_kI(3, Config.TURN_MM_I.value(), Config.CAN_LONG);
+        leftFrontMotor.config_kD(3, Config.TURN_MM_D.value(), Config.CAN_LONG);
+        leftFrontMotor.config_kF(3, Config.TURN_MM_F.value(), Config.CAN_LONG);
+
+        leftFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_LONG);
+        leftFrontMotor.configClosedLoopPeriod(1, 1, Config.CAN_LONG);
+        leftFrontMotor.configClosedLoopPeriod(3, 1, Config.CAN_LONG);
+
+        leftFrontMotor.configAuxPIDPolarity(true, Config.CAN_LONG);
+
+        return SubsystemStatus.OK;
+    }
+
+    private SubsystemStatus setupFrontRightMotor() {
+        leftFrontMotor.setInverted(Config.INVERT_FRONT_RIGHT_DRIVE);
+
+        rightFrontMotor.configRemoteFeedbackFilter(leftFrontMotor.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, 0, Config.CAN_LONG);
+        rightFrontMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, 1, Config.CAN_LONG);
+
+        rightFrontMotor.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Config.CAN_LONG);
+        rightFrontMotor.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative, Config.CAN_LONG);
+
+        rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, 0, Config.CAN_LONG);
+        rightFrontMotor.configSelectedFeedbackCoefficient(0.5, 0, Config.CAN_LONG);
+
+        rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, 1, Config.CAN_LONG);
+
+        rightFrontMotor.configSelectedFeedbackCoefficient(1, 1, Config.CAN_LONG);
+
+        // TODO: Config timings
+
+        rightFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_RIGHT.value());
+
+        rightFrontMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value(), Config.CAN_LONG);
+        rightFrontMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value(), Config.CAN_LONG);
+        rightFrontMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value(), Config.CAN_LONG);
+        rightFrontMotor.config_kF(0, Config.DRIVE_CLOSED_LOOP_F.value(), Config.CAN_LONG);
+
+        rightFrontMotor.config_kP(1, Config.DRIVE_MOTION_MAGIC_P.value(), Config.CAN_LONG);
+        rightFrontMotor.config_kI(1, Config.DRIVE_MOTION_MAGIC_I.value(), Config.CAN_LONG);
+        rightFrontMotor.config_kD(1, Config.DRIVE_MOTION_MAGIC_D.value(), Config.CAN_LONG);
+        rightFrontMotor.config_kF(1, Config.DRIVE_MOTION_MAGIC_F.value(), Config.CAN_LONG);
+
+        rightFrontMotor.config_kP(2, Config.PIGEON_KP.value(), Config.CAN_LONG);
+        rightFrontMotor.config_kI(2, Config.PIGEON_KI.value(), Config.CAN_LONG);
+        rightFrontMotor.config_kD(2, Config.PIGEON_KD.value(), Config.CAN_LONG);
+        rightFrontMotor.config_kF(2, Config.PIGEON_KF.value(), Config.CAN_LONG);
+
+        rightFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_LONG);
+        rightFrontMotor.configClosedLoopPeriod(1, 1, Config.CAN_LONG);
+        rightFrontMotor.configClosedLoopPeriod(2, 1, Config.CAN_LONG);
+        rightFrontMotor.configAuxPIDPolarity(false, Config.CAN_LONG);
+
+        return SubsystemStatus.OK;
+    }
+
+    private SubsystemStatus setupBackLeftMotor() {
+        leftFrontMotor.setInverted(Config.INVERT_BACK_LEFT_DRIVE);
+
+        leftBackMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_LONG);
+
+        leftBackMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, 1, Config.CAN_LONG);
+
+        leftBackMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, 1, Config.CAN_LONG);
+
+        leftBackMotor.configSelectedFeedbackCoefficient(1, 1, Config.CAN_LONG);
+        leftBackMotor.configSelectedFeedbackCoefficient(1, 0, Config.CAN_LONG);
+
+        leftBackMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_LEFT.value());
+        // TODO: Config timings
+
+        leftBackMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
+        leftBackMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
+        leftBackMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value());
+        leftBackMotor.config_kF(1, Config.DRIVE_MOTION_MAGIC_F.value());
+
+        leftBackMotor.config_kP(1, Config.DRIVE_MOTION_MAGIC_P.value());
+        leftBackMotor.config_kI(1, Config.DRIVE_MOTION_MAGIC_I.value());
+        leftBackMotor.config_kD(1, Config.DRIVE_MOTION_MAGIC_D.value());
+        leftBackMotor.config_kF(1, Config.DRIVE_MOTION_MAGIC_F.value());
+
+        leftBackMotor.config_kP(2, Config.PIGEON_KP.value());
+        leftBackMotor.config_kI(2, Config.PIGEON_KI.value());
+        leftBackMotor.config_kD(2, Config.PIGEON_KD.value());
+        leftBackMotor.config_kF(2, Config.PIGEON_KF.value());
+
+        leftBackMotor.configClosedLoopPeriod(0, 1, Config.CAN_LONG);
+        leftBackMotor.configClosedLoopPeriod(1, 1, Config.CAN_LONG);
+        leftBackMotor.configClosedLoopPeriod(2, 1, Config.CAN_LONG);
+        leftBackMotor.configAuxPIDPolarity(true, Config.CAN_LONG);
+
+        return SubsystemStatus.OK;
+    }
+
+    private SubsystemStatus setupBackRightMotor() {
+        leftFrontMotor.setInverted(Config.INVERT_BACK_RIGHT_DRIVE);
+
+        rightBackMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_LONG);
+
+        rightBackMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, 1, Config.CAN_LONG);
+
+        rightBackMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, 1, Config.CAN_LONG);
+
+        rightBackMotor.configSelectedFeedbackCoefficient(1, 1, Config.CAN_LONG);
+        rightBackMotor.configSelectedFeedbackCoefficient(1, 0, Config.CAN_LONG);
+
+        rightBackMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_RIGHT.value());
+
+        // TODO: Config timings
+
+        rightBackMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
+        rightBackMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
+        rightBackMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value());
+        rightBackMotor.config_kF(0, Config.DRIVE_CLOSED_LOOP_F.value());
+
+        rightBackMotor.config_kP(1, Config.DRIVE_MOTION_MAGIC_P.value());
+        rightBackMotor.config_kI(1, Config.DRIVE_MOTION_MAGIC_I.value());
+        rightBackMotor.config_kD(1, Config.DRIVE_MOTION_MAGIC_D.value());
+        rightBackMotor.config_kF(1, Config.DRIVE_MOTION_MAGIC_F.value());
+
+        rightBackMotor.config_kP(2, Config.PIGEON_KP.value());
+        rightBackMotor.config_kI(2, Config.PIGEON_KI.value());
+        rightBackMotor.config_kD(2, Config.PIGEON_KD.value());
+        rightBackMotor.config_kF(2, Config.PIGEON_KF.value());
+
+        rightBackMotor.configClosedLoopPeriod(0, 1, Config.CAN_LONG);
+        rightBackMotor.configClosedLoopPeriod(1, 1, Config.CAN_LONG);
+        rightBackMotor.configClosedLoopPeriod(2, 1, Config.CAN_LONG);
+        rightBackMotor.configAuxPIDPolarity(false, Config.CAN_LONG);
+
+        return SubsystemStatus.OK;
     }
 
     /**
@@ -260,416 +390,17 @@ public class DriveBase extends Subsystem {
     }
 
     /**
-     * Gets the drivemode that the robot is currently in
-     *
-     * @return The current drive mode
-     */
-    public DriveMode getDriveMode() {
-        return driveMode;
-    }
-
-    /**
      * Stops the robot
      */
     public void stop() {
         leftFrontMotor.stopMotor();
         rightFrontMotor.stopMotor();
-    }
-
-    /**
-     * Selects local encoders and the current sensor
-     */
-    private void selectEncodersStandard() {
-        leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
-        rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
-
-        leftFrontMotor.configNeutralDeadband(Config.DRIVE_OPEN_LOOP_DEADBAND.value());
-        rightFrontMotor.configNeutralDeadband(Config.DRIVE_OPEN_LOOP_DEADBAND.value());
-        leftBackMotor.configNeutralDeadband(Config.DRIVE_OPEN_LOOP_DEADBAND.value());
-        rightBackMotor.configNeutralDeadband(Config.DRIVE_OPEN_LOOP_DEADBAND.value());
-    }
-
-    /**
-     * Selects local encoders and the current sensor
-     */
-    private void selectEncodersSum() {
-        resetTalonConfiguration();
-        leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_SHORT);
-        rightFrontMotor.configRemoteFeedbackFilter(leftFrontMotor.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, 0, Config.CAN_SHORT);
-
-        rightFrontMotor.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Config.CAN_SHORT);
-        rightFrontMotor.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative, Config.CAN_SHORT);
-
-        rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, 0, Config.CAN_SHORT);
-        rightFrontMotor.configSelectedFeedbackCoefficient(0.5, 0, Config.CAN_SHORT);
-
-        leftFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_LEFT.value());
-        rightFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_RIGHT.value());
-
-        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Config.CAN_SHORT);
-        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Config.CAN_SHORT);
-        leftFrontMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Config.CAN_SHORT);
-
-        configDeadband(leftFrontMotor, rightFrontMotor);
-
-        rightFrontMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
-        rightFrontMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
-        rightFrontMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value());
-
-        rightFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
-    }
-
-    /**
-     * Selects local encoders, the current sensor and the pigeon
-     */
-    private void selectEncodersSumWithPigeon(boolean motionProfile) {
-        resetTalonConfiguration();
-
-        leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_SHORT);
-        rightFrontMotor.configRemoteFeedbackFilter(leftFrontMotor.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, 0, Config.CAN_SHORT);
-        rightFrontMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, 1, Config.CAN_SHORT);
-
-        rightFrontMotor.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Config.CAN_SHORT);
-        rightFrontMotor.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative, Config.CAN_SHORT);
-
-        rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, 0, Config.CAN_SHORT);
-        rightFrontMotor.configSelectedFeedbackCoefficient(0.5, 0, Config.CAN_SHORT);
-
-        rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, 1, Config.CAN_SHORT);
-
-        rightFrontMotor.configSelectedFeedbackCoefficient(1, 1, Config.CAN_SHORT);
-
-        leftFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_LEFT.value());
-        rightFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_RIGHT.value());
-
-        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Config.CAN_SHORT);
-        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Config.CAN_SHORT);
-        leftFrontMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Config.CAN_SHORT);
-        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Config.CAN_SHORT);
-
-        /* Configure neutral deadband */
-        rightFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value(), Config.CAN_SHORT);
-        leftFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value(), Config.CAN_SHORT);
-
-        if (motionProfile) {
-            rightFrontMotor.config_kP(0, Config.DRIVE_MOTION_MAGIC_P.value());
-            rightFrontMotor.config_kI(0, Config.DRIVE_MOTION_MAGIC_I.value());
-            rightFrontMotor.config_kD(0, Config.DRIVE_MOTION_MAGIC_D.value());
-            rightFrontMotor.config_kF(0, Config.DRIVE_MOTION_MAGIC_F.value());
-        } else {
-            rightFrontMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
-            rightFrontMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
-            rightFrontMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value());
-            rightFrontMotor.config_kF(0, 0);
-        }
-
-        rightFrontMotor.config_kP(1, Config.PIGEON_KP.value());
-        rightFrontMotor.config_kI(1, Config.PIGEON_KI.value());
-        rightFrontMotor.config_kD(1, Config.PIGEON_KD.value());
-        rightFrontMotor.config_kF(1, Config.PIGEON_KF.value());
-
-        rightFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
-
-        rightFrontMotor.configClosedLoopPeriod(1, 1, Config.CAN_SHORT);
-        rightFrontMotor.configAuxPIDPolarity(false, Config.CAN_SHORT);
-
-        rightFrontMotor.selectProfileSlot(0, 0);
-        rightFrontMotor.selectProfileSlot(1, 1);
-    }
-
-    /**
-     * Selects encoders for each wheel and configures the gyro as an auxiliary sensor for each wheel
-     */
-    private void selectEncodersGyro(boolean motionProfile) {
-        resetTalonConfiguration();
-
-        leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_SHORT);
-        rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_SHORT);
-
-        rightFrontMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, 1, Config.CAN_SHORT);
-        leftFrontMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, 1, Config.CAN_SHORT);
-
-        rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, 1, Config.CAN_SHORT);
-        leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, 1, Config.CAN_SHORT);
-
-        rightFrontMotor.configSelectedFeedbackCoefficient(1, 1, Config.CAN_SHORT);
-        rightFrontMotor.configSelectedFeedbackCoefficient(1, 0, Config.CAN_SHORT);
-        leftFrontMotor.configSelectedFeedbackCoefficient(1, 1, Config.CAN_SHORT);
-        leftFrontMotor.configSelectedFeedbackCoefficient(1, 0, Config.CAN_SHORT);
-
-        leftFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_LEFT.value());
-        rightFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_RIGHT.value());
-
-        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Config.CAN_SHORT);
-        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Config.CAN_SHORT);
-        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Config.CAN_SHORT);
-        leftFrontMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Config.CAN_SHORT);
-        leftFrontMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Config.CAN_SHORT);
-        leftFrontMotor.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Config.CAN_SHORT);
-
-        /* Configure neutral deadband */
-        rightFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value(), Config.CAN_SHORT);
-        leftFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value(), Config.CAN_SHORT);
-
-        if (motionProfile) {
-            rightFrontMotor.config_kP(0, Config.DRIVE_MOTION_MAGIC_P.value());
-            rightFrontMotor.config_kI(0, Config.DRIVE_MOTION_MAGIC_I.value());
-            rightFrontMotor.config_kD(0, Config.DRIVE_MOTION_MAGIC_D.value());
-            rightFrontMotor.config_kF(0, Config.DRIVE_MOTION_MAGIC_F.value());
-
-            leftFrontMotor.config_kP(0, Config.DRIVE_MOTION_MAGIC_P.value());
-            leftFrontMotor.config_kI(0, Config.DRIVE_MOTION_MAGIC_I.value());
-            leftFrontMotor.config_kD(0, Config.DRIVE_MOTION_MAGIC_D.value());
-            rightFrontMotor.config_kF(0, Config.DRIVE_MOTION_MAGIC_F.value());
-        } else {
-            rightFrontMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
-            rightFrontMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
-            rightFrontMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value());
-            rightFrontMotor.config_kF(0, 0);
-
-            leftFrontMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
-            leftFrontMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
-            leftFrontMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value());
-            leftFrontMotor.config_kF(0, 0);
-
-        }
-
-        leftFrontMotor.config_kP(1, Config.PIGEON_KP.value());
-        leftFrontMotor.config_kI(1, Config.PIGEON_KI.value());
-        leftFrontMotor.config_kD(1, Config.PIGEON_KD.value());
-        leftFrontMotor.config_kF(1, Config.PIGEON_KF.value());
-
-        rightFrontMotor.config_kP(1, Config.PIGEON_KP.value());
-        rightFrontMotor.config_kI(1, Config.PIGEON_KI.value());
-        rightFrontMotor.config_kD(1, Config.PIGEON_KD.value());
-        rightFrontMotor.config_kF(1, Config.PIGEON_KF.value());
-
-        rightFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
-        leftFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
-
-        leftFrontMotor.configClosedLoopPeriod(1, 1, Config.CAN_SHORT);
-        leftFrontMotor.configAuxPIDPolarity(true, Config.CAN_SHORT);
-
-        rightFrontMotor.configClosedLoopPeriod(1, 1, Config.CAN_SHORT);
-        rightFrontMotor.configAuxPIDPolarity(false, Config.CAN_SHORT);
-
-        rightFrontMotor.selectProfileSlot(0, 0);
-        rightFrontMotor.selectProfileSlot(1, 1);
-
-        leftFrontMotor.selectProfileSlot(0, 0);
-        leftFrontMotor.selectProfileSlot(1, 1);
-    }
-
-    /**
-     * Configures the deadband for the two given motors.
-     *
-     * @param rightFrontMotor The talon object representing the right front motor.
-     * @param leftFrontMotor  The talon object representing the left front motor.
-     */
-    private void configDeadband(WPI_TalonSRX rightFrontMotor, WPI_TalonSRX leftFrontMotor) {
-        rightFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
-        leftFrontMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
-        leftBackMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
-        rightBackMotor.configNeutralDeadband(Config.DRIVE_CLOSED_LOOP_DEADBAND.value());
-    }
-
-    /**
-     * Sets up talons for using the gyro sensor as feedback.
-     */
-    private void selectGyroSensor() {
-        resetTalonConfiguration();
-
-        rightFrontMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, 0, Config.CAN_SHORT);
-
-        rightFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 0, Config.CAN_SHORT);
-
-        rightFrontMotor.configSelectedFeedbackCoefficient(1.0, 0, Config.CAN_SHORT);
-
-        leftFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_LEFT.value());
-        rightFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_RIGHT.value());
-
-        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20, Config.CAN_SHORT);
-        rightFrontMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Config.CAN_SHORT);
-
-        configDeadband(rightFrontMotor, leftFrontMotor);
-
-        rightFrontMotor.config_kP(0, Config.TURN_P.value());
-        rightFrontMotor.config_kI(0, Config.TURN_I.value());
-        rightFrontMotor.config_kD(0, Config.TURN_D.value());
-
-        rightFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_SHORT);
-
-        setTalonInversion(InvertType.OpposeMaster, leftFrontMotor, Config.INVERT_FRONT_RIGHT_DRIVE, Config.INVERT_FRONT_LEFT_DRIVE);
-    }
-
-    /**
-     * Sets the talons to a disabled mode
-     */
-    public void setDisabledMode() {
-        if (driveMode != DriveMode.Disabled) {
-            resetTalonConfiguration();
-            stop();
-
-            reset();
-
-            setDriveMode(DriveMode.Disabled);
-        }
-    }
-
-    /**
-     * Switches the talons to a mode that is optimal for driving the robot using human input
-     */
-    public void setOpenLoopVoltageMode() {
-        if (driveMode != DriveMode.OpenLoopVoltage) {
-            stop();
-            selectEncodersStandard();
-            reset();
-
-            setDriveMode(DriveMode.OpenLoopVoltage);
-        }
-    }
-
-    /**
-     * Sets the talons to a disabled mode
-     */
-    public void setPositionNoGyroMode() {
-        if (!canRunAuto()) {
-            setDisabledMode();
-        } else if (driveMode != DriveMode.PositionNoGyro) {
-            stop();
-            selectEncodersSum();
-            reset();
-
-            setDriveMode(DriveMode.PositionNoGyro);
-        }
-    }
-
-    /**
-     * Sets the robot up for rotation.
-     */
-    public void setRotateMode() {
-        if (!canRunAuto()) {
-            setDisabledMode();
-        } else if (driveMode != DriveMode.Rotate) {
-            stop();
-            selectGyroSensor();
-            reset();
-
-            setDriveMode(DriveMode.Rotate);
-        }
-    }
-
-    /**
-     * Sets motion magic
-     */
-    public void setMotionMagicWithGyroMode() {
-        if (!canRunAuto()) {
-            setDisabledMode();
-        } else if (driveMode != DriveMode.MotionMagicWithGyro) {
-            stop();
-            selectEncodersSumWithPigeon(true);
-            configMotionMagic();
-            reset();
-
-            driveMode = DriveMode.MotionMagicWithGyro;
-        }
-    }
-
-    /**
-     * Sets the drive mode to motion profile
-     */
-    public void setMotionProfile() {
-        if (!canRunAuto()) {
-            setDisabledMode();
-        } else if (driveMode != DriveMode.MotionProfile) {
-            stop();
-            selectEncodersSumWithPigeon(true);
-            configMotionProfile();
-            reset();
-            rightFrontMotor.startMotionProfile(motionProfilePointStreamRight, 20, ControlMode.MotionProfileArc);
-
-            driveMode = DriveMode.MotionProfile;
-        }
-    }
-
-    /**
-     * Sets the drive mode to 2 wheel motion profile
-     */
-    public void setMotionProfile2Wheel() {
-        if (!canRunAuto()) {
-            setDisabledMode();
-        } else if (driveMode != DriveMode.MotionProfile2Wheel) {
-            stop();
-            selectEncodersGyro(true);
-            configMotionProfile();
-            reset();
-            rightFrontMotor.startMotionProfile(motionProfilePointStreamRight, 20, ControlMode.MotionProfileArc);
-            leftFrontMotor.startMotionProfile(motionProfilePointStreamLeft, 20, ControlMode.MotionProfileArc);
-
-            driveMode = DriveMode.MotionProfile2Wheel;
-        }
-    }
-
-    /**
-     * Configures motion magic
-     */
-    private void configMotionMagic() {
-        rightFrontMotor.configMotionSCurveStrength(Config.DRIVEBASE_MOTION_MAGIC_SMOOTHING.value(), Config.CAN_SHORT);
-        rightFrontMotor.configMotionCruiseVelocity((int) (Config.DRIVEBASE_MOTION_MAGIC_CRUISE_VELOCITY.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
-        rightFrontMotor.configMotionAcceleration((int) (Config.DRIVEBASE_MOTION_MAGIC_ACCELERATION.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
-    }
-
-    /**
-     * Configures motion profile
-     */
-    private void configMotionProfile() {
-        rightFrontMotor.configMotionSCurveStrength(Config.DRIVEBASE_MOTION_MAGIC_SMOOTHING.value(), Config.CAN_SHORT);
-        rightFrontMotor.configMotionCruiseVelocity((int) (Config.DRIVEBASE_MOTION_MAGIC_CRUISE_VELOCITY.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
-        rightFrontMotor.configMotionAcceleration((int) (Config.DRIVEBASE_MOTION_MAGIC_ACCELERATION.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
-        leftFrontMotor.configMotionSCurveStrength(Config.DRIVEBASE_MOTION_MAGIC_SMOOTHING.value(), Config.CAN_SHORT);
-        leftFrontMotor.configMotionCruiseVelocity((int) (Config.DRIVEBASE_MOTION_MAGIC_CRUISE_VELOCITY.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
-        leftFrontMotor.configMotionAcceleration((int) (Config.DRIVEBASE_MOTION_MAGIC_ACCELERATION.value() / Config.DRIVE_ENCODER_DPP / 10), Config.CAN_SHORT);
-    }
-
-
-    /**
-     * Gets the encoder sum using the pigeon
-     */
-    public void setPositionGyroMode() {
-        if (!canRunAuto()) {
-            setDisabledMode();
-        } else if (driveMode != DriveMode.PositionGyro) {
-            stop();
-            selectEncodersSumWithPigeon(false);
-            reset();
-
-            driveMode = DriveMode.PositionGyro;
-        }
-    }
-
-    /**
-     * Changes whether current limiting should be used
-     *
-     * @param enable Whether to enable the current or not
-     */
-    public void enableCurrentLimit(boolean enable) {
-        leftFrontMotor.enableCurrentLimit(enable);
-        leftBackMotor.enableCurrentLimit(enable);
-        rightFrontMotor.enableCurrentLimit(enable);
-        rightBackMotor.enableCurrentLimit(enable);
-
+        leftBackMotor.stopMotor();
+        rightFrontMotor.stopMotor();
     }
 
     @Override
     protected void initDefaultCommand() {
-    }
-
-    /**
-     * Has the slave motors follow the master motors
-     */
-    private void follow() {
-        leftBackMotor.follow(leftFrontMotor);
-        rightBackMotor.follow(rightFrontMotor);
     }
 
     /**
@@ -705,10 +436,10 @@ public class DriveBase extends Subsystem {
      * @param squaredInputs Whether to square each of the values
      */
     public void tankDrive(double leftSpeed, double rightSpeed, boolean squaredInputs) {
-        setOpenLoopVoltageMode();
-
         robotDriveBase.tankDrive(leftSpeed, rightSpeed, squaredInputs);
-        follow();
+
+        leftBackMotor.follow(leftFrontMotor);
+        rightBackMotor.follow(rightFrontMotor);
     }
 
     /**
@@ -719,10 +450,10 @@ public class DriveBase extends Subsystem {
      * @param squaredInputs Whether to square each of the values
      */
     public void arcadeDrive(double forwardSpeed, double rotateSpeed, boolean squaredInputs) {
-        setOpenLoopVoltageMode();
-
         robotDriveBase.arcadeDrive(forwardSpeed, rotateSpeed, squaredInputs);
-        follow();
+
+        leftBackMotor.follow(leftFrontMotor, FollowerType.PercentOutput);
+        rightBackMotor.follow(rightFrontMotor);
     }
 
     /**
@@ -733,10 +464,10 @@ public class DriveBase extends Subsystem {
      * @param override     When true will only use rotation values
      */
     public void curvatureDrive(double forwardSpeed, double curveSpeed, boolean override) {
-        setOpenLoopVoltageMode();
-
         robotDriveBase.curvatureDrive(forwardSpeed, curveSpeed, override);
-        follow();
+
+        leftBackMotor.follow(leftFrontMotor);
+        rightBackMotor.follow(rightFrontMotor);
     }
 
     /**
@@ -746,15 +477,16 @@ public class DriveBase extends Subsystem {
      * @param setpoint The setpoint to go to in feet
      */
     public void setPositionNoGyro(double speed, double setpoint) {
-        setPositionNoGyroMode();
+        if (canRunAuto()) {
+            rightFrontMotor.selectProfileSlot(0, 0);
+            rightFrontMotor.set(ControlMode.Position, setpoint / Config.DRIVE_ENCODER_DPP);
 
-        leftFrontMotor.configClosedLoopPeakOutput(0, speed);
-        rightFrontMotor.configClosedLoopPeakOutput(0, speed);
-
-        rightFrontMotor.set(ControlMode.Position, setpoint / Config.DRIVE_ENCODER_DPP);
-        leftFrontMotor.follow(rightFrontMotor);
-
-        follow();
+            leftFrontMotor.follow(rightFrontMotor);
+            leftBackMotor.follow(rightFrontMotor);
+            rightBackMotor.follow(rightFrontMotor);
+        } else {
+            stop();
+        }
     }
 
     /**
@@ -765,17 +497,17 @@ public class DriveBase extends Subsystem {
      * @param targetRotation The target to rotate to
      */
     public void setMotionMagicPositionGyro(double speed, double setpoint, double targetRotation) {
-        setMotionMagicWithGyroMode();
+        if (canRunAuto()) {
+            rightFrontMotor.selectProfileSlot(1, 0);
+            rightFrontMotor.selectProfileSlot(2, 1);
+            rightFrontMotor.set(ControlMode.MotionMagic, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation / Config.PIGEON_DPP);
 
-        leftFrontMotor.configClosedLoopPeakOutput(0, speed);
-        rightFrontMotor.configClosedLoopPeakOutput(0, speed);
-        leftFrontMotor.configClosedLoopPeakOutput(1, speed);
-        rightFrontMotor.configClosedLoopPeakOutput(1, speed);
-
-        rightFrontMotor.set(ControlMode.MotionMagic, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation / Config.PIGEON_DPP);
-        leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
-
-        follow();
+            leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
+            leftBackMotor.follow(leftFrontMotor);
+            rightBackMotor.follow(rightFrontMotor);
+        } else {
+            stop();
+        }
     }
 
     /**
@@ -784,25 +516,18 @@ public class DriveBase extends Subsystem {
      * @param speed The speed from 0 to 1
      */
     public void runMotionProfile(final double speed) {
-        setMotionProfile();
+        if (canRunAuto()) {
+            rightFrontMotor.selectProfileSlot(1, 0);
+            rightFrontMotor.selectProfileSlot(2, 1);
 
-        configTalons(speed);
-    }
+            rightFrontMotor.feed();
 
-    /**
-     * Configures the talons for motion profiling.
-     *
-     * @param speed The speed, from 0 to 1.
-     */
-    private void configTalons(final double speed) {
-        leftFrontMotor.configClosedLoopPeakOutput(0, speed);
-        rightFrontMotor.configClosedLoopPeakOutput(0, speed);
-        leftFrontMotor.configClosedLoopPeakOutput(1, speed);
-        rightFrontMotor.configClosedLoopPeakOutput(1, speed);
-
-        //Doing it automatically so don't disable
-        rightFrontMotor.feed();
-        leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
+            leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
+            leftBackMotor.follow(leftFrontMotor);
+            rightBackMotor.follow(rightFrontMotor);
+        } else {
+            stop();
+        }
     }
 
     /**
@@ -811,10 +536,21 @@ public class DriveBase extends Subsystem {
      * @param speed The speed from 0 to 1
      */
     public void runMotionProfile2Wheel(final double speed) {
-        setMotionProfile2Wheel();
+        if (canRunAuto()) {
+            leftBackMotor.selectProfileSlot(1, 0);
+            leftBackMotor.selectProfileSlot(2, 1);
 
-        configTalons(speed);
-        leftFrontMotor.feed();
+            rightBackMotor.selectProfileSlot(1, 0);
+            rightBackMotor.selectProfileSlot(2, 1);
+
+            leftBackMotor.feed();
+            rightBackMotor.feed();
+
+            leftFrontMotor.follow(leftBackMotor);
+            rightFrontMotor.follow(rightBackMotor);
+        } else {
+            stop();
+        }
     }
 
     /**
@@ -838,9 +574,6 @@ public class DriveBase extends Subsystem {
          */
         talon.clearMotionProfileTrajectories();
         pointStream.Clear();
-
-        /* set the base trajectory period to zero, use the individual trajectory period below */
-        talon.configMotionProfileTrajectoryPeriod(0, Config.CAN_SHORT);
 
         /* This is fast since it's just into our TOP buffer */
         for (int i = 0; i < size; ++i) {
@@ -875,6 +608,8 @@ public class DriveBase extends Subsystem {
      */
     public void pushMotionProfile1Wheel(boolean forwards, double[] pos, double[] vel, double[] heading, int[] time, int size) {
         pushMotionProfile(forwards ? pos : negateDoubleArray(pos), forwards ? vel : negateDoubleArray(vel), heading, time, size, rightFrontMotor, motionProfilePointStreamRight);
+
+        rightFrontMotor.startMotionProfile(motionProfilePointStreamRight, 20, ControlMode.MotionProfileArc);
     }
 
     /**
@@ -890,8 +625,11 @@ public class DriveBase extends Subsystem {
      * @param velRight The velocity of the robot at a trajectory point for the right wheel
      */
     public void pushMotionProfile2Wheel(boolean forwards, double[] posLeft, double[] velLeft, double[] heading, int[] time, int size, double[] posRight, double[] velRight) {
-        pushMotionProfile(forwards ? posLeft : negateDoubleArray(posLeft), forwards ? velLeft : negateDoubleArray(velLeft), heading, time, size, leftFrontMotor, motionProfilePointStreamLeft);
-        pushMotionProfile(forwards ? posRight : negateDoubleArray(posRight), forwards ? velRight : negateDoubleArray(velRight), heading, time, size, rightFrontMotor, motionProfilePointStreamRight);
+        pushMotionProfile(forwards ? posLeft : negateDoubleArray(posLeft), forwards ? velLeft : negateDoubleArray(velLeft), heading, time, size, leftBackMotor, motionProfilePointStreamLeft);
+        pushMotionProfile(forwards ? posRight : negateDoubleArray(posRight), forwards ? velRight : negateDoubleArray(velRight), heading, time, size, rightBackMotor, motionProfilePointStreamRight);
+
+        leftBackMotor.startMotionProfile(motionProfilePointStreamRight, 20, ControlMode.MotionProfileArc);
+        rightBackMotor.startMotionProfile(motionProfilePointStreamRight, 20, ControlMode.MotionProfileArc);
     }
 
     /**
@@ -913,15 +651,18 @@ public class DriveBase extends Subsystem {
      * @param setpoint The setpoint (angle) to which the robot should rotate, in degrees.
      */
     public void setRotation(double speed, double setpoint) {
-        setRotateMode();
+        if (canRunAuto()) {
+            leftFrontMotor.selectProfileSlot(3, 0);
+            leftFrontMotor.selectProfileSlot(0, 1);
 
-        leftFrontMotor.configClosedLoopPeakOutput(0, speed);
-        rightFrontMotor.configClosedLoopPeakOutput(0, speed);
+            leftFrontMotor.set(ControlMode.Position, 0.0, DemandType.AuxPID, setpoint / Config.PIGEON_DPP);
+            rightFrontMotor.follow(leftFrontMotor, FollowerType.AuxOutput1);
 
-        rightFrontMotor.set(ControlMode.Position, setpoint / Config.PIGEON_DPP);
-        leftFrontMotor.follow(rightFrontMotor);
-
-        follow();
+            leftBackMotor.follow(leftFrontMotor);
+            rightBackMotor.follow(rightFrontMotor);
+        } else {
+            stop();
+        }
     }
 
     /**
@@ -932,17 +673,18 @@ public class DriveBase extends Subsystem {
      * @param targetRotation The desired rotation
      */
     public void setPositionGyro(double speed, double setpoint, double targetRotation) {
-        setPositionGyroMode();
+        if (canRunAuto()) {
+            rightFrontMotor.selectProfileSlot(0, 0);
+            rightFrontMotor.selectProfileSlot(2, 1);
 
-        leftFrontMotor.configClosedLoopPeakOutput(0, speed);
-        rightFrontMotor.configClosedLoopPeakOutput(0, speed);
-        leftFrontMotor.configClosedLoopPeakOutput(1, speed);
-        rightFrontMotor.configClosedLoopPeakOutput(1, speed);
+            rightFrontMotor.set(ControlMode.Position, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation);
 
-        rightFrontMotor.set(ControlMode.Position, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation);
-        leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
-
-        follow();
+            leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
+            leftBackMotor.follow(leftFrontMotor);
+            rightBackMotor.follow(rightFrontMotor);
+        } else {
+            stop();
+        }
     }
 
     /**
@@ -1039,9 +781,6 @@ public class DriveBase extends Subsystem {
      * Resets the encoders and gyro
      */
     public void reset() {
-        lastEncoderAv = 0;
-        lastGyro = 0;
-
         resetEncoders();
         resetGyro();
     }
@@ -1131,91 +870,6 @@ public class DriveBase extends Subsystem {
         SmartDashboard.putNumber("Right front motor speed", rightFrontMotor.getSensorCollection().getQuadratureVelocity() * Config.DRIVE_ENCODER_DPP * 10);
         SmartDashboard.putNumber("Left back motor speed", leftBackMotor.getSensorCollection().getQuadratureVelocity() * Config.DRIVE_ENCODER_DPP * 10);
         SmartDashboard.putNumber("Right back motor speed", rightBackMotor.getSensorCollection().getQuadratureVelocity() * Config.DRIVE_ENCODER_DPP * 10);
-    }
-
-    /**
-     * Sets the current drive mode.
-     *
-     * @param driveMode The new drive mode.
-     */
-    private void setDriveMode(DriveMode driveMode) {
-        this.driveMode = driveMode;
-    }
-
-    /**
-     * Sets the inversion of the slave talon based on the constant for whether or not those motors are inverted
-     * by default.
-     *
-     * @param inversion        The type of desired inversion. Should be either {@link InvertType#FollowMaster} or {@link InvertType#OpposeMaster}
-     * @param talon            The slave talon to be configured.
-     * @param isMasterInverted True if the master talon motor is inverted by default.
-     * @param isSlaveInverted  True if the slave talon motor is inverted by default.
-     */
-    private static void setTalonInversion(final InvertType inversion, WPI_TalonSRX talon, final boolean isMasterInverted, final boolean isSlaveInverted) {
-        if (isMasterInverted == isSlaveInverted) {
-            /*
-            If both talons are of the same constant inversion and we want them to follow, then they can just follow each other.
-            If both talons are of the same constant inversion and we want them to oppose, then they can just oppose each other.
-            */
-            talon.setInverted(inversion);
-        } else {
-            if (inversion == InvertType.FollowMaster) {
-                // If the talons are of opposite constant inversion and we want them to follow, the slave should oppose the master.
-                talon.setInverted(InvertType.OpposeMaster);
-            } else {
-                // If the talons are of opposite constant inversion and we want them to oppose, the slave should follow the master.
-                talon.setInverted(InvertType.FollowMaster);
-            }
-        }
-    }
-
-    private double lastEncoderAv = 0;
-    private double lastGyro = 0;
-
-    /**
-     * The drive mode of the robot
-     */
-    public enum DriveMode {
-        /**
-         * There is no control mode active
-         */
-        Disabled,
-
-        /**
-         * Standard open loop voltage control
-         */
-        OpenLoopVoltage,
-
-        /**
-         * Performs closed loop position control without heading support
-         */
-        PositionNoGyro,
-
-
-        /**
-         * Motion magic with gyro
-         */
-        MotionMagicWithGyro,
-
-        /**
-         * Motion profile
-         */
-        MotionProfile,
-
-        /**
-         * Motion profile with 2 wheels
-         */
-        MotionProfile2Wheel,
-
-        /**
-         * Closed loop control with Auxiliary Pigeon Support
-         */
-        PositionGyro,
-
-        /**
-         * Rotates the robot with the gyroscope
-         */
-        Rotate
     }
 }
 

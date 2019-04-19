@@ -71,6 +71,7 @@ public class CurveDrive2Test {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
+            minTimes = 0;
         }};
 
         Util.resetSubsystems();

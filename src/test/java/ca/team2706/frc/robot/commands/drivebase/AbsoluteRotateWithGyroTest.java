@@ -6,6 +6,7 @@ import ca.team2706.frc.robot.subsystems.DriveBase;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motion.BuffTrajPointStreamJNI;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -61,27 +62,10 @@ public class AbsoluteRotateWithGyroTest {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
+            minTimes = 0;
         }};
 
         Util.resetSubsystems();
-    }
-
-    /**
-     * Tests that the command puts the drivetrain into the correct state
-     *
-     * @param speed         The speed to create the command with
-     * @param angle         The rotation to create the command with
-     * @param minDoneCycles The minimum cycles to use
-     */
-    @Test
-    public void testCorrectState(@Injectable("0.0") double speed, @Injectable("0.0") double angle, @Injectable("1") int minDoneCycles) {
-        assertEquals(DriveBase.DriveMode.Disabled, DriveBase.getInstance().getDriveMode());
-        absoluteRotateWithGyro.initialize();
-        assertEquals(DriveBase.DriveMode.Rotate, DriveBase.getInstance().getDriveMode());
-        assertTrue(DriveBase.getInstance().isBrakeMode());
-
-        absoluteRotateWithGyro.end();
-        assertEquals(DriveBase.DriveMode.Disabled, DriveBase.getInstance().getDriveMode());
     }
 
     /**
@@ -96,10 +80,7 @@ public class AbsoluteRotateWithGyroTest {
         new Expectations() {{
             pigeon.getYawPitchRoll((double[]) any);
             // 300 positive
-            returns(
-                    SendablesTest.makePigeonExpectation(0),
-                    SendablesTest.makePigeonExpectation(-3300.0 - Config.ROBOT_START_ANGLE.value())
-            );
+            result = SendablesTest.makePigeonExpectation(-3300.0 - Config.ROBOT_START_ANGLE.value());
         }};
 
 
@@ -109,13 +90,9 @@ public class AbsoluteRotateWithGyroTest {
             absoluteRotateWithGyro.execute();
         }
 
-        absoluteRotateWithGyro.end();
-
         new Verifications() {{
-            talon.set(ControlMode.Position, degreesToTicksDouble(90));
+            talon.set(ControlMode.Position, 0, DemandType.AuxPID, degreesToTicksDouble(90));
             times = 3;
-            talon.configClosedLoopPeakOutput(0, speed);
-            times = 6;
         }};
     }
 
@@ -131,10 +108,7 @@ public class AbsoluteRotateWithGyroTest {
         new Expectations() {{
             pigeon.getYawPitchRoll((double[]) any);
             // 60 positive
-            returns(
-                    SendablesTest.makePigeonExpectation(0),
-                    SendablesTest.makePigeonExpectation(3300.0 - Config.ROBOT_START_ANGLE.value())
-            );
+            result = SendablesTest.makePigeonExpectation(3300.0 - Config.ROBOT_START_ANGLE.value());
         }};
 
         absoluteRotateWithGyro.mirror();
@@ -145,13 +119,9 @@ public class AbsoluteRotateWithGyroTest {
             absoluteRotateWithGyro.execute();
         }
 
-        absoluteRotateWithGyro.end();
-
         new Verifications() {{
-            talon.set(ControlMode.Position, degreesToTicksDouble(-30.0));
+            talon.set(ControlMode.Position, 0, DemandType.AuxPID, degreesToTicksDouble(-30.0));
             times = 3;
-            talon.configClosedLoopPeakOutput(0, speed);
-            times = 6;
         }};
     }
 

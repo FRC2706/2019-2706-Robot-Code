@@ -223,6 +223,7 @@ public class Config {
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_P = constant("drive-P", 0.1);
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_I = constant("drive-I", 0.0);
     public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_D = constant("drive-D", 0.0);
+    public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_F = constant("drive-F", 0.0);
 
     public static final FluidConstant<Double> DRIVE_MOTION_MAGIC_P = constant("drive-mm-P", 0.4096);
     public static final FluidConstant<Double> DRIVE_MOTION_MAGIC_I = constant("drive-mm-I", 0.0);
@@ -247,6 +248,12 @@ public class Config {
     public static final FluidConstant<Double> TURN_P = constant("turn-P", 0.5);
     public static final FluidConstant<Double> TURN_I = constant("turn-I", 0.0);
     public static final FluidConstant<Double> TURN_D = constant("turn-D", 0.0);
+    public static final FluidConstant<Double> TURN_F = constant("turn-F", 0.0);
+
+    public static final FluidConstant<Double> TURN_MM_P = constant("turn-mm-P", 0.5);
+    public static final FluidConstant<Double> TURN_MM_I = constant("turn-mm-I", 0.0);
+    public static final FluidConstant<Double> TURN_MM_D = constant("turn-mm-D", 0.0);
+    public static final FluidConstant<Double> TURN_MM_F = constant("turn-mm-F", 0.0);
 
     public static final FluidConstant<Double>
             LIFT_P = constant("lift-P", 0.9),

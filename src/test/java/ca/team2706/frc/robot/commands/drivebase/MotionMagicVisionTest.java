@@ -80,6 +80,7 @@ public class MotionMagicVisionTest {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
+            minTimes = 0;
         }};
 
         new Expectations(NetworkTableEntry.class) {{

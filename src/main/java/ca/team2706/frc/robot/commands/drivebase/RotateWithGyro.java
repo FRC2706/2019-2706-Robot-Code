@@ -52,7 +52,6 @@ public class RotateWithGyro extends DriveBaseCloseLoop implements IMirrorable<Co
     @Override
     public void initialize() {
         super.initialize();
-        DriveBase.getInstance().setRotateMode();
         doneCycles = 0;
     }
 

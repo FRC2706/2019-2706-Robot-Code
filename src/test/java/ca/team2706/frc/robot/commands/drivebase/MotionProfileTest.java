@@ -80,25 +80,8 @@ public class MotionProfileTest {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
+            minTimes = 0;
         }};
-    }
-
-    /**
-     * Tests that the command puts the drivetrain into the correct state
-     *
-     * @param speed         The speed to create the command with
-     * @param minDoneCycles The minimum cycles to use
-     * @param size          The number of trajectory points
-     */
-    @Test
-    public void testCorrectState(@Injectable("0.0") double speed, @Injectable("1") int minDoneCycles, @Injectable("4") int size) {
-        assertEquals(DriveBase.DriveMode.Disabled, DriveBase.getInstance().getDriveMode());
-        motionProfile.initialize();
-        assertEquals(DriveBase.DriveMode.MotionProfile, DriveBase.getInstance().getDriveMode());
-        assertTrue(DriveBase.getInstance().isBrakeMode());
-
-        motionProfile.end();
-        assertEquals(DriveBase.DriveMode.Disabled, DriveBase.getInstance().getDriveMode());
     }
 
     /**
@@ -116,8 +99,6 @@ public class MotionProfileTest {
             motionProfile.execute();
         }
 
-        motionProfile.end();
-
         new Verifications() {{
             talon.startMotionProfile((BufferedTrajectoryPointStream) any, 20, ControlMode.MotionProfileArc);
             times = 1;
@@ -125,10 +106,6 @@ public class MotionProfileTest {
             times = 3;
             talon.follow((IMotorController) any, FollowerType.AuxOutput1);
             times = 3;
-            talon.configClosedLoopPeakOutput(0, speed);
-            times = 6;
-            talon.configClosedLoopPeakOutput(1, speed);
-            times = 6;
         }};
     }
 
@@ -156,14 +133,5 @@ public class MotionProfileTest {
         assertFalse(motionProfile.isFinished());
         assertFalse(motionProfile.isFinished());
         assertTrue(motionProfile.isFinished());
-
-        motionProfile.end();
-
-        motionProfile.initialize();
-
-        assertFalse(motionProfile.isFinished());
-        assertFalse(motionProfile.isFinished());
-
-        motionProfile.end();
     }
 }

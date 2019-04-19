@@ -26,17 +26,11 @@ public class ArcadeDriveWithTime extends TimedCommand {
 
     @Override
     public void initialize() {
-        DriveBase.getInstance().setOpenLoopVoltageMode();
         DriveBase.getInstance().setBrakeMode(true);
     }
 
     @Override
     public void execute() {
         DriveBase.getInstance().arcadeDrive(forward, rotationSpeed, false);
-    }
-
-    @Override
-    public void end() {
-        DriveBase.getInstance().setDisabledMode();
     }
 }

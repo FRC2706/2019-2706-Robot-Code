@@ -58,24 +58,8 @@ public class DriveForwardWithTimeTest {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
+            minTimes = 0;
         }};
-    }
-
-    /**
-     * Tests that the robot is in the right state
-     *
-     * @param timeout Time for robot to drive
-     * @param speed   Speed to drive
-     */
-    @Test
-    public void testCorrectState(@Injectable("2.0") double timeout, @Injectable("0.2") double speed) {
-        assertEquals(DriveBase.DriveMode.Disabled, DriveBase.getInstance().getDriveMode());
-        drive.initialize();
-        assertEquals(DriveBase.DriveMode.OpenLoopVoltage, DriveBase.getInstance().getDriveMode());
-        assertTrue(DriveBase.getInstance().isBrakeMode());
-
-        drive.end();
-        assertEquals(DriveBase.DriveMode.Disabled, DriveBase.getInstance().getDriveMode());
     }
 
     /**
@@ -90,8 +74,6 @@ public class DriveForwardWithTimeTest {
         drive.execute();
         drive.execute();
         drive.execute();
-
-        drive.end();
 
         new Verifications() {{
             differentialDrive.arcadeDrive(0.2, 0, false);

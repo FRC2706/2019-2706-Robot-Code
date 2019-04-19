@@ -82,8 +82,6 @@ public class DriverAssistVisionTest {
         new Expectations() {{
             pigeon.getYawPitchRoll((double[]) any);
             returns(SendablesTest.makePigeonExpectation(-90.0),
-                    SendablesTest.makePigeonExpectation(-90.0),
-                    SendablesTest.makePigeonExpectation(-90.0),
                     SendablesTest.makePigeonExpectation(0.0),
                     SendablesTest.makePigeonExpectation(90.0),
                     SendablesTest.makePigeonExpectation(180.0)
@@ -127,8 +125,6 @@ public class DriverAssistVisionTest {
         new Expectations() {{
             pigeon.getYawPitchRoll((double[]) any);
             returns(SendablesTest.makePigeonExpectation(-30.0),
-                    SendablesTest.makePigeonExpectation(-30.0),
-                    SendablesTest.makePigeonExpectation(-30.0),
                     SendablesTest.makePigeonExpectation(-90.0),
                     SendablesTest.makePigeonExpectation(210.0),
                     SendablesTest.makePigeonExpectation(30.0),

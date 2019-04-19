@@ -23,17 +23,11 @@ public class DriveForwardWithTime extends TimedCommand {
 
     @Override
     public void initialize() {
-        DriveBase.getInstance().setOpenLoopVoltageMode();
         DriveBase.getInstance().setBrakeMode(true);
     }
 
     @Override
     public void execute() {
         DriveBase.getInstance().arcadeDrive(speed, 0, false);
-    }
-
-    @Override
-    public void end() {
-        DriveBase.getInstance().setDisabledMode();
     }
 }

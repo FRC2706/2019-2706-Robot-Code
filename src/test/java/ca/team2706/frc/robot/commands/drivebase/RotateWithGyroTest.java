@@ -5,6 +5,7 @@ import ca.team2706.frc.robot.subsystems.DriveBase;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.motion.BuffTrajPointStreamJNI;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -60,27 +61,10 @@ public class RotateWithGyroTest {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
+            minTimes = 0;
         }};
 
         Util.resetSubsystems();
-    }
-
-    /**
-     * Tests that the command puts the drivetrain into the correct state
-     *
-     * @param speed         The speed to create the command with
-     * @param angle         The rotation to create the command with
-     * @param minDoneCycles The minimum cycles to use
-     */
-    @Test
-    public void testCorrectState(@Injectable("0.0") double speed, @Injectable("0.0") double angle, @Injectable("1") int minDoneCycles) {
-        assertEquals(DriveBase.DriveMode.Disabled, DriveBase.getInstance().getDriveMode());
-        rotateWithGyro.initialize();
-        assertEquals(DriveBase.DriveMode.Rotate, DriveBase.getInstance().getDriveMode());
-        assertTrue(DriveBase.getInstance().isBrakeMode());
-
-        rotateWithGyro.end();
-        assertEquals(DriveBase.DriveMode.Disabled, DriveBase.getInstance().getDriveMode());
     }
 
     /**
@@ -98,13 +82,9 @@ public class RotateWithGyroTest {
             rotateWithGyro.execute();
         }
 
-        rotateWithGyro.end();
-
         new Verifications() {{
-            talon.set(ControlMode.Position, degreesToTicksDouble(5));
+            talon.set(ControlMode.Position, 0, DemandType.AuxPID, degreesToTicksDouble(5));
             times = 3;
-            talon.configClosedLoopPeakOutput(0, speed);
-            times = 6;
         }};
     }
 
@@ -125,13 +105,9 @@ public class RotateWithGyroTest {
             rotateWithGyro.execute();
         }
 
-        rotateWithGyro.end();
-
         new Verifications() {{
-            talon.set(ControlMode.Position, -degreesToTicksDouble(5));
+            talon.set(ControlMode.Position, 0, DemandType.AuxPID, -degreesToTicksDouble(5));
             times = 3;
-            talon.configClosedLoopPeakOutput(0, speed);
-            times = 6;
         }};
     }
 
@@ -175,13 +151,9 @@ public class RotateWithGyroTest {
         assertFalse(rotateWithGyro.isFinished());
         assertTrue(rotateWithGyro.isFinished());
 
-        rotateWithGyro.end();
-
         rotateWithGyro.initialize();
 
         assertFalse(rotateWithGyro.isFinished());
-
-        rotateWithGyro.end();
     }
 
     private int degreesToTicks(double degrees) {

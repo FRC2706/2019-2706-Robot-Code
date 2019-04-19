@@ -70,6 +70,7 @@ public class CurvatureDriveWithJoystickTest {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
+            minTimes = 0;
         }};
     }
 

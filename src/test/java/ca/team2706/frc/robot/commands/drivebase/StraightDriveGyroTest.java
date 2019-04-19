@@ -65,27 +65,10 @@ public class StraightDriveGyroTest {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
+            minTimes = 0;
         }};
 
         Util.resetSubsystems();
-    }
-
-    /**
-     * Tests that the command puts the drivetrain into the correct state
-     *
-     * @param speed         The speed to create the command with
-     * @param position      The position to create the command with
-     * @param minDoneCycles The minimum cycles to use
-     */
-    @Test
-    public void testCorrectState(@Injectable("0.0") double speed, @Injectable("0.0") double position, @Injectable("1") int minDoneCycles) {
-        assertEquals(DriveBase.DriveMode.Disabled, DriveBase.getInstance().getDriveMode());
-        straightDriveGyro.initialize();
-        assertEquals(DriveBase.DriveMode.PositionGyro, DriveBase.getInstance().getDriveMode());
-        assertTrue(DriveBase.getInstance().isBrakeMode());
-
-        straightDriveGyro.end();
-        assertEquals(DriveBase.DriveMode.Disabled, DriveBase.getInstance().getDriveMode());
     }
 
     /**
@@ -103,13 +86,9 @@ public class StraightDriveGyroTest {
             straightDriveGyro.execute();
         }
 
-        straightDriveGyro.end();
-
         new Verifications() {{
             talon.set(ControlMode.Position, position / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, 0);
             times = 3;
-            talon.configClosedLoopPeakOutput(0, speed);
-            times = 6;
         }};
     }
 
@@ -144,13 +123,9 @@ public class StraightDriveGyroTest {
         assertFalse(straightDriveGyro.isFinished());
         assertTrue(straightDriveGyro.isFinished());
 
-        straightDriveGyro.end();
-
         straightDriveGyro.initialize();
 
         assertFalse(straightDriveGyro.isFinished());
-
-        straightDriveGyro.end();
     }
 
     /**

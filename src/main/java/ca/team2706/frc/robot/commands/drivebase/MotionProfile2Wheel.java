@@ -90,7 +90,6 @@ public class MotionProfile2Wheel extends MirroredCommand {
         } else {
             DriveBase.getInstance().pushMotionProfile2Wheel(speed.get() >= 0, posLeft, velLeft, heading, time, size, posRight, velRight);
         }
-        DriveBase.getInstance().setMotionProfile2Wheel();
 
         doneCycles = 0;
     }
@@ -107,11 +106,6 @@ public class MotionProfile2Wheel extends MirroredCommand {
         }
 
         return doneCycles >= minDoneCycles.get();
-    }
-
-    @Override
-    public void end() {
-        DriveBase.getInstance().setDisabledMode();
     }
 
     /**

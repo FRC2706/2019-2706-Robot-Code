@@ -64,9 +64,4 @@ public abstract class DriveBaseCloseLoop extends Command {
 
         return doneCycles >= minDoneCycles.get();
     }
-
-    @Override
-    public void end() {
-        DriveBase.getInstance().setDisabledMode();
-    }
 }

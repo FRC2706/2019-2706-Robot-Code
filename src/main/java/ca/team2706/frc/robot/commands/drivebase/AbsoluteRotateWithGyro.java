@@ -41,7 +41,6 @@ public class AbsoluteRotateWithGyro extends RotateWithGyro {
     @Override
     public void initialize() {
         super.initialize();
-        DriveBase.getInstance().setRotateMode();
 
         gyroAngle = deltaAngle(getWrappedAngle(DriveBase.getInstance().getAbsoluteHeading()), mirrored ? 360 - angleSupplier.get() : angleSupplier.get());
     }

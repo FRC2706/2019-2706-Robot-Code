@@ -12,6 +12,7 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.RollingRandomAccessFileAppender;
 import org.apache.logging.log4j.core.appender.rolling.RollingRandomAccessFileManager;
 import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.io.IoBuilder;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -47,6 +48,9 @@ public class Log {
      * Starts logging
      */
     public static void init() {
+        System.setErr(IoBuilder.forLogger(LOGGER).setLevel(Level.ERROR).buildPrintStream());
+        System.setOut(IoBuilder.forLogger(LOGGER).setLevel(Level.INFO).buildPrintStream());
+
         Log.i("Starting to log");
 
         Log.i("Robot Free Memory: " + ((double) Runtime.getRuntime().freeMemory()) / (1024 * 1024) + "MB");

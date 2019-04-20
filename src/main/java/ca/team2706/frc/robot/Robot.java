@@ -50,8 +50,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
-        Log.init();
-
         setOnStateChange((state) -> Log.i("Robot State: " + state.name()));
         setOnConnectionChange((state) -> Log.i("Connection State: " + state.name()));
         setOnConnectionChange(Log::setupFMS);
@@ -318,6 +316,8 @@ public class Robot extends TimedRobot {
      * @param args Arguments passed on startup
      */
     public static void main(String[] args) {
+        Log.init();
+
         Runtime.getRuntime().addShutdownHook(new Thread(Robot::shutdown));
 
         RobotBase.startRobot(Robot::new);

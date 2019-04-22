@@ -28,6 +28,7 @@ import java.util.Properties;
  * Logs to USB and console at levels debug, info, warning, error
  */
 public class Log {
+    private static final String PERIODIC_FILE_KEY = "periodicFilename";
     private static final String LOG_FILE_KEY = "logFilename";
     private static final String OLD_LOG_FILE_KEY = "oldLogFilename";
     private static final Path LOG_LOCATION = Path.of("/U/logs");
@@ -35,11 +36,14 @@ public class Log {
     private static boolean validDate;
 
     static {
-        System.setProperty(LOG_FILE_KEY, logFile("latest"));
+        System.setProperty(LOG_FILE_KEY, logFile("latest", false));
         validDate = false;
+
+        System.setProperty(PERIODIC_FILE_KEY, logFile("latest", true));
     }
 
     private static final Logger LOGGER = LogManager.getLogger(Robot.class.getName());
+    private static final Logger CSV_LOGGER = LogManager.getLogger("Periodic");
     private static RollingRandomAccessFileManager rollingAppender;
 
     private static final String BUILD_INFO_NAME = "/build-info.properties";
@@ -88,15 +92,18 @@ public class Log {
 
                 Log.d("FMS: " + eventName + " " + matchType + " " + matchNumber + "-" + replayNumber + " at " + matchTime);
 
-                String logFile = logFile(eventName + "-" + matchType + "-" + matchNumber + "-" + replayNumber);
+                String logFile = logFile(eventName + "-" + matchType + "-" + matchNumber + "-" + replayNumber, false);
 
                 if (!logFile.equals(System.getProperty(LOG_FILE_KEY))) {
                     validDate = true;
 
                     changeLogFile(logFile);
                 }
+
+                String periodicLogFile = logFile(eventName + "-" + matchType + "-" + matchNumber + "-" + replayNumber, true);
+                System.setProperty(PERIODIC_FILE_KEY, periodicLogFile);
             } else if (state == ConnectionState.DRIVERSTATION_CONNECT && !validDate) {
-                String logFile = logFile(formattedDate(Timer.getFPGATimestamp()));
+                String logFile = logFile(formattedDate(Timer.getFPGATimestamp()), false);
                 validDate = true;
 
                 changeLogFile(logFile);
@@ -152,12 +159,12 @@ public class Log {
      * @param name The name of the file to log
      * @return The path with a number at the end if the original alredy exists
      */
-    private static String logFile(String name) {
-        String fileName = LOG_LOCATION.resolve(name + ".log").toString();
+    private static String logFile(String name, boolean csv) {
+        String fileName = LOG_LOCATION.resolve(name + (csv ? ".csv" : ".log")).toString();
 
         int i = 1;
         while (Files.exists(Path.of(fileName))) {
-            fileName = LOG_LOCATION.resolve(name + "-" + i++ + ".log").toString();
+            fileName = LOG_LOCATION.resolve(name + "-" + i++ + (csv ? ".csv" : ".log")).toString();
         }
 
         return fileName;
@@ -286,6 +293,6 @@ public class Log {
     }
 
     static void csvLogData(Object[] data) {
-
+        CSV_LOGGER.debug("Periodic Data", data);
     }
 }

@@ -14,6 +14,8 @@ public class PeriodicLogger {
     private static Object[] writter;
     private static final Notifier periodic = new Notifier(PeriodicLogger::logPeriodic);
     private static final Set<PeriodicLogEntry> ignored = new HashSet<>();
+    private static String[] header;
+    private static boolean firstCSVWrite = true;
 
     public static void register(Object logger) {
         if(logger instanceof PeriodicLoggable) {
@@ -43,7 +45,7 @@ public class PeriodicLogger {
                 }
             }
 
-            logFileHeader(header.toArray(new String[0]));
+            PeriodicLogger.header = header.toArray(new String[0]);
 
 
             writter = new Object[header.size()];
@@ -82,13 +84,18 @@ public class PeriodicLogger {
             logFile(writter);
         }
 
-        Log.d("Time: " + ((Timer.getFPGATimestamp() - start) * 1000) + "ms");
+        Log.d("Periodic Log Time: " + ((Timer.getFPGATimestamp() - start) * 1000) + "ms");
     }
 
     private static void logFileHeader(String[] header) {
         Log.csvLogData(header);
     }
     private static void logFile(Object[] data) {
+        if(firstCSVWrite) {
+            logFileHeader(header);
+            firstCSVWrite = false;
+        }
+
         Log.csvLogData(data);
     }
 }

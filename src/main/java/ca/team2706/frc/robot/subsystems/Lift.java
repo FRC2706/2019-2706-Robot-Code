@@ -3,17 +3,19 @@ package ca.team2706.frc.robot.subsystems;
 import ca.team2706.frc.robot.Sendables;
 import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.logging.Log;
+import ca.team2706.frc.robot.logging.*;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import java.util.Set;
+
 /**
  * Subsystem that controls the elevator on the robot
  */
-public class Lift extends Subsystem {
+public class Lift extends Subsystem implements PeriodicLoggable {
 
     /**
      * The lift motor controller.
@@ -180,16 +182,6 @@ public class Lift extends Subsystem {
         if (liftMotor.getSelectedSensorPosition() < 0) {
             zeroEncoderTicks();
         }
-
-        if (DriverStation.getInstance().isEnabled()) {
-            Log.d("Lift Encoders " + liftMotor.getSelectedSensorPosition());
-            Log.d("Lift Rev Switch " + liftMotor.getSensorCollection().isRevLimitSwitchClosed());
-            Log.d("Lift Current " + liftMotor.getOutputCurrent());
-            Log.d("Lift Voltage " + liftMotor.getMotorOutputVoltage());
-        }
-
-        SmartDashboard.putBoolean("Lift Limit Switch", liftMotor.getSensorCollection().isRevLimitSwitchClosed());
-        SmartDashboard.putNumber("Lift Position", getLiftHeightEncoderTicks());
     }
 
     /**
@@ -412,5 +404,34 @@ public class Lift extends Subsystem {
      */
     public int getLiftHeightEncoderTicks() {
         return liftMotor.getSelectedSensorPosition();
+    }
+
+    @Override
+    public Set<PeriodicLogEntry> getLogs() {
+        return Set.of(
+                PeriodicLogEntry.of(
+                        "Limit Switch",
+                        liftMotor.getSensorCollection()::isRevLimitSwitchClosed,
+                        SmartDashboardEntryType.BOOLEAN,
+                        PeriodicLogPriority.NT_ALWAYS),
+                PeriodicLogEntry.of(
+                        "Encoders",
+                        liftMotor::getSelectedSensorPosition,
+                        SmartDashboardEntryType.NUMBER),
+                PeriodicLogEntry.of(
+                        "Current Command",
+                        () -> this.getCurrentCommandName().isEmpty() ? "No Command" : this.getCurrentCommandName(),
+                        SmartDashboardEntryType.STRING,
+                        PeriodicLogPriority.NT_NEVER),
+                PeriodicLogEntry.of(
+                        "Motor Temperature",
+                        liftMotor::getTemperature,
+                        SmartDashboardEntryType.NUMBER
+                ),
+                PeriodicLogEntry.of(
+                        "Motor Output",
+                        liftMotor::getMotorOutputPercent,
+                        SmartDashboardEntryType.NUMBER
+                ));
     }
 }

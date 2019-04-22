@@ -2,17 +2,19 @@ package ca.team2706.frc.robot.subsystems;
 
 import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.logging.Log;
+import ca.team2706.frc.robot.logging.*;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
+import java.util.Set;
+
 /**
  * The subsystem which controls the intake for cargo and hatches
  */
-public class Intake extends Subsystem {
+public class Intake extends Subsystem implements PeriodicLoggable {
     private static Intake currentInstance;
 
     private WPI_VictorSPX intakeMotor;
@@ -143,4 +145,32 @@ public class Intake extends Subsystem {
         return Math.abs(readIr() - Config.CARGO_CAPTURED_IDEAL_IR_VOLTAGE.value()) <= 0.01;
     }
 
+    @Override
+    public Set<PeriodicLogEntry> getLogs() {
+        return Set.of(
+                PeriodicLogEntry.of(
+                        "IR Sensor",
+                        this::readIr,
+                        SmartDashboardEntryType.NUMBER),
+                PeriodicLogEntry.of(
+                        "Default Command",
+                        this::getCurrentCommandName,
+                        SmartDashboardEntryType.STRING,
+                        PeriodicLogPriority.NT_NEVER),
+                PeriodicLogEntry.of(
+                        "Motor Temperature",
+                        intakeMotor::getTemperature,
+                        SmartDashboardEntryType.NUMBER
+                ),
+                PeriodicLogEntry.of(
+                        "Motor Output",
+                        intakeMotor::getMotorOutputPercent,
+                        SmartDashboardEntryType.NUMBER
+                ),
+                PeriodicLogEntry.of(
+                        "Current Command",
+                        () -> this.getCurrentCommandName().isEmpty() ? "No Command" : this.getCurrentCommandName(),
+                        SmartDashboardEntryType.STRING,
+                        PeriodicLogPriority.NT_NEVER));
+    }
 }

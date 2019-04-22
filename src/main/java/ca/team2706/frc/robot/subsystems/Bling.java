@@ -3,18 +3,19 @@ package ca.team2706.frc.robot.subsystems;
 import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.commands.bling.BlingController;
 import ca.team2706.frc.robot.commands.bling.patterns.BlingPattern;
-import ca.team2706.frc.robot.logging.Log;
+import ca.team2706.frc.robot.logging.*;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 import java.util.Arrays;
+import java.util.Set;
 
 /**
  * Subsystem for controlling bling operations.
  */
-public class Bling extends Subsystem {
+public class Bling extends Subsystem implements PeriodicLoggable {
 
     private static Bling currentInstance;
 
@@ -213,5 +214,20 @@ public class Bling extends Subsystem {
     public void clearStrip() {
         int[] colour = new int[]{0, 0, 0};
         sendPattern(0, 0, colour, CLEAR, 0);
+    }
+
+    @Override
+    public Set<PeriodicLogEntry> getLogs() {
+        return Set.of(
+                PeriodicLogEntry.of(
+                        "Command",
+                        () -> commandNT.getString("None"),
+                        SmartDashboardEntryType.STRING,
+                        PeriodicLogPriority.NT_NEVER),
+                PeriodicLogEntry.of(
+                        "Current Command",
+                        () -> this.getCurrentCommandName().isEmpty() ? "No Command" : this.getCurrentCommandName(),
+                        SmartDashboardEntryType.STRING,
+                        PeriodicLogPriority.NT_NEVER));
     }
 }

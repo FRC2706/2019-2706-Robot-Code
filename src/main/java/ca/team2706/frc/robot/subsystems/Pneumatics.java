@@ -5,18 +5,23 @@ import ca.team2706.frc.robot.RobotState;
 import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.commands.intake.arms.RaiseArmsSafely;
 import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.logging.PeriodicLogEntry;
+import ca.team2706.frc.robot.logging.PeriodicLogPriority;
+import ca.team2706.frc.robot.logging.PeriodicLoggable;
+import ca.team2706.frc.robot.logging.SmartDashboardEntryType;
 import ca.team2706.frc.robot.pneumatics.PneumaticPiston;
 import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
+import java.util.Set;
 import java.util.function.Consumer;
 
 /**
  * Subsystem for controlling pneumatics involved in intake.
  * This means the arms pneumatics and the plunger are controlled here.
  */
-public class Pneumatics extends Subsystem {
+public class Pneumatics extends Subsystem implements PeriodicLoggable {
     private static Pneumatics currentInstance;
 
     private DoubleSolenoid intakeLiftSolenoid;
@@ -179,5 +184,27 @@ public class Pneumatics extends Subsystem {
 
     @Override
     protected void initDefaultCommand() {
+    }
+
+    @Override
+    public Set<PeriodicLogEntry> getLogs() {
+        return Set.of(
+                PeriodicLogEntry.of(
+                        "Intake Lift",
+                        intakeLiftSolenoid.get()::name,
+                        SmartDashboardEntryType.STRING),
+                PeriodicLogEntry.of(
+                        "Hatch",
+                        hatchEjectorSolenoid.getState()::name,
+                        SmartDashboardEntryType.STRING),
+                PeriodicLogEntry.of(
+                        "Hatch Solenoid",
+                        hatchEjectorSolenoid.get()::name,
+                        SmartDashboardEntryType.STRING),
+                PeriodicLogEntry.of(
+                        "Current Command",
+                        () -> this.getCurrentCommandName().isEmpty() ? "No Command" : this.getCurrentCommandName(),
+                        SmartDashboardEntryType.STRING,
+                        PeriodicLogPriority.NT_NEVER));
     }
 }

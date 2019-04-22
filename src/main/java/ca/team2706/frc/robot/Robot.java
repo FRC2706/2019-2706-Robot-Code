@@ -4,6 +4,7 @@ import ca.team2706.frc.robot.commands.auto.DriveOffHab;
 import ca.team2706.frc.robot.commands.auto.LevelOneCentreHatch;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
+import ca.team2706.frc.robot.logging.PeriodicLogger;
 import ca.team2706.frc.robot.subsystems.*;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
@@ -77,6 +78,8 @@ public class Robot extends TimedRobot {
         // OI depends on subsystems, so initialize it after
         OI.init();
 
+        PeriodicLogger.initialize();
+
         // The USB camera used on the Robot, not enabled during simulation mode
         if (Config.ENABLE_CAMERA) {
             UsbCamera camera0 = CameraServer.getInstance().startAutomaticCapture();
@@ -107,6 +110,8 @@ public class Robot extends TimedRobot {
      * @param subsystem       The subsystem
      */
     private void logInitialization(SubsystemStatus subsystemStatus, Subsystem subsystem) {
+        PeriodicLogger.register(subsystem);
+
         String message = subsystem.getName() + " had initialized with status " + subsystemStatus.name();
 
         switch (subsystemStatus) {

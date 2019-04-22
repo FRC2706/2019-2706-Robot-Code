@@ -284,4 +284,8 @@ public class Log {
             Configurator.setLevel("ca.team2706.frc.robot.Robot", Level.ALL);
         }
     }
+
+    static void csvLogData(Object[] data) {
+
+    }
 }

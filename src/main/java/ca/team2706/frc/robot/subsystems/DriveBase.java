@@ -3,7 +3,7 @@ package ca.team2706.frc.robot.subsystems;
 import ca.team2706.frc.robot.Sendables;
 import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.logging.Log;
+import ca.team2706.frc.robot.logging.*;
 import ca.team2706.frc.robot.sensors.AnalogSelector;
 import com.ctre.phoenix.motion.BufferedTrajectoryPointStream;
 import com.ctre.phoenix.motion.MotionProfileStatus;
@@ -20,11 +20,12 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Arrays;
+import java.util.Set;
 
 /**
  * Subsystem that controls the driving of the robot as well as certain sensors that are used for driving
  */
-public class DriveBase extends Subsystem {
+public class DriveBase extends Subsystem implements PeriodicLoggable {
 
     private static DriveBase currentInstance;
 
@@ -83,11 +84,6 @@ public class DriveBase extends Subsystem {
      * Saves the absolute heading when the gyro is reset so that it can be calculated from the relative angle
      */
     private double savedAngle;
-
-    /**
-     * Logs data to SmartDashboard and files periodically
-     */
-    private Notifier loggingNotifier;
 
     /**
      * Holds the status for the motion profile
@@ -152,9 +148,6 @@ public class DriveBase extends Subsystem {
 
         setDisabledMode();
         setBrakeMode(false);
-
-        loggingNotifier = new Notifier(this::log);
-        loggingNotifier.startPeriodic(Config.LOG_PERIOD);
 
         motionProfileStatus = new MotionProfileStatus();
 
@@ -1090,47 +1083,104 @@ public class DriveBase extends Subsystem {
         return (rightFrontMotor.isMotionProfileFinished() || leftFrontMotor.isMotionProfileFinished());
     }
 
-    /**
-     * Logs
-     */
-    public void log() {
-        if (DriverStation.getInstance().isEnabled()) {
-            Log.d("Relative Gyro: " + getHeading());
-            Log.d("Absolute Gyro: " + getAbsoluteHeading());
-
-            Log.d("Left front motor temperature: " + leftFrontMotor.getTemperature());
-            Log.d("Right front motor temperature: " + rightFrontMotor.getTemperature());
-            Log.d("Left back motor temperature: " + leftBackMotor.getTemperature());
-            Log.d("Right back motor temperature: " + rightBackMotor.getTemperature());
-
-            Log.d("Left front motor distance: " + leftFrontMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP);
-            Log.d("Right front motor distance: " + rightFrontMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP);
-            Log.d("Left back motor distance: " + leftBackMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP);
-            Log.d("Right back motor distance: " + rightBackMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP);
-
-            Log.d("Left front motor speed: " + leftFrontMotor.getSensorCollection().getQuadratureVelocity() / Config.DRIVE_ENCODER_DPP * 10);
-            Log.d("Right front motor speed: " + rightFrontMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP * 10);
-            Log.d("Left back motor speed: " + leftBackMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP * 10);
-            Log.d("Right back motor speed: " + rightBackMotor.getSensorCollection().getQuadraturePosition() / Config.DRIVE_ENCODER_DPP * 10);
-        }
-
-        SmartDashboard.putNumber("Relative Gyro", getHeading());
-        SmartDashboard.putNumber("Absolute Gyro", getAbsoluteHeading());
-
-        SmartDashboard.putNumber("Left front motor temp", leftFrontMotor.getTemperature());
-        SmartDashboard.putNumber("Right front motor temp", rightFrontMotor.getTemperature());
-        SmartDashboard.putNumber("Left back motor temp", leftBackMotor.getTemperature());
-        SmartDashboard.putNumber("Right back motor temp", rightBackMotor.getTemperature());
-
-        SmartDashboard.putNumber("Left front motor distance: ", leftFrontMotor.getSensorCollection().getQuadraturePosition() * Config.DRIVE_ENCODER_DPP);
-        SmartDashboard.putNumber("Right front motor distance: ", rightFrontMotor.getSensorCollection().getQuadraturePosition() * Config.DRIVE_ENCODER_DPP);
-        SmartDashboard.putNumber("Left back motor distance: ", leftBackMotor.getSensorCollection().getQuadraturePosition() * Config.DRIVE_ENCODER_DPP);
-        SmartDashboard.putNumber("Right back motor distance: ", rightBackMotor.getSensorCollection().getQuadraturePosition() * Config.DRIVE_ENCODER_DPP);
-
-        SmartDashboard.putNumber("Left front motor speed", leftFrontMotor.getSensorCollection().getQuadratureVelocity() * Config.DRIVE_ENCODER_DPP * 10);
-        SmartDashboard.putNumber("Right front motor speed", rightFrontMotor.getSensorCollection().getQuadratureVelocity() * Config.DRIVE_ENCODER_DPP * 10);
-        SmartDashboard.putNumber("Left back motor speed", leftBackMotor.getSensorCollection().getQuadratureVelocity() * Config.DRIVE_ENCODER_DPP * 10);
-        SmartDashboard.putNumber("Right back motor speed", rightBackMotor.getSensorCollection().getQuadratureVelocity() * Config.DRIVE_ENCODER_DPP * 10);
+    @Override
+    public Set<PeriodicLogEntry> getLogs() {
+        return Set.of(
+                PeriodicLogEntry.of(
+                        "Relative Gyro",
+                        this::getHeading,
+                        SmartDashboardEntryType.NUMBER
+                ),
+                PeriodicLogEntry.of(
+                        "Absolute Gyro",
+                        this::getAbsoluteHeading,
+                        SmartDashboardEntryType.NUMBER
+                ),
+                PeriodicLogEntry.of(
+                        "Left Front Output",
+                        leftFrontMotor::getMotorOutputPercent,
+                        SmartDashboardEntryType.NUMBER
+                ),
+                PeriodicLogEntry.of(
+                        "Right Front Output",
+                        rightFrontMotor::getMotorOutputPercent,
+                        SmartDashboardEntryType.NUMBER
+                ),
+                PeriodicLogEntry.of(
+                        "Left Back Output",
+                        leftBackMotor::getMotorOutputPercent,
+                        SmartDashboardEntryType.NUMBER
+                ),
+                PeriodicLogEntry.of(
+                        "Right Back Output",
+                        rightBackMotor::getMotorOutputPercent,
+                        SmartDashboardEntryType.NUMBER
+                ),
+                PeriodicLogEntry.of(
+                        "Left Front Current",
+                        leftFrontMotor::getOutputCurrent,
+                        SmartDashboardEntryType.NUMBER
+                ),
+                PeriodicLogEntry.of(
+                        "Right Front Current",
+                        rightFrontMotor::getOutputCurrent,
+                        SmartDashboardEntryType.NUMBER
+                ),
+                PeriodicLogEntry.of(
+                        "Left Back Current",
+                        leftBackMotor::getOutputCurrent,
+                        SmartDashboardEntryType.NUMBER
+                ),
+                PeriodicLogEntry.of(
+                        "Right Back Current",
+                        rightBackMotor::getOutputCurrent,
+                        SmartDashboardEntryType.NUMBER
+                ),
+                PeriodicLogEntry.of(
+                        "Left Front Temperature",
+                        leftFrontMotor::getTemperature,
+                        SmartDashboardEntryType.NUMBER
+                ),
+                PeriodicLogEntry.of(
+                        "Right Front Temperature",
+                        rightFrontMotor::getTemperature,
+                        SmartDashboardEntryType.NUMBER
+                ),
+                PeriodicLogEntry.of(
+                        "Left Back Temperature",
+                        leftBackMotor::getTemperature,
+                        SmartDashboardEntryType.NUMBER
+                ),
+                PeriodicLogEntry.of(
+                        "Right Back Temperature",
+                        rightBackMotor::getTemperature,
+                        SmartDashboardEntryType.NUMBER
+                ),
+                PeriodicLogEntry.of(
+                        "Left Front Distance",
+                        this::getLeftDistance,
+                        SmartDashboardEntryType.NUMBER
+                ),
+                PeriodicLogEntry.of(
+                        "Right Front Distance",
+                        this::getLeftDistance,
+                        SmartDashboardEntryType.NUMBER
+                ),
+                PeriodicLogEntry.of(
+                        "Left Front Speed",
+                        this::getLeftSpeed,
+                        SmartDashboardEntryType.NUMBER
+                ),
+                PeriodicLogEntry.of(
+                        "Right Front Speed",
+                        this::getLeftSpeed,
+                        SmartDashboardEntryType.NUMBER
+                ),
+                PeriodicLogEntry.of(
+                        "Current Command",
+                        () -> this.getCurrentCommandName().isEmpty() ? "No Command" : this.getCurrentCommandName(),
+                        SmartDashboardEntryType.STRING,
+                        PeriodicLogPriority.NT_NEVER));
     }
 
     /**

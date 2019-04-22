@@ -2,16 +2,18 @@ package ca.team2706.frc.robot.subsystems;
 
 import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.config.Config;
-import ca.team2706.frc.robot.logging.Log;
+import ca.team2706.frc.robot.logging.*;
 import ca.team2706.frc.robot.pneumatics.PneumaticPiston;
 import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
+import java.util.Set;
+
 /**
  * ClimberPneumatics subsystem for controlling the climber pneumatics.
  */
-public class ClimberPneumatics extends Subsystem {
+public class ClimberPneumatics extends Subsystem implements PeriodicLoggable {
     private static ClimberPneumatics currentInstance;
 
 
@@ -117,5 +119,31 @@ public class ClimberPneumatics extends Subsystem {
 
     @Override
     protected void initDefaultCommand() {
+    }
+
+    @Override
+    public Set<PeriodicLogEntry> getLogs() {
+        return Set.of(
+                PeriodicLogEntry.of(
+                        "Back Pneumatics",
+                        backPusher.getState()::name,
+                        SmartDashboardEntryType.STRING),
+                PeriodicLogEntry.of(
+                        "Front Pneumatics",
+                        frontPusher.getState()::name,
+                        SmartDashboardEntryType.STRING),
+                PeriodicLogEntry.of(
+                        "Back Solenoid",
+                        backPusher.get()::name,
+                        SmartDashboardEntryType.STRING),
+                PeriodicLogEntry.of(
+                        "Front Solenoid",
+                        frontPusher.get()::name,
+                        SmartDashboardEntryType.STRING),
+                PeriodicLogEntry.of(
+                        "Current Command",
+                        () -> this.getCurrentCommandName().isEmpty() ? "No Command" : this.getCurrentCommandName(),
+                        SmartDashboardEntryType.STRING,
+                        PeriodicLogPriority.NT_NEVER));
     }
 }

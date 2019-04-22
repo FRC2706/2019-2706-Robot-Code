@@ -4,10 +4,16 @@ import ca.team2706.frc.robot.Robot;
 import ca.team2706.frc.robot.RobotState;
 import ca.team2706.frc.robot.SubsystemStatus;
 import ca.team2706.frc.robot.config.Config;
+import ca.team2706.frc.robot.logging.PeriodicLogEntry;
+import ca.team2706.frc.robot.logging.PeriodicLogPriority;
+import ca.team2706.frc.robot.logging.PeriodicLoggable;
+import ca.team2706.frc.robot.logging.SmartDashboardEntryType;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-public class RingLight extends Subsystem {
+import java.util.Set;
+
+public class RingLight extends Subsystem implements PeriodicLoggable {
     private static RingLight currentInstance;
 
     /**
@@ -85,5 +91,19 @@ public class RingLight extends Subsystem {
 
     @Override
     protected void initDefaultCommand() {
+    }
+
+    @Override
+    public Set<PeriodicLogEntry> getLogs() {
+        return Set.of(
+                PeriodicLogEntry.of(
+                        "Ring Light",
+                        relay.get()::name,
+                        SmartDashboardEntryType.STRING),
+                PeriodicLogEntry.of(
+                        "Current Command",
+                        () -> this.getCurrentCommandName().isEmpty() ? "No Command" : this.getCurrentCommandName(),
+                        SmartDashboardEntryType.STRING,
+                        PeriodicLogPriority.NT_NEVER));
     }
 }

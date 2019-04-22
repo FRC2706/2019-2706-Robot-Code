@@ -9,13 +9,20 @@ import java.util.*;
 
 public class PeriodicLogger {
 
-    private static final Map<String, Set<PeriodicLogEntry>> loggers = new HashMap<>();
+    private static final Map<String, Set<PeriodicLogEntry>> loggers = new LinkedHashMap<>();
     private static boolean running = false;
     private static Object[] writter;
     private static final Notifier periodic = new Notifier(PeriodicLogger::logPeriodic);
     private static final Set<PeriodicLogEntry> ignored = new HashSet<>();
     private static String[] header;
     private static boolean firstCSVWrite = true;
+
+    static {
+        loggers.put("root", Set.of(PeriodicLogEntry.of("timestamp",
+                System::currentTimeMillis,
+                SmartDashboardEntryType.NUMBER,
+                PeriodicLogPriority.NT_NEVER)));
+    }
 
     public static void register(Object logger) {
         if(logger instanceof PeriodicLoggable) {
@@ -68,7 +75,7 @@ public class PeriodicLogger {
                     writter[i++] = data;
                 }
 
-                if(logEntry.getPriority() == PeriodicLogPriority.NT_ALWAYS || (!fms && logEntry.getPriority() == PeriodicLogPriority.NT_MAYBE) && !ignored.contains(logEntry)) {
+                if((logEntry.getPriority() == PeriodicLogPriority.NT_ALWAYS || (!fms && logEntry.getPriority() == PeriodicLogPriority.NT_MAYBE)) && !ignored.contains(logEntry)) {
                     try {
                         logEntry.getType().put(name, data);
                     }

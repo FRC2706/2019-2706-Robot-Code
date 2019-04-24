@@ -1,6 +1,7 @@
 package ca.team2706.frc.robot.operatorfeedback.rumbler;
 
 import ca.team2706.frc.robot.subsystems.DriveBase;
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.*;
@@ -53,6 +54,12 @@ public class RumblerTest {
 
             new Joystick(1);
             result = operatorStick;
+        }};
+
+        new Expectations(ErrorCode.class) {{
+            ErrorCode.worstOne((ErrorCode)any, (ErrorCode)any);
+            result = ErrorCode.OK;
+            minTimes = 0;
         }};
     }
 

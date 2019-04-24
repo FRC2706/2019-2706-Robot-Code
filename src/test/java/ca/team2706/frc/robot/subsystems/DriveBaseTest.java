@@ -3,6 +3,7 @@ package ca.team2706.frc.robot.subsystems;
 import ca.team2706.frc.robot.SendablesTest;
 import ca.team2706.frc.robot.config.Config;
 import com.ctre.phoenix.CTREJNIWrapper;
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motion.BuffTrajPointStreamJNI;
 import com.ctre.phoenix.motion.BufferedTrajectoryPointStream;
 import com.ctre.phoenix.motion.TrajectoryPoint;
@@ -67,6 +68,12 @@ public class DriveBaseTest {
         new Expectations() {{
             talon.getSensorCollection();
             result = sensorCollection;
+            minTimes = 0;
+        }};
+
+        new Expectations(ErrorCode.class) {{
+            ErrorCode.worstOne((ErrorCode)any, (ErrorCode)any);
+            result = ErrorCode.OK;
             minTimes = 0;
         }};
     }

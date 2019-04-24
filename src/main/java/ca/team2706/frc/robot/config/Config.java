@@ -220,16 +220,6 @@ public class Config {
 
     public static final FluidConstant<Boolean> ENABLE_LIFT_SUM_PHASE = constant("lift-sum-phase", true);
 
-    public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_P = constant("drive-P", 0.1);
-    public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_I = constant("drive-I", 0.0);
-    public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_D = constant("drive-D", 0.0);
-    public static final FluidConstant<Double> DRIVE_CLOSED_LOOP_F = constant("drive-F", 0.0);
-
-    public static final FluidConstant<Double> DRIVE_MOTION_MAGIC_P = constant("drive-mm-P", 0.4096);
-    public static final FluidConstant<Double> DRIVE_MOTION_MAGIC_I = constant("drive-mm-I", 0.0);
-    public static final FluidConstant<Double> DRIVE_MOTION_MAGIC_D = constant("drive-mm-D", 6.5);
-    public static final FluidConstant<Double> DRIVE_MOTION_MAGIC_F = constant("drive-mm-F", 0.397);
-
     public static final FluidConstant<Double> DRIVEBASE_MOTION_MAGIC_CRUISE_VELOCITY = constant("mm-drivebase-cruise-velocity", 8.0);
     public static final FluidConstant<Double> DRIVEBASE_MOTION_MAGIC_ACCELERATION = constant("mm-drivebase-acceleration", 8.0);
 
@@ -245,26 +235,27 @@ public class Config {
     public static final FluidConstant<Double> PATHFINDING_VELOCITY = constant("pf-velocity", 2.0);
     public static final FluidConstant<Double> PATHFINDING_ACCELERATION = constant("pf-acceleration", 6.56);
 
-    public static final FluidConstant<Double> TURN_P = constant("turn-P", 0.5);
-    public static final FluidConstant<Double> TURN_I = constant("turn-I", 0.0);
-    public static final FluidConstant<Double> TURN_D = constant("turn-D", 0.0);
-    public static final FluidConstant<Double> TURN_F = constant("turn-F", 0.0);
+    public static final PIDConfiguration DRIVE_CLOSED_LOOP_SLOT = PIDConfiguration.of("drive-slot",
+            0.1, 0.0, 0.0, 0.0, 0, 0, 0.0, 1.0, 1);
 
-    public static final FluidConstant<Double> TURN_MM_P = constant("turn-mm-P", 0.5);
-    public static final FluidConstant<Double> TURN_MM_I = constant("turn-mm-I", 0.0);
-    public static final FluidConstant<Double> TURN_MM_D = constant("turn-mm-D", 0.0);
-    public static final FluidConstant<Double> TURN_MM_F = constant("turn-mm-F", 0.0);
+    public static final PIDConfiguration DRIVE_MOTION_MAGIC_SLOT = PIDConfiguration.of("drive-mm-slot",
+            0.4096, 0.0, 0.0, 6.5, 0, 0, 0.0, 1.0, 1);
 
-    public static final FluidConstant<Double>
-            LIFT_P = constant("lift-P", 0.9),
-            LIFT_I = constant("lift-I", 0.0),
-            LIFT_D = constant("lift-D", 0.0),
-            LIFT_F = constant("lift-F", 0.0);
+    public static final PIDConfiguration TURN_SLOT = PIDConfiguration.of("turn-slot",
+            0.5, 0.0, 0.0, 0.0, 0, 0, 0.0, 1.0, 1);
 
-    public static final FluidConstant<Double> PIGEON_KP = constant("pigeon-kp", 0.8);
-    public static final FluidConstant<Double> PIGEON_KI = constant("pigeon-ki", 0.0);
-    public static final FluidConstant<Double> PIGEON_KD = constant("pigeon-kd", 4.0);
-    public static final FluidConstant<Double> PIGEON_KF = constant("pigeon-kf", 0.0);
+    public static final PIDConfiguration TURN_MOTION_MAGIC_SLOT = PIDConfiguration.of("drive-slot",
+            0.5, 0.0, 0.0, 0.0, 0, 0, 0.0, 1.0, 1);
+
+    public static final PIDConfiguration LIFT_HOLD_SLOT = PIDConfiguration.of("lift-hold-slot",
+            0.9, 0.0, 0.0, 0.0, 0, 0, 0.0, 1.0, 1);
+
+    public static final PIDConfiguration PIGEON_SLOT = PIDConfiguration.of("pigeon-slot",
+            0.8, 0.0, 4.0, 0.0, 0, 0, 0.0, 1.0, 1);
+
+    public static final PIDConfiguration EMPTY_SLOT = PIDConfiguration.of("empty-slot",
+            0.0, 0.0, 0.0, 0.0, 0, 0, 0.0, 1.0, 1);
+
 
     // All controller bindings.
     public static final FluidConstant<String> INTAKE_BACKWARD_BINDING = constant("intake-backward-binding", XboxValue.XBOX_BACK_LEFT_TRIGGER.getNTString()),

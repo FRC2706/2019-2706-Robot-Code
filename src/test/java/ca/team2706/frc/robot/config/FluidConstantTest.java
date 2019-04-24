@@ -2,6 +2,7 @@ package ca.team2706.frc.robot.config;
 
 import ca.team2706.frc.robot.Robot;
 import com.ctre.phoenix.CTREJNIWrapper;
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motion.BuffTrajPointStreamJNI;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
@@ -116,6 +117,12 @@ public class FluidConstantTest {
             new Expectations(Pathfinder.class) {{
                 Pathfinder.readFromCSV((File) any);
                 result = new Trajectory(0);
+                minTimes = 0;
+            }};
+
+            new Expectations(ErrorCode.class) {{
+                ErrorCode.worstOne((ErrorCode)any, (ErrorCode)any);
+                result = ErrorCode.OK;
                 minTimes = 0;
             }};
 

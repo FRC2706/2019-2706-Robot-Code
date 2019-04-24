@@ -122,10 +122,7 @@ public class Lift extends Subsystem {
         liftMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Config.CAN_LONG);
         liftMotor.configNeutralDeadband(Config.LIFT_CLOSED_LOOP_DEADBAND.value());
 
-        liftMotor.config_kP(0, Config.LIFT_P.value());
-        liftMotor.config_kI(0, Config.LIFT_I.value());
-        liftMotor.config_kD(0, Config.LIFT_D.value());
-        liftMotor.config_kF(0, Config.LIFT_F.value());
+        Config.LIFT_HOLD_SLOT.setForSlot(liftMotor, 0);
 
         liftMotor.configClosedLoopPeriod(0, 1, Config.CAN_LONG);
 

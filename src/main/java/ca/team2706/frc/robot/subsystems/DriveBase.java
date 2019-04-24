@@ -236,24 +236,9 @@ public class DriveBase extends Subsystem {
 
         // TODO: Config timings
 
-        leftFrontMotor.config_kP(0, Config.TURN_P.value(), Config.CAN_LONG);
-        leftFrontMotor.config_kI(0, Config.TURN_I.value(), Config.CAN_LONG);
-        leftFrontMotor.config_kD(0, Config.TURN_D.value(), Config.CAN_LONG);
-        leftFrontMotor.config_kF(0, Config.TURN_F.value(), Config.CAN_LONG);
-
-        leftFrontMotor.config_kP(1, Config.TURN_MM_P.value(), Config.CAN_LONG);
-        leftFrontMotor.config_kI(1, Config.TURN_MM_I.value(), Config.CAN_LONG);
-        leftFrontMotor.config_kD(1, Config.TURN_MM_D.value(), Config.CAN_LONG);
-        leftFrontMotor.config_kF(1, Config.TURN_MM_F.value(), Config.CAN_LONG);
-
-        leftFrontMotor.config_kP(3, Config.TURN_MM_P.value(), Config.CAN_LONG);
-        leftFrontMotor.config_kI(3, Config.TURN_MM_I.value(), Config.CAN_LONG);
-        leftFrontMotor.config_kD(3, Config.TURN_MM_D.value(), Config.CAN_LONG);
-        leftFrontMotor.config_kF(3, Config.TURN_MM_F.value(), Config.CAN_LONG);
-
-        leftFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_LONG);
-        leftFrontMotor.configClosedLoopPeriod(1, 1, Config.CAN_LONG);
-        leftFrontMotor.configClosedLoopPeriod(3, 1, Config.CAN_LONG);
+        Config.TURN_SLOT.setForSlot(leftFrontMotor, 0);
+        Config.TURN_MOTION_MAGIC_SLOT.setForSlot(leftFrontMotor, 1);
+        Config.EMPTY_SLOT.setForSlot(leftFrontMotor, 3);
 
         leftFrontMotor.configAuxPIDPolarity(true, Config.CAN_LONG);
 
@@ -280,24 +265,10 @@ public class DriveBase extends Subsystem {
 
         rightFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_RIGHT.value());
 
-        rightFrontMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value(), Config.CAN_LONG);
-        rightFrontMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value(), Config.CAN_LONG);
-        rightFrontMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value(), Config.CAN_LONG);
-        rightFrontMotor.config_kF(0, Config.DRIVE_CLOSED_LOOP_F.value(), Config.CAN_LONG);
+        Config.DRIVE_CLOSED_LOOP_SLOT.setForSlot(rightFrontMotor, 0);
+        Config.DRIVE_MOTION_MAGIC_SLOT.setForSlot(rightFrontMotor, 1);
+        Config.PIGEON_SLOT.setForSlot(rightFrontMotor, 2);
 
-        rightFrontMotor.config_kP(1, Config.DRIVE_MOTION_MAGIC_P.value(), Config.CAN_LONG);
-        rightFrontMotor.config_kI(1, Config.DRIVE_MOTION_MAGIC_I.value(), Config.CAN_LONG);
-        rightFrontMotor.config_kD(1, Config.DRIVE_MOTION_MAGIC_D.value(), Config.CAN_LONG);
-        rightFrontMotor.config_kF(1, Config.DRIVE_MOTION_MAGIC_F.value(), Config.CAN_LONG);
-
-        rightFrontMotor.config_kP(2, Config.PIGEON_KP.value(), Config.CAN_LONG);
-        rightFrontMotor.config_kI(2, Config.PIGEON_KI.value(), Config.CAN_LONG);
-        rightFrontMotor.config_kD(2, Config.PIGEON_KD.value(), Config.CAN_LONG);
-        rightFrontMotor.config_kF(2, Config.PIGEON_KF.value(), Config.CAN_LONG);
-
-        rightFrontMotor.configClosedLoopPeriod(0, 1, Config.CAN_LONG);
-        rightFrontMotor.configClosedLoopPeriod(1, 1, Config.CAN_LONG);
-        rightFrontMotor.configClosedLoopPeriod(2, 1, Config.CAN_LONG);
         rightFrontMotor.configAuxPIDPolarity(false, Config.CAN_LONG);
 
         return SubsystemStatus.OK;
@@ -318,24 +289,10 @@ public class DriveBase extends Subsystem {
         leftBackMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_LEFT.value());
         // TODO: Config timings
 
-        leftBackMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
-        leftBackMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
-        leftBackMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value());
-        leftBackMotor.config_kF(1, Config.DRIVE_MOTION_MAGIC_F.value());
+        Config.DRIVE_CLOSED_LOOP_SLOT.setForSlot(leftBackMotor, 0);
+        Config.DRIVE_MOTION_MAGIC_SLOT.setForSlot(leftBackMotor, 1);
+        Config.PIGEON_SLOT.setForSlot(leftBackMotor, 2);
 
-        leftBackMotor.config_kP(1, Config.DRIVE_MOTION_MAGIC_P.value());
-        leftBackMotor.config_kI(1, Config.DRIVE_MOTION_MAGIC_I.value());
-        leftBackMotor.config_kD(1, Config.DRIVE_MOTION_MAGIC_D.value());
-        leftBackMotor.config_kF(1, Config.DRIVE_MOTION_MAGIC_F.value());
-
-        leftBackMotor.config_kP(2, Config.PIGEON_KP.value());
-        leftBackMotor.config_kI(2, Config.PIGEON_KI.value());
-        leftBackMotor.config_kD(2, Config.PIGEON_KD.value());
-        leftBackMotor.config_kF(2, Config.PIGEON_KF.value());
-
-        leftBackMotor.configClosedLoopPeriod(0, 1, Config.CAN_LONG);
-        leftBackMotor.configClosedLoopPeriod(1, 1, Config.CAN_LONG);
-        leftBackMotor.configClosedLoopPeriod(2, 1, Config.CAN_LONG);
         leftBackMotor.configAuxPIDPolarity(true, Config.CAN_LONG);
 
         return SubsystemStatus.OK;
@@ -357,24 +314,10 @@ public class DriveBase extends Subsystem {
 
         // TODO: Config timings
 
-        rightBackMotor.config_kP(0, Config.DRIVE_CLOSED_LOOP_P.value());
-        rightBackMotor.config_kI(0, Config.DRIVE_CLOSED_LOOP_I.value());
-        rightBackMotor.config_kD(0, Config.DRIVE_CLOSED_LOOP_D.value());
-        rightBackMotor.config_kF(0, Config.DRIVE_CLOSED_LOOP_F.value());
+        Config.DRIVE_CLOSED_LOOP_SLOT.setForSlot(rightBackMotor, 0);
+        Config.DRIVE_MOTION_MAGIC_SLOT.setForSlot(rightBackMotor, 1);
+        Config.PIGEON_SLOT.setForSlot(rightBackMotor, 2);
 
-        rightBackMotor.config_kP(1, Config.DRIVE_MOTION_MAGIC_P.value());
-        rightBackMotor.config_kI(1, Config.DRIVE_MOTION_MAGIC_I.value());
-        rightBackMotor.config_kD(1, Config.DRIVE_MOTION_MAGIC_D.value());
-        rightBackMotor.config_kF(1, Config.DRIVE_MOTION_MAGIC_F.value());
-
-        rightBackMotor.config_kP(2, Config.PIGEON_KP.value());
-        rightBackMotor.config_kI(2, Config.PIGEON_KI.value());
-        rightBackMotor.config_kD(2, Config.PIGEON_KD.value());
-        rightBackMotor.config_kF(2, Config.PIGEON_KF.value());
-
-        rightBackMotor.configClosedLoopPeriod(0, 1, Config.CAN_LONG);
-        rightBackMotor.configClosedLoopPeriod(1, 1, Config.CAN_LONG);
-        rightBackMotor.configClosedLoopPeriod(2, 1, Config.CAN_LONG);
         rightBackMotor.configAuxPIDPolarity(false, Config.CAN_LONG);
 
         return SubsystemStatus.OK;

@@ -153,11 +153,6 @@ public class Intake extends Subsystem implements PeriodicLoggable {
                         this::readIr,
                         SmartDashboardEntryType.NUMBER),
                 PeriodicLogEntry.of(
-                        "Default Command",
-                        this::getCurrentCommandName,
-                        SmartDashboardEntryType.STRING,
-                        PeriodicLogPriority.NT_NEVER),
-                PeriodicLogEntry.of(
                         "Motor Temperature",
                         intakeMotor::getTemperature,
                         SmartDashboardEntryType.NUMBER

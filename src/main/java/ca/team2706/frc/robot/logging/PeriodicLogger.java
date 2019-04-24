@@ -90,8 +90,6 @@ public class PeriodicLogger {
         if(fms) {
             logFile(writter);
         }
-
-        Log.d("Periodic Log Time: " + ((Timer.getFPGATimestamp() - start) * 1000) + "ms");
     }
 
     private static void logFileHeader(String[] header) {

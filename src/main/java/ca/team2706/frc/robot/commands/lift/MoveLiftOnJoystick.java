@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
- * Command for moving the lift up and down with PID based on controller input.
+ * Command for moving the lift up and down with percent output based on controller input.
  */
 public class MoveLiftOnJoystick extends Command {
 

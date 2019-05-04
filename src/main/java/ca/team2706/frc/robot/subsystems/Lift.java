@@ -123,16 +123,17 @@ public class Lift extends Subsystem {
         liftMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Config.CAN_LONG);
         liftMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Config.CAN_LONG);
         liftMotor.configNeutralDeadband(Config.LIFT_CLOSED_LOOP_DEADBAND.value());
+        liftMotor.configMotionSCurveStrength(2, Config.CAN_LONG);
 
         liftMotor.config_kP(HOLD_SLOT, Config.LIFT_P.value());
         liftMotor.config_kI(HOLD_SLOT, Config.LIFT_I.value());
         liftMotor.config_kD(HOLD_SLOT, Config.LIFT_D.value());
         liftMotor.config_kF(HOLD_SLOT, Config.LIFT_F.value());
 
-        liftMotor.config_kP(FEED_FORWARD_SLOT, Config.LIFT_P.value());
-        liftMotor.config_kI(FEED_FORWARD_SLOT, Config.LIFT_I.value());
-        liftMotor.config_kD(FEED_FORWARD_SLOT, Config.LIFT_D.value());
-        liftMotor.config_kF(FEED_FORWARD_SLOT, Config.LIFT_F.value());
+        liftMotor.config_kP(FEED_FORWARD_SLOT, Config.LIFT_P_FEED_FORWARD.value());
+        liftMotor.config_kI(FEED_FORWARD_SLOT, Config.LIFT_I_FEED_FORWARD.value());
+        liftMotor.config_kD(FEED_FORWARD_SLOT, Config.LIFT_D_FEED_FORWARD.value());
+        liftMotor.config_kF(FEED_FORWARD_SLOT, Config.LIFT_F_FEED_FORWARD.value());
 
         liftMotor.configClosedLoopPeriod(0, 1, Config.CAN_LONG);
 
@@ -280,7 +281,7 @@ public class Lift extends Subsystem {
 
         liftMotor.configClosedLoopPeakOutput(FEED_FORWARD_SLOT, maxSpeed);
         liftMotor.selectProfileSlot(FEED_FORWARD_SLOT, 0);
-        liftMotor.set(ControlMode.MotionMagic, position);
+        liftMotor.set(ControlMode.MotionMagic, position , DemandType.ArbitraryFeedForward, Config.LIFT_FEED_FORWARD);
     }
 
     /**

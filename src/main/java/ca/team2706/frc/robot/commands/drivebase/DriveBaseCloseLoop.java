@@ -51,6 +51,8 @@ public abstract class DriveBaseCloseLoop extends Command {
     public void initialize() {
         DriveBase.getInstance().setBrakeMode(true);
 
+        DriveBase.getInstance().reset();
+
         doneCycles = 0;
     }
 

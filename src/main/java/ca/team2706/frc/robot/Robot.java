@@ -2,6 +2,9 @@ package ca.team2706.frc.robot;
 
 import ca.team2706.frc.robot.commands.auto.DriveOffHab;
 import ca.team2706.frc.robot.commands.auto.LevelOneCentreHatch;
+import ca.team2706.frc.robot.commands.drivebase.MotionMagic;
+import ca.team2706.frc.robot.commands.drivebase.RotateWithGyro;
+import ca.team2706.frc.robot.commands.drivebase.StraightDriveGyro;
 import ca.team2706.frc.robot.config.Config;
 import ca.team2706.frc.robot.logging.Log;
 import ca.team2706.frc.robot.subsystems.*;
@@ -97,6 +100,9 @@ public class Robot extends TimedRobot {
                 null,                                                                      // 4
                 new DriveOffHab(),                                                         // 5
                 new LevelOneCentreHatch(),                                                 // 6
+                new RotateWithGyro(0.0, 90, 20),                  // 7
+                new StraightDriveGyro(0.0, 5, 20),              // 8
+                new MotionMagic(0.0, 5, 20, 0.0)        // 9
         };
 
         selectorOrientation = Map.of(4, 270);

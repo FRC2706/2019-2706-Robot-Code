@@ -65,6 +65,7 @@ public class MotionProfile extends Command {
     @Override
     public void initialize() {
         DriveBase.getInstance().setBrakeMode(true);
+        DriveBase.getInstance().reset();
         DriveBase.getInstance().pushMotionProfile1Wheel(speed.get() >= 0, pos, vel, heading, time, size);
 
         doneCycles = 0;

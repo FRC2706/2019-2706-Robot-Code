@@ -15,6 +15,7 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -228,9 +229,8 @@ public class DriveBase extends Subsystem {
 
         leftFrontMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, 0, Config.CAN_LONG);
 
-        leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 0, Config.CAN_LONG);
-
-        leftFrontMotor.configSelectedFeedbackCoefficient(1.0, 0, Config.CAN_LONG);
+        leftFrontMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 1, Config.CAN_LONG);
+        leftFrontMotor.configSelectedFeedbackCoefficient(1.0, 1, Config.CAN_LONG);
 
         leftFrontMotor.setSensorPhase(Config.DRIVE_SUM_PHASE_LEFT.value());
 
@@ -246,7 +246,7 @@ public class DriveBase extends Subsystem {
     }
 
     private SubsystemStatus setupFrontRightMotor() {
-        leftFrontMotor.setInverted(Config.INVERT_FRONT_RIGHT_DRIVE);
+        rightFrontMotor.setInverted(Config.INVERT_FRONT_RIGHT_DRIVE);
 
         rightFrontMotor.configRemoteFeedbackFilter(leftFrontMotor.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, 0, Config.CAN_LONG);
         rightFrontMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, 1, Config.CAN_LONG);
@@ -275,7 +275,7 @@ public class DriveBase extends Subsystem {
     }
 
     private SubsystemStatus setupBackLeftMotor() {
-        leftFrontMotor.setInverted(Config.INVERT_BACK_LEFT_DRIVE);
+        leftBackMotor.setInverted(Config.INVERT_BACK_LEFT_DRIVE);
 
         leftBackMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_LONG);
 
@@ -299,7 +299,7 @@ public class DriveBase extends Subsystem {
     }
 
     private SubsystemStatus setupBackRightMotor() {
-        leftFrontMotor.setInverted(Config.INVERT_BACK_RIGHT_DRIVE);
+        rightBackMotor.setInverted(Config.INVERT_BACK_RIGHT_DRIVE);
 
         rightBackMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_LONG);
 
@@ -690,6 +690,8 @@ public class DriveBase extends Subsystem {
     public void resetEncoders() {
         leftFrontMotor.getSensorCollection().setQuadraturePosition(0, Config.CAN_SHORT);
         rightFrontMotor.getSensorCollection().setQuadraturePosition(0, Config.CAN_SHORT);
+
+        Timer.delay(0.02);
     }
 
     /**
@@ -710,6 +712,8 @@ public class DriveBase extends Subsystem {
     public void resetAbsoluteGyro(double savedAngle) {
         this.savedAngle = savedAngle;
         gyro.setYaw(0, Config.CAN_SHORT);
+
+        Timer.delay(0.02);
     }
 
     /**
@@ -718,6 +722,8 @@ public class DriveBase extends Subsystem {
     public void resetGyro() {
         savedAngle = getAbsoluteHeading();
         gyro.setYaw(0, Config.CAN_SHORT);
+
+        Timer.delay(0.02);
     }
 
     /**
@@ -813,6 +819,8 @@ public class DriveBase extends Subsystem {
         SmartDashboard.putNumber("Right front motor speed", rightFrontMotor.getSensorCollection().getQuadratureVelocity() * Config.DRIVE_ENCODER_DPP * 10);
         SmartDashboard.putNumber("Left back motor speed", leftBackMotor.getSensorCollection().getQuadratureVelocity() * Config.DRIVE_ENCODER_DPP * 10);
         SmartDashboard.putNumber("Right back motor speed", rightBackMotor.getSensorCollection().getQuadratureVelocity() * Config.DRIVE_ENCODER_DPP * 10);
+
+        SmartDashboard.putNumber("Selector switch", getAnalogSelectorIndex());
     }
 }
 

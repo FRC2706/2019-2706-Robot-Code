@@ -54,7 +54,7 @@ public class Config {
 
     // Timeouts for sending CAN bus commands
     public static final int
-            CAN_SHORT = 10,
+            CAN_SHORT = 0,
             CAN_LONG = 100;
 
     // DriveBase motor CAN IDs
@@ -220,7 +220,7 @@ public class Config {
 
     public static final FluidConstant<Boolean> ENABLE_LIFT_SUM_PHASE = constant("lift-sum-phase", true);
 
-    public static final FluidConstant<Double> DRIVEBASE_MOTION_MAGIC_CRUISE_VELOCITY = constant("mm-drivebase-cruise-velocity", 8.0);
+    public static final FluidConstant<Double> DRIVEBASE_MOTION_MAGIC_CRUISE_VELOCITY = constant("mm-drivebase-cruise-velocity", 4.0);
     public static final FluidConstant<Double> DRIVEBASE_MOTION_MAGIC_ACCELERATION = constant("mm-drivebase-acceleration", 8.0);
 
     public static final FluidConstant<Double> LIFT_MOTION_MAGIC_ACCELERATION = constant("mm-lift-acceleration", 4.0);
@@ -236,15 +236,15 @@ public class Config {
     public static final FluidConstant<Double> PATHFINDING_ACCELERATION = constant("pf-acceleration", 6.56);
 
     public static final PIDConfiguration DRIVE_CLOSED_LOOP_SLOT = PIDConfiguration.of("drive-slot",
-            0.1, 0.0, 0.0, 0.0, 0, 0, 0.0, 1.0, 1);
+            0.1, 0.0, 0.0, 0.0, 0, 0, 0.0, 0.8, 1);
 
     public static final PIDConfiguration DRIVE_MOTION_MAGIC_SLOT = PIDConfiguration.of("drive-mm-slot",
             0.4096, 0.0, 0.0, 6.5, 0, 0, 0.0, 1.0, 1);
 
     public static final PIDConfiguration TURN_SLOT = PIDConfiguration.of("turn-slot",
-            0.5, 0.0, 0.0, 0.0, 0, 0, 0.0, 1.0, 1);
+            0.5, 0.0, 0.0, 0.0, 0, 0, 0.0, 0.6, 1);
 
-    public static final PIDConfiguration TURN_MOTION_MAGIC_SLOT = PIDConfiguration.of("drive-slot",
+    public static final PIDConfiguration TURN_MOTION_MAGIC_SLOT = PIDConfiguration.of("turn-mm-slot",
             0.5, 0.0, 0.0, 0.0, 0, 0, 0.0, 1.0, 1);
 
     public static final PIDConfiguration LIFT_HOLD_SLOT = PIDConfiguration.of("lift-hold-slot",
@@ -254,7 +254,7 @@ public class Config {
             0.8, 0.0, 4.0, 0.0, 0, 0, 0.0, 1.0, 1);
 
     public static final PIDConfiguration EMPTY_SLOT = PIDConfiguration.of("empty-slot",
-            0.0, 0.0, 0.0, 0.0, 0, 0, 0.0, 1.0, 1);
+            0.0, 0.0, 0.0, 0.0, 0, 0, 0.0, 0.0, 1);
 
 
     // All controller bindings.

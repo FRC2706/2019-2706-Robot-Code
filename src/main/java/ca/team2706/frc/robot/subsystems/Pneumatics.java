@@ -9,6 +9,7 @@ import ca.team2706.frc.robot.pneumatics.PneumaticPiston;
 import ca.team2706.frc.robot.pneumatics.PneumaticState;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.function.Consumer;
 
@@ -150,6 +151,8 @@ public class Pneumatics extends Subsystem {
      */
     public void movePlunger(PneumaticState newState) {
         hatchEjectorSolenoid.set(newState);
+        // Update plunger state on dashboard.
+        SmartDashboard.putString("Plunger State", getPlungerState().toString());
     }
 
     /**
@@ -165,7 +168,7 @@ public class Pneumatics extends Subsystem {
      * @return True if the plunger is stowed, false otherwise.
      */
     public boolean isPlungerStowed() {
-        return hatchEjectorSolenoid.getState() == PneumaticState.STOWED;
+        return getPlungerState() == PneumaticState.STOWED;
     }
 
     /**

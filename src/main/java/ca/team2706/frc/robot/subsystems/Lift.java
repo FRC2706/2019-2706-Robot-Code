@@ -281,7 +281,7 @@ public class Lift extends Subsystem {
 
         liftMotor.configClosedLoopPeakOutput(FEED_FORWARD_SLOT, maxSpeed);
         liftMotor.selectProfileSlot(FEED_FORWARD_SLOT, 0);
-        liftMotor.set(ControlMode.MotionMagic, position , DemandType.ArbitraryFeedForward, Config.LIFT_FEED_FORWARD);
+        liftMotor.set(ControlMode.MotionMagic, position, DemandType.ArbitraryFeedForward, Config.LIFT_FEED_FORWARD);
     }
 
     /**
@@ -317,8 +317,8 @@ public class Lift extends Subsystem {
             }
 
             liftMotor.configClosedLoopPeakOutput(FEED_FORWARD_SLOT, 1.0); // Peak output to max (1.0).
-            liftMotor.selectProfileSlot(FEED_FORWARD_SLOT, 0);
-            liftMotor.set(ControlMode.Velocity, velocity);
+            liftMotor.selectProfileSlot(FEED_FORWARD_SLOT, 0, );
+            liftMotor.set(ControlMode.Velocity, velocity, DemandType.ArbitraryFeedForward, Config.LIFT_FEED_FORWARD);
         }
     }
 

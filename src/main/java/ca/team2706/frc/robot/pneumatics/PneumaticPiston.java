@@ -1,6 +1,7 @@
 package ca.team2706.frc.robot.pneumatics;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 
 /**
  * Class for representing a pneumatic piston, a device which goes in or out
@@ -31,17 +32,16 @@ public class PneumaticPiston extends DoubleSolenoid {
      * @param forwardChannel {@link DoubleSolenoid#DoubleSolenoid(int, int)}
      * @param reverseChannel {@link DoubleSolenoid#DoubleSolenoid(int, int)}
      * @param startPosition  The default starting position for the pneumatic piston, either in or out.
-     *                       Must be one of {@link PneumaticState#DEPLOYED} or {@link PneumaticState#STOWED}
+     *                       Must be one of {@link PneumaticState#DEPLOYED} or {@link PneumaticState#STOWED},
+     *                       or null if the state is unknown, in which case the state can be set with
+     *                       {@link #forceSetState(PneumaticState)} or will be set when the piston is moved.
      * @param checkState     True to not call the double solenoid if the pneumatic piston is already
      *                       in the desired position, false otherwise.
      */
     public PneumaticPiston(int forwardChannel, int reverseChannel, PneumaticState startPosition, boolean checkState) {
         super(forwardChannel, reverseChannel);
 
-        if (startPosition != PneumaticState.STOWED && startPosition != PneumaticState.DEPLOYED) {
-            throw new IllegalArgumentException("Start position of a pneumatic piston must either be stowed or deployed");
-        }
-        this.currentState = startPosition;
+        forceSetState(startPosition);
         this.checkState = checkState;
     }
 
@@ -97,5 +97,35 @@ public class PneumaticPiston extends DoubleSolenoid {
      */
     public PneumaticState getState() {
         return currentState;
+    }
+
+    /**
+     * Sets the state of the pneumatic piston without moving it.
+     * @param state The state of the pneumatic piston.
+     *              Must be one of {@link PneumaticState#STOWED} or {@link PneumaticState#DEPLOYED} or null for unknown.
+     */
+    public void forceSetState(final PneumaticState state) {
+        if (state != PneumaticState.STOWED && state != PneumaticState.DEPLOYED && state != null) {
+            throw new IllegalArgumentException("Start position of a pneumatic piston must either be stowed or " +
+                    "deployed or null for unknown.");
+        } else {
+            currentState = state;
+        }
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        builder.addStringProperty("State", () -> {
+            PneumaticState state = getState();
+            String stringState;
+            if (state == null) {
+                stringState = "NULL";
+            } else {
+                stringState = state.toString();
+            }
+
+            return stringState;
+        }, s -> set(PneumaticState.valueOf(s)));
+        super.initSendable(builder);
     }
 }

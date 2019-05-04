@@ -127,7 +127,7 @@ public class Config {
     /**
      * How long (in seconds) the lift ramp up on voltage should be.
      */
-    public static double LIFT_VOLTAGE_RAMP_UP_PERIOD = 0.6;
+    public static double LIFT_VOLTAGE_RAMP_UP_PERIOD = 0.6, LIFT_FEED_FORWARD = 0.08;
 
     public static int MAX_LIFT_ENCODER_TICKS = robotSpecific(61_000, 58_000, 61_000);
 
@@ -238,7 +238,7 @@ public class Config {
     /**
      * Max speed of the lift in encoder ticks.
      */
-    public static final FluidConstant<Integer> LIFT_MAX_SPEED = constant("max-lift-velocity", 3000);
+    public static final FluidConstant<Integer> LIFT_MAX_SPEED = constant("max-lift-velocity", 2559);
     public static final FluidConstant<Integer> DRIVEBASE_MOTION_MAGIC_SMOOTHING = constant("mm-smoothing", 0);
     public static final FluidConstant<Double> PATHFINDING_JERK = constant("pf-jerk", 197.0);
     public static final FluidConstant<Double> PATHFINDING_VELOCITY = constant("pf-velocity", 2.0);
@@ -252,7 +252,11 @@ public class Config {
             LIFT_P = constant("lift-P", 0.9),
             LIFT_I = constant("lift-I", 0.0),
             LIFT_D = constant("lift-D", 0.0),
-            LIFT_F = constant("lift-F", 0.0);
+            LIFT_F = constant("lift-F", 0.0),
+            LIFT_P_FEED_FORWARD = constant("lift-P-feed-forward", 3.0),
+            LIFT_I_FEED_FORWARD = constant("lift-I-feed-forward", 0.0),
+            LIFT_D_FEED_FORWARD = constant("lift-D-feed-forward", 0.0),
+            LIFT_F_FEED_FORWARD = constant("lift-F-feed-forward", 1023D / LIFT_MAX_SPEED.value());
 
     public static final FluidConstant<Double> PIGEON_KP = constant("pigeon-kp", 0.8);
     public static final FluidConstant<Double> PIGEON_KI = constant("pigeon-ki", 0.0);

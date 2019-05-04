@@ -119,28 +119,32 @@ public class Log {
      * @param newFile The new location
      */
     private static void changeLogFile(String newFile) {
-        Log.i("Changed log file from " + System.getProperty(LOG_FILE_KEY) + " to " + newFile);
+        Thread t = new Thread(() -> {
+            Log.i("Changed log file from " + System.getProperty(LOG_FILE_KEY) + " to " + newFile);
 
-        System.setProperty(OLD_LOG_FILE_KEY, System.getProperty(LOG_FILE_KEY));
-        System.setProperty(LOG_FILE_KEY, newFile);
+            System.setProperty(OLD_LOG_FILE_KEY, System.getProperty(LOG_FILE_KEY));
+            System.setProperty(LOG_FILE_KEY, newFile);
 
-        Path oldPath = Paths.get(System.getProperty(OLD_LOG_FILE_KEY));
+            Path oldPath = Paths.get(System.getProperty(OLD_LOG_FILE_KEY));
 
-        try {
-            Files.copy(Paths.get(System.getProperty(OLD_LOG_FILE_KEY)), Paths.get(System.getProperty(LOG_FILE_KEY)));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            try {
+                Files.copy(Paths.get(System.getProperty(OLD_LOG_FILE_KEY)), Paths.get(System.getProperty(LOG_FILE_KEY)));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-        getRollingAppender().rollover();
-        
-        try {
-            Files.delete(oldPath);
-        } catch (SecurityException | IOException e) {
-            e.printStackTrace();
-        }
+            getRollingAppender().rollover();
 
-        Log.i("Exited rename method");
+            try {
+                Files.delete(oldPath);
+            } catch (SecurityException | IOException e) {
+                e.printStackTrace();
+            }
+
+            Log.i("Exited rename method");
+        });
+        t.setDaemon(true);
+        t.start();
     }
 
     private static RollingRandomAccessFileManager getRollingAppender() {

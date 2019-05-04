@@ -19,8 +19,9 @@ public class MoveArms extends PneumaticController {
      *                             The expected return is the desired position for the arms.
      */
     public MoveArms(final Supplier<PneumaticState> desiredStateProvider) {
-        super(Pneumatics.getInstance()::raiseArms, Pneumatics.getInstance()::lowerArms,
-                pneumaticState -> desiredStateProvider.get(), null, Config.INTAKE_ARMS_DELAY,
+        super(Pneumatics.getInstance()::moveArms,
+                pneumaticState -> desiredStateProvider.get(), Pneumatics.getInstance()::getArmsState,
+                Config.INTAKE_ARMS_DELAY,
                 Pneumatics.getInstance()::stopArmsPneumatics);
         requires(Pneumatics.getInstance());
     }

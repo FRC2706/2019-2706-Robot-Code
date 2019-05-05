@@ -1,6 +1,5 @@
 package ca.team2706.frc.robot.commands.drivebase;
 
-import ca.team2706.frc.robot.subsystems.DriveBase;
 import com.ctre.phoenix.CTREJNIWrapper;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motion.BuffTrajPointStreamJNI;
@@ -21,7 +20,8 @@ import org.junit.Before;
 import org.junit.Test;
 import util.Util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class MotionProfile2WheelTest {
 
@@ -90,7 +90,7 @@ public class MotionProfile2WheelTest {
         }};
 
         new Expectations(ErrorCode.class) {{
-            ErrorCode.worstOne((ErrorCode)any, (ErrorCode)any);
+            ErrorCode.worstOne((ErrorCode) any, (ErrorCode) any);
             result = ErrorCode.OK;
             minTimes = 0;
         }};

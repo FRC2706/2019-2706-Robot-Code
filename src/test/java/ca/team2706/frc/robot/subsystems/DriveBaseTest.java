@@ -7,8 +7,6 @@ import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motion.BuffTrajPointStreamJNI;
 import com.ctre.phoenix.motion.BufferedTrajectoryPointStream;
 import com.ctre.phoenix.motion.TrajectoryPoint;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -72,7 +70,7 @@ public class DriveBaseTest {
         }};
 
         new Expectations(ErrorCode.class) {{
-            ErrorCode.worstOne((ErrorCode)any, (ErrorCode)any);
+            ErrorCode.worstOne((ErrorCode) any, (ErrorCode) any);
             result = ErrorCode.OK;
             minTimes = 0;
         }};

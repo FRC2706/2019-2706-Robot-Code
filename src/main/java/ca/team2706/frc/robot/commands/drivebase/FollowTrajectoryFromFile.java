@@ -16,7 +16,7 @@ public class FollowTrajectoryFromFile extends FollowTrajectory {
     /**
      * Follows the trajectory from a file
      *
-     * @param direction True to drive forwards, false to drive backwards
+     * @param direction     True to drive forwards, false to drive backwards
      * @param minDoneCycles The number of cycles to complete after finishing the motion profile
      * @param trajectory    The trajectory for the robot
      */
@@ -27,7 +27,7 @@ public class FollowTrajectoryFromFile extends FollowTrajectory {
     /**
      * Follows the trajectory from a file
      *
-     * @param direction True to drive forwards, false to drive backwards
+     * @param direction     True to drive forwards, false to drive backwards
      * @param minDoneCycles The number of cycles to complete after finishing the motion profile
      * @param trajectory    The trajectory for the robot
      */

@@ -15,7 +15,7 @@ public class CurveDrive2 extends FollowTrajectory {
     /**
      * Takes waypoints and turns it into trajectories for following
      *
-     * @param direction True to drive forwards, false to drive backwards
+     * @param direction     True to drive forwards, false to drive backwards
      * @param minDoneCycles he number of cycles to complete after finishing the motion profile
      * @param waypoints     The array of waypoints
      */
@@ -26,7 +26,7 @@ public class CurveDrive2 extends FollowTrajectory {
     /**
      * Takes waypoints and turns it into trajectories for following
      *
-     * @param direction True to drive forwards, false to drive backwards
+     * @param direction     True to drive forwards, false to drive backwards
      * @param minDoneCycles he number of cycles to complete after finishing the motion profile
      * @param waypoints     The array of waypoints
      */

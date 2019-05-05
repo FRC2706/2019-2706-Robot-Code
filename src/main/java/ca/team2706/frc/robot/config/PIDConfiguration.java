@@ -2,7 +2,6 @@ package ca.team2706.frc.robot.config;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.IMotorController;
-import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 
 /**
@@ -23,16 +22,17 @@ public class PIDConfiguration extends SlotConfiguration {
 
     /**
      * Constructs a fluid slot configuration
-     * @param name The name of the configuration
-     * @param kP The default fP
-     * @param kI The default kI
-     * @param kD The default kD
-     * @param kF The default kF
-     * @param integralZone The default integralZone
+     *
+     * @param name                     The name of the configuration
+     * @param kP                       The default fP
+     * @param kI                       The default kI
+     * @param kD                       The default kD
+     * @param kF                       The default kF
+     * @param integralZone             The default integralZone
      * @param allowableClosedloopError The default allowableClosedLoopError
-     * @param maxIntegralAccumulator The default maxIntegralAccumulator
-     * @param closedLoopPeakOutput The default closedLoopPeakOutput
-     * @param closedLoopPeriod The default closedLoopPeriod
+     * @param maxIntegralAccumulator   The default maxIntegralAccumulator
+     * @param closedLoopPeakOutput     The default closedLoopPeakOutput
+     * @param closedLoopPeriod         The default closedLoopPeriod
      */
     private PIDConfiguration(String name, double kP, double kI, double kD, double kF, int integralZone, int allowableClosedloopError, double maxIntegralAccumulator, double closedLoopPeakOutput, int closedLoopPeriod) {
         this.kP = new FluidConstant<>(name + ".kP", kP);
@@ -49,8 +49,9 @@ public class PIDConfiguration extends SlotConfiguration {
 
     /**
      * Concigures a motor controller with PID settings
+     *
      * @param controller The motor to configure
-     * @param slot The slot index to update
+     * @param slot       The slot index to update
      * @return The worst {@code ErrorCode} of all the configurations performed
      */
     public ErrorCode setForSlot(IMotorController controller, int slot) {
@@ -71,16 +72,17 @@ public class PIDConfiguration extends SlotConfiguration {
 
     /**
      * Constructs a fluid slot configuration
-     * @param name The name of the configuration
-     * @param kP The default fP
-     * @param kI The default kI
-     * @param kD The default kD
-     * @param kF The default kF
-     * @param integralZone The default integralZone
+     *
+     * @param name                     The name of the configuration
+     * @param kP                       The default fP
+     * @param kI                       The default kI
+     * @param kD                       The default kD
+     * @param kF                       The default kF
+     * @param integralZone             The default integralZone
      * @param allowableClosedloopError The default allowableClosedLoopError
-     * @param maxIntegralAccumulator The default maxIntegralAccumulator
-     * @param closedLoopPeakOutput The default closedLoopPeakOutput
-     * @param closedLoopPeriod The default closedLoopPeriod
+     * @param maxIntegralAccumulator   The default maxIntegralAccumulator
+     * @param closedLoopPeakOutput     The default closedLoopPeakOutput
+     * @param closedLoopPeriod         The default closedLoopPeriod
      */
     public static PIDConfiguration of(String name, double kP, double kI, double kD, double kF, int integralZone, int allowableClosedloopError, double maxIntegralAccumulator, double closedLoopPeakOutput, int closedLoopPeriod) {
         return new PIDConfiguration(name, kP, kI, kD, kF, integralZone, allowableClosedloopError, maxIntegralAccumulator, closedLoopPeakOutput, closedLoopPeriod);

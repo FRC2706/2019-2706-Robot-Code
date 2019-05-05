@@ -121,7 +121,7 @@ public class FluidConstantTest {
             }};
 
             new Expectations(ErrorCode.class) {{
-                ErrorCode.worstOne((ErrorCode)any, (ErrorCode)any);
+                ErrorCode.worstOne((ErrorCode) any, (ErrorCode) any);
                 result = ErrorCode.OK;
                 minTimes = 0;
             }};

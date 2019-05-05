@@ -38,7 +38,7 @@ public class FollowTrajectory extends MotionProfile2Wheel {
     /**
      * Follows a left and right trajectory
      *
-     * @param direction True to drive forwards, false to drive backwards
+     * @param direction     True to drive forwards, false to drive backwards
      * @param minDoneCycles The supplier to the cycles to hold after the profile has ended
      * @param trajectory    The trajectory to follow
      * @param left          The left trajectory
@@ -51,7 +51,7 @@ public class FollowTrajectory extends MotionProfile2Wheel {
     /**
      * Follows a left and right trajectory
      *
-     * @param direction True to drive forwards, false to drive backwards
+     * @param direction     True to drive forwards, false to drive backwards
      * @param minDoneCycles The cycles to hold after the profile has ended
      * @param trajectory    The trajectory to follow
      * @param left          The left trajectory

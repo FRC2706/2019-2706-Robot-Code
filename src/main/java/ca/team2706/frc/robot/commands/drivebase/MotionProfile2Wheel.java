@@ -31,7 +31,7 @@ public class MotionProfile2Wheel extends MirroredCommand {
     /**
      * Creates a motion profile using two wheels
      *
-     * @param direction True to drive forwards, false to drive backwards
+     * @param direction     True to drive forwards, false to drive backwards
      * @param minDoneCycles The cycles to hold after the motion profile has ended
      * @param posLeft       The left wheel positions in feet at each point
      * @param velLeft       The left wheel velocities in feet per second at each point
@@ -48,7 +48,7 @@ public class MotionProfile2Wheel extends MirroredCommand {
     /**
      * Creates a motion profile using two wheels
      *
-     * @param direction True to drive forwards, false to drive backwards
+     * @param direction     True to drive forwards, false to drive backwards
      * @param minDoneCycles The supplier to the cycles to hold after the motion profile has ended
      * @param posLeft       The left wheel positions in feet at each point
      * @param velLeft       The left wheel velocities in feet per second at each point
@@ -74,7 +74,7 @@ public class MotionProfile2Wheel extends MirroredCommand {
     /**
      * Creates a motion profile using the sum of two encoders
      *
-     * @param direction True to drive forwards, false to drive backwards
+     * @param direction           True to drive forwards, false to drive backwards
      * @param minDoneCycles       The cycles to hold after the motion profile has ended
      * @param dualTalonTrajectory An object with all trajectory data for both wheels
      */

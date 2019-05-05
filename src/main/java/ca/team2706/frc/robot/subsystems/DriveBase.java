@@ -15,7 +15,6 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PWM;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -620,7 +619,7 @@ public class DriveBase extends Subsystem {
             rightFrontMotor.selectProfileSlot(0, 0);
             rightFrontMotor.selectProfileSlot(2, 1);
 
-            rightFrontMotor.set(ControlMode.Position, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation);
+            rightFrontMotor.set(ControlMode.Position, setpoint / Config.DRIVE_ENCODER_DPP, DemandType.AuxPID, targetRotation / Config.PIGEON_DPP);
 
             leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
             leftBackMotor.follow(leftFrontMotor);
@@ -690,8 +689,6 @@ public class DriveBase extends Subsystem {
     public void resetEncoders() {
         leftFrontMotor.getSensorCollection().setQuadraturePosition(0, Config.CAN_SHORT);
         rightFrontMotor.getSensorCollection().setQuadraturePosition(0, Config.CAN_SHORT);
-
-        Timer.delay(0.02);
     }
 
     /**
@@ -712,8 +709,6 @@ public class DriveBase extends Subsystem {
     public void resetAbsoluteGyro(double savedAngle) {
         this.savedAngle = savedAngle;
         gyro.setYaw(0, Config.CAN_SHORT);
-
-        Timer.delay(0.02);
     }
 
     /**
@@ -722,8 +717,6 @@ public class DriveBase extends Subsystem {
     public void resetGyro() {
         savedAngle = getAbsoluteHeading();
         gyro.setYaw(0, Config.CAN_SHORT);
-
-        Timer.delay(0.02);
     }
 
     /**

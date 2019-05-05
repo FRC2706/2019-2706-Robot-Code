@@ -40,9 +40,10 @@ public class AbsoluteRotateWithGyro extends RotateWithGyro {
 
     @Override
     public void initialize() {
-        super.initialize();
-
         gyroAngle = deltaAngle(getWrappedAngle(DriveBase.getInstance().getAbsoluteHeading()), mirrored ? 360 - angleSupplier.get() : angleSupplier.get());
+
+        // Initialize after getting angle to avoid calculating with old gyro values
+        super.initialize();
     }
 
     @Override

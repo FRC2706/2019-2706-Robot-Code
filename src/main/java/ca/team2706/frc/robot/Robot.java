@@ -94,17 +94,17 @@ public class Robot extends TimedRobot {
         }
 
         commands = new Command[]{
-                null,                                                                      // 0
-                null,                                                                      // 1
-                null,                                                                      // 2
-                null,                                                                      // 3
-                null,                                                                      // 4
-                new DriveOffHab(),                                                         // 5
-                new LevelOneCentreHatch(),                                                 // 6
-                new RotateWithGyro(90, 20),                  // 7
-                new StraightDriveGyro(5, 20),              // 8
-                new MotionMagic(5, 20, 0.0),        // 9
-                new FollowTrajectoryFromFile(true, 20, "Test")
+                null,                                                                          // 0
+                null,                                                                          // 1
+                null,                                                                          // 2
+                null,                                                                          // 3
+                null,                                                                          // 4
+                new DriveOffHab(),                                                             // 5
+                new LevelOneCentreHatch(),                                                     // 6
+                new RotateWithGyro(90, 20),                                // 7
+                new StraightDriveGyro(5, 20),                            // 8
+                new MotionMagic(5, 20, 0.0),                    // 9
+                new FollowTrajectoryFromFile(true, 20, "Test") // 10
         };
 
         selectorOrientation = Map.of(4, 270);

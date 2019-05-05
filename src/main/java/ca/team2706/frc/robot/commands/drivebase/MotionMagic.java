@@ -26,7 +26,6 @@ public class MotionMagic extends DriveBaseCloseLoop {
     /**
      * Creates a straight drive command with constant values
      *
-     * @param speed         The maximum speed of the robot
      * @param position      The position to go to in feet
      * @param minDoneCycles The minimum number of cycles for the robot to be within
      *                      the target zone before the command ends

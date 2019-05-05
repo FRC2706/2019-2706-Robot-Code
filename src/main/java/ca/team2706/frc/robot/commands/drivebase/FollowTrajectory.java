@@ -16,7 +16,7 @@ public class FollowTrajectory extends MotionProfile2Wheel {
     /**
      * Follows a single trajectory
      *
-     * @param speed         The max speed
+     * @param direction     True to drive forwards, false to drive backwards
      * @param minDoneCycles The cycles to hold after the profile has ended
      * @param trajectory    The trajectory to follow
      */
@@ -27,7 +27,7 @@ public class FollowTrajectory extends MotionProfile2Wheel {
     /**
      * Follows a single trajectory
      *
-     * @param speed         The supplier to the max speed
+     * @param direction     True to drive forwards, false to drive backwards
      * @param minDoneCycles The supplier to the cycles to hold after the profile has ended
      * @param trajectory    The trajectory to follow
      */

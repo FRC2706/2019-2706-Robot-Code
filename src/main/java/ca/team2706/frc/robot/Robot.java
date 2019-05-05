@@ -2,6 +2,7 @@ package ca.team2706.frc.robot;
 
 import ca.team2706.frc.robot.commands.auto.DriveOffHab;
 import ca.team2706.frc.robot.commands.auto.LevelOneCentreHatch;
+import ca.team2706.frc.robot.commands.drivebase.FollowTrajectoryFromFile;
 import ca.team2706.frc.robot.commands.drivebase.MotionMagic;
 import ca.team2706.frc.robot.commands.drivebase.RotateWithGyro;
 import ca.team2706.frc.robot.commands.drivebase.StraightDriveGyro;
@@ -102,7 +103,8 @@ public class Robot extends TimedRobot {
                 new LevelOneCentreHatch(),                                                 // 6
                 new RotateWithGyro(0.0, 90, 20),                  // 7
                 new StraightDriveGyro(0.0, 5, 20),              // 8
-                new MotionMagic(0.0, 5, 20, 0.0)        // 9
+                new MotionMagic(0.0, 5, 20, 0.0),        // 9
+                new FollowTrajectoryFromFile(0.0, 20, "Test")
         };
 
         selectorOrientation = Map.of(4, 270);

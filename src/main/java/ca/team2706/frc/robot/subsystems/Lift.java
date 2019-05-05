@@ -22,6 +22,8 @@ public class Lift extends Subsystem {
 
     private final SubsystemStatus status;
 
+    private static final int HOLD_SLOT = 0, FEED_FORWARD_SLOT = 1;
+
     /**
      * Setpoints for cargo, in encoder ticks.
      */
@@ -121,8 +123,10 @@ public class Lift extends Subsystem {
         liftMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Config.CAN_LONG);
         liftMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Config.CAN_LONG);
         liftMotor.configNeutralDeadband(Config.LIFT_CLOSED_LOOP_DEADBAND.value());
+        liftMotor.configMotionSCurveStrength(2, Config.CAN_LONG);
 
-        Config.LIFT_HOLD_SLOT.setForSlot(liftMotor, 0);
+        Config.LIFT_HOLD_SLOT.setForSlot(liftMotor, HOLD_SLOT);
+        Config.LIFT_FEED_FORWARD_SLOT.setForSlot(liftMotor, HOLD_SLOT);
 
         liftMotor.configClosedLoopPeriod(0, 1, Config.CAN_LONG);
 
@@ -239,6 +243,7 @@ public class Lift extends Subsystem {
         enableLimit(true);
         enableLimitSwitch(true);
         liftMotor.configClosedLoopPeakOutput(0, maxSpeed);
+        liftMotor.selectProfileSlot(HOLD_SLOT, 0);
         liftMotor.set(ControlMode.Position, encoderTicksPosition);
     }
 
@@ -267,8 +272,9 @@ public class Lift extends Subsystem {
         enableLimit(true);
         enableLimitSwitch(getLiftHeight() > 0);
 
-        liftMotor.configClosedLoopPeakOutput(0, maxSpeed);
-        liftMotor.set(ControlMode.MotionMagic, position);
+        liftMotor.configClosedLoopPeakOutput(FEED_FORWARD_SLOT, maxSpeed);
+        liftMotor.selectProfileSlot(FEED_FORWARD_SLOT, 0);
+        liftMotor.set(ControlMode.MotionMagic, position, DemandType.ArbitraryFeedForward, Config.LIFT_FEED_FORWARD);
     }
 
     /**
@@ -303,8 +309,9 @@ public class Lift extends Subsystem {
                 }
             }
 
-            liftMotor.configClosedLoopPeakOutput(0, 1.0); // Peak output to max (1.0).
-            liftMotor.set(ControlMode.Velocity, velocity);
+            liftMotor.configClosedLoopPeakOutput(FEED_FORWARD_SLOT, 1.0); // Peak output to max (1.0).
+            liftMotor.selectProfileSlot(FEED_FORWARD_SLOT, 0);
+            liftMotor.set(ControlMode.Velocity, velocity, DemandType.ArbitraryFeedForward, Config.LIFT_FEED_FORWARD);
         }
     }
 
@@ -316,6 +323,7 @@ public class Lift extends Subsystem {
     public void setPercentOutput(double percentOutput) {
         enableLimit(true);
         enableLimitSwitch(true);
+        liftMotor.selectProfileSlot(HOLD_SLOT, 0);
         liftMotor.set(percentOutput);
     }
 
@@ -325,13 +333,13 @@ public class Lift extends Subsystem {
     public void overrideUp() {
         enableLimit(false);
         enableLimitSwitch(true);
-        liftMotor.set(Config.LIFT_OVERRIDE_UP_SPEED);
+        setPercentOutput(Config.LIFT_OVERRIDE_UP_SPEED);
     }
 
     public void overrideDown() {
         enableLimit(false);
         enableLimitSwitch(true);
-        liftMotor.set(Config.LIFT_OVERRIDE_DOWN_SPEED);
+        setPercentOutput(Config.LIFT_OVERRIDE_DOWN_SPEED);
     }
 
     /**

@@ -127,7 +127,7 @@ public class Config {
     /**
      * How long (in seconds) the lift ramp up on voltage should be.
      */
-    public static double LIFT_VOLTAGE_RAMP_UP_PERIOD = 0.6;
+    public static double LIFT_VOLTAGE_RAMP_UP_PERIOD = 0.6, LIFT_FEED_FORWARD = 0.08;
 
     public static int MAX_LIFT_ENCODER_TICKS = robotSpecific(61_000, 58_000, 61_000);
 
@@ -229,7 +229,7 @@ public class Config {
     /**
      * Max speed of the lift in encoder ticks.
      */
-    public static final FluidConstant<Integer> LIFT_MAX_SPEED = constant("max-lift-velocity", 3000);
+    public static final FluidConstant<Integer> LIFT_MAX_SPEED = constant("max-lift-velocity", 2559);
     public static final FluidConstant<Integer> DRIVEBASE_MOTION_MAGIC_SMOOTHING = constant("mm-smoothing", 0);
     public static final FluidConstant<Double> PATHFINDING_JERK = constant("pf-jerk", 197.0);
     public static final FluidConstant<Double> PATHFINDING_VELOCITY = constant("pf-velocity", 2.0);
@@ -249,6 +249,9 @@ public class Config {
 
     public static final PIDConfiguration LIFT_HOLD_SLOT = PIDConfiguration.of("lift-hold-slot",
             0.9, 0.0, 0.0, 0.0, 0, 0, 0.0, 1.0, 1);
+
+    public static final PIDConfiguration LIFT_FEED_FORWARD_SLOT = PIDConfiguration.of("lift-feed-forward-slot",
+            3.0, 0.0, 0.0, 1023D / LIFT_MAX_SPEED.value(), 0, 0, 0.0, 1.0, 1);
 
     public static final PIDConfiguration PIGEON_SLOT = PIDConfiguration.of("pigeon-slot",
             0.8, 0.0, 4.0, 0.0, 0, 0, 0.0, 1.0, 1);

@@ -20,8 +20,8 @@ public class FollowTrajectory extends MotionProfile2Wheel {
      * @param minDoneCycles The cycles to hold after the profile has ended
      * @param trajectory    The trajectory to follow
      */
-    public FollowTrajectory(double speed, int minDoneCycles, Trajectory trajectory) {
-        this(() -> speed, () -> minDoneCycles, trajectory);
+    public FollowTrajectory(boolean direction, int minDoneCycles, Trajectory trajectory) {
+        this(() -> direction, () -> minDoneCycles, trajectory);
     }
 
     /**
@@ -31,34 +31,34 @@ public class FollowTrajectory extends MotionProfile2Wheel {
      * @param minDoneCycles The supplier to the cycles to hold after the profile has ended
      * @param trajectory    The trajectory to follow
      */
-    public FollowTrajectory(Supplier<Double> speed, Supplier<Integer> minDoneCycles, Trajectory trajectory) {
-        super(speed, minDoneCycles, generateDualTrajectory(trajectory, twoTrajectory(trajectory)));
+    public FollowTrajectory(Supplier<Boolean> direction, Supplier<Integer> minDoneCycles, Trajectory trajectory) {
+        super(direction, minDoneCycles, generateDualTrajectory(trajectory, twoTrajectory(trajectory)));
     }
 
     /**
      * Follows a left and right trajectory
      *
-     * @param speed         The supplier to the max speed
+     * @param direction True to drive forwards, false to drive backwards
      * @param minDoneCycles The supplier to the cycles to hold after the profile has ended
      * @param trajectory    The trajectory to follow
      * @param left          The left trajectory
      * @param right         The right trajectory
      */
-    public FollowTrajectory(double speed, int minDoneCycles, Trajectory trajectory, Trajectory left, Trajectory right) {
-        this(() -> speed, () -> minDoneCycles, trajectory, left, right);
+    public FollowTrajectory(boolean direction, int minDoneCycles, Trajectory trajectory, Trajectory left, Trajectory right) {
+        this(() -> direction, () -> minDoneCycles, trajectory, left, right);
     }
 
     /**
      * Follows a left and right trajectory
      *
-     * @param speed         The max speed
+     * @param direction True to drive forwards, false to drive backwards
      * @param minDoneCycles The cycles to hold after the profile has ended
      * @param trajectory    The trajectory to follow
      * @param left          The left trajectory
      * @param right         The right trajectory
      */
-    public FollowTrajectory(Supplier<Double> speed, Supplier<Integer> minDoneCycles, Trajectory trajectory, Trajectory left, Trajectory right) {
-        super(speed, minDoneCycles, generateDualTrajectory(trajectory, Pair.of(left, right)));
+    public FollowTrajectory(Supplier<Boolean> direction, Supplier<Integer> minDoneCycles, Trajectory trajectory, Trajectory left, Trajectory right) {
+        super(direction, minDoneCycles, generateDualTrajectory(trajectory, Pair.of(left, right)));
     }
 
     /**

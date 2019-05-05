@@ -16,23 +16,23 @@ public class FollowTrajectoryFromFile extends FollowTrajectory {
     /**
      * Follows the trajectory from a file
      *
-     * @param speed         The speed of the robot
+     * @param direction True to drive forwards, false to drive backwards
      * @param minDoneCycles The number of cycles to complete after finishing the motion profile
      * @param trajectory    The trajectory for the robot
      */
-    public FollowTrajectoryFromFile(double speed, int minDoneCycles, String trajectory) {
-        this(() -> speed, () -> minDoneCycles, trajectory);
+    public FollowTrajectoryFromFile(boolean direction, int minDoneCycles, String trajectory) {
+        this(() -> direction, () -> minDoneCycles, trajectory);
     }
 
     /**
      * Follows the trajectory from a file
      *
-     * @param speed         The speed of the robot
+     * @param direction True to drive forwards, false to drive backwards
      * @param minDoneCycles The number of cycles to complete after finishing the motion profile
      * @param trajectory    The trajectory for the robot
      */
-    public FollowTrajectoryFromFile(Supplier<Double> speed, Supplier<Integer> minDoneCycles, String trajectory) {
-        super(speed, minDoneCycles, readFromFile(Config.DEPLOY_DIR.resolve("motion-profiles/output/" + trajectory + ".pf1.csv")),
+    public FollowTrajectoryFromFile(Supplier<Boolean> direction, Supplier<Integer> minDoneCycles, String trajectory) {
+        super(direction, minDoneCycles, readFromFile(Config.DEPLOY_DIR.resolve("motion-profiles/output/" + trajectory + ".pf1.csv")),
                 readFromFile(Config.DEPLOY_DIR.resolve("motion-profiles/output/" + trajectory + ".left.pf1.csv")),
                 readFromFile(Config.DEPLOY_DIR.resolve("motion-profiles/output/" + trajectory + ".right.pf1.csv")));
     }

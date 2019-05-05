@@ -104,7 +104,7 @@ public class MotionProfile2WheelTest {
      * @param size          The number of trajectory points
      */
     @Test
-    public void testSetting(@Injectable("0.0") double speed, @Injectable("1") int minDoneCycles, @Injectable("4") int size) {
+    public void testSetting(@Injectable("true") boolean direction, @Injectable("1") int minDoneCycles, @Injectable("4") int size) {
         motionProfile2Wheel.initialize();
 
         for (int i = 0; i < 3; i++) {
@@ -127,7 +127,7 @@ public class MotionProfile2WheelTest {
      * @param size          The number of trajectory points
      */
     @Test
-    public void testFinished(@Injectable("0.0") double speed, @Injectable("3") int minDoneCycles, @Injectable("4") int size) {
+    public void testFinished(@Injectable("true") boolean direction, @Injectable("3") int minDoneCycles, @Injectable("4") int size) {
         new Expectations() {{
             talon.isMotionProfileFinished();
             returns(false, false, false, false, false, true, true, true, true, true, true, true, true, true);

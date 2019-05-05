@@ -23,19 +23,18 @@ public class AbsoluteRotateWithGyro extends RotateWithGyro {
      *                      ending the command.
      */
     public AbsoluteRotateWithGyro(double speed, double angle, int minDoneCycles) {
-        this(() -> speed, () -> angle, () -> minDoneCycles);
+        this(() -> angle, () -> minDoneCycles);
     }
 
     /**
      * Constructs a new rotate with gyro command for rotating the robot a set number of degrees.
      *
-     * @param speed                    The speed supplier for the rotation.
      * @param angle                    The new absolute heading to rotate to, in degrees.
      * @param minCyclesWithinThreshold The supplier for the number of cycles in which the robot should be in
      *                                 the target position.
      */
-    public AbsoluteRotateWithGyro(Supplier<Double> speed, Supplier<Double> angle, Supplier<Integer> minCyclesWithinThreshold) {
-        super(speed, angle, minCyclesWithinThreshold);
+    public AbsoluteRotateWithGyro(Supplier<Double> angle, Supplier<Integer> minCyclesWithinThreshold) {
+        super(angle, minCyclesWithinThreshold);
     }
 
     @Override
@@ -48,7 +47,7 @@ public class AbsoluteRotateWithGyro extends RotateWithGyro {
 
     @Override
     public void execute() {
-        DriveBase.getInstance().setRotation(speedSupplier.get(), gyroAngle);
+        DriveBase.getInstance().setRotation(gyroAngle);
     }
 
     /**

@@ -415,10 +415,9 @@ public class DriveBase extends Subsystem {
     /**
      * Goes to a position with the closed loop Talon PIDs using only encoder information
      *
-     * @param speed    The speed from 0 to 1
      * @param setpoint The setpoint to go to in feet
      */
-    public void setPositionNoGyro(double speed, double setpoint) {
+    public void setPositionNoGyro(double setpoint) {
         if (canRunAuto()) {
             rightFrontMotor.selectProfileSlot(0, 0);
             rightFrontMotor.set(ControlMode.Position, setpoint / Config.DRIVE_ENCODER_DPP);
@@ -434,11 +433,10 @@ public class DriveBase extends Subsystem {
     /**
      * Follows motion magic profile
      *
-     * @param speed          The speed from 0 to 1
      * @param setpoint       The setpoint in feet
      * @param targetRotation The target to rotate to
      */
-    public void setMotionMagicPositionGyro(double speed, double setpoint, double targetRotation) {
+    public void setMotionMagicPositionGyro(double setpoint, double targetRotation) {
         if (canRunAuto()) {
             rightFrontMotor.selectProfileSlot(1, 0);
             rightFrontMotor.selectProfileSlot(2, 1);
@@ -454,10 +452,8 @@ public class DriveBase extends Subsystem {
 
     /**
      * Runs the motion profile
-     *
-     * @param speed The speed from 0 to 1
      */
-    public void runMotionProfile(final double speed) {
+    public void runMotionProfile() {
         if (canRunAuto()) {
             rightFrontMotor.selectProfileSlot(1, 0);
             rightFrontMotor.selectProfileSlot(2, 1);
@@ -474,10 +470,8 @@ public class DriveBase extends Subsystem {
 
     /**
      * Runs the motion profile for each wheel
-     *
-     * @param speed The speed from 0 to 1
      */
-    public void runMotionProfile2Wheel(final double speed) {
+    public void runMotionProfile2Wheel() {
         if (canRunAuto()) {
             leftBackMotor.selectProfileSlot(1, 0);
             leftBackMotor.selectProfileSlot(2, 1);
@@ -592,7 +586,7 @@ public class DriveBase extends Subsystem {
      * @param speed    The speed of the rotation.
      * @param setpoint The setpoint (angle) to which the robot should rotate, in degrees.
      */
-    public void setRotation(double speed, double setpoint) {
+    public void setRotation(double setpoint) {
         if (canRunAuto()) {
             leftFrontMotor.selectProfileSlot(3, 0);
             leftFrontMotor.selectProfileSlot(0, 1);
@@ -610,11 +604,10 @@ public class DriveBase extends Subsystem {
     /**
      * Goes to a position with the closed loop Talon PIDs using only encoder and gyro
      *
-     * @param speed          The speed from 0 to 1
      * @param setpoint       The setpoint to go to in feet
      * @param targetRotation The desired rotation
      */
-    public void setPositionGyro(double speed, double setpoint, double targetRotation) {
+    public void setPositionGyro(double setpoint, double targetRotation) {
         if (canRunAuto()) {
             rightFrontMotor.selectProfileSlot(0, 0);
             rightFrontMotor.selectProfileSlot(2, 1);

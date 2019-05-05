@@ -89,7 +89,7 @@ public class CurveDrive2Test {
      */
     @Test
     public void createWayPoints() throws IOException {
-        CurveDrive2 curveDrive2 = new CurveDrive2(0.0, 0, new Waypoint[]{
+        CurveDrive2 curveDrive2 = new CurveDrive2(true, 0, new Waypoint[]{
                 new Waypoint(0, 0, 0),
                 new Waypoint(10, 10, Pathfinder.d2r(90))
         });

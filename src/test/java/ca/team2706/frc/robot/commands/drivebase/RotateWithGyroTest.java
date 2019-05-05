@@ -82,7 +82,7 @@ public class RotateWithGyroTest {
      * @param minDoneCycles The min cycles to inject
      */
     @Test
-    public void testSetting(@Injectable("0.0") double speed, @Injectable("5") double angle, @Injectable("1") int minDoneCycles) {
+    public void testSetting(@Injectable("5") double angle, @Injectable("1") int minDoneCycles) {
         rotateWithGyro.initialize();
 
         for (int i = 0; i < 3; i++) {
@@ -103,7 +103,7 @@ public class RotateWithGyroTest {
      * @param minDoneCycles The min cycles to inject
      */
     @Test
-    public void testSettingMirror(@Injectable("0.0") double speed, @Injectable("5") double angle, @Injectable("1") int minDoneCycles) {
+    public void testSettingMirror(@Injectable("5") double angle, @Injectable("1") int minDoneCycles) {
         rotateWithGyro.mirror();
 
         rotateWithGyro.initialize();

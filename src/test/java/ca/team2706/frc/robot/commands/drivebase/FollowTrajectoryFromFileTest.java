@@ -110,7 +110,7 @@ public class FollowTrajectoryFromFileTest {
             returns(trajectory, trajectoryLeft, trajectoryRight);
         }};
 
-        FollowTrajectoryFromFile followTrajectoryFromFile = new FollowTrajectoryFromFile(0, 0, "ATest");
+        FollowTrajectoryFromFile followTrajectoryFromFile = new FollowTrajectoryFromFile(true, 0, "ATest");
 
         followTrajectoryFromFile.initialize();
 

@@ -117,7 +117,7 @@ public class MotionMagicVisionTest {
      * @param minDoneCycles The min cycles to inject
      */
     @Test
-    public void testNetworkTablesSetup(@Injectable("0.0") double speed, @Injectable("0") double position, @Injectable("3") int minDoneCycles) {
+    public void testNetworkTablesSetup(@Injectable("0") double position, @Injectable("3") int minDoneCycles) {
         motionMagicVision.initialize();
         motionMagicVision.end();
 
@@ -145,7 +145,7 @@ public class MotionMagicVisionTest {
      * @param minDoneCycles The min cycles to inject
      */
     @Test
-    public void testAuxSetting(@Injectable("0.0") double speed, @Injectable("0") double position, @Injectable("3") int minDoneCycles) {
+    public void testAuxSetting(@Injectable("0") double position, @Injectable("3") int minDoneCycles) {
         new Expectations() {{
             tapeDetected.getBoolean(false);
             returns(false, true, true, true);

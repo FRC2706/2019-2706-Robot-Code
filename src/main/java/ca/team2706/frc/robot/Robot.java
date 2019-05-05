@@ -101,10 +101,10 @@ public class Robot extends TimedRobot {
                 null,                                                                      // 4
                 new DriveOffHab(),                                                         // 5
                 new LevelOneCentreHatch(),                                                 // 6
-                new RotateWithGyro(0.0, 90, 20),                  // 7
-                new StraightDriveGyro(0.0, 5, 20),              // 8
-                new MotionMagic(0.0, 5, 20, 0.0),        // 9
-                new FollowTrajectoryFromFile(0.0, 20, "Test")
+                new RotateWithGyro(90, 20),                  // 7
+                new StraightDriveGyro(5, 20),              // 8
+                new MotionMagic(5, 20, 0.0),        // 9
+                new FollowTrajectoryFromFile(true, 20, "Test")
         };
 
         selectorOrientation = Map.of(4, 270);

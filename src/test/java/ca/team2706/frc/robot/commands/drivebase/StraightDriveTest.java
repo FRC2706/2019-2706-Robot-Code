@@ -81,7 +81,7 @@ public class StraightDriveTest {
      * @param minDoneCycles The min cycles to inject
      */
     @Test
-    public void testSetting(@Injectable("0.0") double speed, @Injectable("0.5") double position, @Injectable("1") int minDoneCycles) {
+    public void testSetting(@Injectable("0.5") double position, @Injectable("1") int minDoneCycles) {
         straightDrive.initialize();
 
         straightDrive.execute();
@@ -102,7 +102,7 @@ public class StraightDriveTest {
      * @param minDoneCycles The min cycles to inject
      */
     @Test
-    public void testFinished(@Injectable("0.0") double speed, @Injectable("5") double position, @Injectable("3") int minDoneCycles) {
+    public void testFinished(@Injectable("5") double position, @Injectable("3") int minDoneCycles) {
         new Expectations() {{
             talon.getClosedLoopError(0);
             returns(intFeetToTicks(5), intFeetToTicks(4), intFeetToTicks(1), intFeetToTicks(0.25), intFeetToTicks(1), intFeetToTicks(0.25),

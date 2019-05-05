@@ -16,25 +16,23 @@ public class MotionMagicVision extends MotionMagic {
     /**
      * Uses motion magic using vision for heading
      *
-     * @param speed         The maximum speed of the robot
      * @param position      The position to go to in feet
      * @param minDoneCycles The minimum number of cycles for the robot to be within
      *                      the target zone before the command ends
      */
-    public MotionMagicVision(double speed, double position, int minDoneCycles) {
-        this(() -> speed, () -> position, () -> minDoneCycles);
+    public MotionMagicVision(double position, int minDoneCycles) {
+        this(() -> position, () -> minDoneCycles);
     }
 
     /**
      * Uses motion magic using vision for heading
      *
-     * @param speed         The maximum speed of the robot
      * @param position      The position to go to in feet
      * @param minDoneCycles The minimum number of cycles for the robot to be within
      *                      the target zone before the command ends
      */
-    public MotionMagicVision(Supplier<Double> speed, Supplier<Double> position, Supplier<Integer> minDoneCycles) {
-        super(speed, position, minDoneCycles, MotionMagicVision::getTargetHeading);
+    public MotionMagicVision(Supplier<Double> position, Supplier<Integer> minDoneCycles) {
+        super(position, minDoneCycles, MotionMagicVision::getTargetHeading);
         requires(RingLight.getInstance());
     }
 

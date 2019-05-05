@@ -15,23 +15,23 @@ public class CurveDrive2 extends FollowTrajectory {
     /**
      * Takes waypoints and turns it into trajectories for following
      *
-     * @param speed         The speed of the robot
+     * @param direction True to drive forwards, false to drive backwards
      * @param minDoneCycles he number of cycles to complete after finishing the motion profile
      * @param waypoints     The array of waypoints
      */
-    public CurveDrive2(double speed, int minDoneCycles, Waypoint[] waypoints) {
-        this(() -> speed, () -> minDoneCycles, waypoints);
+    public CurveDrive2(boolean direction, int minDoneCycles, Waypoint[] waypoints) {
+        this(() -> direction, () -> minDoneCycles, waypoints);
     }
 
     /**
      * Takes waypoints and turns it into trajectories for following
      *
-     * @param speed         The speed of the robot
+     * @param direction True to drive forwards, false to drive backwards
      * @param minDoneCycles he number of cycles to complete after finishing the motion profile
      * @param waypoints     The array of waypoints
      */
-    public CurveDrive2(Supplier<Double> speed, Supplier<Integer> minDoneCycles, Waypoint[] waypoints) {
-        super(speed, minDoneCycles, generateTrajectory(waypoints));
+    public CurveDrive2(Supplier<Boolean> direction, Supplier<Integer> minDoneCycles, Waypoint[] waypoints) {
+        super(direction, minDoneCycles, generateTrajectory(waypoints));
     }
 
     /**

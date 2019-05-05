@@ -15,7 +15,7 @@ public class MotionProfile2Wheel extends MirroredCommand {
     /**
      * References to the speed and position that the robot should be travelling at
      */
-    private final Supplier<Double> speed;
+    private final Supplier<Boolean> direction;
     private final Supplier<Integer> minDoneCycles;
 
     private final double[] posLeft;
@@ -31,7 +31,7 @@ public class MotionProfile2Wheel extends MirroredCommand {
     /**
      * Creates a motion profile using two wheels
      *
-     * @param speed         The maximum speed of the robot
+     * @param direction True to drive forwards, false to drive backwards
      * @param minDoneCycles The cycles to hold after the motion profile has ended
      * @param posLeft       The left wheel positions in feet at each point
      * @param velLeft       The left wheel velocities in feet per second at each point
@@ -41,14 +41,14 @@ public class MotionProfile2Wheel extends MirroredCommand {
      * @param time          The milliseconds to run each segment
      * @param size          The amount of segments in the trajectory
      */
-    public MotionProfile2Wheel(double speed, int minDoneCycles, double[] posLeft, double[] velLeft, double[] posRight, double[] velRight, double[] heading, int[] time, int size) {
-        this(() -> speed, () -> minDoneCycles, posLeft, velLeft, posRight, velRight, heading, time, size);
+    public MotionProfile2Wheel(boolean direction, int minDoneCycles, double[] posLeft, double[] velLeft, double[] posRight, double[] velRight, double[] heading, int[] time, int size) {
+        this(() -> direction, () -> minDoneCycles, posLeft, velLeft, posRight, velRight, heading, time, size);
     }
 
     /**
      * Creates a motion profile using two wheels
      *
-     * @param speed         The supplier to the maximum speed of the robot
+     * @param direction True to drive forwards, false to drive backwards
      * @param minDoneCycles The supplier to the cycles to hold after the motion profile has ended
      * @param posLeft       The left wheel positions in feet at each point
      * @param velLeft       The left wheel velocities in feet per second at each point
@@ -58,9 +58,9 @@ public class MotionProfile2Wheel extends MirroredCommand {
      * @param time          The milliseconds to run each segment
      * @param size          The amount of segments in the trajectory
      */
-    public MotionProfile2Wheel(Supplier<Double> speed, Supplier<Integer> minDoneCycles, double[] posLeft, double[] velLeft, double[] posRight, double[] velRight, double[] heading, int[] time, int size) {
+    public MotionProfile2Wheel(Supplier<Boolean> direction, Supplier<Integer> minDoneCycles, double[] posLeft, double[] velLeft, double[] posRight, double[] velRight, double[] heading, int[] time, int size) {
         requires(DriveBase.getInstance());
-        this.speed = speed;
+        this.direction = direction;
         this.posLeft = posLeft;
         this.velLeft = velLeft;
         this.posRight = posRight;
@@ -74,21 +74,21 @@ public class MotionProfile2Wheel extends MirroredCommand {
     /**
      * Creates a motion profile using the sum of two encoders
      *
-     * @param speed               The maximum speed of the robot
+     * @param direction True to drive forwards, false to drive backwards
      * @param minDoneCycles       The cycles to hold after the motion profile has ended
      * @param dualTalonTrajectory An object with all trajectory data for both wheels
      */
-    MotionProfile2Wheel(Supplier<Double> speed, Supplier<Integer> minDoneCycles, DualTalonTrajectory dualTalonTrajectory) {
-        this(speed, minDoneCycles, dualTalonTrajectory.posLeft, dualTalonTrajectory.velLeft, dualTalonTrajectory.posRight, dualTalonTrajectory.velRight, dualTalonTrajectory.heading, dualTalonTrajectory.time, dualTalonTrajectory.size);
+    MotionProfile2Wheel(Supplier<Boolean> direction, Supplier<Integer> minDoneCycles, DualTalonTrajectory dualTalonTrajectory) {
+        this(direction, minDoneCycles, dualTalonTrajectory.posLeft, dualTalonTrajectory.velLeft, dualTalonTrajectory.posRight, dualTalonTrajectory.velRight, dualTalonTrajectory.heading, dualTalonTrajectory.time, dualTalonTrajectory.size);
     }
 
     @Override
     public void initialize() {
         DriveBase.getInstance().setBrakeMode(true);
         if (isMirrored()) {
-            DriveBase.getInstance().pushMotionProfile2Wheel(speed.get() >= 0, posRight, velRight, negateDoubleArray(heading), time, size, posLeft, velLeft);
+            DriveBase.getInstance().pushMotionProfile2Wheel(direction.get(), posRight, velRight, negateDoubleArray(heading), time, size, posLeft, velLeft);
         } else {
-            DriveBase.getInstance().pushMotionProfile2Wheel(speed.get() >= 0, posLeft, velLeft, heading, time, size, posRight, velRight);
+            DriveBase.getInstance().pushMotionProfile2Wheel(direction.get(), posLeft, velLeft, heading, time, size, posRight, velRight);
         }
         DriveBase.getInstance().reset();
 
@@ -97,7 +97,7 @@ public class MotionProfile2Wheel extends MirroredCommand {
 
     @Override
     public void execute() {
-        DriveBase.getInstance().runMotionProfile2Wheel(Math.abs(speed.get()));
+        DriveBase.getInstance().runMotionProfile2Wheel();
     }
 
     @Override

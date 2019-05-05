@@ -284,7 +284,7 @@ public class DriverAssistVision extends Command {
             } else {
 
                 Log.d("DAV: Commanding robot to follow trajectory");
-                followTrajectory = new FollowTrajectory(1.0, 100, trajectory);
+                followTrajectory = new FollowTrajectory(true, 100, trajectory);
                 followTrajectory.start();
             }
         }

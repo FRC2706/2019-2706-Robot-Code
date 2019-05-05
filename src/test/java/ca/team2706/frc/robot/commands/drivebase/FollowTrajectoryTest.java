@@ -93,7 +93,7 @@ public class FollowTrajectoryTest {
                 new Trajectory.Segment(0.010, 0, 0, 0, 3, 2, 54, Pathfinder.d2r(345))
         });
 
-        FollowTrajectory followTrajectory = new FollowTrajectory(0, 0, trajectory);
+        FollowTrajectory followTrajectory = new FollowTrajectory(true, 0, trajectory);
 
         followTrajectory.initialize();
 
@@ -129,7 +129,7 @@ public class FollowTrajectoryTest {
                 new Trajectory.Segment(0.010, 0, 0, 3, 3, 2, 54, Pathfinder.d2r(345))
         });
 
-        FollowTrajectory followTrajectory = new FollowTrajectory(0, 0, trajectory, trajectoryLeft, trajectoryRight);
+        FollowTrajectory followTrajectory = new FollowTrajectory(true, 0, trajectory, trajectoryLeft, trajectoryRight);
 
         followTrajectory.initialize();
 

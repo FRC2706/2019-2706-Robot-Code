@@ -22,7 +22,7 @@ public class PneumaticPiston extends DoubleSolenoid {
      * @param reverseChannel {@link DoubleSolenoid#DoubleSolenoid(int, int)}
      * @param startPosition  The default starting position for the pneumatic piston, either in or out.
      */
-    public PneumaticPiston(int forwardChannel, int reverseChannel, PneumaticState startPosition) {
+    public PneumaticPiston(final int forwardChannel, final int reverseChannel, final PneumaticState startPosition) {
         this(forwardChannel, reverseChannel, startPosition, false);
     }
 
@@ -38,11 +38,12 @@ public class PneumaticPiston extends DoubleSolenoid {
      * @param checkState     True to not call the double solenoid if the pneumatic piston is already
      *                       in the desired position, false otherwise.
      */
-    public PneumaticPiston(int forwardChannel, int reverseChannel, PneumaticState startPosition, boolean checkState) {
+    public PneumaticPiston(final int forwardChannel, final int reverseChannel,
+                           final PneumaticState startPosition, final boolean checkState) {
         super(forwardChannel, reverseChannel);
+        this.checkState = checkState;
 
         forceSetState(startPosition);
-        this.checkState = checkState;
     }
 
 

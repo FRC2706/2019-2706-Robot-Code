@@ -102,6 +102,7 @@ public class PneumaticPiston extends DoubleSolenoid {
 
     /**
      * Sets the state of the pneumatic piston without moving it.
+     *
      * @param state The state of the pneumatic piston.
      *              Must be one of {@link PneumaticState#STOWED} or {@link PneumaticState#DEPLOYED} or null for unknown.
      */

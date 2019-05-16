@@ -55,7 +55,7 @@ public class Pneumatics extends Subsystem {
      * Constructs a new Pneumatics with default DoubleSolenoids.
      */
     private Pneumatics() {
-        this(new PneumaticPiston(Config.INTAKE_LIFT_SOLENOID_FORWARD_ID, Config.INTAKE_LIFT_SOLENOID_BACKWARD_ID, null), // TODO make sure null doesn't crash it.
+        this(new PneumaticPiston(Config.INTAKE_LIFT_SOLENOID_FORWARD_ID, Config.INTAKE_LIFT_SOLENOID_BACKWARD_ID, null),
                 new PneumaticPiston(Config.HATCH_EJECTOR_SOLENOID_FORWARD_ID, Config.HATCH_EJECTOR_SOLENOID_BACKWARD_ID, PneumaticState.STOWED));
     }
 

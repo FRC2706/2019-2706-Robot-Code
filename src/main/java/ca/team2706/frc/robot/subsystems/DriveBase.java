@@ -455,9 +455,6 @@ public class DriveBase extends Subsystem {
      */
     public void runMotionProfile() {
         if (canRunAuto()) {
-            rightFrontMotor.selectProfileSlot(1, 0);
-            rightFrontMotor.selectProfileSlot(2, 1);
-
             rightFrontMotor.feed();
 
             leftFrontMotor.follow(rightFrontMotor, FollowerType.AuxOutput1);
@@ -473,12 +470,6 @@ public class DriveBase extends Subsystem {
      */
     public void runMotionProfile2Wheel() {
         if (canRunAuto()) {
-            leftBackMotor.selectProfileSlot(1, 0);
-            leftBackMotor.selectProfileSlot(2, 1);
-
-            rightBackMotor.selectProfileSlot(1, 0);
-            rightBackMotor.selectProfileSlot(2, 1);
-
             leftBackMotor.feed();
             rightBackMotor.feed();
 
@@ -519,8 +510,8 @@ public class DriveBase extends Subsystem {
             points[i].velocity = vel[i] / Config.DRIVE_ENCODER_DPP / 10;
             points[i].auxiliaryPos = heading[i] / Config.PIGEON_DPP; /* scaled such that 3600 => 360 deg */
             points[i].headingDeg = heading[i];
-            points[i].profileSlotSelect0 = 0;
-            points[i].profileSlotSelect1 = 1;
+            points[i].profileSlotSelect0 = 1;
+            points[i].profileSlotSelect1 = 2;
             points[i].timeDur = time[i];
             points[i].zeroPos = i == 0;
             points[i].useAuxPID = true;

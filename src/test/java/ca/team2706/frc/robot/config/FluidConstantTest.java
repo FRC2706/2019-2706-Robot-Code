@@ -14,6 +14,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
 import mockit.*;
@@ -36,6 +37,9 @@ public class FluidConstantTest {
 
     @Mocked
     private DigitalInput digitalInput;
+
+    @Mocked
+    private SmartDashboard dashboard;
 
     @Injectable
     private NetworkTable constantsTable;

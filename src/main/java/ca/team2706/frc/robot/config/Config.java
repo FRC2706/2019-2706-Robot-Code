@@ -73,8 +73,8 @@ public class Config {
     public static final int
             INTAKE_MOTOR_ID = robotSpecific(6, 6, 6),
             CARGO_IR_SENSOR_ID = robotSpecific(1, 1, 1),
-            INTAKE_LIFT_SOLENOID_FORWARD_ID = robotSpecific(2, 2, 2),
-            INTAKE_LIFT_SOLENOID_BACKWARD_ID = robotSpecific(3, 3, 3),
+            INTAKE_LIFT_SOLENOID_FORWARD_ID = robotSpecific(3, 3, 3),
+            INTAKE_LIFT_SOLENOID_BACKWARD_ID = robotSpecific(2, 2, 2),
             HATCH_EJECTOR_SOLENOID_FORWARD_ID = robotSpecific(1, 0, 0),
             HATCH_EJECTOR_SOLENOID_BACKWARD_ID = robotSpecific(0, 1, 1);
 

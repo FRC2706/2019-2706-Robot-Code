@@ -126,7 +126,7 @@ public class Lift extends Subsystem {
         liftMotor.configMotionSCurveStrength(2, Config.CAN_LONG);
 
         Config.LIFT_HOLD_SLOT.setForSlot(liftMotor, HOLD_SLOT);
-        Config.LIFT_FEED_FORWARD_SLOT.setForSlot(liftMotor, HOLD_SLOT);
+        Config.LIFT_FEED_FORWARD_SLOT.setForSlot(liftMotor, FEED_FORWARD_SLOT);
 
         liftMotor.configClosedLoopPeriod(0, 1, Config.CAN_LONG);
 

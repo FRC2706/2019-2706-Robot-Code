@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Mocked;
@@ -70,6 +71,9 @@ public class EButtonTest {
 
     @Injectable
     private SensorCollection sensorCollection;
+
+    @Mocked
+    private SmartDashboard dashboard;
 
     @Before
     public void setUp() {

@@ -278,9 +278,9 @@ public class DriveBase extends Subsystem {
 
         leftBackMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_LONG);
 
-        leftBackMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, 1, Config.CAN_LONG);
+        leftBackMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, 0, Config.CAN_LONG);
 
-        leftBackMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, 1, Config.CAN_LONG);
+        leftBackMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 1, Config.CAN_LONG);
 
         leftBackMotor.configSelectedFeedbackCoefficient(1, 1, Config.CAN_LONG);
         leftBackMotor.configSelectedFeedbackCoefficient(1, 0, Config.CAN_LONG);
@@ -302,9 +302,9 @@ public class DriveBase extends Subsystem {
 
         rightBackMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Config.CAN_LONG);
 
-        rightBackMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, 1, Config.CAN_LONG);
+        rightBackMotor.configRemoteFeedbackFilter(gyro.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, 0, Config.CAN_LONG);
 
-        rightBackMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, 1, Config.CAN_LONG);
+        rightBackMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 1, Config.CAN_LONG);
 
         rightBackMotor.configSelectedFeedbackCoefficient(1, 1, Config.CAN_LONG);
         rightBackMotor.configSelectedFeedbackCoefficient(1, 0, Config.CAN_LONG);
@@ -555,7 +555,7 @@ public class DriveBase extends Subsystem {
         pushMotionProfile(forwards ? posLeft : negateDoubleArray(posLeft), forwards ? velLeft : negateDoubleArray(velLeft), heading, time, size, leftBackMotor, motionProfilePointStreamLeft);
         pushMotionProfile(forwards ? posRight : negateDoubleArray(posRight), forwards ? velRight : negateDoubleArray(velRight), heading, time, size, rightBackMotor, motionProfilePointStreamRight);
 
-        leftBackMotor.startMotionProfile(motionProfilePointStreamRight, 20, ControlMode.MotionProfileArc);
+        leftBackMotor.startMotionProfile(motionProfilePointStreamLeft, 20, ControlMode.MotionProfileArc);
         rightBackMotor.startMotionProfile(motionProfilePointStreamRight, 20, ControlMode.MotionProfileArc);
     }
 

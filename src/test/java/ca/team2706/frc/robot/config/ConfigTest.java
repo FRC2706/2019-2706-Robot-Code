@@ -14,6 +14,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
 import mockit.Expectations;
@@ -100,6 +101,9 @@ public class ConfigTest {
 
     @Mocked
     private DigitalInput input;
+
+    @Mocked
+    private SmartDashboard dashboard;
 
     private boolean initialized = false;
 

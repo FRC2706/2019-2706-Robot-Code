@@ -99,8 +99,8 @@ public class OI {
                 .whenHeld(new RunIntakeOnJoystick(controlStick, Config.INTAKE_BACKWARD_BINDING, false));
         new FluidButton(controlStick, Config.INTAKE_FORWARD_BINDING, Config.CONTROLLER_DEADBAND)
                 .whenHeld(new RunIntakeOnJoystick(controlStick, Config.INTAKE_FORWARD_BINDING, true));
-        new FluidButton(controlStick, Config.MOVE_LIFT_BINDING, Config.CONTROLLER_DEADBAND)
-                .whenHeld(new MoveLiftJoystickVelocity(controlStick, Config.MOVE_LIFT_BINDING, Config.OVERRIDE_LIFT_BINDING));
+//        new FluidButton(controlStick, Config.MOVE_LIFT_BINDING, Config.CONTROLLER_DEADBAND)
+//                .whenHeld(new MoveLiftJoystickVelocity(controlStick, Config.MOVE_LIFT_BINDING, Config.OVERRIDE_LIFT_BINDING));
 
         new FluidButton(controlStick, Config.LIFT_ARMS_BINDING)
                 .whenPressed(new RaiseArmsSafely());

@@ -41,7 +41,7 @@ public class Lift extends Subsystem {
             0, // Bottom position
             1725, // lowest hatch deploy
             27138, // middle hatch
-            53500 // highest hatch
+            48500 // highest hatch
     };
 
     private static Lift currentInstance;
